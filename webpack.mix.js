@@ -22,12 +22,12 @@ if (mix.inProduction()) {
     'vue-i18n',
     'vue-meta',
     'js-cookie',
-    'bootstrap',
     'vue-router',
     'sweetalert2',
     'vuex-router-sync',
-    '@fortawesome/fontawesome',
-    '@fortawesome/vue-fontawesome'
+    'element-ui',
+    'normalize.css',
+    'nprogress'
   ])
 }
 
@@ -38,7 +38,8 @@ mix.webpackConfig({
   resolve: {
     extensions: ['.js', '.json', '.vue'],
     alias: {
-      '~': path.join(__dirname, './resources/assets/js')
+      '@': path.join(__dirname, './resources/assets/js'),
+      '@sass': path.join(__dirname, './resources/assets/sass')
     }
   },
   output: {

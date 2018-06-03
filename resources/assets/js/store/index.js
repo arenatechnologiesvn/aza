@@ -1,23 +1,19 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import app from './modules/app'
+import user from './modules/user'
+import permission from './modules/permission'
+import getters from './getters'
 
 Vue.use(Vuex)
 
-// Load store modules dynamically.
-const requireContext = require.context('./modules', false, /.*\.js$/)
-
-const modules = requireContext.keys()
-  .map(file =>
-    [file.replace(/(^.\/)|(\.js$)/g, ''), requireContext(file)]
-  )
-  .reduce((modules, [name, module]) => {
-    if (module.namespaced === undefined) {
-      module.namespaced = true
-    }
-
-    return { ...modules, [name]: module }
-  }, {})
-
-export default new Vuex.Store({
-  modules
+const store = new Vuex.Store({
+  modules: {
+    app,
+    user,
+    permission
+  },
+  getters
 })
+
+export default store

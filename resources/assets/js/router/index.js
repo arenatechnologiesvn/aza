@@ -1,199 +1,84 @@
 import Vue from 'vue'
-import store from '~/store'
-import Meta from 'vue-meta'
-import routes from './routes'
 import Router from 'vue-router'
-import { sync } from 'vuex-router-sync'
 
-Vue.use(Meta)
+// in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
+// detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
+
 Vue.use(Router)
 
-// The middleware for every page of the application.
-const globalMiddleware = ['locale', 'check-auth']
-
-// Load middleware modules dynamically.
-const routeMiddleware = resolveMiddleware(
-  require.context('~/middleware', false, /.*\.js$/)
-)
-
-const router = createRouter()
-
-sync(store, router)
-
-export default router
+/* Layout */
+import Layout from '../views/layout/Layout'
 
 /**
- * Create a new router instance.
- *
- * @return {Router}
- */
-function createRouter () {
-  const router = new Router({
-    scrollBehavior,
-    mode: 'history',
-    routes
-  })
-
-  router.beforeEach(beforeEach)
-  router.afterEach(afterEach)
-
-  return router
-}
-
-/**
- * Global router guard.
- *
- * @param {Route} to
- * @param {Route} from
- * @param {Function} next
- */
-async function beforeEach (to, from, next) {
-  // Get the matched components and resolve them.
-  const components = await resolveComponents(
-    router.getMatchedComponents({ ...to })
-  )
-
-  if (components.length === 0) {
-    return next()
+* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+*                                if not set alwaysShow, only more than one route under the children
+*                                it will becomes nested mode, otherwise not show the root menu
+* redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
+* name:'router-name'             the name is used by <keep-alive> (must set!!!)
+* meta : {
+    title: 'title'               the name show in submenu and breadcrumb (recommend set)
+    icon: 'svg-name'             the icon show in the sidebar,
   }
+**/
+export const constantRouterMap = [
+  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
+  { path: '/404', component: () => import('@/views/404'), hidden: true },
 
-  // Start the loading bar.
-  if (components[components.length - 1].loading !== false) {
-    router.app.$nextTick(() => router.app.$loading.start())
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Dashboard',
+    hidden: true,
+    children: [{
+      path: 'dashboard',
+      component: () => import('@/views/dashboard/index')
+    }]
   }
+]
 
-  // Get the middleware for all the matched components.
-  const middleware = getMiddleware(components)
+export default new Router({
+  // mode: 'history', //后端支持可开
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
+})
 
-  // Call each middleware.
-  callMiddleware(middleware, to, from, (...args) => {
-    // Set the application layout only if "next()" was called with no args.
-    if (args.length === 0) {
-      router.app.setLayout(components[0].layout || '')
-    }
-
-    next(...args)
-  })
-}
-
-/**
- * Global after hook.
- *
- * @param {Route} to
- * @param {Route} from
- * @param {Function} next
- */
-async function afterEach (to, from, next) {
-  await router.app.$nextTick()
-
-  router.app.$loading.finish()
-}
-
-/**
- * Call each middleware.
- *
- * @param {Array} middleware
- * @param {Route} to
- * @param {Route} from
- * @param {Function} next
- */
-function callMiddleware (middleware, to, from, next) {
-  const stack = middleware.reverse()
-
-  const _next = (...args) => {
-    // Stop if "_next" was called with an argument or the stack is empty.
-    if (args.length > 0 || stack.length === 0) {
-      if (args.length > 0) {
-        router.app.$loading.finish()
+export const asyncRouterMap = [
+  {
+    path: '/example',
+    component: Layout,
+    redirect: '/example/table',
+    name: 'Example',
+    meta: { title: 'Example', icon: 'example' },
+    children: [
+      {
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/table/index'),
+        meta: { title: 'Table', icon: 'table' }
+      },
+      {
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/tree/index'),
+        meta: { title: 'Tree', icon: 'tree', roles: ['admin'] }
       }
+    ]
+  },
 
-      return next(...args)
-    }
+  {
+    path: '/form',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Form',
+        component: () => import('@/views/form/index'),
+        meta: { title: 'Form', icon: 'form' }
+      }
+    ]
+  },
 
-    const middleware = stack.pop()
-
-    if (typeof middleware === 'function') {
-      middleware(to, from, _next)
-    } else if (routeMiddleware[middleware]) {
-      routeMiddleware[middleware](to, from, _next)
-    } else {
-      throw Error(`Undefined middleware [${middleware}]`)
-    }
-  }
-
-  _next()
-}
-
-/**
- * Resolve async components.
- *
- * @param  {Array} components
- * @return {Array}
- */
-async function resolveComponents (components) {
-  return await Promise.all(components.map(async component => {
-    return typeof component === 'function' ? await component() : component
-  }))
-}
-
-/**
- * Merge the the global middleware with the components middleware.
- *
- * @param  {Array} components
- * @return {Array}
- */
-function getMiddleware (components) {
-  const middleware = [...globalMiddleware]
-
-  components.filter(c => c.middleware).forEach(component => {
-    if (Array.isArray(component.middleware)) {
-      middleware.push(...component.middleware)
-    } else {
-      middleware.push(component.middleware)
-    }
-  })
-
-  return middleware
-}
-
-/**
- * Scroll Behavior
- *
- * @link https://router.vuejs.org/en/advanced/scroll-behavior.html
- *
- * @param  {Route} to
- * @param  {Route} from
- * @param  {Object|undefined} savedPosition
- * @return {Object}
- */
-function scrollBehavior (to, from, savedPosition) {
-  if (savedPosition) {
-    return savedPosition
-  }
-
-  if (to.hash) {
-    return { selector: to.hash }
-  }
-
-  const [component] = router.getMatchedComponents({ ...to }).slice(-1)
-
-  if (component && component.scrollToTop === false) {
-    return {}
-  }
-
-  return { x: 0, y: 0 }
-}
-
-/**
- * @param  {Object} requireContext
- * @return {Object}
- */
-function resolveMiddleware (requireContext) {
-  return requireContext.keys()
-    .map(file =>
-      [file.replace(/(^.\/)|(\.js$)/g, ''), requireContext(file)]
-    )
-    .reduce((guards, [name, guard]) => (
-      { ...guards, [name]: guard.default }
-    ), {})
-}
+  { path: '*', redirect: '/404', hidden: true }
+]
