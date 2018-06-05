@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  @import "/home/sy/Documents/aza/resources/assets/sass/mixin.scss";
+  @import "resources/assets/sass/mixin.scss";
   .app-wrapper {
     @include clearfix;
     position: relative;
