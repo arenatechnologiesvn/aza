@@ -38,8 +38,8 @@ mix.webpackConfig({
   resolve: {
     extensions: ['.js', '.json', '.vue'],
     alias: {
-      '@': path.join(__dirname, './resources/assets/js'),
-      '@sass': path.join(__dirname, './resources/assets/sass')
+      '~': path.join(__dirname, './resources/assets/js'),
+      '~sass': path.join(__dirname, './resources/assets/sass')
     }
   },
   output: {

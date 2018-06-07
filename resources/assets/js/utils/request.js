@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
 import store from '../store'
-import { getToken } from '@/utils/auth'
+import { getToken } from '~/utils/auth'
 
 const RESPONSE_OK_STATUS = 200
 const TIME_1_SECOND = 1000
@@ -22,8 +22,6 @@ const service = axios.create({
 // Request interceptor
 service.interceptors.request.use((config) => {
   if (store.getters.token) {
-    // Let each request carry a custom token.
-    // Please modify it according to the actual situation
     config.headers.common['Authorization'] = `Bearer ${getToken()}`
     config.headers.common['Content-Type'] = 'application/x-www-form-urlencoded'
   }
@@ -35,22 +33,24 @@ service.interceptors.request.use((config) => {
 
 // Response interceptor
 service.interceptors.response.use((response) => {
-    if (response.status === RESPONSE_OK_STATUS) return response.data;
+  const status = response.status
 
-    set_error_notify(response.data.message)
-    // 50008: illegal token; 50012: other client logged in; 50014: Token expired;
-    if (response.status === 50008 || response.status === 50012 || response.status === 50014) {
-      MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
-        confirmButtonText: '重新登录',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        store.dispatch('FedLogOut').then(() => {
-          location.reload() // To re-instantiate the vue-router object Avoid bugs
-        })
+  if (response.status === RESPONSE_OK_STATUS) return response.data;
+
+  set_error_notify(response.data.message)
+  // 50008: illegal token; 50012: other client logged in; 50014: Token expired;
+  if (status >= 500 || (status === 401 && store.getters.token)) {
+    MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    }).then(() => {
+      store.dispatch('FedLogOut').then(() => {
+        location.reload() // To re-instantiate the vue-router object Avoid bugs
       })
-    }
-    return Promise.reject('error')
+    })
+  }
+  return Promise.reject('error')
   }, (error) => {
     console.log('err' + error) // for debug
     set_error_notify(error)

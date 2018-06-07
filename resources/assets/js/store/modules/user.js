@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, getInfo } from '~/api/login'
+import { getToken, setToken, removeToken } from '~/utils/auth'
 
 const user = {
   state: {
@@ -25,7 +25,6 @@ const user = {
   },
 
   actions: {
-    // 登录
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
@@ -39,18 +38,16 @@ const user = {
       })
     },
 
-    // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
-          const data = response
           if (response.roles && response.roles.length > 0) {
             commit('SET_ROLES', response.roles)
           } else {
             reject('getInfo: roles must be a non-null array !')
           }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
+          commit('SET_NAME', response.name)
+          commit('SET_AVATAR', response.avatar)
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -58,7 +55,6 @@ const user = {
       })
     },
 
-    // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
@@ -72,7 +68,6 @@ const user = {
       })
     },
 
-    // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
