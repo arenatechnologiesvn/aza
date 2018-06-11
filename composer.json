@@ -6,8 +6,11 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
+        "baum/baum": "^1.1",
         "fideloper/proxy": "~3.3",
+        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.5.*",
+        "laravel/passport": "~4.0",
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",
         "tymon/jwt-auth": "^1.0.0-rc.1"

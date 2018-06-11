@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+//use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -20,6 +22,18 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    public function register(Request $request)
+    {
+        $errors = $this->validator($request->all())->errors();
+        if ($errors && count($errors)>0) {
+            return ['errors'=>$errors];
+        } else {
+            event(new Registered($user = $this->create($request->all())));
+            return $this->registered($request, $user)
+                ?: 'error';
+        }
     }
 
     /**
@@ -45,7 +59,8 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'role_id' => 'required',
+            'password' => 'required|min:6',
         ]);
     }
 
@@ -57,10 +72,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $time = date_timestamp_get(date_create());
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'role_id' => $data['role_id'],
             'password' => bcrypt($data['password']),
+            'phone' => $data['phone'],
+            'created_at' => $time,
+            'updated_at' => $time
         ]);
     }
 }
