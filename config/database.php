@@ -38,14 +38,13 @@ return [
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
         ],
-
         'mysql' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', '210.211.111.86'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'aza2'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'database' => env('DB_DATABASE', 'uhwaxmkqhosting_aza'),
+            'username' => env('DB_USERNAME', 'uhwaxmkqhosting_ngocxuan'),
+            'password' => env('DB_PASSWORD', 'Nx519069'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
