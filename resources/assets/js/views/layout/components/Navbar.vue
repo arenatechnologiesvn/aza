@@ -1,24 +1,17 @@
-<template>
-  <el-menu class="navbar" mode="horizontal">
-    <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-    <breadcrumb></breadcrumb>
-    <el-dropdown class="avatar-container" trigger="click">
-      <div class="avatar-wrapper">
-        <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
-        <i class="el-icon-caret-bottom"></i>
-      </div>
-      <el-dropdown-menu class="user-dropdown" slot="dropdown">
-        <router-link class="inlineBlock" to="/">
-          <el-dropdown-item>
-            Home
-          </el-dropdown-item>
-        </router-link>
-        <el-dropdown-item divided>
-          <span @click="logout" style="display:block;">LogOut</span>
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
-  </el-menu>
+<template lang="pug">
+  el-menu.navbar(mode="horizontal")
+    hamburger.hamburger-container(:toggleClick="toggleSideBar" :isActive="sidebar.opened")
+    breadcrumb
+    el-dropdown.avatar-container(trigger="click")
+      el-row.avatar-wrapper(type="flex" class="row-bg" justify="space-between" align="middle")
+        img.user-avatar(:src="avatar")
+        span(style="margin-left: 10px") {{ name }}
+        i.el-icon-caret-bottom
+      el-dropdown-menu.user-dropdown(slot="dropdown")
+        router-link(class="inlineBlock" to="/")
+          el-dropdown-item Trang chủ
+        el-dropdown-item(divided)
+          span(@click="logout" style="display:block;") Đăng xuất
 </template>
 
 <script>
@@ -34,6 +27,7 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
+      'name',
       'avatar'
     ])
   },
@@ -74,17 +68,15 @@ export default {
     right: 35px;
     .avatar-wrapper {
       cursor: pointer;
-      margin-top: 5px;
       position: relative;
       .user-avatar {
         width: 40px;
         height: 40px;
-        border-radius: 10px;
+        border-radius: 50%;
       }
       .el-icon-caret-bottom {
         position: absolute;
         right: -20px;
-        top: 25px;
         font-size: 12px;
       }
     }

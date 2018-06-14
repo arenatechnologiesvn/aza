@@ -1,17 +1,15 @@
-<template>
-  <el-scrollbar wrapClass="scrollbar-wrapper">
-    <el-menu
+<template lang="pug">
+  el-scrollbar(wrapClass="scrollbar-wrapper")
+    el-menu(
       mode="vertical"
       :show-timeout="200"
       :default-active="$route.path"
       :collapse="isCollapse"
-      background-color="#304156"
+      background-color="#001C2C"
       text-color="#bfcbd9"
       active-text-color="#409EFF"
-    >
-      <sidebar-item :routes="permission_routers"></sidebar-item>
-    </el-menu>
-  </el-scrollbar>
+    )
+      sidebar-item(:routes="permission_routers")
 </template>
 
 <script>

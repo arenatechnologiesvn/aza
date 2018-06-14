@@ -1,27 +1,29 @@
 <template lang='pug'>
   section.el-container.login-container.is-vertical
     header.el-header
-    main.el-main
-      el-row.logo-container(type="flex" justify="center")
-        img(:src="logo_img")
-      el-row
-        el-form.login-form(autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left")
-          el-form-item.el-form-item__input(prop="email")
-            span.svg-container.svg-container_login
-              svg-icon(icon-class="user")
-            el-input(name="email" type="text" v-model="loginForm.email" autoComplete="on" placeholder="Email")
-          el-form-item.el-form-item__input(prop="password")
-            span.svg-container.svg-container_login
-              svg-icon(icon-class="password")
-            el-input(name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="Mật khẩu")
-              span(class="showPwd")
-          el-form-item.el-row
-            el-col(:span="12")
-              el-checkbox Lưu mật khẩu
-            el-col(:span="12")
-              el-button(type="text" style="color: #242256; float: right;") Quên mật khẩu?
-          el-form-item
-            el-button(type="success" style="width:100%" :loading="loading" @click.native.prevent="handleLogin") ĐĂNG NHẬP
+    main.el-main(style="position: relative; padding: 0")
+      div(style="position: absolute; top: 50%; transform: translateY(-50%); width: 100%;")
+        el-row.logo-container(type="flex" justify="center")
+          img(:src="logo_img")
+        el-row(type="flex" justify="center")
+          el-col(:md="5")
+            el-form.login-form(autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left")
+              el-form-item.el-form-item__input(prop="email")
+                span.svg-container.svg-container_login
+                  svg-icon(icon-class="user")
+                el-input(name="email" type="text" v-model="loginForm.email" autoComplete="on" placeholder="Email")
+              el-form-item.el-form-item__input(prop="password")
+                span.svg-container.svg-container_login
+                  svg-icon(icon-class="password")
+                el-input(name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="Mật khẩu")
+                  span(class="showPwd")
+              el-form-item.el-row
+                el-col(:span="12")
+                  el-checkbox Nhớ mật khẩu
+                el-col(:span="12")
+                  el-button(type="text" style="color: #242256; float: right;") Quên mật khẩu?
+              el-form-item
+                el-button(type="success" style="width:100%" :loading="loading" @click.native.prevent="handleLogin") ĐĂNG NHẬP
     footer.el-footer
       el-row(type="flex" justify="center")
         span(style="color: #242256") Copyright © Công Ty Cổ Phần Thịnh Thế. All right reserved.
@@ -37,14 +39,14 @@ export default {
   name: 'login',
   data() {
     const validateEmail = (rule, value, callback) => {
-      if (!isValidateEmail(value)) {
+      if (value && !isValidateEmail(value)) {
         callback(new Error('Vui lòng nhập email chính xác'))
       } else {
         callback()
       }
     }
     const validatePass = (rule, value, callback) => {
-      if (value.length < 5) {
+      if (value && value.length < 5) {
         callback(new Error('Mật khẩu không được nhỏ hơn 5 ký tự'))
       } else {
         callback()
@@ -129,17 +131,13 @@ $aza_color:#242256;
 $bg:#2d3a4b;
 $aza_color:#242256;
 .login-container {
-  position: fixed;
   height: 100%;
   width: 100%;
-  background-image: url('../../assets/login_images/background.jpg');
+  background: url('../../assets/login_images/background.png') no-repeat center center;
+  background-size: cover;
   .login-form {
-    position: absolute;
-    left: 0;
-    right: 0;
-    width: 420px;
     padding: 35px 35px 15px 35px;
-    margin: 15px auto;
+    margin: 35px 0;
     background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
   }
@@ -179,9 +177,6 @@ $aza_color:#242256;
     color: $aza_color;
     cursor: pointer;
     user-select: none;
-  }
-  .logo-container {
-    margin: 70px 0 0 0;
   }
 }
 </style>
