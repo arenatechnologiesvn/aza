@@ -1,16 +1,16 @@
-<template>
-  <div class="app-wrapper" :class="classObj">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"></div>
-    <sidebar class="sidebar-container"></sidebar>
-    <div class="main-container">
-      <navbar></navbar>
-      <app-main></app-main>
-    </div>
-  </div>
+<template lang="pug">
+  div.app-wrapper(:class="classObj")
+    div.drawer-bg(v-if="device==='mobile'&&sidebar.opened" @click="handleClickOutside")
+    sidebar.sidebar-container
+    div.main-container
+      navbar
+      breadcrumb
+      app-main
 </template>
 
 <script>
 import { Navbar, Sidebar, AppMain } from './components'
+import Breadcrumb from '~/components/Breadcrumb'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
@@ -18,6 +18,7 @@ export default {
   components: {
     Navbar,
     Sidebar,
+    Breadcrumb,
     AppMain
   },
   mixins: [ResizeMixin],

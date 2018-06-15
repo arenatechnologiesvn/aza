@@ -1,7 +1,6 @@
 <template lang="pug">
   el-menu.navbar(mode="horizontal")
     hamburger.hamburger-container(:toggleClick="toggleSideBar" :isActive="sidebar.opened")
-    breadcrumb
     el-dropdown.avatar-container(trigger="click")
       el-row.avatar-wrapper(type="flex" class="row-bg" justify="space-between" align="middle")
         img.user-avatar(:src="avatar")
@@ -16,12 +15,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Breadcrumb from '~/components/Breadcrumb'
 import Hamburger from '~/components/Hamburger'
 
 export default {
   components: {
-    Breadcrumb,
     Hamburger
   },
   computed: {

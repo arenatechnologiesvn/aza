@@ -6,7 +6,7 @@
         el-row.logo-container(type="flex" justify="center")
           img(:src="logo_img")
         el-row(type="flex" justify="center")
-          el-col(:md="5")
+          el-col(:md="6")
             el-form.login-form(autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left")
               el-form-item.el-form-item__input(prop="email")
                 span.svg-container.svg-container_login
