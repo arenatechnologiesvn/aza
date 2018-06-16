@@ -6,7 +6,7 @@ const user = {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles: {}
   },
 
   mutations: {
@@ -41,13 +41,13 @@ const user = {
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
-          if (response.roles && response.roles.length > 0) {
-            commit('SET_ROLES', response.roles)
+          if (response.role) {
+            commit('SET_ROLES', response.role)
           } else {
             reject('getInfo: roles must be a non-null array !')
           }
           commit('SET_NAME', response.name)
-          commit('SET_AVATAR', response.avatar)
+          commit('SET_AVATAR', response.photo_url )
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -59,7 +59,7 @@ const user = {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
           commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
+          commit('SET_ROLES', {})
           removeToken()
           resolve()
         }).catch(error => {
