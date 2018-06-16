@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Responses\FailedResponse;
+use App\Http\Responses\Users\UserCreatedResponse;
 use App\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -22,31 +24,12 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
-    /**
-     * The user has been registered.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return mixed
-     */
-    protected function registered(Request $request, $user)
+    public function register(RegisterRequest $request)
     {
-        return $user;
-    }
-
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
-        ]);
+        event(new Registered($user = $this->create($request->all())));
+        return $user ?
+            new UserCreatedResponse($user) :
+            new FailedResponse();
     }
 
     /**
@@ -60,7 +43,9 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'role_id' => $data['role_id'],
             'password' => bcrypt($data['password']),
+            'phone' => $data['phone']
         ]);
     }
 }

@@ -2,24 +2,40 @@
 
 namespace App;
 
+//use Illuminate\Support\Facades\Auth;
+use App\Observers\ByUserObserver;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\ResetPassword as ResetPasswordNotification;
 
+//use Laravel\Passport\HasApiTokens;
+
 class User extends Authenticatable implements JWTSubject
 {
+//    use HasApiTokens, Notifiable;
     use Notifiable;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
+        'role_id',
+        'phone',
+        'two_factor',
+        'is_active'
     ];
 
+    public static function boot()
+    {
+        User::observe(new ByUserObserver());
+
+        parent::boot();
+    }
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -38,6 +54,11 @@ class User extends Authenticatable implements JWTSubject
         'photo_url',
     ];
 
+    protected function getDateFormat()
+    {
+        return 'U';
+    }
+
     /**
      * Get the profile photo URL attribute.
      *
@@ -45,7 +66,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getPhotoUrlAttribute()
     {
-        return 'https://www.gravatar.com/avatar/'.md5(strtolower($this->email)).'.jpg?s=200&d=mm';
+        return 'https://www.gravatar.com/avatar/' . md5(strtolower($this->email)) . '.jpg?s=200&d=mm';
     }
 
     /**
@@ -58,10 +79,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(OAuthProvider::class);
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function userDetail() {
+        return $this->hasOne(UserDetail::class);
+    }
     /**
      * Send the password reset notification.
      *
-     * @param  string  $token
+     * @param  string $token
      * @return void
      */
     public function sendPasswordResetNotification($token)
@@ -83,5 +112,24 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function detail($user)
+    {
+        return self::with(['role.permissions' => function ($query) {
+            $query->where('parent_id', '0');
+        }, 'role.permissions.children' => function ($query) use ($user) {
+            $query->whereIn('id',
+                RolePermission::query()
+                    ->where('role_id', $user->role_id)
+                    ->get(['permission_id'])
+                    ->toArray());
+        }, 'role.permissions.children.children' => function ($query) use ($user) {
+            $query->whereIn('id',
+                RolePermission::query()
+                    ->where('role_id', $user->role_id)
+                    ->get(['permission_id'])
+                    ->toArray());
+        }])->find($user->id);
     }
 }
