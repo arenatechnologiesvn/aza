@@ -46,38 +46,68 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
-    path: '/example',
+    path: '/dashboard',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('~/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('~/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree', roles: ['Admin'] }
-      }
-    ]
+    redirect: '/dashboard',
+    name: 'Bảng tin',
+    meta: { title: 'Bảng tin', icon: 'example' },
+    children: []
   },
-
   {
-    path: '/form',
+    path: '/dashboard',
     component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('~/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
+    redirect: '/dashboard',
+    name: 'Quản lý thành viên',
+    meta: { title: 'Quản lý thành viên', icon: 'example' },
+    children: []
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Quản lý sản phẩm',
+    meta: { title: 'Quản lý sản phẩm', icon: 'example' },
+    children: []
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Quản lý khách hàng',
+    meta: { title: 'Quản lý khách hàng', icon: 'example' },
+    children: []
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Quản lý nhân viên',
+    meta: { title: 'Quản lý nhân viên', icon: 'example' },
+    children: []
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Quản lý đơn hàng',
+    meta: { title: 'Quản lý đơn hàng', icon: 'example' },
+    children: []
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Báo cái doanh số',
+    meta: { title: 'Báo cái doanh số', icon: 'example' },
+    children: []
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Cài đặt hệ thống',
+    meta: { title: 'Cài đặt hệ thống', icon: 'example' },
+    children: []
   },
 
   { path: '*', redirect: '/404', hidden: true }
