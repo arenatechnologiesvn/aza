@@ -1,18 +1,18 @@
 <template lang='pug'>
   section.el-container.login-container.is-vertical
     header.el-header
-    main.el-main(style="position: relative; padding: 0")
-      div(style="position: absolute; top: 50%; transform: translateY(-50%); width: 100%;")
+    main(style="position: relative; padding: 0; height: 600px;")
+      div(style="margin-top: 50px; width: 100%;")
         el-row.logo-container(type="flex" justify="center")
           img(:src="logo_img")
         el-row(type="flex" justify="center")
-          el-col(:md="6")
+          div(style="width: 574px;")
             el-form.login-form(autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left")
               el-form-item.el-form-item__input(prop="email")
                 span.svg-container.svg-container_login
                   svg-icon(icon-class="user")
-                el-input(name="email" type="text" v-model="loginForm.email" autoComplete="on" placeholder="Email")
-              el-form-item.el-form-item__input(prop="password")
+                el-input(name="email" type="text" v-model="loginForm.email" autoComplete="off" placeholder="Email")
+              el-form-item.el-form-item__input(prop="password", style="margin-top: 30px;")
                 span.svg-container.svg-container_login
                   svg-icon(icon-class="password")
                 el-input(name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="Mật khẩu")
@@ -100,7 +100,7 @@ $aza_color:#242256;
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 85%;
+    width: calc(100% - 70px);
     input {
       background: transparent;
       border: 0px;
@@ -121,6 +121,30 @@ $aza_color:#242256;
     color: $aza_color;
     &__input {
       background: rgba(255, 255, 255, 0.6);
+    }
+  }
+  span.svg-container.svg-container_login {
+    margin-right: 15px;
+    position: relative;
+    min-width: 50px;
+  }
+  span.svg-container.svg-container_login::after {
+    content: '';
+    height: 36px;
+    position: absolute;
+    right: 0;
+    top: 7px;
+    width: 1px;
+    background-color: #636b6f;
+  }
+  footer.el-footer {
+    position: absolute;
+    height: 80px;
+    bottom: 0;
+    width: 400px;
+    margin-left: calc(50% - 200px);
+    span {
+      font-size: .8em;
     }
   }
 }
@@ -163,7 +187,6 @@ $aza_color:#242256;
   }
   .title {
     font-size: 26px;
-    font-weight: 400;
     color: $aza_color;
     margin: 0px auto 40px auto;
     text-align: center;
