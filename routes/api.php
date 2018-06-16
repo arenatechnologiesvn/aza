@@ -20,13 +20,16 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::patch('settings/profile', 'Settings\ProfileController@update');
     Route::patch('settings/password', 'Settings\PasswordController@update');
-    Route::post('user', 'UserController@create')->middleware('can:create,App\User');
+//    Route::post('user', 'UserController@create')->middleware('can:create,App\User');
+    Route::post('user', 'Auth\RegisterController@register');
     Route::post('role', 'RoleController@create');
     Route::put('role/{id}', 'RoleController@update');
+
+    Route::post('permissions', 'PermissionController@create');
 });
-Route::get('/api/login', function () {
-    return \Illuminate\Support\Facades\Auth::user();
-})->name('login');
+//Route::get('/api/login', function () {
+//    return \Illuminate\Support\Facades\Auth::user();
+//})->name('login');
 
 //Route::post('register', 'Auth\RegisterController@register')->middleware('can:create-user');
 

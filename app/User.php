@@ -3,6 +3,7 @@
 namespace App;
 
 //use Illuminate\Support\Facades\Auth;
+use App\Observers\ByUserObserver;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +15,6 @@ class User extends Authenticatable implements JWTSubject
 {
 //    use HasApiTokens, Notifiable;
     use Notifiable;
-    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -25,15 +25,17 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'role_id',
-        'created_at',
-        'updated_at',
         'phone',
-        'created_user',
-        'update_user',
         'two_factor',
         'is_active'
     ];
 
+    public static function boot()
+    {
+        User::observe(new ByUserObserver());
+
+        parent::boot();
+    }
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -51,6 +53,11 @@ class User extends Authenticatable implements JWTSubject
     protected $appends = [
         'photo_url',
     ];
+
+    protected function getDateFormat()
+    {
+        return 'U';
+    }
 
     /**
      * Get the profile photo URL attribute.
@@ -77,6 +84,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Role::class);
     }
 
+    public function userDetail() {
+        return $this->hasOne(UserDetail::class);
+    }
     /**
      * Send the password reset notification.
      *

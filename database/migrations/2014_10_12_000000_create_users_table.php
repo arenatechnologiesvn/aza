@@ -14,10 +14,9 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->engine = "InnoDB";
             $table->increments('id');
             $table->string('name');
-            $table->string('email',100)->unique();
+            $table->string('email',255);
             $table->string('password');
             $table->rememberToken();
             $table->string('phone', 20);
@@ -25,14 +24,11 @@ class CreateUsersTable extends Migration
             $table->boolean('is_active')->nullable();
             $table->integer('role_id')->unsigned();
             $table->integer('created_at')->nullable();
-            $table->integer('created_user')->nullable();
+            $table->integer('created_by')->nullable();
             $table->integer('updated_at')->nullable();
-            $table->integer('update_user')->nullable();
-
-            $table->foreign('role_id')
-                ->references('id')
-                ->on('roles')
-                ->onDelete('cascade');
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_at')->nullable();
+            $table->integer('deleted_by')->nullable();
 
         });
     }

@@ -87,7 +87,6 @@ class RoleController extends Controller
         $role->update($request->all());
         $role->permissions()->sync($permissions);
         return Role::with('permissions')->find($id);
-
     }
 
     /**

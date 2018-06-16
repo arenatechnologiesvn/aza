@@ -2,13 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class Role extends BaseModel
 {
     //
     protected $table = 'roles';
-    protected $fillable = ['title','description','note', 'updated_user', 'created_user','updated_at', 'created_at'];
+    protected $fillable = [
+        'title',
+        'description',
+        'note'
+    ];
     public function users()
     {
         return $this->hasMany(User::class);

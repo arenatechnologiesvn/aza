@@ -2,12 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 
-class Permission extends Model
+class Permission extends BaseModel
 {
     protected $fillable = [
-        'level'
+        'level',
+        'name',
+        'title',
+        'url_action',
+        'icon'
     ];
     //
     protected $table = 'permissions';

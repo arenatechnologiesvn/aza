@@ -14,10 +14,10 @@ class CreatePermissionsTable extends Migration
     public function up()
     {
         Schema::create('permissions', function (Blueprint $table) {
-            $table->engine = "InnoDB";
             $table->increments('id');
-            $table->string('name', 150)->unique();
-            $table->string('url_action', 150)->unique();
+            $table->string('name', 255);
+            $table->string('title', 255);
+            $table->string('url_action', 255);
             $table->boolean('authorize')->default(false);
             $table->boolean('is_menu')->default(false);
             $table->boolean('is_show')->default(false);
@@ -27,9 +27,11 @@ class CreatePermissionsTable extends Migration
             $table->string('icon', 255)->nullable();
             $table->integer('parent_id')->nullable();
             $table->integer('created_at')->nullable();
-            $table->integer('created_user')->nullable();
+            $table->integer('created_by')->nullable();
             $table->integer('updated_at')->nullable();
-            $table->integer('updated_user')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_at')->nullable();
+            $table->integer('deleted_by')->nullable();
         });
     }
 

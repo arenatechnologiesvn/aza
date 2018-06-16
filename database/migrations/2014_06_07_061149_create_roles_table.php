@@ -14,15 +14,16 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->engine = "InnoDB";
             $table->increments('id');
             $table->string('title', 255);
             $table->string('description', 255)->nullable();
             $table->string('note', 500)->nullable();
             $table->integer('created_at')->nullable();
-            $table->integer('created_user')->nullable();
+            $table->integer('created_by')->nullable();
             $table->integer('updated_at')->nullable();
-            $table->integer('updated_user')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_at')->nullable();
+            $table->integer('deleted_by')->nullable();
         });
     }
 
