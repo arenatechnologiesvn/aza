@@ -1,7 +1,7 @@
 <template lang="pug">
-  div(style="background-color: #dff6fd; padding: 10px 0 0 10px;")
+  div.app-page-title-panel
     el-row
-      span.app-page-title {{ pageName }}
+      span.app-page-title {{ pageTitle }}
     el-row
       el-breadcrumb.app-breadcrumb(separator="|")
         transition-group(name="breadcrumb")
@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      pageName: '',
+      pageTitle: '',
       levelList: null
     };
   },
@@ -34,7 +34,7 @@ export default {
         matched = [{ path: '/dashboard', meta: { title: 'Dashboard' }}];
       }
       this.levelList = matched;
-      this.pageName = matched.slice().pop().meta.title.toUpperCase();
+      this.pageTitle = matched.slice().pop().meta.title.toUpperCase();
     }
   }
 }
@@ -51,8 +51,12 @@ export default {
       cursor: text;
     }
   }
-  .app-page-title {
-    color: #000;
-    font-size: 18px;
+  .app-page-title-panel {
+    background-color: #dff6fd;
+    padding: 10px 10px 0 10px;
+    .app-page-title {
+      color: #000;
+      font-size: 18px;
+    }
   }
 </style>

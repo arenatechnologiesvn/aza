@@ -1,5 +1,8 @@
 <template lang="pug">
   el-menu.navbar(mode="horizontal")
+    el-row.logo-container(type="flex" justify="center" align="middle" :class="!sidebar.opened ? 'collapse' : 'non-collapse'")
+      img.logo-image(:src="logo_img")
+      span.logo-title(v-if="sidebar.opened") PROJECT
     hamburger.hamburger-container(:toggleClick="toggleSideBar" :isActive="sidebar.opened")
     el-dropdown.avatar-container(trigger="click")
       el-row.avatar-wrapper(type="flex" class="row-bg" justify="space-between" align="middle")
@@ -16,10 +19,16 @@
 <script>
 import { mapGetters } from 'vuex'
 import Hamburger from '~/components/Hamburger'
+import logo_img from '~/assets/login_images/logo-login-page.png'
 
 export default {
   components: {
     Hamburger
+  },
+  data() {
+    return {
+      logo_img
+    }
   },
   computed: {
     ...mapGetters([
@@ -46,6 +55,10 @@ export default {
   height: 50px;
   line-height: 50px;
   border-radius: 0px !important;
+  box-shadow: 2px 4px 20px -4px rgba(0,0,0,.3);
+  z-index: 9999;
+  width: 100%;
+  position: fixed;
   .hamburger-container {
     line-height: 58px;
     height: 50px;
@@ -77,6 +90,26 @@ export default {
         font-size: 12px;
       }
     }
+  }
+  .logo-container {
+    float: left;
+    background-color: #001C2C;
+    height: 50px;
+    .logo-image {
+      height: 40px;
+      width: 40px;
+    }
+    .logo-title {
+      margin-left: 10px;
+      font-weight: bold;
+      color: #71a42c;
+    }
+  }
+  .collapse {
+    width: 50px;
+  }
+  .non-collapse {
+    width: 250px;
   }
 }
 </style>

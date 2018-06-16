@@ -1,9 +1,9 @@
 <template lang="pug">
   div.app-wrapper(:class="classObj")
     div.drawer-bg(v-if="device==='mobile'&&sidebar.opened" @click="handleClickOutside")
-    sidebar.sidebar-container
+    navbar
     div.main-container
-      navbar
+      sidebar.sidebar-container
       breadcrumb
       app-main
 </template>
