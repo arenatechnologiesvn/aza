@@ -2,8 +2,8 @@
   el-scrollbar(wrapClass="scrollbar-wrapper")
     div.logo-container(v-if="sidebar.opened" style="height: 250px;")
       div.logo-content
-        img.logo-image(:src="avatar")
-        span.logo-name {{ name.toUpperCase() }}
+        img.logo-image(:src="fake_avatar")
+        span.logo-name LINH NGUYỄN
         span.logo-description Quản trị viên cao cấp
     el-menu(
       mode="vertical"
@@ -20,9 +20,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import SidebarItem from './SidebarItem'
+import fake_avatar from '~/assets/login_images/linh-nguyen.jpg'
 
 export default {
   components: { SidebarItem },
+  data() {
+    return {
+      fake_avatar
+    }
+  },
   computed: {
     ...mapGetters([
       'permission_routers',
