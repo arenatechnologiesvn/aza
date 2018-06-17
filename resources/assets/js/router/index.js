@@ -50,7 +50,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Bảng tin',
-    meta: { title: 'Bảng tin', icon: 'home' },
+    meta: { title: 'Bảng tin', icon: 'fa-solid home' },
     children: []
   },
   {
@@ -58,7 +58,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Quản lý thành viên',
-    meta: { title: 'Quản lý thành viên', icon: 'user' },
+    meta: { title: 'Quản lý thành viên', icon: 'fa-solid user' },
     children: []
   },
   {
@@ -66,7 +66,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Quản lý sản phẩm',
-    meta: { title: 'Quản lý sản phẩm', icon: 'codepen' },
+    meta: { title: 'Quản lý sản phẩm', icon: 'fa-brands codepen' },
     children: []
   },
   {
@@ -74,7 +74,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Quản lý khách hàng',
-    meta: { title: 'Quản lý khách hàng', icon: 'user-tie' },
+    meta: { title: 'Quản lý khách hàng', icon: 'fa-solid user-tie' },
     children: []
   },
   {
@@ -82,7 +82,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Quản lý nhân viên',
-    meta: { title: 'Quản lý nhân viên', icon: 'users' },
+    meta: { title: 'Quản lý nhân viên', icon: 'fa-solid users' },
     children: []
   },
   {
@@ -90,7 +90,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Quản lý đơn hàng',
-    meta: { title: 'Quản lý đơn hàng', icon: 'box-open' },
+    meta: { title: 'Quản lý đơn hàng', icon: 'fa-solid box-open' },
     children: []
   },
   {
@@ -98,7 +98,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Báo cái doanh số',
-    meta: { title: 'Báo cái doanh số', icon: 'chart-bar' },
+    meta: { title: 'Báo cái doanh số', icon: 'fa-solid chart-bar' },
     children: []
   },
   {
@@ -106,7 +106,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Cài đặt hệ thống',
-    meta: { title: 'Cài đặt hệ thống', icon: 'cog' },
+    meta: { title: 'Cài đặt hệ thống', icon: 'fa-solid cog' },
     children: []
   },
 

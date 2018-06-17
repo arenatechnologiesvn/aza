@@ -10,11 +10,11 @@
             el-form.login-form(autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left")
               el-form-item.el-form-item__input(prop="email")
                 span.svg-container.svg-container_login
-                  svg-icon(icon-class="user")
+                  svg-icon(icon-class="fa-solid user")
                 el-input(name="email" type="text" v-model="loginForm.email" autoComplete="off" placeholder="Email")
               el-form-item.el-form-item__input(prop="password", style="margin-top: 30px;")
                 span.svg-container.svg-container_login
-                  svg-icon(icon-class="password")
+                  svg-icon(icon-class="fa-solid lock")
                 el-input(name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="Mật khẩu")
                   span(class="showPwd")
               el-form-item.el-row
