@@ -7,7 +7,8 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 /* Layout */
-import Layout from '../views/layout/Layout'
+import Layout from '../views/shared/layout/Admin'
+import LayoutGuest from '../views/shared/layout/Guest'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -22,9 +23,24 @@ import Layout from '../views/layout/Layout'
   }
 **/
 export const constantRouterMap = [
-  { path: '/login', component: () => import('~/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('~/views/404'), hidden: true },
-
+  {
+    path: '/login',
+    redirect: '/login',
+    name: 'login',
+    component: LayoutGuest,
+    children: [
+      {
+        path: '/login',
+        component: () => import('~/views/pages/auth/Login')
+      },
+      {
+        path: '/forget',
+        component: () => import('~/views/pages/auth/Forget')
+      }
+    ]
+  },
+  {
+    path: '/404', component: () => import('~/views/404'), hidden: true },
   {
     path: '/',
     component: Layout,
@@ -39,7 +55,7 @@ export const constantRouterMap = [
 ]
 
 export default new Router({
-  mode: 'history', //后端支持可开
+  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
@@ -76,6 +92,29 @@ export const asyncRouterMap = [
     name: 'Quản lý khách hàng',
     meta: { title: 'Quản lý khách hàng', icon: 'fa-solid user-tie' },
     children: []
+    redirect: '/example/table',
+    name: 'Example',
+    meta: { title: 'Example', icon: 'example' },
+    children: [
+      {
+        path: 'table',
+        name: 'Table',
+        component: () => import('~/views/table/index'),
+        meta: { title: 'Table', icon: 'table' }
+      },
+      {
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('~/views/tree/index'),
+        meta: { title: 'Tree', icon: 'tree', roles: ['Admin'] }
+      },
+      {
+        path: 'form',
+        name: 'user_form',
+        component: () => import('~/views/pages/users/Form'),
+        meta: { title: 'Form', icon: 'form' }
+      }
+    ]
   },
   {
     path: '/dashboard',
@@ -107,7 +146,14 @@ export const asyncRouterMap = [
     redirect: '/dashboard',
     name: 'Cài đặt hệ thống',
     meta: { title: 'Cài đặt hệ thống', icon: 'fa-solid cog' },
-    children: []
+    children: [
+      {
+        path: 'index',
+        name: 'Form',
+        component: () => import('~/views/pages/users/Form'),
+        meta: { title: 'Form', icon: 'form' }
+      }
+    ]
   },
 
   { path: '*', redirect: '/404', hidden: true }

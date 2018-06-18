@@ -1,0 +1,87 @@
+@import "./variables";
+.title--center {
+  text-align: center;
+}
+.guest__layout {
+  height: 100%;
+  background-size: cover;
+  background: url('../assets/login_images/background.png') no-repeat center center;
+}
+.main-wrapper {
+  padding: 50px 0 0;
+  max-width: 600px;
+  margin: 0 auto;
+  .logo {
+    margin: 0 auto;
+    width: 200px;
+    text-align: center;
+  }
+  .login-content {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 35px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    .el-form-item {
+      margin-bottom: 25px;
+    }
+    .form-opacity {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 5px;
+    }
+    .icon-container {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      padding: 6px 5px 6px 15px;
+      color: $aza_color;
+      vertical-align: middle;
+      font-size: 1.5em;
+      margin-right: 10px;
+      &::after {
+        content: '';
+        position: absolute;
+        height: 30px;
+        top: 10px;
+        right: 0;
+        width: 1px;
+        background-color: gray;
+      }
+    }
+    .el-input {
+      display: inline-block;
+      width: calc(100% - 65px);
+      input {
+        background: transparent;
+        border: 0;
+        -webkit-appearance: none;
+        border-radius: 0;
+        padding: 12px 5px 12px 15px;
+        color: $aza_color;
+        height: 40px;
+        &:-webkit-autofill {
+          -webkit-box-shadow: 0 0 0 0 inset !important;
+          -webkit-text-fill-color: #242256 !important;
+          background-color: rgba(255, 255, 255, 0.6) !important;
+        }
+      }
+    }
+  }
+}
+footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  vertical-align: middle;
+  padding-top: 30px !important;
+  span {
+    display: block;
+    width: 100%;
+    font-size: .9em;
+    line-height: 1.1em;
+    text-align: center;
+    &:first-child {
+      margin-bottom: 5px;
+    }
+  }
+}

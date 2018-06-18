@@ -12,7 +12,6 @@
 import { mapGetters } from 'vuex'
 import MediaManagerModal from '~/components/MediaManager/modal';
 import AdministrativeSelect from '~/components/AdministrativeSelect';
-
 export default {
   name: 'dashboard',
   computed: {
