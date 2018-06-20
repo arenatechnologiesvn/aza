@@ -13,7 +13,9 @@
         "laravel/passport": "~4.0",
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",
-        "tymon/jwt-auth": "^1.0.0-rc.1"
+        "tymon/jwt-auth": "^1.0.0-rc.1",
+        "plank/laravel-mediable": "^2.7.1",
+        "intervention/image": "^2.3"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

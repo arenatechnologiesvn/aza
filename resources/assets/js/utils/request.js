@@ -5,7 +5,7 @@ import { getToken } from '~/utils/auth'
 
 const RESPONSE_OK_STATUS = 200
 const TIME_1_SECOND = 1000
-const set_error_notify = (error) => {
+const setErrorNotify = (error) => {
   return Message({
     message: error.message,
     type: 'error',
@@ -37,7 +37,7 @@ service.interceptors.response.use((response) => {
 
   if (response.status === RESPONSE_OK_STATUS) return response.data;
 
-  set_error_notify(response.data.message)
+  setErrorNotify(response.data.message)
   // 50008: illegal token; 50012: other client logged in; 50014: Token expired;
   if (status >= 500 || (status === 401 && store.getters.token)) {
     MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
@@ -51,11 +51,10 @@ service.interceptors.response.use((response) => {
     })
   }
   return Promise.reject('error')
-  }, (error) => {
-    console.log('err' + error) // for debug
-    set_error_notify(error)
-    return Promise.reject(error)
-  }
-)
+}, (error) => {
+  console.log('err' + error) // for debug
+  setErrorNotify(error)
+  return Promise.reject(error)
+})
 
 export default service
