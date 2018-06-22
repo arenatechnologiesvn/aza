@@ -4,24 +4,31 @@ namespace App\Http\Controllers\MediaManager;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Plank\Mediable\Media;
 use Plank\Mediable\MediaUploader;
-use App\User;
+use App\Http\Controllers\Controller;
 
 class MediaManagerController extends Controller
 {
     private static $OBJECT_TYPES = ['profile', 'shop', 'product'];
+
     /**
      * Get the list of images for Media Manager.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $images = Media::orderBy('created_at', 'desc')->get();
+        if (!$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
+            return response(['message' => 'params is invalid'], 433);
+        }
+
+        $uploadUser = Auth::user();
+        $images = $uploadUser->getMedia($request->input('type'));
         return response()->json(['data' => $images], 200);
     }
 
@@ -73,8 +80,8 @@ class MediaManagerController extends Controller
             ->upload();
 
         // Set mediable object
-        $uploadObject = $this->uploadObject($request->input('type'));
-        $uploadObject->attachMedia($media, $request->input('type'));
+        $uploadUser = Auth::user();
+        $uploadUser->attachMedia($media, $request->input('type'));
 
         $thumbImage = Image::make($request->file('file'))
             ->resize(400, null, function ($constraint) {
@@ -83,7 +90,37 @@ class MediaManagerController extends Controller
             })
             ->save(public_path($folder) . $thumbFileName);
 
-        return response()->json(['data' => $media], 200);
+        return response()->json(['data' => 'success'], 200);
+    }
+
+    /**
+     * delete a media.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteMediaImage(Request $request)
+    {
+        if (!$request->input('imageId') || !$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
+            return response(['message' => 'params is invalid'], 433);
+        }
+
+        $media = Media::find($request->input('imageId'));
+        if (!$media) return response('Image not found', 400);
+
+        // delete media file from directory
+        $directory = public_path($media->directory);
+        $files = Storage::files($directory);
+        if (count($files) > 1) {
+            $mediaPath = $directory . $media->filename . '.' . $media->extension;
+            Storage::delete($mediaPath);
+        } else {
+            Storage::deleteDirectory($directory);
+        }
+
+        // delete media from Media table
+        $media->delete();
+
+        return response()->json(['data' => $directory], 200);
     }
 
     public function imageMetaData(Request $request)
@@ -102,11 +139,5 @@ class MediaManagerController extends Controller
         $media->save();
 
         return $media;
-    }
-
-    private function uploadObject($type) {
-        if ($type == 'profile') return User::first();
-        if ($type == 'shop') return Shop::first();
-        return Product::first();
     }
 }

@@ -1,9 +1,13 @@
 <template lang="pug">
     el-dialog.media-modal(:visible.sync="dialogVisible" width="60%")
-      media-manager
+      media-manager(ref="mediaManager")
       span.dialog-footer(slot="footer")
-        el-button(@click="dialogVisible = false") Hủy
-        el-button(type="primary" @click="dialogVisible = false") Thay đổi
+        el-button(size="medium" @click="closeModal")
+          svg-icon(icon-class="fa-solid ban")
+          span  Hủy
+        el-button(type="primary" size="medium" @click="setSelectedImage")
+          svg-icon(icon-class="fa-solid check")
+          span  Thay đổi
 </template>
 
 <script>
@@ -16,7 +20,17 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+    }
+  },
+  methods: {
+    setSelectedImage() {
+      const url = this.$refs.mediaManager.selectedImageUrl();
+      this.$parent.getSelectedMediaImageUrl(url);
+      this.closeModal();
+    },
+    closeModal() {
+      this.dialogVisible = false;
     }
   }
 }

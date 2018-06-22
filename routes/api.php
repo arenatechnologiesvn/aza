@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Media manager
     Route::get('media', 'MediaManager\MediaManagerController@index');
     Route::post('media/upload', 'MediaManager\MediaManagerController@uploadMediaImage');
+    Route::post('media/delete', 'MediaManager\MediaManagerController@deleteMediaImage');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {

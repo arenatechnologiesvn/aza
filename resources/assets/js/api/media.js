@@ -1,8 +1,20 @@
 import request from '~/utils/request'
 
-export function getImages() {
+export function getMedia(type) {
   return request({
     url: '/api/media',
-    method: 'get'
+    method: 'get',
+    params: { type: type }
+  })
+}
+
+export function deleteMedia(type, mediaId) {
+  return request({
+    url: '/api/media/delete',
+    method: 'post',
+    params: {
+      type: type,
+      imageId: mediaId
+    }
   })
 }

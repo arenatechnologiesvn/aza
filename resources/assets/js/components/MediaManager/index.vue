@@ -4,24 +4,33 @@
       span(slot="label")
         svg-icon(icon-class="fa-solid images")
         span(slot="label")  Quản lý File
+      el-row(type="flex" justify="end" :gutter="10" style="padding: 0 10px 10px")
+        el-col(:span="6")
+          el-input(size="small" placeholder="Tìm kiếm")
+            i(slot="suffix" class="el-input__icon el-icon-search")
+        el-col(:span="2" v-if="images.length")
+          el-button(type="danger" size="small" @click="deleteImage")
+            svg-icon(icon-class="fa-solid trash-alt")
+            span  Xóa
       el-container.media-container
         el-aside.aside-container(width="200px")
-          img.aside-image(:src="currentImage.directory + '/' + currentImage.filename + '.' + currentImage.extension")
-          el-row.aside-info
-            div
-              span(style="font-weight: bold") Tên: 
-              span {{ currentImage.filename }}.{{ currentImage.extension }}
-            div
-              span(style="font-weight: bold") Size: 
-              span {{ bytesToSize(currentImage.size) }}
-            div
-              span(style="font-weight: bold") Loại file: 
-              span {{ currentImage.mime_type }}
+          div(v-if="images.length > 0")
+            img.aside-image(:src="selectedImageUrl()")
+            el-row.aside-info
+              div
+                span(style="font-weight: bold") Tên:
+                span  {{ currentImage.filename }}.{{ currentImage.extension }}
+              div
+                span(style="font-weight: bold") Size:
+                span  {{ bytesToSize(currentImage.size) }}
+              div
+                span(style="font-weight: bold") Loại file:
+                span  {{ currentImage.mime_type }}
         el-main
           div.clearfix
             ul
               li.attach-image(v-for="(image, index) in images" :key="index")
-                div.__file-box(v-touch:tap="selectImage(image)" :class="[image.filename == currentImage.filename ? 'selected': '']")
+                div.__file-box(v-touch:tap="selectImage(image)" :class="[image.id == currentImage.id ? 'selected': '']")
                   div.__box-data
                       div.__box-preview
                         div.__box-img
@@ -41,11 +50,12 @@
 </template>
 
 <script>
-  import { getImages } from '~/api/media'
-  import { getToken } from '~/utils/auth'
-  import Dropzone from 'vue2-dropzone'
+  import { getMedia, deleteMedia } from '~/api/media';
+  import { getToken } from '~/utils/auth';
+  import Dropzone from 'vue2-dropzone';
 
-  const MEDIA_UPLOAD_API = `http://${location.host}/api/media/upload`
+  const MEDIA_UPLOAD_API = `http://${location.host}/api/media/upload`;
+  const FILE_SIZES = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 
   export default {
     name: 'media-manager',
@@ -53,13 +63,7 @@
       Dropzone
     },
     created () {
-      getImages().then(response => {
-          this.images = response.data
-
-          if (this.images.length) {
-            this.handleImageDetails(this.images[0])
-          }
-      })
+      this.getMediaData();
     },
     data () {
       return {
@@ -87,20 +91,10 @@
             caption: '',
             currentImageId: null
           }
-        }
+        };
       },
       showSuccess(file, response) {
-        console.log(response);
-        var imageData = response.data
-        imageData.meta_data = {
-          alt: '',
-          caption: '',
-          currentImageId: imageData.id
-        }
-        this.images.unshift(imageData)
-      },
-      onError (file, error) {
-        console.log('file error', file, error)
+        this.getMediaData();
       },
       handleImageDetails(image) {
         this.currentImage = image
@@ -109,7 +103,7 @@
             alt: '',
             caption: '',
             currentImageId: image.id
-          }
+          };
         } else {
           (typeof image.meta_data === 'object') ? this.currentImage.meta_data = image.meta_data : this.currentImage.meta_data = JSON.parse(image.meta_data);
         }
@@ -124,16 +118,31 @@
       //   })
       // },
       bytesToSize(bytes) {
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
         if (bytes == 0) return '0 Byte';
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + FILE_SIZES[i];
       },
       selectImage(image) {
         return () => {
-
           this.handleImageDetails(image);
         };
+      },
+      getMediaData() {
+        getMedia('profile').then(response => {
+          this.images = response.data;
+
+          if (this.images.length) {
+            this.handleImageDetails(this.images[0]);
+          }
+        })
+      },
+      selectedImageUrl() {
+        return `${this.currentImage.directory}/${this.currentImage.filename}.${this.currentImage.extension}`;
+      },
+      deleteImage() {
+        deleteMedia('profile', this.currentImage.id).then(() => {
+          this.getMediaData();
+        })
       }
     }
   }
@@ -165,7 +174,7 @@
   }
 
   .media-container {
-    height: 500px;
+    height: 400px;
     border: 1px solid rgb(238, 238, 238);
 
     .aside-container {
@@ -180,6 +189,12 @@
         padding: 10px 0 0 10px;
       }
     }
+  }
+
+  .el-tabs--border-card {
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
   }
 
   .__file-box {
@@ -235,7 +250,7 @@
         overflow: hidden;
         width: 50px;
         height: 50px;
-        border-radius: 3px 3px 5px 5px;
+        border-radius: 3px;
 
         img {
           width: 100%;
