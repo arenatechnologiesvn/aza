@@ -21,15 +21,13 @@
           div.clearfix
             ul
               li.attach-image(v-for="(image, index) in images" :key="index")
-                div.__file-box
+                div.__file-box(v-touch:tap="selectImage(image)" :class="[image.filename == currentImage.filename ? 'selected': '']")
                   div.__box-data
                       div.__box-preview
                         div.__box-img
                           img(:src="image.directory + '/' + image.filename + '.' + image.extension"
-                            v-on:click="handleImageDetails(image)"
                             v-bind:alt="image.directory"
                             v-bind:title="(image.meta_data !== null) ? image.meta_data.alt : ''")
-
 
                       div.__box-info
                         div
@@ -71,7 +69,10 @@
           url: MEDIA_UPLOAD_API,
           thumbnailWidth: 150,
           maxFilesize: 0.5,
-          headers: { Authorization: `Bearer ${getToken()}` }
+          headers: { Authorization: `Bearer ${getToken()}` },
+          params: {
+            type: 'profile'
+          }
         }
       }
     },
@@ -127,6 +128,12 @@
         if (bytes == 0) return '0 Byte';
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+      },
+      selectImage(image) {
+        return () => {
+
+          this.handleImageDetails(image);
+        };
       }
     }
   }
@@ -187,6 +194,7 @@
     border: 1px solid darken($active_theme, 2.5%);
     border-radius: 4px;
     background: lighten($active_theme, 2.5%);
+    line-height: 1.4;
 
     &.selected,
     &.bulk-selected,

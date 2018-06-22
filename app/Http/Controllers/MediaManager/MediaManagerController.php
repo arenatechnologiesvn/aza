@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Plank\Mediable\Media;
 use Plank\Mediable\MediaUploader;
+use App\User;
 
 class MediaManagerController extends Controller
 {
+    private static $OBJECT_TYPES = ['profile', 'shop', 'product'];
     /**
      * Get the list of images for Media Manager.
      *
@@ -42,8 +44,12 @@ class MediaManagerController extends Controller
             return response(['message' => $validator->errors()], 433);
         }
 
+        if (!$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
+            return response(['message' => 'params is invalid'], 433);
+        }
+
         $file = $request->file('file');
-        $folder = 'uploads/' . Carbon::now()->year . '/' . Carbon::now()->month . '/';
+        $folder = 'uploads/' .$request->input('type'). '/' . Carbon::now()->year . '/' . Carbon::now()->month . '/';
         $uniqid = uniqid();
         $mainFileName = $uniqid . '.' . $file->getClientOriginalExtension();
         $thumbFileName = $uniqid . '_thumb.' . $file->getClientOriginalExtension();
@@ -66,6 +72,10 @@ class MediaManagerController extends Controller
             ->toDirectory($folder)
             ->upload();
 
+        // Set mediable object
+        $uploadObject = $this->uploadObject($request->input('type'));
+        $uploadObject->attachMedia($media, $request->input('type'));
+
         $thumbImage = Image::make($request->file('file'))
             ->resize(400, null, function ($constraint) {
                 $constraint->aspectRatio();
@@ -73,7 +83,7 @@ class MediaManagerController extends Controller
             })
             ->save(public_path($folder) . $thumbFileName);
 
-        return response()->json(['data' => $media], 201);
+        return response()->json(['data' => $media], 200);
     }
 
     public function imageMetaData(Request $request)
@@ -92,5 +102,11 @@ class MediaManagerController extends Controller
         $media->save();
 
         return $media;
+    }
+
+    private function uploadObject($type) {
+        if ($type == 'profile') return User::first();
+        if ($type == 'shop') return Shop::first();
+        return Product::first();
     }
 }

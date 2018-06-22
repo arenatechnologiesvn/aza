@@ -19,6 +19,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     // User
     Route::post('user', 'Auth\RegisterController@register');
     Route::get('user', 'UserController@detail');
+    Route::post('user/uploadavatar', 'Auth\RegisterController@uploadProfilePicture');
 
     // Settings
     Route::patch('settings/profile', 'Settings\ProfileController@update');
