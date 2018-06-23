@@ -13,5 +13,6 @@ yarn-error.log
 /public/css
 /public/fonts
 /public/images
+/public/uploads
 /public/mix-manifest.json
 phpunit.dusk.xml

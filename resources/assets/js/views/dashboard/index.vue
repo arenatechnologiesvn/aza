@@ -1,76 +1,14 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">SẢN PHẨM BÁN CHẠY</div>
-    <el-table
-            id="product"
-            :data="tableData"
-            :border="true"
-            style="width: 100%">
-      <el-table-column
-              prop="stt"
-              label="STT"
-              width="80">
-      </el-table-column>
-      <el-table-column
-              prop="name"
-              label="Tên sản phẩm"
-              width="200">
-      </el-table-column>
-      <el-table-column
-              prop="category"
-              label="Danh mục">
-      </el-table-column>
-      <el-table-column
-              prop="company"
-              label="Nhà cung cấp">
-      </el-table-column>
-      <el-table-column
-              prop="price"
-              label="Giá">
-      </el-table-column>
-      <el-table-column
-              prop="total"
-              label="Tổng đơn hàng">
-      </el-table-column>
-      <el-table-column
-              prop="totalPrice"
-              label="Tổng cộng">
-      </el-table-column>
-    </el-table>
-    <br>
-    <div class="dashboard-text">NHÂN VIÊN XUẤT SẮC</div>
-    <el-table
-            :data="tableData"
-            :border="true"
-            style="width: 100%">
-      <el-table-column
-              prop="stt"
-              label="STT"
-              width="80">
-      </el-table-column>
-      <el-table-column
-              prop="name"
-              label="Họ tên"
-              width="200">
-      </el-table-column>
-      <el-table-column
-              prop="phone"
-              label="Điện Thoại">
-      </el-table-column>
-      <el-table-column
-              prop="total"
-              label="Tổng đơn hàng">
-      </el-table-column>
-      <el-table-column
-              prop="totalPrice"
-              label="Tổng cộng">
-      </el-table-column>
-    </el-table>
+
+    <el-button type="primary" @click="$refs.media_manager_modal.dialogVisible = true">Open Media Manager</el-button>
+    <media-manager-modal ref="media_manager_modal"></media-manager-modal>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import MediaManagerModal from '~/components/MediaManager/modal'
 
 export default {
   name: 'dashboard',
@@ -80,8 +18,12 @@ export default {
       'roles'
     ])
   },
+  components: {
+    MediaManagerModal
+  },
   data() {
     return {
+      mediaDialogVisible: false,
       tableData: [{
         stt: '1',
         name: 'SẢN PHẨM 1',
@@ -120,6 +62,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+
 .dashboard {
   &-container {
     margin: 30px;
@@ -131,9 +74,18 @@ export default {
 }
 </style>
 <style rel="stylesheet/scss" lang="scss">
-  #product {
-    .el-table th {
-      background-color: darkgreen !important;
-    }
+.media-modal {
+  .el-dialog__header {
+    display: none;
   }
+
+  .el-dialog__body {
+    padding: 0;
+  }
+}
+#product {
+  .el-table th {
+    background-color: darkgreen !important;
+  }
+}
 </style>

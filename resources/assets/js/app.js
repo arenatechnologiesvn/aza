@@ -1,6 +1,7 @@
 import Vue from 'vue'
 
 import 'normalize.css/normalize.css'// A modern alternative to CSS resets
+import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -15,6 +16,9 @@ import store from './store'
 import '~/icons' // icon
 import '~/permission' // permission control
 
+import Vue2TouchEvents from 'vue2-touch-events'
+
+Vue.use(Vue2TouchEvents)
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false

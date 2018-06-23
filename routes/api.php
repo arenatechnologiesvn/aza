@@ -16,23 +16,26 @@ use Illuminate\Http\Request;
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
-    Route::get('/user', 'UserController@detail');
+    // User
+    Route::post('user', 'Auth\RegisterController@register');
+    Route::get('user', 'UserController@detail');
+    Route::post('user/uploadavatar', 'Auth\RegisterController@uploadProfilePicture');
 
+    // Settings
     Route::patch('settings/profile', 'Settings\ProfileController@update');
     Route::patch('settings/password', 'Settings\PasswordController@update');
-//    Route::post('user', 'UserController@create')->middleware('can:create,App\User');
-    Route::post('user', 'Auth\RegisterController@register');
+
+    // Role and permission
     Route::post('role', 'RoleController@create');
     Route::put('role/{id}', 'RoleController@update');
 
     Route::post('permissions', 'PermissionController@create');
+
+    // Media manager
+    Route::get('media', 'MediaManager\MediaManagerController@index');
+    Route::post('media/upload', 'MediaManager\MediaManagerController@uploadMediaImage');
+    Route::post('media/delete', 'MediaManager\MediaManagerController@deleteMediaImage');
 });
-//Route::get('/api/login', function () {
-//    return \Illuminate\Support\Facades\Auth::user();
-//})->name('login');
-
-//Route::post('register', 'Auth\RegisterController@register')->middleware('can:create-user');
-
 
 Route::group(['middleware' => 'guest:api'], function () {
     Route::post('login', 'Auth\LoginController@login');
