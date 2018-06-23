@@ -18,11 +18,16 @@ export default {
   components: {
     MediaManager
   },
+  model: {
+    prop: 'selectedMediaUrl',
+    event: 'click'
+  },
   props: {
     type: {
       type: String,
       required: true
-    }
+    },
+    selectedMediaUrl: String
   },
   data() {
     return {
@@ -32,7 +37,11 @@ export default {
   methods: {
     setSelectedImage() {
       const url = this.$refs.mediaManager.selectedImageUrl();
-      this.$parent.getSelectedMediaImageUrl(url);
+
+      // send url to parent model
+      this.$emit('click', url);
+
+      // close modal
       this.closeModal();
     },
     closeModal() {
