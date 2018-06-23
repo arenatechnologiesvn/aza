@@ -1,0 +1,21 @@
+.trans{
+  transition: transform .2s ease;
+}
+$size: 40px;
+.sider-trigger-a {
+  padding: 6px;
+  width: $size;
+  height: $size;
+  display: inline-block;
+  text-align: center;
+  color: #5c6b77;
+  margin-top: 12px;
+  svg {
+    transition: transform .2s ease;
+    vertical-align: top;
+  }
+  &.collapsed svg {
+    transform: rotateZ(90deg);
+    transition: transform .2s ease;
+  }
+}

@@ -7,7 +7,7 @@ import { getToken } from '~/utils/auth' // getToken from cookie
 
 NProgress.configure({ showSpinner: false })// NProgress Configuration
 
-const whiteList = ['/login']// no redirect whitelist
+const whiteList = ['/login', '/forget']// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
@@ -28,6 +28,7 @@ router.beforeEach((to, from, next) => {
           store.dispatch('FedLogOut').then(() => {
             Message.error(err || 'Verification failed, please login again')
             next({ path: '/' })
+            NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
           })
         })
       } else {

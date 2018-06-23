@@ -9,12 +9,13 @@ import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
 import '~sass/app.scss' // global css
 
-import App from './App'
+import App from './App.vue'
 import router from './router'
 import store from './store'
 
 import '~/icons' // icon
 import '~/permission' // permission control
+// only import the icons you use to reduce bundle size
 
 import Vue2TouchEvents from 'vue2-touch-events'
 

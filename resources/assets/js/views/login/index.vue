@@ -1,12 +1,12 @@
 <template lang='pug'>
   section.el-container.login-container.is-vertical
     header.el-header
-    main(style="position: relative; padding: 0; height: 600px;")
+    main(style="position: relative; padding: 0;")
       div(style="margin-top: 50px; width: 100%;")
         el-row.logo-container(type="flex" justify="center")
           img(:src="logo_img")
         el-row(type="flex" justify="center")
-          div(style="width: 574px;")
+          div(style="width: 474px;")
             el-form.login-form(autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left")
               el-form-item.el-form-item__input(prop="email")
                 span.svg-container.svg-container_login
@@ -77,7 +77,7 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
-            this.$router.push({ path: '/' })
+            this.$router.push({path: '/'})
           }).catch(() => {
             this.loading = false
           })
@@ -94,12 +94,15 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 $bg:#2d3a4b;
 $aza_color:#242256;
-
+body {
+  background: url('../../assets/login_images/background.png') no-repeat center center;
+  background-size: cover;
+}
 /* reset element-ui css */
 .login-container {
   .el-input {
     display: inline-block;
-    height: 47px;
+    height: 40px;
     width: calc(100% - 70px);
     input {
       background: transparent;
@@ -108,7 +111,7 @@ $aza_color:#242256;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
       color: $aza_color;
-      height: 47px;
+      height: 40px;
       &:-webkit-autofill {
         -webkit-box-shadow: 0 0 0px 1000px none inset !important;
         -webkit-text-fill-color: #242256 !important;
@@ -124,7 +127,7 @@ $aza_color:#242256;
     }
   }
   span.svg-container.svg-container_login {
-    margin-right: 15px;
+    margin-right: 10px;
     position: relative;
     min-width: 50px;
   }
@@ -138,7 +141,7 @@ $aza_color:#242256;
     background-color: #636b6f;
   }
   footer.el-footer {
-    position: absolute;
+    position: relative;
     height: 80px;
     bottom: 0;
     width: 400px;
@@ -157,8 +160,6 @@ $aza_color:#242256;
 .login-container {
   height: 100%;
   width: 100%;
-  background: url('../../assets/login_images/background.png') no-repeat center center;
-  background-size: cover;
   .login-form {
     padding: 35px 35px 15px 35px;
     margin: 35px 0;

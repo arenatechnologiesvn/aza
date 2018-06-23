@@ -16,3 +16,5 @@ yarn-error.log
 /public/uploads
 /public/mix-manifest.json
 phpunit.dusk.xml
+composer.lock
+package-lock.json

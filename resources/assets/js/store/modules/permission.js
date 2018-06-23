@@ -1,11 +1,12 @@
-import { asyncRouterMap, constantRouterMap } from '~/router'
-
+import { asyncRouterMap, asyncRouterMapChild, constantRouterMap } from '~/router'
+import { getIntersection } from '~/utils/tools'
+import { getMenuByRouter } from '~/utils/util'
 /**
  * 通过meta.role判断是否与当前用户权限匹配
  * @param roles
  * @param route
  */
-function hasPermission(roles, route) {
+function hasPermission (roles, route) {
   if (route.meta && route.meta.roles) {
     return route.meta.roles.indexOf(roles.title) >= 0
   } else {
@@ -18,7 +19,7 @@ function hasPermission(roles, route) {
  * @param asyncRouterMap
  * @param roles
  */
-function filterAsyncRouter(asyncRouterMap, roles) {
+function filterAsyncRouter (asyncRouterMap, roles) {
   const accessedRouters = asyncRouterMap.filter(route => {
     if (hasPermission(roles, route)) {
       if (route.children && route.children.length) {
@@ -39,11 +40,11 @@ const permission = {
   mutations: {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
-      state.routers = constantRouterMap.concat(routers)
+      state.routers = getIntersection(constantRouterMap, routers)
     }
   },
   actions: {
-    GenerateRoutes({ commit }, data) {
+    GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
         const { roles } = data
         let accessedRouters
@@ -57,6 +58,9 @@ const permission = {
         resolve()
       })
     }
+  },
+  getters: {
+    menuList: (state, getters, rootState) => getMenuByRouter(asyncRouterMapChild, rootState.user.role)
   }
 }
 

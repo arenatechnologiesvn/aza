@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import "./variables";
+
+*, body {
+  font-family: 'Roboto', sans-serif;
+}
+.search {
+  .el-form-item__content {
+    width: 100%;
+  }
+}
+.control__wraper {
+  margin: 10px 0;
+}
+// override Element css
+
+//main
+.el-menu--horizontal {
+  border-bottom: unset;
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
+}
+.el-menu--collapse {
+  width: 50px;
+}
+.el-menu {
+  border-right: unset;
+  background-color: #001C2C;
+  color: white;
+  //.el-submenu__title, .el-menu-item {
+  //  span {
+  //    margin-left: 20px;
+  //  }
+  //}
+}
+.el-pagination__sizes {
+  float: right;
+  margin-right: -10px;
+}
+.el-pagination {
+  text-align: center;
+  margin-top: 30px;
+}
+.el-pagination__total {
+  float: left;
+  margin-left: -5px;
+}

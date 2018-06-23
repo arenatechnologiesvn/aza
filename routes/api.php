@@ -26,8 +26,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::patch('settings/password', 'Settings\PasswordController@update');
 
     // Role and permission
-    Route::post('role', 'RoleController@create');
-    Route::put('role/{id}', 'RoleController@update');
+//    Route::post('role', 'RoleController@create');
+//    Route::put('role/{id}', 'RoleController@update');
+
+//    Route::post('user', 'UserController@create')->middleware('can:create,App\User');
+//    Route::post('user', 'Auth\RegisterController@register');
+//    Route::post('role', 'RoleController@create');
+//    Route::put('role/{id}', 'RoleController@update');
+    Route::resource('role', 'RoleController');
 
     Route::post('permissions', 'PermissionController@create');
 
