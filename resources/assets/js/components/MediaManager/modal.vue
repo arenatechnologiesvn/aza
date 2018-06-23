@@ -1,6 +1,6 @@
 <template lang="pug">
     el-dialog.media-modal(:visible.sync="dialogVisible" width="60%")
-      media-manager(ref="mediaManager")
+      media-manager(:type="type" ref="mediaManager")
       span.dialog-footer(slot="footer")
         el-button(size="medium" @click="closeModal")
           svg-icon(icon-class="fa-solid ban")
@@ -17,6 +17,12 @@ export default {
   name: 'media-manager-modal',
   components: {
     MediaManager
+  },
+  props: {
+    type: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {

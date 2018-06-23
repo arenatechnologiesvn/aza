@@ -108,10 +108,10 @@ class MediaManagerController extends Controller
         if (!$media) return response('Image not found', 400);
 
         // delete media file from directory
-        $directory = public_path($media->directory);
+        $directory = $media->disk . '/' . $media->directory;
         $files = Storage::files($directory);
         if (count($files) > 1) {
-            $mediaPath = $directory . $media->filename . '.' . $media->extension;
+            $mediaPath = $directory . '/' . $media->filename . '.' . $media->extension;
             Storage::delete($mediaPath);
         } else {
             Storage::deleteDirectory($directory);
@@ -120,7 +120,7 @@ class MediaManagerController extends Controller
         // delete media from Media table
         $media->delete();
 
-        return response()->json(['data' => $directory], 200);
+        return response()->json(['data' => [$files, $media->directory]], 200);
     }
 
     public function imageMetaData(Request $request)

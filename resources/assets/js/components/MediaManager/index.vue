@@ -9,7 +9,7 @@
           el-input(size="small" placeholder="Tìm kiếm")
             i(slot="suffix" class="el-input__icon el-icon-search")
         el-col(:span="2" v-if="images.length")
-          el-button(type="danger" size="small" @click="deleteImage")
+          el-button(type="danger" size="small" @click="deleteImage" disabled)
             svg-icon(icon-class="fa-solid trash-alt")
             span  Xóa
       el-container.media-container
@@ -28,7 +28,7 @@
                 span  {{ currentImage.mime_type }}
         el-main
           div.clearfix
-            ul
+            ul.__file-box-container
               li.attach-image(v-for="(image, index) in images" :key="index")
                 div.__file-box(v-touch:tap="selectImage(image)" :class="[image.id == currentImage.id ? 'selected': '']")
                   div.__box-data
@@ -62,6 +62,12 @@
     components: {
       Dropzone
     },
+    props: {
+      type: {
+        type: String,
+        required: true
+      }
+    },
     created () {
       this.getMediaData();
     },
@@ -75,7 +81,7 @@
           maxFilesize: 0.5,
           headers: { Authorization: `Bearer ${getToken()}` },
           params: {
-            type: 'profile'
+            type: this.type
           }
         }
       }
@@ -128,21 +134,25 @@
         };
       },
       getMediaData() {
-        getMedia('profile').then(response => {
+        getMedia(this.type).then(response => {
           this.images = response.data;
 
           if (this.images.length) {
             this.handleImageDetails(this.images[0]);
           }
-        })
+        }).catch(error => {
+          console.log(error);
+        });
       },
       selectedImageUrl() {
         return `${this.currentImage.directory}/${this.currentImage.filename}.${this.currentImage.extension}`;
       },
       deleteImage() {
-        deleteMedia('profile', this.currentImage.id).then(() => {
+        deleteMedia(this.type, this.currentImage.id).then(() => {
           this.getMediaData();
-        })
+        }).catch(error => {
+          console.log(error);
+        });
       }
     }
   }
@@ -197,89 +207,94 @@
     -webkit-box-shadow: none;
   }
 
-  .__file-box {
-    position: relative;
-    display: flex;
-    overflow: hidden;
-    width: 100%;
-    padding: 0.5rem;
-    cursor: pointer;
-    transition: all 0.25s;
-    color: darken($active_theme, 60%);
-    border: 1px solid darken($active_theme, 2.5%);
-    border-radius: 4px;
-    background: lighten($active_theme, 2.5%);
-    line-height: 1.4;
+  .__file-box-container {
+    display: inline-block;
+    padding: 0;
+    margin-top: 0;
 
-    &.selected,
-    &.bulk-selected,
-    &:hover {
-      color: $white;
-      border-color: darken($blue, 5%);
-      background: $blue;
-
-      h4,
-      i,
-      svg {
-        color: $white;
-      }
-    }
-
-    &:hover {
-      box-shadow: $shadow_1;
-    }
-  }
-
-  .__box-data {
-    display: flex;
-    overflow: hidden;
-    align-items: center;
-    align-self: flex-end;
-    justify-content: start;
-    width: 100%;
-
-    .__box-preview {
-      margin: 0 0.75rem 0 1px;
-      color: darken($active_theme, 50%);
-
-      .icon {
-        transform: translateY(3px);
-      }
-
-      .__box-img {
-        overflow: hidden;
-        width: 50px;
-        height: 50px;
-        border-radius: 3px;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: fill;
-          object-position: center;
-        }
-      }
-    }
-
-    .__box-info {
+    .__file-box {
+      position: relative;
       overflow: hidden;
       width: 100%;
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      color: darken($active_theme, 60%);
+      border: 1px solid darken($active_theme, 2.5%);
+      border-radius: 4px;
+      background: lighten($active_theme, 2.5%);
+      line-height: 1.4;
 
-      span {
-        font-size: 11px;
+      &.selected,
+      &.bulk-selected,
+      &:hover {
+        color: $white;
+        border-color: darken($blue, 5%);
+        background: $blue;
+
+        h4,
+        i,
+        svg {
+          color: $white;
+        }
+      }
+
+      &:hover {
+        box-shadow: $shadow_1;
+      }
+    }
+
+    .__box-data {
+      display: flex;
+      overflow: hidden;
+      align-items: center;
+      align-self: flex-end;
+      justify-content: start;
+      width: 100%;
+
+      .__box-preview {
+        margin: 0 0.75rem 0 1px;
+        color: darken($active_theme, 50%);
+
+        .icon {
+          transform: translateY(3px);
+        }
+
+        .__box-img {
+          overflow: hidden;
+          width: 50px;
+          height: 50px;
+          border-radius: 3px;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            object-position: center;
+          }
+        }
+      }
+
+      .__box-info {
         overflow: hidden;
-        margin: 0;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
+        width: 100%;
 
-      small {
-        font-size: 11px;
-      }
+        span {
+          font-size: 11px;
+          overflow: hidden;
+          margin: 0;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
 
-      .__info-file-size {
-        font-weight: bold;
-        margin-left: 2px;
+        small {
+          font-size: 11px;
+        }
+
+        .__info-file-size {
+          font-weight: bold;
+          margin-left: 2px;
+        }
       }
     }
   }
