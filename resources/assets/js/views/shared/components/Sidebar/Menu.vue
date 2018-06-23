@@ -1,5 +1,5 @@
 <template lang="pug">
-  el-menu( mode="vertical" :show-timeout="100" :default-active="$router.path" :collapse="isCollapse"
+  el-menu( mode="vertical" :show-timeout="100" :default-active="$router.path" :collapse="collapse"
     background-color="#001C2C"
     text-color="#bfcbd9"
     active-text-color="#409EFF"
@@ -7,15 +7,15 @@
     template( v-for="item in menus")
       el-submenu(v-if="item.children && item.children.length > 0" :index="item.name||item.path" :key="item.path")
         template(slot="title")
-          i.el-icon-document
+          svg-icon(:icon-class="item.meta && item.meta.icon ? item.meta.icon : ''")
           span(slot="title") {{item.name}}
         router-link(to='/form' v-for="child in item.children" :key="child.path")
           el-menu-item( :index="item.path+'/'+child.path")
-            i.el-icon-document
+            svg-icon(:icon-class="child.meta && child.meta.icon ? child.meta.icon : ''")
             span(slot="title") {{child.name}}
       router-link(v-else to='/form' :key="item.path")
         el-menu-item(:index="item.name")
-          i.el-icon-document
+          svg-icon(:icon-class="item.meta && item.meta.icon  ? item.meta.icon : '' ")
           span(slot="title") {{item.name}}
 </template>
 
@@ -24,6 +24,9 @@
 
   export default {
     name: 'SidebarItem',
+    props: {
+      collapse: Boolean
+    },
     computed: {
       ...mapGetters([
           'sidebar',

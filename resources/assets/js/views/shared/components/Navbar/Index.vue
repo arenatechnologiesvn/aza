@@ -9,7 +9,7 @@
         bars(:toggleClick="toggleSideBar" :isActive='sidebar.opened')
       div.header__info
         el-badge(:value="10" class="item")
-          icon(name="bell" scale=1.3)
+          svg-icon(icon-class="fa-solid bell")
         el-dropdown(trigger="click")
           div.navbar-right
             div.img-container

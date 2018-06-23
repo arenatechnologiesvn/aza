@@ -41,6 +41,7 @@ const user = {
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
+          console.log(response)
           if (response.role) {
             commit('SET_ROLES', response.role)
           } else {

@@ -1,39 +1,68 @@
 <template lang="pug">
-  el-container(:class="classObj")
-    div.drawer-bg(v-if="device==='mobile'&&sidebar.opened" @click="handleClickOutside")
-    el-header(style="padding: 0" height="50px")
-      navbar
-    el-container
-      el-aside(width="auto")
-        sidebar
+  el-container.main__container(direction="horizontal")
+    el-aside.sidebar__container(:class="collapsed ? 'collapsed':''")
+      sidebar(:collapse="collapsed" :menuList="menuList" :active-name="$route.name" @on-select="turnToPage")
+        div.logo-con(slot="logo")
+          img(:src="logo" key="max-logo")
+          span.logo__title(v-show="!collapsed") PROJECT
+    el-container(style="overflow-x: hidden;")
+      el-header.header__container(height="64px")
+        navbar(:collapsed="collapsed" @on-coll-change="handleCollapsedChange" :listBreadcrumb="listBreadcrumb")
+          div.account-con
+            navbar-account(:avatar="logo")
       el-main
-        bread-crumb
-        div.line(style="margin: 5px 0;")
-        div.main-content
-          app-main
-    el-footer
+        app-main
 </template>
 
 <script>
   import '~/style/admin.scss'
+  import './admin.scss'
+  import { mapGetters } from 'vuex'
   import AppMain from '../components/AppMain'
-  import BreadCrumb from '~/components/Breadcrumb'
   import ResizeMixin from '../mixin/ResizeHandler'
-  import Navbar from '../components/Navbar'
-  import Sidebar from '../components/Sidebar'
-  import ElContainer from "element-ui/packages/container/src/main";
+  import Navbar from './components/Navbar'
+  import Sidebar from './components/Sidebar'
+  import logo from '~/assets/login_images/logo-login-page.png'
+  import NavbarAccount from './components/User'
 
   export default {
     name: "admin",
     mixins: [ResizeMixin],
     components: {
-      ElContainer,
       AppMain,
-      BreadCrumb,
       Navbar,
-      Sidebar
+      Sidebar,
+      NavbarAccount
+    },
+    data () {
+      return {
+        collapsed: false,
+        logo,
+        listBreadcrumb: [
+          {
+            name: 'index',
+            path: '/index',
+            meta: {
+              icon: 'fa-solid home',
+              title: 'Trang chủ'
+            }
+          },
+          {
+            name: 'user',
+            path: '/user',
+            meta: {
+              icon: 'fa-solid bell',
+              title: 'Danh bạ'
+            }
+          }
+        ]
+      }
     },
     computed: {
+      ...mapGetters([
+        'name',
+        'roles'
+      ]),
       sidebar() {
         return this.$store.state.app.sidebar
       },
@@ -46,12 +75,23 @@
           withoutAnimation: this.sidebar.withoutAnimation,
           mobile: this.device === 'mobile'
         }
+      },
+      menuList () {
+        return this.$store.getters.menuList
       }
     },
     methods: {
-      handleClickOutside() {
-        this.$store.dispatch('CloseSideBar', { withoutAnimation: false })
+      handleCollapsedChange (state) {
+        this.collapsed = state
+      },
+      turnToPage (name) {
+        this.$router.push({
+          name: name
+        })
       }
+    },
+    created () {
+      console.log(this.menuList)
     }
   }
 </script>

@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Roles\RoleCreateRequest;
+use App\Http\Requests\Roles\RoleUpdateRequest;
+use App\Http\Responses\Roles\RoleEditResponse;
+use App\Http\Responses\Roles\RoleIndexResponse;
 use App\Role;
 use Illuminate\Http\Request;
 
@@ -20,7 +24,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::all();
+        return new RoleIndexResponse($roles);
     }
 
     /**
@@ -28,13 +33,17 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(RoleCreateRequest $request)
     {
         //
-        $permissions = $request->get('permissions');
-        $role = Role::create($request->all());
-        $role->permissions()->attach($permissions);
-        return Role::with('permissions')->find($role->id);
+//        $permissions = $request->get('permissions');
+//        $role = Role::create($request->all());
+//        $role->permissions()->attach($permissions);
+//        return Role::with('permissions')->find($role->id);
+        $role = $this->role->create($request->all());
+        return $role ?
+            new RoleEditResponse($role) :
+            new FailedResponse();
     }
 
     /**
@@ -43,9 +52,13 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RoleCreateRequest $request)
     {
         //
+        $role = $this->role->create($request->all());
+        return $role ?
+            new RoleEditResponse($role) :
+            new FailedResponse();
     }
 
     /**
@@ -56,7 +69,8 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        //
+        $role = Role::find($id);
+        return new RoleEditResponse($role);
     }
 
     /**
@@ -67,8 +81,9 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        //
-
+        $role = Role::find($id);
+        return 'da,sdlas';
+        return new RoleEditResponse($role);
     }
 
     /**
@@ -78,15 +93,20 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(RoleUpdateRequest $request, $id)
     {
         //
-        $permissions = $request->get('permissions');
-        $role = Role::with('permissions')->find($id);
-        unset($request['permissions']);
+//        $permissions = $request->get('permissions');
+//        $role = Role::with('permissions')->find($id);
+//        unset($request['permissions']);
+//        $role->update($request->all());
+//        $permissions && $role->permissions()->sync($permissions);
+//        return Role::with('permissions')->find($id);
+        $role = $this->role->find($id);
         $role->update($request->all());
-        $role->permissions()->sync($permissions);
-        return Role::with('permissions')->find($id);
+        return $role ?
+            new RoleEditResponse($role) :
+            new FailedResponse();
     }
 
     /**

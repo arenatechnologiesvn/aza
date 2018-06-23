@@ -1,0 +1,28 @@
+.header-account {
+  display: flex;
+  margin-right: 15px;
+  .header-account__alert {
+    margin-top: 20px;
+    margin-right: 25px;
+    svg {
+      font-size: 23px;
+    }
+  }
+  .header-account__control {
+    display: flex;
+    cursor: pointer;
+    line-height: 64px;
+    i {
+      line-height: 64px;
+      margin-left: 5px;
+    }
+    span {
+      margin-left: 5px;
+    }
+  }
+  .header-account__dropdown {
+    span {
+      margin-left: 5px;
+    }
+  }
+}

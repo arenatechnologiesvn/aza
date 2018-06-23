@@ -1,7 +1,7 @@
 <template lang="pug">
   el-scrollbar(wrapClass="scrollbar-wrapper")
     account
-    sidebar-menu
+    sidebar-menu(:collapse="collapsed")
 </template>
 
 <script>
@@ -10,6 +10,9 @@
 
   export default {
     name: 'Sidebar',
+    props: {
+      collapsed: Boolean
+    },
     components: {
       Account,
       SidebarMenu

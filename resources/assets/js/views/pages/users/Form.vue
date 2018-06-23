@@ -2,20 +2,20 @@
   el-card
     div.clearfix(slot="header")
       span
-        svg-icon(icon-class="user")
+        svg-icon(icon-class="fa-solid user-plus")
         span(style="margin-left: 10px;") Thêm mới khách hàng
       el-dropdown(style="float: right; padding-right: 7px; cursor: pointer;")
         span.el-dropdown-link
-          svg-icon(icon-class="bus")
+          svg-icon(icon-class="fa-solid cog")
           i(class="el-icon-arrow-down el-icon--right")
         el-dropdown-menu(slot="dropdown")
           el-dropdown-item
             router-link(to="/shop/create")
-              svg-icon(icon-class="password")
+              svg-icon(icon-class="fa-solid shopping-basket")
               span(style="margin-left: 5px;") Thêm mới cửa hàng
           el-dropdown-item
             router-link(to="/shop/create")
-              svg-icon(icon-class="user")
+              svg-icon(icon-class="fa-solid hand-pointer")
               span(style="margin-left: 5px;") Thêm mới loại khách hàng
     el-row
       el-col(:span="4")
@@ -58,10 +58,10 @@
           el-col(:span="24")
             el-form-item(style="text-align: right;")
               el-button(type="primary")
-                svg-icon(icon-class="user")
+                svg-icon(icon-class="fa-solid save")
                 span(style="margin-left: 10px") Lưu
               el-button(type="danger")
-                svg-icon(icon-class="password")
+                svg-icon(icon-class="fa-solid ban")
                 span(style="margin-left: 10px") Hủy bỏ
 </template>
 <script>

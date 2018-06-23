@@ -3,30 +3,28 @@
     el-form(:model="loginForm" :rules="loginRules" ref="loginForm" )
       el-form-item.form-opacity
         span.icon-container
-          svg-icon(icon-class="user")
+          svg-icon(icon-class="fa-solid user")
         el-input(name="email" type="email" v-model="loginForm.email" autoComplete="off" placeholder="Email")
       el-form-item.form-opacity
         span.icon-container
-          svg-icon(icon-class="password")
+          svg-icon(icon-class="fa-solid lock")
         el-input(name="password" type="password" @keyup.enter.native="handleLogin" v-model="loginForm.password" placeholder="Mật khẩu")
       el-form-item
         el-row
           el-col(:span=12)
             el-checkbox(v-model="loginForm.remember") Nhớ mật khẩu
           el-col(:span=12)
-            router-link(to="/forget" style="float: right;") Quên mật khẩu?
+            router-link(to="/forget" style="float: right;")
+              svg-icon(icon-class="fa-solid question-circle")
+              span(style="margin-left: 5px;") Quên mật khẩu?
       el-form-item
         el-button(type="success" style="width:100%" :loading="loading" @click.native.prevent="handleLogin") ĐĂNG NHẬP
 </template>
 
 <script>
-  import ElRow from "element-ui/packages/row/src/row"
   import { isValidateEmail } from '~/utils/validate'
 
   export default {
-    components: {
-      ElRow
-    },
     name: 'Login',
     data() {
       const validateEmail = (rule, value, callback) => {

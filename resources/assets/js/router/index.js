@@ -8,7 +8,8 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '../views/shared/layout/Admin'
-import LayoutGuest from '../views/shared/layout/Guest'
+import ParentView from '~/components/parent-view'
+import BaseRouter from './base_router'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -22,139 +23,184 @@ import LayoutGuest from '../views/shared/layout/Guest'
     icon: 'svg-name'             the icon show in the sidebar,
   }
 **/
-export const constantRouterMap = [
-  {
-    path: '/login',
-    redirect: '/login',
-    name: 'login',
-    component: LayoutGuest,
-    children: [
-      {
-        path: '/login',
-        component: () => import('~/views/pages/auth/Login')
-      },
-      {
-        path: '/forget',
-        component: () => import('~/views/pages/auth/Forget')
-      }
-    ]
-  },
-  {
-    path: '/404', component: () => import('~/views/404'), hidden: true },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: true,
-    children: [{
-      path: 'dashboard',
-      component: () => import('~/views/dashboard/index')
-    }]
-  }
-]
-
 export default new Router({
   mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+  routes: BaseRouter
 })
 
+export const asyncRouterMapChild = [
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    meta: {
+      title: 'Dashboard', icon: 'fa-solid tachometer-alt'
+    },
+    component: () => import('~/views/dashboard/index')
+  },
+  {
+    path: '/products',
+    redirect: 'products',
+    name: 'ProductContainer',
+    component: ParentView,
+    meta: { title: 'Quản lý sản phẩm', icon: 'fa-solid home' },
+    children: [
+      {
+        path: '',
+        name: 'products',
+        component: () => import('~/views/pages/products/Index'),
+        meta: {
+          title: 'Danh sách sản phẩm',
+          icon: 'fa-solid shop'
+        }
+      },
+      {
+        path: 'add',
+        name: 'add_product',
+        component: () => import('~/views/pages/products/Create'),
+        meta: {
+          title: 'Thêm mới sản phẩm',
+          icon: 'fa-solid plus'
+        }
+      }
+    ]
+  },
+  {
+    path: '/users',
+    redirect: 'roles',
+    component: ParentView,
+    meta: { title: 'Quản lý tài khoản', icon: 'fa-solid user' },
+    children: [
+      {
+        path: '',
+        name: 'roles',
+        component: () => import('~/views/pages/roles/Index'),
+        meta: {
+          title: 'Danh sách quyền',
+          icon: 'fa-solid lock'
+        }
+      },
+      {
+        path: ':id',
+        name: 'role_update',
+        component: () => import('~/views/pages/roles/Update'),
+        hidden: true,
+        meta: {
+          title: 'Cập nhật quyền',
+          icon: 'fa-solid lock'
+        }
+      },
+      {
+        path: 'add',
+        name: 'role_create',
+        component: () => import('~/views/pages/roles/Create'),
+        hidden: true,
+        meta: {
+          title: 'Thêm mới quyền',
+          icon: 'fa-solid lock'
+        }
+      }
+    ]
+  }
+]
 export const asyncRouterMap = [
   {
-    path: '/dashboard',
+    path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    name: 'Bảng tin',
-    meta: { title: 'Bảng tin', icon: 'fa-solid home' },
-    children: []
+    redirect: 'products',
+    meta: { title: 'Dashboard', icon: 'fa-solid tachometer-alt' },
+    children: [...asyncRouterMapChild]
   },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Quản lý thành viên',
-    meta: { title: 'Quản lý thành viên', icon: 'fa-solid user' },
-    children: []
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Quản lý sản phẩm',
-    meta: { title: 'Quản lý sản phẩm', icon: 'fa-brands codepen' },
-    children: []
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Quản lý khách hàng',
-    meta: { title: 'Quản lý khách hàng', icon: 'fa-solid user-tie' },
-    children: []
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('~/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('~/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree', roles: ['Admin'] }
-      },
-      {
-        path: 'form',
-        name: 'user_form',
-        component: () => import('~/views/pages/users/Form'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Quản lý nhân viên',
-    meta: { title: 'Quản lý nhân viên', icon: 'fa-solid users' },
-    children: []
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Quản lý đơn hàng',
-    meta: { title: 'Quản lý đơn hàng', icon: 'fa-solid box-open' },
-    children: []
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Báo cái doanh số',
-    meta: { title: 'Báo cái doanh số', icon: 'fa-solid chart-bar' },
-    children: []
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    name: 'Cài đặt hệ thống',
-    meta: { title: 'Cài đặt hệ thống', icon: 'fa-solid cog' },
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('~/views/pages/users/Form'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
+  // {
+  //   path: '/dashboard7',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Quản lý thành viên',
+  //   meta: { title: 'Quản lý thành viên', icon: 'fa-solid user' },
+  //   children: []
+  // },
+  // {
+  //   path: '/dashboard8',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Quản lý sản phẩm',
+  //   meta: { title: 'Quản lý sản phẩm', icon: 'fa-brands codepen' },
+  //   children: []
+  // },
+  // {
+  //   path: '/dashboard0',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Quản lý khách hàng',
+  //   meta: { title: 'Quản lý khách hàng', icon: 'fa-solid user-tie' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('~/views/table/index'),
+  //       meta: { title: 'Table', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: () => import('~/views/tree/index'),
+  //       meta: { title: 'Tree', icon: 'tree', roles: ['Admin'] }
+  //     },
+  //     {
+  //       path: 'form',
+  //       name: 'user_form',
+  //       component: () => import('~/views/pages/users/Form'),
+  //       meta: { title: 'Form', icon: 'form' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/dashboard1',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Quản lý nhân viên',
+  //   meta: { title: 'Quản lý nhân viên', icon: 'fa-solid users' },
+  //   children: []
+  // },
+  // {
+  //   path: '/dashboard2',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Quản lý đơn hàng',
+  //   meta: { title: 'Quản lý đơn hàng', icon: 'fa-solid box-open' },
+  //   children: []
+  // },
+  // {
+  //   path: '/form',
+  //   component: Layout,
+  //   redirect: '/form',
+  //   name: 'Báo cái doanh số',
+  //   meta: { title: 'Báo cái doanh số', icon: 'fa-solid chart-bar' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: () => import('~/views/pages/users/Form'),
+  //       meta: { title: 'Form', icon: 'form' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/dashboard4',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Cài đặt hệ thống',
+  //   meta: { title: 'Cài đặt hệ thống', icon: 'fa-solid cog' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: () => import('~/views/pages/users/Form'),
+  //       meta: { title: 'Form', icon: 'form' }
+  //     }
+  //   ]
+  // },
   { path: '*', redirect: '/404', hidden: true }
 ]
+
+export const constantRouterMap = BaseRouter

@@ -21,6 +21,6 @@ class FailedResponse implements Responsable
      */
     public function toResponse($request)
     {
-        return response()->json(['message' => trans('error.server')], 501);
+        return response()->json(['message' => trans('error.server')], 500);
     }
 }
