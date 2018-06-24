@@ -69,6 +69,7 @@ export const asyncRouterMapChild = [
     path: '/users',
     redirect: 'roles',
     component: ParentView,
+    name: 'AccountContainer',
     meta: { title: 'Quản lý tài khoản', icon: 'fa-solid user' },
     children: [
       {
@@ -97,6 +98,117 @@ export const asyncRouterMapChild = [
         hidden: true,
         meta: {
           title: 'Thêm mới quyền',
+          icon: 'fa-solid lock'
+        }
+      }
+    ]
+  },
+  {
+    path: '/employees',
+    redirect: 'employees',
+    component: ParentView,
+    name: 'EmployeeContainer',
+    meta: { title: 'Quản lý Nhân viên', icon: 'fa-solid users' },
+    children: [
+      {
+        path: '',
+        name: 'employees',
+        component: () => import('~/views/pages/employees/Index'),
+        meta: {
+          title: 'Danh sách nhân viên',
+          icon: 'fa-solid users'
+        }
+      },
+      {
+        path: ':id',
+        name: 'employee_update',
+        component: () => import('~/views/pages/employees/Update'),
+        hidden: true,
+        meta: {
+          title: 'Cập nhật nhân viên',
+          icon: 'fa-solid lock'
+        }
+      },
+      {
+        path: 'add',
+        name: 'employee_create',
+        component: () => import('~/views/pages/employees/Create'),
+        meta: {
+          title: 'Thêm mới nhân viên',
+          icon: 'fa-solid lock'
+        }
+      }
+    ]
+  },
+  {
+    path: '/customers',
+    redirect: 'customers',
+    component: ParentView,
+    name: 'CustomerContainer',
+    meta: { title: 'Quản lý khách hàng', icon: 'fa-solid user' },
+    children: [
+      {
+        path: '',
+        name: 'customers',
+        component: () => import('~/views/pages/customers/Index'),
+        meta: {
+          title: 'Danh sách khách hàng',
+          icon: 'fa-solid users'
+        }
+      },
+      {
+        path: ':id',
+        name: 'customer_update',
+        component: () => import('~/views/pages/customers/Update'),
+        hidden: true,
+        meta: {
+          title: 'Cập nhật nhân viên',
+          icon: 'fa-solid lock'
+        }
+      },
+      {
+        path: 'add',
+        name: 'customer_create',
+        component: () => import('~/views/pages/customers/Create'),
+        meta: {
+          title: 'Thêm mới khách hàng',
+          icon: 'fa-solid lock'
+        }
+      }
+    ]
+  },
+  {
+    path: '/shops',
+    redirect: 'shops',
+    component: ParentView,
+    name: 'ShopContainer',
+    meta: { title: 'Quản lý cừa hàng', icon: 'fa-solid store' },
+    children: [
+      {
+        path: '',
+        name: 'shops',
+        component: () => import('~/views/pages/shops/Index'),
+        meta: {
+          title: 'Danh sách cửa hàng',
+          icon: 'fa-solid store'
+        }
+      },
+      {
+        path: ':id',
+        name: 'shop_update',
+        component: () => import('~/views/pages/shops/Update'),
+        hidden: true,
+        meta: {
+          title: 'Cập nhật cừa hàng',
+          icon: 'fa-solid lock'
+        }
+      },
+      {
+        path: 'add',
+        name: 'shop_create',
+        component: () => import('~/views/pages/shops/Create'),
+        meta: {
+          title: 'Thêm mới cừa hàng',
           icon: 'fa-solid lock'
         }
       }

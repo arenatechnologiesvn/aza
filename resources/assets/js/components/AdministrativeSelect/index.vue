@@ -1,23 +1,32 @@
 <template lang="pug">
-  div
-    el-select.administrative-select(v-model="selectedProvince" @change="filterDistrict" filterable placeholder="Tỉnh/TP")
-      el-option(
-      v-for="item in provinces"
-      :key="item.code"
-      :label="item.name_with_type"
-      :value="item.code")
-    el-select.administrative-select(v-model="selectedDistrict" @change="filterWard" filterable placeholder="Huyện/Thị trấn" :disabled="!selectedProvince")
-      el-option(
-      v-for="item in districts"
-      :key="item.code"
-      :label="item.name_with_type"
-      :value="item.code")
-    el-select(v-model="selectedWard" @change="selectWard" filterable placeholder="Xã/Phường" :disabled="!selectedDistrict")
-      el-option(
-      v-for="item in wards"
-      :key="item.code"
-      :label="item.name_with_type"
-      :value="item.code")
+  el-row
+    el-col(:span="8")
+      div.el-form-item
+        div.el-form-item__content
+          el-select.administrative-select(v-model="selectedProvince" clearable style="width: 100%" @change="filterDistrict" filterable placeholder="Tỉnh/TP")
+            el-option(
+            v-for="item in provinces"
+            :key="item.code"
+            :label="item.name_with_type"
+            :value="item.code")
+    el-col(:span="8")
+      div.el-form-item
+        div.el-form-item__content
+          el-select.administrative-select(v-model="selectedDistrict" clearable style="width: 100%" @change="filterWard" filterable placeholder="Huyện/Thị trấn" :disabled="!selectedProvince")
+            el-option(
+            v-for="item in districts"
+            :key="item.code"
+            :label="item.name_with_type"
+            :value="item.code")
+    el-col(:span="8")
+      div.el-form-item
+        div.el-form-item__content
+          el-select(v-model="selectedWard" @change="selectWard" clearable style="width: 100%" filterable placeholder="Xã/Phường" :disabled="!selectedDistrict")
+            el-option(
+            v-for="item in wards"
+            :key="item.code"
+            :label="item.name_with_type"
+            :value="item.code")
 </template>
 
 <script>

@@ -25,12 +25,15 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'role_id',
         'phone',
         'two_factor',
-        'is_active'
+        'is_active',
+        'avatar'
     ];
 
     public static function boot()
@@ -89,6 +92,11 @@ class User extends Authenticatable implements JWTSubject
 
     public function userDetail() {
         return $this->hasOne(UserDetail::class);
+    }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
     }
     /**
      * Send the password reset notification.

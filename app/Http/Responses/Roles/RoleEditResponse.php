@@ -36,7 +36,8 @@ class RoleEditResponse implements Responsable
         return [
             'id' => $this->role->id,
             'title' => $this->role->title,
-            'description' => $this->role->description
+            'description' => $this->role->description,
+            'is_employee' => $this->role->is_employee
         ];
     }
 }

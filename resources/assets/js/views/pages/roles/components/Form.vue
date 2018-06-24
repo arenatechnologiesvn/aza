@@ -5,6 +5,8 @@
         el-input(v-model="role.title")
       el-form-item(label="Mô tả")
         el-input(v-model="role.description" type="textarea" rows="3")
+      el-form-item
+        el-checkbox(label="Quyền thuộc nhân viên" v-model="role.is_employee")
       el-form-item(style="text-align: right;")
         el-button(type="primary" @click="handleSubmit")
           svg-icon(icon-class="fa-solid save")
@@ -24,7 +26,8 @@
           return {
             id: 0,
             title: '',
-            description: ''
+            description: '',
+            is_employee: false
           }
         }
       },
