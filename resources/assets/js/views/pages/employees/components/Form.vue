@@ -1,9 +1,10 @@
 <template lang="pug">
   el-row
+    media-manager-modal(type="profile" v-model="selectedImage" ref="mediaEmployeeModal")
     el-col(:span="4")
-      img(:src="logo_img" style="width: 100%" height="230")
+      img(:src="selectedImage" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
-        el-button(type="success") Thay đổi
+        el-button(type="success" @click="$refs.mediaEmployeeModal.dialogVisible = true;") Thay đổi
     el-col(:span="20")
       el-form(ref="form" v-model="employee")
         el-col(:span="24")
@@ -52,13 +53,17 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import logo_img from '~/assets/login_images/linh-nguyen.jpg'
+  import MediaManagerModal from '~/components/MediaManager/modal';
+  import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
   export default {
     name: 'EmployeeForm',
+    components: {
+      MediaManagerModal
+    },
     data () {
       return {
-        logo_img
+        selectedImage: dummyImage
       }
     },
     props: {
