@@ -1,17 +1,17 @@
-<template>
-  <div class="dashboard-container">
-    <administrative-select v-model="selectedProvince"></administrative-select>
-    <span>{{ selectedProvince }}</span>
-    <media-manager-modal type="profile" v-model="selectedImageUrl" ref="mediaModal"></media-manager-modal>
-    <el-button type="primary" @click="$refs.mediaModal.dialogVisible=true">Open Media Modal</el-button>
-    <span>{{ selectedImageUrl }}</span>
-  </div>
+<template lang="pug">
+  div.dashboard-container
+    el-row
+      el-col(:xs="24" :sm="24" :lg="8")
+        div.chart-wrapper
+          bar-chart
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import MediaManagerModal from '~/components/MediaManager/modal';
 import AdministrativeSelect from '~/components/AdministrativeSelect';
+import BarChart from './BarChart'
+
 export default {
   name: 'dashboard',
   computed: {
@@ -22,7 +22,8 @@ export default {
   },
   components: {
     MediaManagerModal,
-    AdministrativeSelect
+    AdministrativeSelect,
+    BarChart
   },
   data() {
     return {
@@ -91,6 +92,15 @@ export default {
 #product {
   .el-table th {
     background-color: darkgreen !important;
+  }
+}
+.dashboard-editor-container {
+  padding: 32px;
+  background-color: rgb(240, 242, 245);
+  .chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
   }
 }
 </style>

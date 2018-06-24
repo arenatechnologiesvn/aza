@@ -34,7 +34,7 @@
                   div.__box-data
                       div.__box-preview
                         div.__box-img
-                          img(:src="image.directory + '/' + image.filename + '.' + image.extension"
+                          img(:src="'/' + image.directory + '/' + image.filename + '.' + image.extension"
                             v-bind:alt="image.directory"
                             v-bind:title="(image.meta_data !== null) ? image.meta_data.alt : ''")
 
@@ -145,7 +145,7 @@
         });
       },
       selectedImageUrl() {
-        return `${this.currentImage.directory}/${this.currentImage.filename}.${this.currentImage.extension}`;
+        return `/${this.currentImage.directory}/${this.currentImage.filename}.${this.currentImage.extension}`;
       },
       deleteImage() {
         deleteMedia(this.type, this.currentImage.id).then(() => {
