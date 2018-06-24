@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 class Category extends BaseModel
 {
     protected $table = 'categories';
@@ -17,13 +16,4 @@ class Category extends BaseModel
         'lft',
         'rght'
     ];
-
-    public function children(){
-        return $this->hasMany( 'App\Category', 'parent_id', 'id' );
-    }
-
-    public function parent(){
-        return $this->belongsTo( 'App\Category', 'parent_id');
-    }
-
 }

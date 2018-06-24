@@ -17,21 +17,15 @@
             router-link(to="/shop/create")
               svg-icon(icon-class="fa-solid hand-pointer")
               span(style="margin-left: 5px;") Thêm mới loại khách hàng
-    div.form-search__wrapper
-      product-form-search
-    div.control__wrapper
-    div.table__wrapper
-      product-table
+    product-table
 </template>
 
 <script>
   import ProductTable from './components/ProductTable'
-  import ProductFormSearch from './components/ProductFormSearch'
   export default {
     name: 'ProductIndex',
     components: {
-      ProductTable,
-      ProductFormSearch
+      ProductTable
     }
   }
 </script>

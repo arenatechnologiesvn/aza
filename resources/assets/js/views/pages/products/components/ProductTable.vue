@@ -1,68 +1,174 @@
 <template lang="pug">
-  div.index__container
-    div.table
-      el-table(:data="tableData" border  style="width: 100%")
-        el-table-column(type="selection" width="40")
-        el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable)
-        el-table-column(prop="price" label="GIÁ" sortable width="180")
-        el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
-        el-table-column(prop="category_id" label="DANH MỤC" sortable)
-        el-table-column(prop="company_id" label="NHÀ CUNG CẤP" sortable)
-        el-table-column(prop="image" label="HÌNH ẢNH")
-          template(slot-scope="scope")
-            img(:src="scope.image")
-        el-table-column(prop="tag" label="TÁC VỤ" width="100" fixed="right")
-          template(slot-scope="scope")
-            el-button(type="text" size="small") Edit
-            el-button(type="text" size="small") Delete
-    div.pagination__wrapper
-      el-pagination(@size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-          :current-page.sync="currentPage4"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-      layout="total, sizes, prev, pager, next"
-        :total="400")
+  div
+    div.form-search__wrapper
+      el-form.search
+        el-row(:gutter="10")
+          el-col(:span="16")
+            el-form-item
+              el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
+          el-col(:span="4")
+            el-form-item
+              el-select(v-model="selectedCategory" @change="filterData" @clear="filterData" clearable placeholder="Danh mục")
+                el-option(v-for="item in categories" :key="item.id" :label="item.name" :value="item.id")
+                  svg-icon(:icon-class="item.icon")
+                  span(style="margin-left: 5px") {{ item.name }}
+          el-col(:span="4")
+            el-form-item
+              el-select(v-model="selectedProvider" @change="filterData" @clear="filterData" clearable placeholder="Nhà cung cấp")
+                el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
+    div.control__wrapper
+      el-row
+        el-col(:span="12")
+          h4.control__info(style="margin: 0;") Đã chọn {{ multipleSelection.length }} khách hàng
+        el-col(:span="12" style="text-align: right;")
+          el-button(type="success" size="medium")
+            svg-icon(icon-class="fa-solid file-excel")
+            span.ml-5  Xuất Excel
+          el-button(type="primary" size="medium" @click="redirectToAddingPage")
+            svg-icon(icon-class="fa-solid plus")
+            span.ml-5  Thêm mới
+    div.table__wrapper
+      div.index__container
+        div.table
+          el-table(:data="tableData" border  style="width: 100%" @selection-change="handleSelectionChange")
+            el-table-column(type="selection" width="40")
+            el-table-column(prop="preview_images" label="HÌNH ẢNH" width="90")
+              template(slot-scope="scope")
+                img(:src="scope.row.preview_images" :width="50" :height="50")
+            el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable)
+            el-table-column(prop="price" label="GIÁ" sortable width="180")
+            el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
+            el-table-column(prop="category.name" label="DANH MỤC" sortable)
+            el-table-column(prop="provider.name" label="NHÀ CUNG CẤP" sortable)
+            el-table-column(prop="id" label="TÁC VỤ" width="100" fixed="right")
+              template(slot-scope="scope")
+                el-button(type="text" size="small") Cập nhật
+                span /
+                el-button(type="text" size="small" @click="" style="color: red") Xóa
+        div.pagination__wrapper
+          el-pagination(:current-page.sync="currentPage"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="20"
+            layout="total, sizes, prev, pager, next"
+            :total="originProducts.length")
+    el-dialog(title="Xác nhận xóa sản phẩm" :visible.sync="confirmDialogVisible" width="30%" center)
+      el-row(type="flex" justify="center")
+        span Bạn có chắc chắn muốn xóa sản phẩm này!
+      span(slot="footer" class="dialog-footer")
+        el-button(type="danger" @click="closeDeleteConfirmModal")
+          svg-icon(icon-class="fa-solid ban")
+          span  Hủy
+        el-button(type="primary" @click="deleteOneProduct")
+          svg-icon(icon-class="fa-solid check")
+          span  Xác nhận
 </template>
 
 <script>
-  export default {
-    name: 'ProductTable',
-    data() {
-      return {
-        currentPage4: 1,
-        tableData: [{
-          name: 'Coca Cola',
-          price: '5.000',
-          unit: 'Chai',
-          category_id: 'Nước uống',
-          company_id: 'Coca Cola Cake',
-          image: '',
-          tag: 0
-        }]
+import { getProducts, deleteProduct } from '~/api/product.js';
+import { getCategories } from '~/api/category.js';
+import { getProviders } from '~/api/provider.js';
+
+export default {
+  name: 'product-table',
+  created() {
+    getProducts().then(response => {
+      this.tableData = response.data;
+      this.originProducts = this.tableData;
+    });
+
+    getCategories().then(response => {
+      this.categories = response.data;
+    }).catch(error => {
+      this.categories = [];
+    });
+
+    getProviders().then(response => {
+      this.providers = response.data;
+    }).catch(error => {
+      this.providers = [];
+    });
+  },
+  data() {
+    return {
+      currentPage: 1,
+      originProducts: [],
+      tableData: [],
+      categories: [],
+      providers: [],
+      multipleSelection: [],
+      searchWord: '',
+      selectedCategory: '',
+      selectedProvider: '',
+      confirmDialogVisible: false,
+      deleteProductId: ''
+    }
+  },
+  methods: {
+    filterData() {
+      this.tableData = this.originProducts.slice();
+      const filterWord = this.searchWord && this.searchWord.toLowerCase();
+
+      if (filterWord !== '') {
+        filterWord.trim().split(/\s/).forEach(word => {
+          this.tableData = this.tableData.filter(item => {
+            return item.name.indexOf(word) > 1;
+          });
+        });
+      }
+
+      if (this.selectedCategory) {
+        this.tableData = this.tableData.filter(item => {
+          return item.category && item.category.id === this.selectedCategory;
+        });
+      }
+
+      if (this.selectedProvider) {
+        this.tableData = this.tableData.filter(item => {
+          return item.category && item.category.id === this.selectedProvider;
+        });
       }
     },
-    methods: {
-      formatter(row, column) {
-        return row.address;
-      },
-      filterTag(value, row) {
-        return row.tag === value;
-      },
-      filterHandler(value, row, column) {
-        const property = column['property'];
-        return row[property] === value;
-      },
-      handleSizeChange(val) {
-        console.log(`${val} items per page`);
-      },
-      handleCurrentChange(val) {
-        console.log(`current page: ${val}`);
-      }
+    handleSelectionChange(val) {
+        this.multipleSelection = val;
+    },
+    redirectToAddingPage() {
+      this.$router.push({path: '/products/add'});
+    },
+    deleteOneProduct() {
+      // openDeleteConfirmModal(scope.row.id)
+
+      deleteProduct(this.deleteProductId).then(response => {
+        this.originProducts = response.data;
+        
+        // remove deleted item out of table data
+        this.tableData = this.tableData.filter(item => {
+          return item.id !== this.deleteProductId;
+        }) || [];
+        
+        closeDeleteConfirmModal();     
+      }).catch(error => {
+        closeDeleteConfirmModal(); 
+      });
+    },
+    openDeleteConfirmModal(id) {
+      this.confirmDialogVisible = true;
+      this.deleteProductId = id;
+    },
+    closeDeleteConfirmModal() {
+      this.confirmDialogVisible = false;
+      this.deleteProductId = '';
+    }
+  },
+  watch: {
+    searchWord() {
+      this.filterData();
     }
   }
+}
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.control__wrapper {
+  margin: 10px 0;
+}
 </style>
