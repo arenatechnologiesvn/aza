@@ -1,9 +1,10 @@
 <template lang="pug">
   el-row
     el-col(:span="4")
-      img(:src="logo_img" style="width: 100%" height="230")
+      media-manager-modal(type="shop" v-model="selectedImage" ref="mediaShopModal")
+      img(:src="selectedImage" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
-        el-button(type="success") Thay đổi
+        el-button(type="success" @click="$refs.mediaShopModal.dialogVisible = true;") Thay đổi
     el-col(:span="20")
       el-form(ref="form" v-model="shop")
         el-col(:span="12")
@@ -38,18 +39,20 @@
 </template>
 
 <script>
-  import logo_img from '~/assets/login_images/linh-nguyen.jpg'
   import AdministrativeSelect from '~/components/AdministrativeSelect'
+  import MediaManagerModal from '~/components/MediaManager/modal';
+  import dummyImage from '~/assets/login_images/dummy-image.jpg';
   import { mapGetters } from 'vuex'
 
   export default {
     name: 'EmployeeForm',
     components: {
-      AdministrativeSelect
+      AdministrativeSelect,
+      MediaManagerModal
     },
     data () {
       return {
-        logo_img
+        selectedImage: dummyImage
       }
     },
     props: {
