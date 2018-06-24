@@ -8,7 +8,7 @@
 
 <script>
   import SiderTrigger from './SiderTrigger'
-  import BreadCrumb2 from './Breadcrumb2/index'
+  import BreadCrumb2 from './BreadCrumb2'
   export default {
     name: 'Navbar',
     components: {
