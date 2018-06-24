@@ -1,9 +1,42 @@
 <template lang="pug">
   div.dashboard-container
     el-row
-      el-col(:xs="24" :sm="24" :lg="8")
-        div.chart-wrapper
-          bar-chart
+      el-col(:xs="24" :sm="12" :lg="12" style="padding-right: 5px")
+        el-card
+          div.clearfix(slot="header")
+            span
+              svg-icon(icon-class="fa-solid chart-bar")
+              span(style="margin-left: 10px;") DOANH THU THEO TUẦN
+          div
+            bar-chart
+      el-col(:xs="24" :sm="12" :lg="12" style="padding-left: 5px")
+        el-card
+          div.clearfix(slot="header")
+            span
+              svg-icon(icon-class="fa-solid chart-bar")
+              span(style="margin-left: 10px;") DOANH THU THEO THÁNG
+          div
+            bar-chart
+    div.clearfix(style="margin: 10px 0;")
+    el-row
+      el-col(:span="24")
+        el-card
+          div.clearfix(slot="header")
+            span
+              svg-icon(icon-class="fa-solid user-graduate")
+              span(style="margin-left: 10px;") NHÂN VIÊN XUẤT SẮC
+          div
+            employee-table(:employees="employees" :total="total")
+    div.clearfix(style="margin: 10px 0;")
+    el-row
+      el-col(:span="24")
+        el-card
+          div.clearfix(slot="header")
+            span
+              svg-icon(icon-class="fa-solid shipping-fast")
+              span(style="margin-left: 10px;") SẢN PHẨM BÁN CHẠY
+          div
+            product-table
 </template>
 
 <script>
@@ -11,19 +44,30 @@ import { mapGetters } from 'vuex'
 import MediaManagerModal from '~/components/MediaManager/modal';
 import AdministrativeSelect from '~/components/AdministrativeSelect';
 import BarChart from './BarChart'
-
+import ElCard from "element-ui/packages/card/src/main";
+import EmployeeTable from '../pages/employees/components/Table'
+import ProductTable from '../pages/products/components/ProductTable'
 export default {
   name: 'dashboard',
   computed: {
     ...mapGetters([
       'name',
       'roles'
-    ])
+    ]),
+    ...mapGetters('employee', {
+      employees: 'list'
+    }),
+    total () {
+      return this.employees.length
+    }
   },
   components: {
+    ElCard,
     MediaManagerModal,
     AdministrativeSelect,
-    BarChart
+    BarChart,
+    EmployeeTable,
+    ProductTable
   },
   data() {
     return {
@@ -70,9 +114,6 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 
 .dashboard {
-  &-container {
-    margin: 30px;
-  }
   &-text {
     font-size: 20px;
     line-height: 46px;
