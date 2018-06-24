@@ -38,7 +38,8 @@ class RoleIndexResponse implements Responsable
             return [
                 'id' => $item->id,
                 'title' => $item->title,
-                'description' => $item->description
+                'description' => $item->description,
+                'is_employee' => $item->is_employee
             ];
         });
     }

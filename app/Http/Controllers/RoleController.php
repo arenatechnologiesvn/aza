@@ -29,24 +29,6 @@ class RoleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(RoleCreateRequest $request)
-    {
-        //
-//        $permissions = $request->get('permissions');
-//        $role = Role::create($request->all());
-//        $role->permissions()->attach($permissions);
-//        return Role::with('permissions')->find($role->id);
-        $role = $this->role->create($request->all());
-        return $role ?
-            new RoleEditResponse($role) :
-            new FailedResponse();
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -70,19 +52,6 @@ class RoleController extends Controller
     public function show($id)
     {
         $role = Role::find($id);
-        return new RoleEditResponse($role);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $role = Role::find($id);
-        return 'da,sdlas';
         return new RoleEditResponse($role);
     }
 

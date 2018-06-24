@@ -17,7 +17,7 @@
 <script>
   import '~/style/admin.scss'
   import './admin.scss'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
   import AppMain from '../components/AppMain'
   import ResizeMixin from '../mixin/ResizeHandler'
   import Navbar from './components/Navbar'
@@ -38,25 +38,16 @@
       return {
         collapsed: false,
         logo,
-        listBreadcrumb: [
-          {
-            name: 'index',
-            path: '/index',
-            meta: {
-              icon: 'fa-solid home',
-              title: 'Trang chủ'
-            }
-          },
-          {
-            name: 'user',
-            path: '/user',
-            meta: {
-              icon: 'fa-solid bell',
-              title: 'Danh bạ'
-            }
-          }
-        ]
+        listBreadcrumb: this.$route.matched
       }
+    },
+    watch: {
+      '$route' (newRoute) {
+        this.setBreadCrumb(newRoute.matched)
+      }
+    },
+    mounted () {
+      this.setBreadCrumb(this.$route.matched)
     },
     computed: {
       ...mapGetters([
@@ -81,6 +72,9 @@
       }
     },
     methods: {
+      ...mapMutations([
+        'setBreadCrumb'
+      ]),
       handleCollapsedChange (state) {
         this.collapsed = state
       },
@@ -91,7 +85,9 @@
       }
     },
     created () {
-      console.log(this.menuList)
+      this.$store.dispatch('role/getList')
+      this.$store.dispatch('employee/getList')
+      this.$store.dispatch('customer/getList')
     }
   }
 </script>

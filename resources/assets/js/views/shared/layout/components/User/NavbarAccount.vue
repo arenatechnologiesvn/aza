@@ -5,7 +5,7 @@
     el-dropdown(trigger="click")
       div.header-account__control
         img.user__avatar(:src="avatar")
-        span Ngoc Xuân
+        span Nguyễn Linh
         i.el-icon-caret-bottom
       el-dropdown-menu.header-account__dropdown(slot="dropdown")
         el-dropdown-item
@@ -18,7 +18,7 @@
             svg-icon(icon-class="fa-solid cog")
             span(style="margin-left: 5px") Cài đặt
         el-dropdown-item
-          span(style="display:block;")
+          span(style="display:block;" @click="logout")
             svg-icon(icon-class="fa-solid lock")
             span(style="margin-left: 5px") Đăng xuất
 </template>
@@ -29,6 +29,13 @@
     name: 'NavbarAccount',
     props: {
       avatar: String
+    },
+    methods: {
+      logout () {
+        this.$store.dispatch('LogOut').then(() => {
+          this.$router.push({name: 'login'})
+        })
+      }
     }
   }
 </script>

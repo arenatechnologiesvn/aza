@@ -10,7 +10,8 @@ class Role extends BaseModel
     protected $fillable = [
         'title',
         'description',
-        'note'
+        'note',
+        'is_employee'
     ];
     public function users()
     {
