@@ -1,4 +1,4 @@
-import LayoutGuest from '../views/shared/layout/Guest'
+import LayoutGuest from '../views/shared/layout/Guest';
 const ConstBaseRouterMap = [
   {
     path: '/login',
@@ -28,5 +28,5 @@ const ConstBaseRouterMap = [
   {
     path: '/500', component: () => import('~/views/errors/500'), hidden: true
   }
-]
-export default ConstBaseRouterMap
+];
+export default ConstBaseRouterMap;
