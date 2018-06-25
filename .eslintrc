@@ -5,12 +5,36 @@
   "plugins": [
     "pug"
   ],
+  "env": {
+    "es6": true
+  },
   "settings": {
     "pug/pug-extensions": [".html", ".vue"]
   },
   "parserOptions": {
     "parser": "babel-eslint",
     "ecmaVersion": 2017,
-    "sourceType": "module"
+    "sourceType": "module",
+    "esversion": 6
+  },
+  "rules": {
+    "semi": [2, "always"],
+    "indent": ["error", 2],
+    "comma-dangle": ["error", "never"],
+    "no-unused-vars": ["error", { "vars": "all", "args": "none" }],
+    "arrow-body-style": ["off"],
+    "no-param-reassign": ["off"],
+    "new-cap": [2, {
+        "capIsNewExceptions": ["Map"]
+    }],
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+    "max-len": ["error", 130],
+    "no-invalid-this": "error",
+    "no-useless-call": "error",
+    "no-class-assign": "error",
+    "require-yield": "error",
+    "constructor-super": "error",
+    "no-this-before-super": "error",
+    "class-methods-use-this": "off"
   }
 }
