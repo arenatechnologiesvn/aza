@@ -8,7 +8,7 @@ import { getToken } from '~/utils/auth';
 NProgress.configure({ showSpinner: false });
 
 const whiteList = ['/login', '/forget'];
-// debugger;
+
 router.beforeEach((to, from, next) => {
   // Start routing bar
   NProgress.start();
@@ -22,10 +22,10 @@ router.beforeEach((to, from, next) => {
     } else {
       if (!store.getters.roles.title) {
         store.dispatch('GetInfo').then(res => {
-          const roles = res.role;
+          const role = res.role;
 
           // Generates an accessible routing table based on roles permission
-          store.dispatch('GenerateRoutes', { roles }).then(() => {
+          store.dispatch('GenerateRoutes', { role }).then(() => {
             // Add dynamically accessible routing tables
             router.addRoutes(store.getters.addRouters);
 
@@ -43,11 +43,7 @@ router.beforeEach((to, from, next) => {
           });
         });
       } else {
-        if (to.meta.roles.indexOf(store.getters.roles.title) === 1) {
-          next();
-        } else {
-          next({ path: '/401', replace: true, query: { noGoBack: true }});
-        }
+        next();
       }
     }
   } else {
