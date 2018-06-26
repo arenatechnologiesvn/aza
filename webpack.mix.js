@@ -1,16 +1,14 @@
-const path = require('path')
-const mix = require('laravel-mix')
-// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const path = require('path');
+const mix = require('laravel-mix');
 
 mix
   .js('resources/assets/js/app.js', 'public/js')
   .sass('resources/assets/sass/app.scss', 'public/css')
-
   .sourceMaps()
-  .disableNotifications()
+  .disableNotifications();
 
 if (mix.inProduction()) {
-  mix.version()
+  mix.version();
 
   mix.extract([
     'vue',
@@ -28,7 +26,7 @@ if (mix.inProduction()) {
     'element-ui',
     'normalize.css',
     'nprogress'
-  ])
+  ]);
 }
 
 mix.webpackConfig({
@@ -54,4 +52,4 @@ mix.webpackConfig({
       }
     ]
   }
-})
+});
