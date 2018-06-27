@@ -1,15 +1,16 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from 'vue';
+import Router from 'vue-router';
 
-// in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
+// in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow.
+// so only in production use lazy-loading.
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
-Vue.use(Router)
+Vue.use(Router);
 
 /* Layout */
-import Layout from '../views/shared/layout/Admin'
-import ParentView from '~/components/parent-view'
-import BaseRouter from './base_router'
+import Layout from '../views/shared/layout/Admin';
+import ParentView from '~/components/parent-view';
+import BaseRouter from './base_router';
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -24,10 +25,9 @@ import BaseRouter from './base_router'
   }
 **/
 export default new Router({
-  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: BaseRouter
-})
+});
 
 export const asyncRouterMapChild = [
   {
@@ -51,7 +51,8 @@ export const asyncRouterMapChild = [
         component: () => import('~/views/pages/products/Index'),
         meta: {
           title: 'Danh sách sản phẩm',
-          icon: 'fa-solid shop'
+          icon: 'fa-solid shop',
+          roles: ['Admin']
         }
       },
       {
@@ -60,7 +61,8 @@ export const asyncRouterMapChild = [
         component: () => import('~/views/pages/products/Create'),
         meta: {
           title: 'Thêm mới sản phẩm',
-          icon: 'fa-solid plus'
+          icon: 'fa-solid plus',
+          roles: ['Admin']
         }
       }
     ]
@@ -214,7 +216,7 @@ export const asyncRouterMapChild = [
       }
     ]
   }
-]
+];
 export const asyncRouterMap = [
   {
     path: '/',
@@ -313,6 +315,6 @@ export const asyncRouterMap = [
   //   ]
   // },
   { path: '*', redirect: '/404', hidden: true }
-]
+];
 
-export const constantRouterMap = BaseRouter
+export const constantRouterMap = BaseRouter;
