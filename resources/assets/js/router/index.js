@@ -25,7 +25,6 @@ import BaseRouter from './base_router';
   }
 **/
 export default new Router({
-  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: BaseRouter
 });

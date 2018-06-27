@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import app from './modules/app'
-import user from './modules/user'
-import permission from './modules/permission'
-import role from './modules/role'
-import roles from './modules/roles'
-import employee from './modules/employee'
-import customer from './modules/customer'
-import shop from './modules/shop'
-import getters from './getters'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import app from './modules/app';
+import user from './modules/user';
+import permission from './modules/permission';
+import role from './modules/role';
+import roles from './modules/roles';
+import employee from './modules/employee';
+import customer from './modules/customer';
+import shop from './modules/shop';
+import getters from './getters';
 
 Vue.use(Vuex);
 
@@ -23,13 +23,7 @@ const store = new Vuex.Store({
     customer,
     roles
   },
-  getters,
-  plugins: [
-    createPersistedState({
-      getState: (key) => Cookies.getJSON(key),
-      setState: (key, state) => Cookies.set(key, state, { expires: 3, secure: true })
-    })
-  ]
+  getters
 });
 
 export default store;
