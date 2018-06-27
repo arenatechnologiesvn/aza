@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex'
+  import { mapActions, mapGetters, mapState} from 'vuex'
   import RoleForm from './components/Form'
 
   export default {
@@ -20,27 +20,32 @@
       RoleForm
     },
     computed: {
-      ...mapGetters('role', {
+      ...mapGetters('roles', {
         roleById : 'byId'
       }),
+      ...mapState([
+        'route', // vuex-router-sync
+      ]),
       currentRole () {
+        console.log(this.roleById(this.$route.params.id))
         return this.roleById(this.$route.params.id);
       }
     },
     methods: {
-      ...mapActions('role', {
-        'getById': 'getById'
+      ...mapActions('roles', {
+        fetchRole: 'fetchSingle'
       }),
-      getByIdRoute () {
-        const id = this.$route.params.id
-        this.getById(id)
+      fetchData () {
+        this.fetchRole({
+          id: this.$route.params.id
+        })
       },
     },
     watch: {
-      $route: 'getByIdRoute'
+      $route: 'fetchData'
     },
     created () {
-      this.getByIdRoute()
+      this.fetchData()
     }
   }
 </script>

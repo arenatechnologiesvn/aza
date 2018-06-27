@@ -29,7 +29,7 @@ class RoleIndexResponse implements Responsable
      */
     public function toResponse($request)
     {
-        return response()->json($this->convertToDto(), 200);
+        return response()->json(['data'=>$this->convertToDto()], 200);
         // TODO: Implement toResponse() method.
     }
 

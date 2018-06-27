@@ -1,19 +1,18 @@
 <template lang="pug">
   div.index__container
     div.table
-      el-table(:data="roles" border  style="width: 100%")
+      el-table(:data="roles" border v-loading="loading"  style="width: 100%" size="small" @selection-change="selectChange")
         el-table-column(type="selection" width="40")
         el-table-column(prop="title" label="TÊN QUYỀN" sortable)
         el-table-column(prop="description" label="MÔ TẢ" sortable width="180")
         el-table-column(prop="id" label="TÁC VỤ" width="170")
           template(slot-scope="scope")
-            el-button(type="text" size="small" @click="handleEdit(scope.row.id)") Edit
-            el-popover(placement="top" trigger="click" width="200")
-              p Bạn muốn xóa quyền này?
-              div
-                el-button(size="mini" type="text" @click="showDialog = false") Hủy
-                el-button(size="mini" type="primary" @click="onDelete(scope.row.id)") Đồng ý
-              el-button(slot="reference" size="small" type="text") Delete
+            el-button(type="warning" size="mini" @click="handleEdit(scope.row.id)")
+              svg-icon(icon-class="fa-solid user-edit")
+              span(style="margin-left: 5px") Sửa
+            el-button(type="danger" size="mini")
+              svg-icon(icon-class="fa-solid trash-alt")
+              span(style="margin-left: 5px") Xóa
     <!--div.pagination__wrapper-->
       <!--el-pagination(@size-change="handleSizeChange"-->
         <!--@current-change="handleCurrentChange"-->
@@ -32,7 +31,8 @@
     data () {
       return {
         currentPage: 1,
-        showDialog: false
+        showDialog: false,
+        selection: []
       }
     },
     props: {
@@ -43,6 +43,10 @@
       total: {
         type: Number,
         default: 0
+      },
+      loading: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {
@@ -58,6 +62,9 @@
       onDelete (id) {
         this.$emit('on-delete', id)
         this.showDialog = false
+      },
+      selectChange (selection) {
+       this.$emit('on-selection', selection);
       }
     }
   }
