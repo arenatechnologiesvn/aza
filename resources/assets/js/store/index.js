@@ -4,6 +4,7 @@ import app from './modules/app'
 import user from './modules/user'
 import permission from './modules/permission'
 import role from './modules/role'
+import roles from './modules/roles'
 import employee from './modules/employee'
 import customer from './modules/customer'
 import shop from './modules/shop'
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     role,
     employee,
     shop,
-    customer
+    customer,
+    roles
   },
   getters
 })
