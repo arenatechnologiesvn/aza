@@ -21,11 +21,52 @@
 </template>
 
 <script>
-  import ProductTable from './components/ProductTable'
+  import { mapGetters, mapActions, mapState } from 'vuex';
+  import ProductTable from './components/ProductTable';
+
   export default {
     name: 'ProductIndex',
     components: {
       ProductTable
+    },
+    computed: {
+      ...mapGetters(
+        'categories', { categories: 'list'},
+        'providers', { providers: 'list'}
+      ),
+
+      ...mapState([
+        'route'
+      ])
+    },
+    methods: {
+      ...mapActions(
+        'categories', { fetchCategories: 'fetchList' },
+        'providers', { fetchProviders: 'fetchList' }
+      ),
+
+      fetchCategoryData() {
+        this.fetchCategories().then(response => {
+          this.categories = response;
+        });
+      },
+
+      fetchProviderData() {
+        return this.fetchProviders().then(response => {
+          this.categories = response;
+        });
+      },
+
+      fetchData() {
+        this.fetchCategoryData();
+        this.fetchProviderData();
+      }
+    },
+    create() {
+      this.fetchData();
+    },
+    watch: {
+      $route: 'fetchData'
     }
   }
 </script>

@@ -7,6 +7,9 @@ import roles from './modules/roles';
 import employees from './modules/employees';
 import customer from './modules/customer';
 import shop from './modules/shop';
+import products from './modules/products';
+import categories from './modules/categories';
+import providers from './modules/providers';
 import getters from './getters';
 
 Vue.use(Vuex);
@@ -19,7 +22,10 @@ const store = new Vuex.Store({
     employees,
     shop,
     customer,
-    roles
+    roles,
+    products,
+    categories,
+    providers
   },
   getters
 });

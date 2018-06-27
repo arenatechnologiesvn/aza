@@ -21,36 +21,37 @@
         el-col(:span="12")
           h4.control__info(style="margin: 0;") Đã chọn {{ multipleSelection.length }} khách hàng
         el-col(:span="12" style="text-align: right;")
-          el-button(type="success" size="medium")
+          el-button(type="success" size="small")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
-          el-button(type="primary" size="medium" @click="redirectToAddingPage")
+          el-button(type="primary" size="small" @click="redirectToAddingPage")
             svg-icon(icon-class="fa-solid plus")
             span.ml-5  Thêm mới
     div.table__wrapper
       div.index__container
         div.table
-          el-table(:data="tableData" border  style="width: 100%" @selection-change="handleSelectionChange")
-            el-table-column(type="selection" width="40")
-            el-table-column(prop="preview_images" label="HÌNH ẢNH" width="90")
+          el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange")
+            el-table-column(type="selection" header-align="center" align="center" width="40")
+            el-table-column(prop="preview_images" align="center" width="60")
               template(slot-scope="scope")
-                img(:src="scope.row.preview_images" :width="50" :height="50")
+                img(:src="scope.row.preview_images" :width="40" :height="40")
             el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable)
-            el-table-column(prop="price" label="GIÁ" sortable width="180")
+            el-table-column(prop="price" label="GIÁ (VND)" sortable width="180")
             el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
             el-table-column(prop="category.name" label="DANH MỤC" sortable)
             el-table-column(prop="provider.name" label="NHÀ CUNG CẤP" sortable)
-            el-table-column(prop="id" label="TÁC VỤ" width="100" fixed="right")
+            el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-button(type="text" size="small") Cập nhật
-                span /
-                el-button(type="text" size="small" @click="" style="color: red") Xóa
+                el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
+                  el-button(type="primary" icon="el-icon-edit" size="mini" round)
+                el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
+                  el-button(type="danger" icon="el-icon-delete" size="mini" round)
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 50]"
             :page-size="20"
             layout="total, sizes, prev, pager, next"
-            :total="originProducts.length")
+            :total="tableData.length")
     el-dialog(title="Xác nhận xóa sản phẩm" :visible.sync="confirmDialogVisible" width="30%" center)
       el-row(type="flex" justify="center")
         span Bạn có chắc chắn muốn xóa sản phẩm này!
@@ -64,37 +65,27 @@
 </template>
 
 <script>
-import { getProducts, deleteProduct } from '~/api/product.js';
-import { getCategories } from '~/api/category.js';
-import { getProviders } from '~/api/provider.js';
+import { mapGetters, mapActions, mapState } from 'vuex';
 
 export default {
   name: 'product-table',
+  computed: {
+    ...mapGetters('products', { products: 'list' }),
+    ...mapGetters('categories', { categories: 'list' }),
+    ...mapGetters('providers', { providers: 'list' }),
+    ...mapState([
+      'route', // vuex-router-sync
+    ]),
+    tableData() {
+      return this.products;
+    }
+  },
   created() {
-    getProducts().then(response => {
-      this.tableData = response.data;
-      this.originProducts = this.tableData;
-    });
-
-    getCategories().then(response => {
-      this.categories = response.data;
-    }).catch(error => {
-      this.categories = [];
-    });
-
-    getProviders().then(response => {
-      this.providers = response.data;
-    }).catch(error => {
-      this.providers = [];
-    });
+    this.fetchData();
   },
   data() {
     return {
       currentPage: 1,
-      originProducts: [],
-      tableData: [],
-      categories: [],
-      providers: [],
       multipleSelection: [],
       searchWord: '',
       selectedCategory: '',
@@ -104,8 +95,38 @@ export default {
     }
   },
   methods: {
+    ...mapActions(
+      'products', { fetchProducts: 'fetchList' }
+    ),
+
+    ...mapActions(
+      'categories', { fetchCategories: 'fetchList' }
+    ),
+
+    ...mapActions(
+      'providers', { fetchProviders: 'fetchList' }
+    ),
+
+    fetchData() {
+      this.fetchProductData();
+      this.fetchCategoryData();
+      this.fetchProviderData();
+    },
+
+    fetchProductData() {
+      return this.fetchProducts();
+    },
+
+    fetchCategoryData() {
+      return this.fetchCategories();
+    },
+
+    fetchProviderData() {
+      return this.fetchProviders();
+    },
+
     filterData() {
-      this.tableData = this.originProducts.slice();
+      this.tableData = this.products.slice();
       const filterWord = this.searchWord && this.searchWord.toLowerCase();
 
       if (filterWord !== '') {
@@ -138,7 +159,7 @@ export default {
       // openDeleteConfirmModal(scope.row.id)
 
       deleteProduct(this.deleteProductId).then(response => {
-        this.originProducts = response.data;
+        this.products = response.data;
         
         // remove deleted item out of table data
         this.tableData = this.tableData.filter(item => {
@@ -162,7 +183,8 @@ export default {
   watch: {
     searchWord() {
       this.filterData();
-    }
+    },
+    $route: 'fetchData'
   }
 }
 </script>
