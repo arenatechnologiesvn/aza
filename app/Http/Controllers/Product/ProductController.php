@@ -101,7 +101,25 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        if (!$product) {
+            return response(['message' => 'Invalid param'], 433);
+        }
+
+        $data = [
+            'id' => $product['id'],
+            'product_code' => $product['product_code'],
+            'name' => $product['name'],
+            'description' => $product['description'],
+            'unit' => $product['unit'],
+            'price' => $product['price'],
+            'discount_price' => $product['discount_price'],
+            'preview_images' => $product['preview_images'],
+            'featured_images' => $product['featured_images'],
+            'category_id' => $product['category_id'],
+            'provider_id' => $product['provider_id']
+        ];
+
+        return response()->json(['data' => $data], 200);
     }
 
     /**
@@ -136,7 +154,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if (!$product) {
-            return response(['message' => 'Delete product failed'], 433);
+            return response(['message' => 'Invalid param'], 433);
         }
 
         $product->delete();

@@ -3,43 +3,65 @@
 .kpi-edit(:class="panelOpen ? 'kpi-edit--open' : ''" :style="{ top: handlePanelPosition() + 'px', height: handlePanelHeight() + 'px' }")
   .kpi-edit__inner
     .kpi-edit__controls
-      div.control__item(:class="!productId ? 'control__item--disabled' : ''" @click="handlePanelClick")
-        svg-icon(icon-class="fa-solid angle-double-left")
+      div.control__item(:class="!productId ? 'control__item--disabled' : ''" v-touch:tap="handlePanelClick")
+        svg-icon(:icon-class="panelOpen ? 'fa-solid angle-double-right' : 'fa-solid angle-double-left'")
     .kpi-edit__content
       .kpi-edit__header
-        el-tooltip(class="item" effect="dark" :content="title" placement="bottom")
-          span.header-text {{ title }}
+        el-tooltip(class="item" effect="dark" :content="product.name" placement="bottom")
+          span.header-text {{ product.name }}
       .kpi-edit__form
-
+        .kpi-edit__form-item
+          product-form(v-model="product")
       .kpi-edit__save
         el-button(type="primary" size="mini")
           svg-icon(icon-class="fa-solid save")
           span  Lưu
-        el-button(type="info" size="mini")
+        el-button(type="info" size="mini" @click="panelOpen = false")
           svg-icon(icon-class="fa-solid ban")
           span  Hủy
 </template>
 <script>
+import { mapGetters, mapActions, mapState } from 'vuex';
+import ProductForm from './Form';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
+
 const panelDefaultPosition = 263;
 
 export default {
   name: 'edit-panel',
   components: {
-
-  },
-  watch: {
-
+    ProductForm
   },
   data() {
     return {
       scrolled: 0,
       userHeight: 0,
-      panelOpen: false
+      panelOpen: false,
+      product: {
+        name: '',
+        product_code: '',
+        price:'',
+        discount_price: '',
+        unit: '',
+        preview_images: dummyImage,
+        featured_images: dummyImage,
+        category_id: '',
+        provider_id:'',
+        description: ''
+      },
+      productId: ''
     };
   },
   computed: {
-    title() {
-      return 'AZA Project';
+    ...mapGetters({
+      productById: 'products/byId'
+    }),
+    ...mapState([
+      'route', // vuex-router-sync
+    ]),
+    currentProduct() {
+      console.log(this.route.params.id);
+      return this.productById(this.route.params.id);
     }
   },
   methods: {

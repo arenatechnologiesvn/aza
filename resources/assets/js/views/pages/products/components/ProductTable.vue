@@ -43,7 +43,7 @@
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
-                  el-button(type="primary" icon="el-icon-edit" size="mini" round  @click="$refs.editPanel.panelOpen = true")
+                  el-button(type="primary" icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="openDeleteConfirmModal")
         div.pagination__wrapper
@@ -75,9 +75,11 @@ export default {
     EditPanel
   },
   computed: {
-    ...mapGetters('products', { products: 'list' }),
-    ...mapGetters('categories', { categories: 'list' }),
-    ...mapGetters('providers', { providers: 'list' }),
+    ...mapGetters({
+      products: 'products/list',
+      categories: 'categories/list',
+      providers: 'providers/list'
+    }),
     ...mapState([
       'route', // vuex-router-sync
     ]),
@@ -100,17 +102,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(
-      'products', { fetchProducts: 'fetchList' }
-    ),
-
-    ...mapActions(
-      'categories', { fetchCategories: 'fetchList' }
-    ),
-
-    ...mapActions(
-      'providers', { fetchProviders: 'fetchList' }
-    ),
+    ...mapActions({
+      fetchProducts: 'products/fetchList',
+      fetchProduct: 'products/fetchSingle',
+      fetchCategories: 'categories/fetchList',
+      fetchProviders: 'providers/fetchList'
+    }),
 
     fetchData() {
       this.fetchProductData();
@@ -128,6 +125,12 @@ export default {
 
     fetchProviderData() {
       return this.fetchProviders();
+    },
+
+    openEditPanel(productId) {
+      this.fetchProduct({ id: productId }).then(() => {
+        this.$refs.editPanel.panelOpen = true;
+      });
     },
 
     filterData() {
