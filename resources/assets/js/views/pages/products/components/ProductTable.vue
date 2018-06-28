@@ -43,9 +43,9 @@
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
-                  el-button(type="primary" icon="el-icon-edit" size="mini" round)
+                  el-button(type="primary" icon="el-icon-edit" size="mini" round  @click="$refs.editPanel.panelOpen = true")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
-                  el-button(type="danger" icon="el-icon-delete" size="mini" round)
+                  el-button(type="danger" icon="el-icon-delete" size="mini" round @click="openDeleteConfirmModal")
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 50]"
@@ -62,13 +62,18 @@
         el-button(type="primary" @click="deleteOneProduct")
           svg-icon(icon-class="fa-solid check")
           span  Xác nhận
+    edit-panel(ref="editPanel")
 </template>
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import EditPanel from './EditPanel';
 
 export default {
   name: 'product-table',
+  components: {
+    EditPanel
+  },
   computed: {
     ...mapGetters('products', { products: 'list' }),
     ...mapGetters('categories', { categories: 'list' }),

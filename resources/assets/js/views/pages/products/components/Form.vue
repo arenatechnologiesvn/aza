@@ -66,9 +66,7 @@
 <script>
 import MediaManagerModal from '~/components/MediaManager/modal';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
-import { getCategories } from '~/api/category.js';
-import { getProviders } from '~/api/provider.js';
-import { storeProduct } from '~/api/product.js';
+import { mapGetters, mapActions, mapState } from 'vuex';
 
 const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
 
