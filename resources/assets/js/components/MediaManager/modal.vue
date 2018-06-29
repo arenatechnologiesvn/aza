@@ -2,10 +2,10 @@
     el-dialog.media-modal(:visible.sync="dialogVisible" width="60%")
       media-manager(:type="type" ref="mediaManager")
       span.dialog-footer(slot="footer")
-        el-button(size="medium" @click="closeModal")
+        el-button(size="small" @click="closeModal")
           svg-icon(icon-class="fa-solid ban")
           span  Hủy
-        el-button(type="primary" size="medium" @click="setSelectedImage")
+        el-button(type="primary" size="small" @click="setSelectedImage")
           svg-icon(icon-class="fa-solid check")
           span  Thay đổi
 </template>

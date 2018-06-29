@@ -3,27 +3,26 @@
 .kpi-edit(:class="panelOpen ? 'kpi-edit--open' : ''" :style="{ top: handlePanelPosition() + 'px', height: handlePanelHeight() + 'px' }")
   .kpi-edit__inner
     .kpi-edit__controls
-      div.control__item(:class="!productId ? 'control__item--disabled' : ''" v-touch:tap="handlePanelClick")
+      .control__item(v-touch:tap="handlePanelClick()" :class="!productId ? 'control__item--disabled' : ''")
         svg-icon(:icon-class="panelOpen ? 'fa-solid angle-double-right' : 'fa-solid angle-double-left'")
     .kpi-edit__content
       .kpi-edit__header
-        el-tooltip(class="item" effect="dark" :content="product.name" placement="bottom")
-          span.header-text {{ product.name }}
+        el-tooltip(class="item" effect="dark" :content="currentProduct && currentProduct.name" placement="bottom")
+          span.header-text {{ currentProduct && currentProduct.name }}
       .kpi-edit__form
         .kpi-edit__form-item
-          product-form(v-model="product")
+          product-form
       .kpi-edit__save
-        el-button(type="primary" size="mini")
+        el-button(type="primary" size="mini" @click="save")
           svg-icon(icon-class="fa-solid save")
           span  Lưu
-        el-button(type="info" size="mini" @click="panelOpen = false")
+        el-button(type="info" size="mini" @click="cancel")
           svg-icon(icon-class="fa-solid ban")
           span  Hủy
 </template>
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
 import ProductForm from './Form';
-import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const panelDefaultPosition = 263;
 
@@ -35,59 +34,65 @@ export default {
   data() {
     return {
       scrolled: 0,
-      userHeight: 0,
-      panelOpen: false,
-      product: {
-        name: '',
-        product_code: '',
-        price:'',
-        discount_price: '',
-        unit: '',
-        preview_images: dummyImage,
-        featured_images: dummyImage,
-        category_id: '',
-        provider_id:'',
-        description: ''
-      },
-      productId: ''
+      userHeight: 0
     };
   },
   computed: {
     ...mapGetters({
       productById: 'products/byId'
     }),
-    ...mapState([
-      'route', // vuex-router-sync
-    ]),
+
+    ...mapState({
+      panelOpen: state => state.common.product.openEditPanel,
+      productId: state => state.common.product.editId
+    }),
+
     currentProduct() {
-      console.log(this.route.params.id);
-      return this.productById(this.route.params.id);
+      return this.productById(this.productId);
     }
   },
   methods: {
     handlePanelClick() {
-
+      return () => {
+        if (this.productId) {
+          if (this.panelOpen) {
+            this.closeProductEditPanel();
+          } else {
+            this.openProductEditPanel();
+          }
+        }
+      };
     },
+
     handlePageScroll() {
       this.scrolled = window.scrollY;
     },
+
     handlePanelPosition() {
       const panelScrolledPosition = panelDefaultPosition - this.scrolled;
 
       return (panelScrolledPosition > 0) ? panelScrolledPosition : 0;
     },
+
     handlePanelHeight() {
       const panelHeight = (window.innerHeight - panelDefaultPosition) + this.scrolled;
 
       if (panelHeight < window.innerHeight) return panelHeight;
       return window.innerHeight;
     },
-    // save() {
-    //   this.handlePanelOpen();
-    // },
-    // cancel() {
-    //   this.handlePanelOpen();
-    // },
+
+    save() {
+      this.closeProductEditPanel();
+    },
+
+    cancel() {
+      this.closeProductEditPanel();
+    },
+
+    ...mapActions({
+      openProductEditPanel: 'openProductEditPanel',
+      closeProductEditPanel: 'closeProductEditPanel'
+    })
   },
   created () {
     window.addEventListener('scroll', this.handlePageScroll);

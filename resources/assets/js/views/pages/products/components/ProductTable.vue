@@ -62,7 +62,7 @@
         el-button(type="primary" @click="deleteOneProduct")
           svg-icon(icon-class="fa-solid check")
           span  Xác nhận
-    edit-panel(ref="editPanel")
+    edit-panel
 </template>
 
 <script>
@@ -106,7 +106,9 @@ export default {
       fetchProducts: 'products/fetchList',
       fetchProduct: 'products/fetchSingle',
       fetchCategories: 'categories/fetchList',
-      fetchProviders: 'providers/fetchList'
+      fetchProviders: 'providers/fetchList',
+      setEditProductId: 'setEditProductId',
+      openProductEditPanel: 'openProductEditPanel'
     }),
 
     fetchData() {
@@ -129,7 +131,8 @@ export default {
 
     openEditPanel(productId) {
       this.fetchProduct({ id: productId }).then(() => {
-        this.$refs.editPanel.panelOpen = true;
+        this.setEditProductId({ productId: productId });
+        this.openProductEditPanel();
       });
     },
 

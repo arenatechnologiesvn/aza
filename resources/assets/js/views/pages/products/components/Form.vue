@@ -2,41 +2,41 @@
   el-row
     el-col.side-form(:span="6")
       .image-container
-        img.image-preview(:src="form.preview_images" width="100%")
+        img.image-preview(:src="product.preview_images" width="100%")
       div(style="margin-top: 10px;")
         el-button(type="success" size="small" @click="$refs.mediaProductModal.dialogVisible = true") Thay đổi
-      media-manager-modal(type="product" v-model="form.preview_images" ref="mediaProductModal")
+      media-manager-modal(type="product" v-model="product.preview_images" ref="mediaProductModal")
     el-col(:span="18")
-      el-form(ref="form" v-model="form" size="small")
+      el-form(ref="form" v-model="product" size="small")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="form.name" placeholder="Tên sản phẩm")
+            el-input(v-model="product.name" placeholder="Tên sản phẩm")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="form.product_code" placeholder="Mã sản phẩm")
+            el-input(v-model="product.product_code" placeholder="Mã sản phẩm")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="form.price" placeholder="Giá sản phẩm (VND)")
+            el-input(v-model="product.price" placeholder="Giá sản phẩm (VND)")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="form.discountPrice" placeholder="Giá khuyến mãi (VND)")
+            el-input(v-model="product.discountPrice" placeholder="Giá khuyến mãi (VND)")
         el-col(:span="12")
           el-form-item
-            el-select(v-model="form.categoryId" clearable placeholder="Danh mục sản phẩm" style="width: 100%")
+            el-select(v-model="product.category_id" clearable placeholder="Danh mục sản phẩm" style="width: 100%")
               el-option(v-for="item in categories" :key="item.id" :label="item.name" :value="item.id")
                 svg-icon(:icon-class="item.icon")
                 span(style="margin-left: 5px") {{ item.name }}
         el-col(:span="12")
           el-form-item
-            el-select(v-model="form.providerId" clearable placeholder="Nhà cung cấp" style="width: 100%")
+            el-select(v-model="product.provider_id" clearable placeholder="Nhà cung cấp" style="width: 100%")
               el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
         el-col(:span="12")
           el-form-item
-            el-select(v-model="form.unit" clearable placeholder="Đơn vị" style="width: 100%")
+            el-select(v-model="product.unit" clearable placeholder="Đơn vị" style="width: 100%")
               el-option(v-for="(item, index) in productUnits" :key="index" :label="item" :value="item")
         el-col(:span="24")
           el-form-item
-            el-input(type="textarea" rows="10" v-model="form.description" placeholder="Mô tả sản phẩm")
+            el-input(type="textarea" rows="10" v-model="product.description" placeholder="Mô tả sản phẩm")
 </template>
 <script>
 import MediaManagerModal from '~/components/MediaManager/modal';
@@ -50,18 +50,37 @@ export default {
   components: {
     MediaManagerModal
   },
-  model: {
-    prop: 'form',
-    event: 'click'
-  },
-  props: {
-    form: Object
+  computed: {
+    ...mapGetters({
+      productById: 'products/byId'
+    }),
+
+    ...mapState({
+      panelOpen: state => state.common.product.openEditPanel,
+      productId: state => state.common.product.editId
+    }),
+
+    currentProduct() {
+      return this.productById(this.productId);
+    }
   },
   data () {
     return {
       categories: [],
       providers: [],
       productUnits: PRODUCT_UNITS,
+      product: {
+        name: '',
+        product_code: '',
+        price:'',
+        discount_price: '',
+        unit: '',
+        preview_images: dummyImage,
+        featured_images: dummyImage,
+        category_id: '',
+        provider_id:'',
+        description: ''
+      }
     }
   },
   methods: {
@@ -74,6 +93,11 @@ export default {
     },
     backToListPage() {
       this.$router.push({path: '/products'});
+    }
+  },
+  watch: {
+    productId() {
+      this.product = JSON.parse(JSON.stringify(this.currentProduct));
     }
   }
 }

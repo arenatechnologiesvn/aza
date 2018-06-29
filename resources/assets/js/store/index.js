@@ -10,6 +10,7 @@ import shop from './modules/shop';
 import products from './modules/products';
 import categories from './modules/categories';
 import providers from './modules/providers';
+import common from './modules/common';
 import getters from './getters';
 
 Vue.use(Vuex);
@@ -25,7 +26,8 @@ const store = new Vuex.Store({
     roles,
     products,
     categories,
-    providers
+    providers,
+    common
   },
   getters
 });
