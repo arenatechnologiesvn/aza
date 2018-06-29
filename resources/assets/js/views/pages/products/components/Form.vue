@@ -4,8 +4,7 @@
       .image-container
         img.image-preview(:src="product.preview_images" width="100%")
       div(style="margin-top: 10px;")
-        el-button(type="success" size="small" @click="$refs.mediaProductModal.dialogVisible = true") Thay đổi
-      media-manager-modal(type="product" v-model="product.preview_images" ref="mediaProductModal")
+        el-button(type="success" size="small" @click="openMediaModal") Thay đổi
     el-col(:span="18")
       el-form(ref="form" v-model="product" size="small")
         el-col(:span="12")
@@ -39,7 +38,6 @@
             el-input(type="textarea" rows="10" v-model="product.description" placeholder="Mô tả sản phẩm")
 </template>
 <script>
-import MediaManagerModal from '~/components/MediaManager/modal';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
 import { mapGetters, mapActions, mapState } from 'vuex';
 
@@ -47,16 +45,13 @@ const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
 
 export default {
   name: 'ProductForm',
-  components: {
-    MediaManagerModal
-  },
   computed: {
     ...mapGetters({
-      productById: 'products/byId'
+      productById: 'products/byId',
+      selectedImageUrl: 'media/selectedMediaUrl'
     }),
 
     ...mapState({
-      panelOpen: state => state.common.product.openEditPanel,
       productId: state => state.common.product.editId
     }),
 
@@ -84,20 +79,18 @@ export default {
     }
   },
   methods: {
-    saveProduct() {
-      storeProduct(this.form).then(() => {
-        this.$router.push({path: '/products'});
-      }).catch(error => {
-        console.log(error);
-      });
-    },
-    backToListPage() {
-      this.$router.push({path: '/products'});
-    }
+    ...mapActions({
+      openMediaModal: 'common/openMediaManagerModal'
+    })
   },
   watch: {
     productId() {
       this.product = JSON.parse(JSON.stringify(this.currentProduct));
+    },
+
+    selectedImageUrl() {
+      this.product.preview_images = this.selectedImageUrl;
+      this.product.featured_images = this.selectedImageUrl;
     }
   }
 }

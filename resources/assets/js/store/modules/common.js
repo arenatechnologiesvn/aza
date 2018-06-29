@@ -1,8 +1,13 @@
 const common = {
+  namespaced: true,
+
   state: {
     product: {
       editId: '',
-      openEditPanel: false
+      editPanelVisible: false
+    },
+    media: {
+      dialogVisible: false
     }
   },
 
@@ -11,10 +16,17 @@ const common = {
       state.product.editId = id;
     },
     OPEN_PRODUCT_EDIT_PANEL: (state) => {
-      state.product.openEditPanel = true;
+      state.product.editPanelVisible = true;
     },
     CLOSE_PRODUCT_EDIT_PANEL: (state) => {
-      state.product.openEditPanel = false;
+      state.product.editPanelVisible = false;
+    },
+
+    OPEN_MEDIA_MANAGER_MODAL: (state) => {
+      state.media.dialogVisible = true;
+    },
+    CLOSE_MEDIA_MANAGER_MODAL: (state) => {
+      state.media.dialogVisible = false;
     }
   },
 
@@ -27,6 +39,13 @@ const common = {
     },
     closeProductEditPanel ({ commit }) {
       commit('CLOSE_PRODUCT_EDIT_PANEL');
+    },
+
+    openMediaManagerModal ({ commit }) {
+      commit('OPEN_MEDIA_MANAGER_MODAL');
+    },
+    closeMediaManagerModal ({ commit }) {
+      commit('CLOSE_MEDIA_MANAGER_MODAL');
     }
   }
 };

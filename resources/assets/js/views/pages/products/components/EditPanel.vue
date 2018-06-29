@@ -7,8 +7,8 @@
         svg-icon(:icon-class="panelOpen ? 'fa-solid angle-double-right' : 'fa-solid angle-double-left'")
     .kpi-edit__content
       .kpi-edit__header
-        el-tooltip(class="item" effect="dark" :content="currentProduct && currentProduct.name" placement="bottom")
-          span.header-text {{ currentProduct && currentProduct.name }}
+        el-tooltip(class="item" effect="dark" :content="panelTitle" placement="bottom")
+          span.header-text {{ panelTitle }}
       .kpi-edit__form
         .kpi-edit__form-item
           product-form
@@ -34,7 +34,8 @@ export default {
   data() {
     return {
       scrolled: 0,
-      userHeight: 0
+      userHeight: 0,
+      panelTitle: ''
     };
   },
   computed: {
@@ -43,7 +44,7 @@ export default {
     }),
 
     ...mapState({
-      panelOpen: state => state.common.product.openEditPanel,
+      panelOpen: state => state.common.product.editPanelVisible,
       productId: state => state.common.product.editId
     }),
 
@@ -90,9 +91,16 @@ export default {
     },
 
     ...mapActions({
-      openProductEditPanel: 'openProductEditPanel',
-      closeProductEditPanel: 'closeProductEditPanel'
+      openProductEditPanel: 'common/openProductEditPanel',
+      closeProductEditPanel: 'common/closeProductEditPanel'
     })
+  },
+  watch: {
+    productId() {
+      const product = this.currentProduct;
+      if (!product) this.panelTitle = '';
+      this.panelTitle =`${product.product_code}: ${product.name}`
+    }
   },
   created () {
     window.addEventListener('scroll', this.handlePageScroll);

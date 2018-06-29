@@ -1,29 +1,83 @@
+import { getMedia, deleteMedia } from '~/api/media';
+
+const mediaUrl = (media) => {
+  if (!media.filename) return '';
+  return `/${media.directory}/${media.filename}.${media.extension}`;
+};
+
 const media = {
+  namespaced: true,
+
   state: {
-    selectedMediaUrl: ''
+    selectedMedia: {
+      directory: '',
+      filename: '',
+      extension: '',
+      size: ''
+    },
+    previewMedia: {
+      directory: '',
+      filename: '',
+      extension: '',
+      size: ''
+    },
+    mediaList: []
+  },
+
+  getters: {
+    list: (state) => {
+      return state.mediaList;
+    },
+
+    selectedMedia: (state) => {
+      return state.selectedMedia;
+    },
+
+    selectedMediaUrl: (state) => {
+      return mediaUrl(state.selectedMedia);
+    },
+
+    previewMedia: (state) => {
+      return state.previewMedia;
+    },
+
+    previewMediaUrl: (state) => {
+      return mediaUrl(state.previewMedia);
+    }
   },
 
   mutations: {
-    SET_MEDIA_URL: (state, url) => {
-      state.selectedMediaUrl = url;
+    SET_MEDIA_LIST: (state, list) => {
+      state.mediaList = list;
     },
-    OPEN_PRODUCT_EDIT_PANEL: (state) => {
-      state.product.openEditPanel = true;
+
+    SET_MEDIA: (state, media) => {
+      state.selectedMedia = media;
     },
-    CLOSE_PRODUCT_EDIT_PANEL: (state) => {
-      state.product.openEditPanel = false;
+
+    SET_PREVIEW_MEDIA: (state, media) => {
+      state.previewMedia = media;
     }
   },
 
   actions: {
-    setEditProductId ({ commit }, { productId }) {
-      commit('SET_EDIT_PRODUCT_ID', productId);
+    fetchMedia ({ commit }, type) {
+      return new Promise((resolve, reject) => {
+        getMedia(type).then(response => {
+          commit('SET_MEDIA_LIST', response.data);
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      });
     },
-    openProductEditPanel ({ commit }) {
-      commit('OPEN_PRODUCT_EDIT_PANEL');
+
+    setMedia ({ commit }, media) {
+      commit('SET_MEDIA', media);
     },
-    closeProductEditPanel ({ commit }) {
-      commit('CLOSE_PRODUCT_EDIT_PANEL');
+
+    setPreviewMedia ({ commit }, media) {
+      commit('SET_PREVIEW_MEDIA', media);
     }
   }
 };

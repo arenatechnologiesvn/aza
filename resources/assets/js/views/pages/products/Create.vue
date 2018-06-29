@@ -27,14 +27,30 @@
           el-button(type="info" size="small" @click="backToListPage")
             svg-icon(icon-class="fa-solid ban")
             span(style="margin-left: 10px") Hủy bỏ
+    media-manager-modal(type="product")
 </template>
 
 <script>
-  import ProductForm from './components/Form'
+  import ProductForm from './components/Form';
+  import MediaManagerModal from '~/components/MediaManager/modal';
+
   export default {
     name: 'CreateProduct',
     components: {
-      ProductForm
+      ProductForm,
+      MediaManagerModal
+    },
+    methods: {
+      saveProduct() {
+        storeProduct(this.form).then(() => {
+          this.$router.push({path: '/products'});
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      backToListPage() {
+        this.$router.push({path: '/products'});
+      }
     }
   }
 </script>

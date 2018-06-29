@@ -63,16 +63,19 @@
           svg-icon(icon-class="fa-solid check")
           span  Xác nhận
     edit-panel
+    media-manager-modal(type="product")
 </template>
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
 import EditPanel from './EditPanel';
+import MediaManagerModal from '~/components/MediaManager/modal';
 
 export default {
   name: 'product-table',
   components: {
-    EditPanel
+    EditPanel,
+    MediaManagerModal
   },
   computed: {
     ...mapGetters({
@@ -107,8 +110,8 @@ export default {
       fetchProduct: 'products/fetchSingle',
       fetchCategories: 'categories/fetchList',
       fetchProviders: 'providers/fetchList',
-      setEditProductId: 'setEditProductId',
-      openProductEditPanel: 'openProductEditPanel'
+      setEditProductId: 'common/setEditProductId',
+      openProductEditPanel: 'common/openProductEditPanel'
     }),
 
     fetchData() {
