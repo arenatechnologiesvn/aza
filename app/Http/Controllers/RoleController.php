@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Roles\RoleCreateRequest;
 use App\Http\Requests\Roles\RoleUpdateRequest;
+use App\Http\Responses\FailedResponse;
+use App\Http\Responses\Roles\RoleDeleteResponse;
 use App\Http\Responses\Roles\RoleEditResponse;
+use App\Http\Responses\Roles\RoleGetByIdResponse;
 use App\Http\Responses\Roles\RoleIndexResponse;
 use App\Role;
+use App\User;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -24,7 +28,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        $roles = $this->role->get();
         return new RoleIndexResponse($roles);
     }
 
@@ -52,7 +56,7 @@ class RoleController extends Controller
     public function show($id)
     {
         $role = Role::find($id);
-        return new RoleEditResponse($role);
+        return new RoleGetByIdResponse($role);
     }
 
     /**
@@ -86,6 +90,13 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->role->find($id)->delete();
+        $roleDeleted = $this->role->onlyTrashed()->find($id);
+        return $roleDeleted ? new RoleDeleteResponse($roleDeleted) : new FailedResponse();
+    }
+
+    public function deletes(){
+        $this->role->whereIn('id', request()->all())->delete();
+        return response()->json(['data'=>request()->all()], 200);
     }
 }

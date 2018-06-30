@@ -2,7 +2,7 @@
   div.form__wrapper
     el-form(ref="form" v-model="role")
       el-form-item(label="Tên quyền")
-        el-input(v-model="role.title")
+        el-input(v-model="role.title" v-bind:disabled="isUpdate")
       el-form-item(label="Mô tả")
         el-input(v-model="role.description" type="textarea" rows="3")
       el-form-item
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex'
   export default {
     name: 'RoleForm',
     props: {
@@ -37,19 +38,27 @@
       }
     },
     methods: {
+      ...mapActions('roles', {
+        createRole: 'create',
+        updateRole: 'update'
+      }),
       back () {
         this.$router.go(-1)
       },
       update () {
-        this.$store.dispatch('role/update', this.role).then(res => {
-          this.$router.push({name: 'roles', replace: true})
-        }).catch(err => {
-          console.log(err)
-          this.$message.error('Error! Cannot update role');
-        })
+        this.updateRole({
+          id: this.$route.params.id,
+          data: this.role
+        }).then(() => this.$router.push({name: 'roles', replace: true}))
+          .catch(err => {
+            console.log(err)
+            this.$message.error('Error! Cannot update role')
+          })
       },
       create () {
-        this.$store.dispatch('role/create', this.role).then(res => {
+        this.createRole({
+          data: this.role
+        }).then(() => {
           this.$router.push({name: 'roles'})
         }).catch(err => {
           console.log(err)

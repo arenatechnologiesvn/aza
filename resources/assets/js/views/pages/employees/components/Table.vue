@@ -1,37 +1,35 @@
 <template lang="pug">
   div.index__container
     div.table
-      el-table(:data="employees" border  style="width: 100%")
+      el-table(:data="employees.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
         el-table-column(type="selection" width="40")
-        el-table-column(prop="avatar" width="80" label="AVATAR")
+        el-table-column(prop="avatar" width="60")
           template(slot-scope="scope")
-            img(:src="scope.row.avatar" width="50" height="50")
+            img(:src="scope.row.avatar" width="40" height="40")
         el-table-column(prop="full_name" label="HỌ TÊN" sortable)
-        el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable width="180")
+        el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable width="120")
         el-table-column(prop="email" label="EMAIL" sortable width="180")
+        el-table-column(prop="customer_count" label="SỐ KHÁCH HÀNG" sortable width="140"  :formatter="(row, column) => `${row.customer_count} Khách hàng`")
         el-table-column(prop="role_name" label="VAI TRÒ" sortable width="180")
-        el-table-column(prop="id" label="TÁC VỤ" width="100")
+        el-table-column(prop="is_active" label="TRẠNG THÁI" sortable width="120")
           template(slot-scope="scope")
-            el-button(type="text" size="small" @click="handleEdit(scope.row.id)") Edit
-            label(style="width: 15px; display: inline-block; text-align: center") /
-            el-button(slot="reference" @click="dialogShow = true" size="small" type="text" style="color: red;") Delete
+            el-switch(v-model="scope.row.is_active" @change="onChangeStatus(scope.row.id, scope.row.is_active)")
+        el-table-column(prop="id" label="TÁC VỤ" width="130")
+          template(slot-scope="scope")
+            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
+              el-button(size="mini" @click="handleEdit(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid user-edit")
+            el-tooltip(effect="dark" content="Xóa" placement="top")
+              el-button(size="mini" type="danger" @click="onDelete(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid trash-alt")
     div.pagination__wrapper
       el-pagination(@size-change="handleSizeChange"
         @current-change="handleCurrentChange"
           :current-page.sync="currentPage"
-          :page-sizes="[5, 10, 20, 40]"
-          :page-size="10"
+          :page-sizes="[1, 5, 10, 20, 40]"
+          :page-size="pageSize"
       layout="total, sizes, prev, pager, next"
-        :total="total")
-    div
-      el-dialog(title="Xóa nhân viên"
-        :visible.sync="dialogShow"
-      width="30%"
-      center)
-        span  Bạn muốn xóa nhân viên này
-        span(slot="footer" class="dialog-footer")
-          el-button(@click="dialogShow = false") Hủy
-          el-button(type="primary" @click="dialogShow = false") Đồng ý
+        :total="employees.length")
 
 </template>
 
@@ -41,9 +39,9 @@
     name: 'EmployeeTable',
     data () {
       return {
-        dialogShow: false,
         currentPage: 1,
-        showDialog: false
+        showDialog: false,
+        pageSize: 10
       }
     },
     props: {
@@ -58,17 +56,23 @@
     },
     methods: {
       handleSizeChange (size) {
-        this.$emit('on-size-change', size)
+        this.pageSize = size
       },
       handleCurrentChange (current) {
-        this.$emit('on-current-change', current)
+        this.currentPage = current
       },
       handleEdit (id) {
         this.$emit('on-update', id)
       },
       onDelete (id) {
         this.$emit('on-delete', id)
-        this.showDialog = false
+        alert(id)
+      },
+      onChangeStatus(id, isActive) {
+        this.$emit('on-change-status', id, {
+          id: id,
+          is_active: isActive
+        })
       }
     }
   }

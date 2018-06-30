@@ -6,6 +6,7 @@ use App\Employee;
 use App\Http\Requests\Employees\EmployeeCreateRequest;
 use App\Http\Responses\Employees\EmployeeCreateResponse;
 use App\Http\Responses\Employees\EmployeeIndexResponse;
+use App\Http\Responses\Employees\EmployeeUpdateResponse;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -21,7 +22,7 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return EmployeeIndexResponse
      */
     public function index()
     {
@@ -33,7 +34,7 @@ class EmployeeController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return EmployeeCreateResponse
      */
     public function store(EmployeeCreateRequest $request)
     {
@@ -62,6 +63,9 @@ class EmployeeController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $employee = $this->employee->find($id);
+        $employee->user->update($request->all());
+        return new EmployeeUpdateResponse($employee);
     }
 
     /**

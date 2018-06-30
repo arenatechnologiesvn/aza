@@ -37,10 +37,7 @@
               el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
         el-col(:span="24")
           el-form-item(style="margin: 0 10px")
-            el-checkbox(label="Online activities")
-        el-col(:span="24")
-          el-form-item(style="margin: 0 10px")
-            el-checkbox(label="Active")
+            el-checkbox(label="Đang hoạt động" v-model="employee.is_active")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
             el-button(type="primary" @click="handleSubmit")
@@ -52,7 +49,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions} from 'vuex'
   import MediaManagerModal from '~/components/MediaManager/modal';
   import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
@@ -89,11 +86,11 @@
       }
     },
     computed: {
-      ...mapGetters('role', {
-        'roles': 'list'
+      ...mapGetters('roles', {
+        roles: 'list'
       }),
       roleList () {
-        return this.roles.map(item => {
+        return this.roles.filter(item => item.is_employee).map(item => {
           return {
             id: item.id,
             value: item.description
@@ -105,6 +102,9 @@
       back () {
         this.$router.go(-1)
       },
+      ...mapActions('roles', {
+        fetchRoles: 'fetchList'
+      }),
       update () {
         this.$store.dispatch('employee/update', this.employee).then(res => {
           this.$router.push({name: 'employees', replace: true})
@@ -124,6 +124,9 @@
       handleSubmit () {
         this.isUpdate ? this.update() : this.create()
       }
+    },
+    created () {
+      this.fetchRoles()
     }
   }
 </script>

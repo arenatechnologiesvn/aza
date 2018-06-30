@@ -9,6 +9,7 @@
 namespace App\Http\Responses\Roles;
 
 
+use App\Helper\ApiResponse;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
 
@@ -29,7 +30,7 @@ class RoleIndexResponse implements Responsable
      */
     public function toResponse($request)
     {
-        return response()->json(['data'=>$this->convertToDto()], 200);
+        return response()->json(new ApiResponse('Get Roles Successful', $this->convertToDto(), 200));
         // TODO: Implement toResponse() method.
     }
 
@@ -39,7 +40,7 @@ class RoleIndexResponse implements Responsable
                 'id' => $item->id,
                 'title' => $item->title,
                 'description' => $item->description,
-                'is_employee' => $item->is_employee
+                'is_employee' => (bool) $item->is_employee
             ];
         });
     }

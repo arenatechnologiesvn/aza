@@ -3,9 +3,8 @@ import Vuex from 'vuex';
 import app from './modules/app';
 import user from './modules/user';
 import permission from './modules/permission';
-import role from './modules/role';
 import roles from './modules/roles';
-import employee from './modules/employee';
+import employees from './modules/employees';
 import customer from './modules/customer';
 import shop from './modules/shop';
 import getters from './getters';
@@ -17,8 +16,7 @@ const store = new Vuex.Store({
     app,
     user,
     permission,
-    role,
-    employee,
+    employees,
     shop,
     customer,
     roles

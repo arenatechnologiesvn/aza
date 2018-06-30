@@ -10,6 +10,7 @@ namespace App\Http\Responses\Employees;
 
 
 use App\Employee;
+use App\Helper\ApiResponse;
 use Illuminate\Contracts\Support\Responsable;
 
 class EmployeeIndexResponse implements Responsable
@@ -22,7 +23,7 @@ class EmployeeIndexResponse implements Responsable
      */
     public function toResponse($request)
     {
-        return response()->json($this->toDto(), 200);
+        return response()->json(new ApiResponse('Get Employees successful', $this->toDto(), 200));
         // TODO: Implement toResponse() method.
 
     }
@@ -41,7 +42,9 @@ class EmployeeIndexResponse implements Responsable
                 'phone' => $item->user->phone,
                 'full_name' => $item->user->first_name . ' ' . $item->user->last_name,
                 'first_name' => $item->user->first_name,
-                'last_name' => $item->user->last_name
+                'last_name' => $item->user->last_name,
+                'is_active' => (bool) $item->user->is_active,
+                'customer_count' => count($item->customers)
             ];
         });
     }

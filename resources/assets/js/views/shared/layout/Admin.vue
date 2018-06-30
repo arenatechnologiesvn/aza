@@ -36,7 +36,7 @@
     },
     data () {
       return {
-        collapsed: false,
+        collapsed: true,
         logo,
         listBreadcrumb: this.$route.matched
       }
@@ -85,9 +85,9 @@
       }
     },
     created () {
-      this.$store.dispatch('role/getList')
-      this.$store.dispatch('employee/getList')
-      this.$store.dispatch('customer/getList')
+      // this.$store.dispatch('role/getList')
+      // this.$store.dispatch('employee/getList')
+      // this.$store.dispatch('customer/getList')
     }
   }
 </script>

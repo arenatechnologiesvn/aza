@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 //    Route::post('role', 'RoleController@create');
 //    Route::put('role/{id}', 'RoleController@update');
     Route::resource('role', 'RoleController');
+    Route::delete('roles/deletes', 'RoleController@deletes');
     Route::resource('roles', 'RoleController');
     Route::resource('employees', 'EmployeeController');
     Route::resource('customers', 'CustomerController');

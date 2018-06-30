@@ -1,5 +1,5 @@
 import createCrudModule from './crud';
 export default createCrudModule({
-  resource: 'roles',
+  resource: 'employees',
   idAttribute: 'id'
 });

@@ -76,3 +76,18 @@
   height: 45px;
   line-height: 45px;
 }
+.el-table th {
+  background-color: #f6f8fa;
+}
+.caret-wrapper {
+  float: right;
+}
+.el-table .cell {
+  line-height: 30px;
+}
+.el-table--small td, .el-table--small th {
+  padding: 8px 0;
+}
+button:not(.is-round) svg {
+  margin-right: 5px;
+}

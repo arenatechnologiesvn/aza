@@ -1,7 +1,7 @@
 <template lang="pug">
   div.index__container
     div.table
-      el-table(:data="roles" border v-loading="loading"  style="width: 100%" size="small" @selection-change="selectChange")
+      el-table(:data="roles" border style="width: 100%" size="small" @selection-change="selectChange")
         el-table-column(type="selection" width="40")
         el-table-column(prop="title" label="TÊN QUYỀN" sortable)
         el-table-column(prop="description" label="MÔ TẢ" sortable width="180")
@@ -10,7 +10,7 @@
             el-button(type="warning" size="mini" @click="handleEdit(scope.row.id)")
               svg-icon(icon-class="fa-solid user-edit")
               span(style="margin-left: 5px") Sửa
-            el-button(type="danger" size="mini")
+            el-button(type="danger" size="mini" @click="handleDelete(scope.row.id)")
               svg-icon(icon-class="fa-solid trash-alt")
               span(style="margin-left: 5px") Xóa
     <!--div.pagination__wrapper-->
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-
+  import { mapActions } from 'vuex'
   export default {
     name: 'RoleTable',
     data () {
@@ -50,6 +50,12 @@
       }
     },
     methods: {
+      ...mapActions('roles', {
+        deleteRole: 'destroy'
+      }),
+      remove (id) {
+        return this.deleteRole({id})
+      },
       handleSizeChange (size) {
         this.$emit('on-size-change', size)
       },
@@ -58,6 +64,26 @@
       },
       handleEdit (id) {
         this.$emit('on-update', id)
+      },
+      handleDelete (id) {
+        this.$confirm('Bạn muốn xóa quyền này?', 'Xác nhận xóa', {
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Hủy bỏ',
+          type: 'warning',
+          confirmButtonClass: 'el-button el-button--danger'
+        }).then(() => {
+          this.remove(id).then(() => {
+            this.$message({
+              type: 'success',
+              message: `Delete completed ${id}`
+            })
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: 'Delete canceled'
+          });
+        });
       },
       onDelete (id) {
         this.$emit('on-delete', id)
