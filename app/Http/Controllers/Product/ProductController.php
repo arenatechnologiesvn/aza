@@ -65,29 +65,30 @@ class ProductController extends Controller
             'product_code' => 'required|unique:products|max:255',
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'discountPrice' => 'numeric',
+            'discount_price' => 'numeric',
             'unit' => 'required|string|max:255',
-            'imageUrl'=> 'required|string|max:500',
-            'categoryId' => 'required|exists:categories,id',
-            'providerId' => 'required|exists:providers,id',
+            'preview_images'=> 'required|string|max:500',
+            'featured_images'=> 'required|string|max:500',
+            'category_id' => 'required|exists:categories,id',
+            'provider_id' => 'required|exists:providers,id',
             'description'=> 'string|max:500',
         ]);
 
         $product = Product::create([
             'product_code' => $data['product_code'],
             'name' => $data['name'],
-            'description' => $data['description'],
             'unit' => $data['unit'],
             'price' => $data['price'],
-            'discount_price' => $data['discountPrice'],
-            'preview_images' => $data['imageUrl'],
-            'featured_images' => $data['imageUrl'],
-            'category_id' => $data['categoryId'],
-            'provider_id' => $data['providerId']
+            'discount_price' => $data['discount_price'],
+            'preview_images' => $data['preview_images'],
+            'featured_images' => $data['featured_images'],
+            'category_id' => $data['category_id'],
+            'provider_id' => $data['provider_id'],
+            'description' => $data['description'],
         ]);
 
         if (!$product) {
-            return response(['message' => 'Store product failed'], 433);
+            return response(['message' => 'failed'], 433);
         }
 
         return response(['message' => 'success'], 200);

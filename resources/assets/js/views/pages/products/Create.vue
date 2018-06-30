@@ -18,13 +18,13 @@
               router-link(to="/shop/create")
                 svg-icon(icon-class="fa-solid hand-pointer")
                 span(style="margin-left: 5px;") Thêm mới nhà cung cấp
-      product-form
+      product-form(ref="productCreateForm")
       el-row(type="flex" justify="end" style="text-align: right; margin: 10px 14px 0 0;")
         el-col(:span="24")
-          el-button(type="primary" size="small" @click="saveProduct")
+          el-button(type="primary" size="small" @click="save")
             svg-icon(icon-class="fa-solid save")
             span(style="margin-left: 10px") Lưu
-          el-button(type="info" size="small" @click="backToListPage")
+          el-button(type="info" size="small" @click="cancel")
             svg-icon(icon-class="fa-solid ban")
             span(style="margin-left: 10px") Hủy bỏ
     media-manager-modal(type="product")
@@ -33,6 +33,7 @@
 <script>
   import ProductForm from './components/Form';
   import MediaManagerModal from '~/components/MediaManager/modal';
+  import { mapActions, mapGetters } from 'vuex';
 
   export default {
     name: 'CreateProduct',
@@ -40,17 +41,39 @@
       ProductForm,
       MediaManagerModal
     },
+    computed: {
+      ...mapGetters({
+        getFormProduct: 'products/getFormProduct'
+      })
+    },
     methods: {
-      saveProduct() {
-        storeProduct(this.form).then(() => {
-          this.$router.push({path: '/products'});
-        }).catch(error => {
-          console.log(error);
+      save() {
+        this.$confirm('Bạn có muốn tạo sản phẩm này không?', 'Xác nhận', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Hủy',
+          type: 'success'
+        }).then(() => {
+          this.$refs.productCreateForm.isValidForm().then((valid) => {
+            if (valid) {
+              this.createProduct({ data: this.getFormProduct });
+            }
+          });
         });
       },
-      backToListPage() {
-        this.$router.push({path: '/products'});
-      }
+
+      cancel() {
+        this.$confirm('Bạn có muốn hủy tạo sản phẩm này không?', 'Xác nhận', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Hủy',
+          type: 'warning'
+        }).then(() => {
+          this.$router.push({ path: '/products' });
+        });
+      },
+
+      ...mapActions({
+        createProduct: 'products/create'
+      })
     }
   }
 </script>

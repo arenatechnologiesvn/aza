@@ -61,7 +61,6 @@ service.interceptors.response.use((response) => {
   return Promise.reject('error');
 }, (error) => {
   console.log('err' + error); // for debug
-  setErrorNotify(error);
   return Promise.reject(error);
 });
 

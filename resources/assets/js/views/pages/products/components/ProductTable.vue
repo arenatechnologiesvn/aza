@@ -19,7 +19,10 @@
     div.control__wrapper
       el-row
         el-col(:span="12")
-          h4.control__info(style="margin: 0;") Đã chọn {{ multipleSelection.length }} khách hàng
+          el-dropdown(split-button type="primary" size="small")
+            span Đã chọn {{ multipleSelection.length }} sản phẩm
+            el-dropdown-menu(slot="dropdown")
+              el-dropdown-item Xóa
         el-col(:span="12" style="text-align: right;")
           el-button(type="success" size="small")
             svg-icon(icon-class="fa-solid file-excel")
@@ -82,19 +85,14 @@ export default {
       products: 'products/list',
       categories: 'categories/list',
       providers: 'providers/list'
-    }),
-    ...mapState([
-      'route', // vuex-router-sync
-    ]),
-    tableData() {
-      return this.products;
-    }
+    })
   },
   created() {
     this.fetchData();
   },
   data() {
     return {
+      tableData: [],
       currentPage: 1,
       multipleSelection: [],
       searchWord: '',
@@ -108,28 +106,18 @@ export default {
     ...mapActions({
       fetchProducts: 'products/fetchList',
       fetchProduct: 'products/fetchSingle',
-      fetchCategories: 'categories/fetchList',
-      fetchProviders: 'providers/fetchList',
       setEditProductId: 'common/setEditProductId',
       openProductEditPanel: 'common/openProductEditPanel'
     }),
 
     fetchData() {
-      this.fetchProductData();
-      this.fetchCategoryData();
-      this.fetchProviderData();
+      this.fetchProductData().then(() => {
+        this.tableData = JSON.parse(JSON.stringify(this.products));
+      });
     },
 
     fetchProductData() {
       return this.fetchProducts();
-    },
-
-    fetchCategoryData() {
-      return this.fetchCategories();
-    },
-
-    fetchProviderData() {
-      return this.fetchProviders();
     },
 
     openEditPanel(productId) {
@@ -140,13 +128,13 @@ export default {
     },
 
     filterData() {
-      this.tableData = this.products.slice();
+      this.tableData = JSON.parse(JSON.stringify(this.products));
       const filterWord = this.searchWord && this.searchWord.toLowerCase();
 
       if (filterWord !== '') {
         filterWord.trim().split(/\s/).forEach(word => {
           this.tableData = this.tableData.filter(item => {
-            return item.name.indexOf(word) > 1;
+            return item.name.toLowerCase().indexOf(word) > -1;
           });
         });
       }
@@ -159,10 +147,11 @@ export default {
 
       if (this.selectedProvider) {
         this.tableData = this.tableData.filter(item => {
-          return item.category && item.category.id === this.selectedProvider;
+          return item.provider && item.provider.id === this.selectedProvider;
         });
       }
     },
+
     handleSelectionChange(val) {
         this.multipleSelection = val;
     },
@@ -197,8 +186,7 @@ export default {
   watch: {
     searchWord() {
       this.filterData();
-    },
-    $route: 'fetchData'
+    }
   }
 }
 </script>
