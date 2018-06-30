@@ -14,29 +14,26 @@
             span  Xóa
       el-container.media-container
         el-aside.aside-container(width="200px")
-          div(v-if="images.length > 0")
-            img.aside-image(:src="selectedImageUrl()")
-            el-row.aside-info
-              div
-                span(style="font-weight: bold") Tên:
-                span  {{ currentImage.filename }}.{{ currentImage.extension }}
-              div
-                span(style="font-weight: bold") Size:
-                span  {{ bytesToSize(currentImage.size) }}
-              div
-                span(style="font-weight: bold") Loại file:
-                span  {{ currentImage.mime_type }}
+          img.aside-image(:src="previewImageUrl || dummyImage")
+          el-row.aside-info
+            .row-info
+              span.image-info Tên
+              span {{ previewImage.filename }}.{{ previewImage.extension }}
+            .row-info
+              span.image-info Size
+              span {{ bytesToSize(previewImage.size) }}
+            .row-info
+              span.image-info Loại file
+              span {{ previewImage.mime_type }}
         el-main
           div.clearfix
             ul.__file-box-container
               li.attach-image(v-for="(image, index) in images" :key="index")
-                div.__file-box(v-touch:tap="selectImage(image)" :class="[image.id == currentImage.id ? 'selected': '']")
+                div.__file-box(v-touch:tap="selectImage(image)" :class="[image.id == previewImage.id ? 'selected': '']")
                   div.__box-data
                       div.__box-preview
                         div.__box-img
-                          img(:src="'/' + image.directory + '/' + image.filename + '.' + image.extension"
-                            v-bind:alt="image.directory"
-                            v-bind:title="(image.meta_data !== null) ? image.meta_data.alt : ''")
+                          img(:src="'/' + image.directory + '/' + image.filename + '.' + image.extension")
 
                       div.__box-info
                         div
@@ -50,9 +47,10 @@
 </template>
 
 <script>
-  import { getMedia, deleteMedia } from '~/api/media';
+  import { mapGetters, mapActions, mapState } from 'vuex';
   import { getToken } from '~/utils/auth';
   import Dropzone from 'vue2-dropzone';
+  import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
   const MEDIA_UPLOAD_API = `http://${location.host}/api/media/upload`;
   const FILE_SIZES = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -68,13 +66,18 @@
         required: true
       }
     },
+    computed: {
+      ...mapGetters({
+        images: 'media/list',
+        previewImage: 'media/previewMedia',
+        previewImageUrl: 'media/previewMediaUrl'
+      })
+    },
     created () {
       this.getMediaData();
     },
     data () {
       return {
-        images: [],
-        currentImage: this.setCurrentImage(),
         dropzoneOptions: {
           url: MEDIA_UPLOAD_API,
           thumbnailWidth: 150,
@@ -83,37 +86,45 @@
           params: {
             type: this.type
           }
-        }
+        },
+        dummyImage: dummyImage
       }
     },
     methods: {
-      setCurrentImage() {
-        return {
-          directory: '',
-          filename: '',
-          extension: '',
-          meta_data: {
-            alt: '',
-            caption: '',
-            currentImageId: null
-          }
+      selectImage(image) {
+        return () => {
+          this.setPreviewMedia(image);
         };
       },
+
+      getMediaData() {
+        this.fetchMedia(this.type);
+      },
+
+      deleteImage() {
+        deleteMedia(this.type, this.selectedImage.id).then(() => {
+          this.getMediaData();
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+
       showSuccess(file, response) {
         this.getMediaData();
       },
-      handleImageDetails(image) {
-        this.currentImage = image
-        if (image.meta_data == null) {
-          image.meta_data = {
-            alt: '',
-            caption: '',
-            currentImageId: image.id
-          };
-        } else {
-          (typeof image.meta_data === 'object') ? this.currentImage.meta_data = image.meta_data : this.currentImage.meta_data = JSON.parse(image.meta_data);
-        }
+
+      bytesToSize(bytes) {
+        if (bytes === '') return '';
+        if (bytes === 0) return '0 Byte';
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + FILE_SIZES[i];
       },
+
+      ...mapActions({
+        fetchMedia: 'media/fetchMedia',
+        setPreviewMedia: 'media/setPreviewMedia'
+      })
+
       // handleImageMetaDataSave() {
       //   this.currentImage.meta_data.currentImageId = this.currentImage.id
       //   this.$http.post(metaDataSave, this.currentImage.meta_data)
@@ -123,37 +134,6 @@
       //       console.log('error', error)
       //   })
       // },
-      bytesToSize(bytes) {
-        if (bytes == 0) return '0 Byte';
-        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + FILE_SIZES[i];
-      },
-      selectImage(image) {
-        return () => {
-          this.handleImageDetails(image);
-        };
-      },
-      getMediaData() {
-        getMedia(this.type).then(response => {
-          this.images = response.data;
-
-          if (this.images.length) {
-            this.handleImageDetails(this.images[0]);
-          }
-        }).catch(error => {
-          console.log(error);
-        });
-      },
-      selectedImageUrl() {
-        return `/${this.currentImage.directory}/${this.currentImage.filename}.${this.currentImage.extension}`;
-      },
-      deleteImage() {
-        deleteMedia(this.type, this.currentImage.id).then(() => {
-          this.getMediaData();
-        }).catch(error => {
-          console.log(error);
-        });
-      }
     }
   }
 </script>
@@ -185,7 +165,7 @@
 
   .media-container {
     height: 400px;
-    border: 1px solid rgb(238, 238, 238);
+    border: 1px solid #e4e7ed;
 
     .aside-container {
       background-color: rgb(238, 241, 246);
@@ -193,10 +173,28 @@
       .aside-image {
         width: 200px;
         height: 200px;
+        background: #909399;
+        border-right: 1px solid #e4e7ed;
+        border-bottom: 1px solid #e4e7ed;
       }
 
       .aside-info {
         padding: 10px 0 0 10px;
+        font-size: 12px;
+
+        .row-info {
+          margin-top: 3px;
+
+          .image-info {
+            font-weight: bold;
+            background: #909399;
+            padding: 4px 5px 4px;
+            border-color: #909399;
+            border-radius: 3px;
+            color: white;
+            margin-right: 3px;
+          }
+        }
       }
     }
   }

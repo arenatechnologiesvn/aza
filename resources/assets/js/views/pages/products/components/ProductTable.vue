@@ -19,38 +19,44 @@
     div.control__wrapper
       el-row
         el-col(:span="12")
-          h4.control__info(style="margin: 0;") Đã chọn {{ multipleSelection.length }} khách hàng
+          el-dropdown(split-button type="primary" size="small")
+            span Đã chọn {{ multipleSelection.length }} sản phẩm
+            el-dropdown-menu(slot="dropdown")
+              el-dropdown-item Xóa
         el-col(:span="12" style="text-align: right;")
-          el-button(type="success" size="medium")
+          el-button(type="success" size="small")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
-          el-button(type="primary" size="medium" @click="redirectToAddingPage")
-            svg-icon(icon-class="fa-solid plus")
+          el-button(type="primary" size="small" @click="redirectToAddingPage")
+            svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới
     div.table__wrapper
       div.index__container
         div.table
-          el-table(:data="tableData" border  style="width: 100%" @selection-change="handleSelectionChange")
-            el-table-column(type="selection" width="40")
-            el-table-column(prop="preview_images" label="HÌNH ẢNH" width="90")
+          el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange")
+            el-table-column(type="selection" header-align="center" align="center" width="40")
+            el-table-column(prop="preview_images" align="center" width="60")
               template(slot-scope="scope")
-                img(:src="scope.row.preview_images" :width="50" :height="50")
+                img(:src="scope.row.preview_images" :width="40" :height="40")
             el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable)
-            el-table-column(prop="price" label="GIÁ" sortable width="180")
+            el-table-column(prop="price" label="GIÁ (VND)" sortable width="180")
+              template(slot-scope="scope")
+                span {{ Number(scope.row.price).toLocaleString('de-DE') }}
             el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
             el-table-column(prop="category.name" label="DANH MỤC" sortable)
             el-table-column(prop="provider.name" label="NHÀ CUNG CẤP" sortable)
-            el-table-column(prop="id" label="TÁC VỤ" width="100" fixed="right")
+            el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-button(type="text" size="small") Cập nhật
-                span /
-                el-button(type="text" size="small" @click="" style="color: red") Xóa
+                el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
+                  el-button(type="warning" icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
+                el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
+                  el-button(type="danger" icon="el-icon-delete" size="mini" round @click="openDeleteConfirmModal")
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 50]"
-            :page-size="20"
+            :page-size="10"
             layout="total, sizes, prev, pager, next"
-            :total="originProducts.length")
+            :total="tableData.length")
     el-dialog(title="Xác nhận xóa sản phẩm" :visible.sync="confirmDialogVisible" width="30%" center)
       el-row(type="flex" justify="center")
         span Bạn có chắc chắn muốn xóa sản phẩm này!
@@ -61,40 +67,35 @@
         el-button(type="primary" @click="deleteOneProduct")
           svg-icon(icon-class="fa-solid check")
           span  Xác nhận
+    edit-panel
+    media-manager-modal(type="product")
 </template>
 
 <script>
-import { getProducts, deleteProduct } from '~/api/product.js';
-import { getCategories } from '~/api/category.js';
-import { getProviders } from '~/api/provider.js';
+import { mapGetters, mapActions, mapState } from 'vuex';
+import EditPanel from './EditPanel';
+import MediaManagerModal from '~/components/MediaManager/modal';
 
 export default {
   name: 'product-table',
+  components: {
+    EditPanel,
+    MediaManagerModal
+  },
+  computed: {
+    ...mapGetters({
+      products: 'products/list',
+      categories: 'categories/list',
+      providers: 'providers/list'
+    })
+  },
   created() {
-    getProducts().then(response => {
-      this.tableData = response.data;
-      this.originProducts = this.tableData;
-    });
-
-    getCategories().then(response => {
-      this.categories = response.data;
-    }).catch(error => {
-      this.categories = [];
-    });
-
-    getProviders().then(response => {
-      this.providers = response.data;
-    }).catch(error => {
-      this.providers = [];
-    });
+    this.fetchData();
   },
   data() {
     return {
-      currentPage: 1,
-      originProducts: [],
       tableData: [],
-      categories: [],
-      providers: [],
+      currentPage: 1,
       multipleSelection: [],
       searchWord: '',
       selectedCategory: '',
@@ -104,14 +105,38 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      fetchProducts: 'products/fetchList',
+      fetchProduct: 'products/fetchSingle',
+      setEditProductId: 'common/setEditProductId',
+      openProductEditPanel: 'common/openProductEditPanel'
+    }),
+
+    fetchData() {
+      this.fetchProductData().then(() => {
+        this.tableData = JSON.parse(JSON.stringify(this.products));
+      });
+    },
+
+    fetchProductData() {
+      return this.fetchProducts();
+    },
+
+    openEditPanel(productId) {
+      this.fetchProduct({ id: productId }).then(() => {
+        this.setEditProductId({ productId: productId });
+        this.openProductEditPanel();
+      });
+    },
+
     filterData() {
-      this.tableData = this.originProducts.slice();
+      this.tableData = JSON.parse(JSON.stringify(this.products));
       const filterWord = this.searchWord && this.searchWord.toLowerCase();
 
       if (filterWord !== '') {
         filterWord.trim().split(/\s/).forEach(word => {
           this.tableData = this.tableData.filter(item => {
-            return item.name.indexOf(word) > 1;
+            return item.name.toLowerCase().indexOf(word) > -1;
           });
         });
       }
@@ -124,10 +149,11 @@ export default {
 
       if (this.selectedProvider) {
         this.tableData = this.tableData.filter(item => {
-          return item.category && item.category.id === this.selectedProvider;
+          return item.provider && item.provider.id === this.selectedProvider;
         });
       }
     },
+
     handleSelectionChange(val) {
         this.multipleSelection = val;
     },
@@ -138,7 +164,7 @@ export default {
       // openDeleteConfirmModal(scope.row.id)
 
       deleteProduct(this.deleteProductId).then(response => {
-        this.originProducts = response.data;
+        this.products = response.data;
         
         // remove deleted item out of table data
         this.tableData = this.tableData.filter(item => {

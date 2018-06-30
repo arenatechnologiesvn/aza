@@ -26,7 +26,7 @@ class Product extends Model
         'provider_id'
     ];
 
-    public $primaryKey = 'product_code';
+    public $primaryKey = 'id';
 
     public function category()
     {

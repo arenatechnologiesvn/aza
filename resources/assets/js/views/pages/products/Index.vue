@@ -21,7 +21,8 @@
 </template>
 
 <script>
-  import ProductTable from './components/ProductTable'
+  import ProductTable from './components/ProductTable';
+
   export default {
     name: 'ProductIndex',
     components: {
@@ -29,7 +30,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>
