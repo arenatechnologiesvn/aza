@@ -15,10 +15,12 @@
             el-input(v-model="product.product_code" placeholder="Mã sản phẩm")
         el-col(:span="12")
           el-form-item(prop="price" )
-            el-input(v-model="product.price" placeholder="Giá sản phẩm (VND)")
+            el-input(v-model="product.price" placeholder="Giá sản phẩm")
+              template(slot="append") VND
         el-col(:span="12")
           el-form-item(prop="discount_price")
-            el-input(v-model="product.discount_price" placeholder="Giá khuyến mãi (VND)")
+            el-input(v-model="product.discount_price" placeholder="Giá khuyến mãi")
+              template(slot="append") VND
         el-col(:span="12")
           el-form-item(prop="category_id")
             el-select(v-model="product.category_id" clearable placeholder="Danh mục sản phẩm" style="width: 100%")
@@ -68,7 +70,11 @@ export default {
       rules: {
         name: [
           { required: true, message: 'Làm ơn nhập tên sản phẩm', trigger: 'blur' },
-          { max: 255, message: 'Tên sản phẩm nhỏ hơn 255 ký tự', trigger: 'blur' }
+          { max: 255, message: 'Tên sản phẩm phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+        ],
+        product_code: [
+          { required: true, message: 'Làm ơn nhập mã sản phẩm', trigger: 'blur' },
+          { max: 255, message: 'Mã sản phẩm phải nhỏ hơn 255 ký tự', trigger: 'blur' }
         ]
       }
     }

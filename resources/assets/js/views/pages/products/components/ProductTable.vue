@@ -28,7 +28,7 @@
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
           el-button(type="primary" size="small" @click="redirectToAddingPage")
-            svg-icon(icon-class="fa-solid plus")
+            svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới
     div.table__wrapper
       div.index__container
@@ -40,19 +40,21 @@
                 img(:src="scope.row.preview_images" :width="40" :height="40")
             el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable)
             el-table-column(prop="price" label="GIÁ (VND)" sortable width="180")
+              template(slot-scope="scope")
+                span {{ Number(scope.row.price).toLocaleString('de-DE') }}
             el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
             el-table-column(prop="category.name" label="DANH MỤC" sortable)
             el-table-column(prop="provider.name" label="NHÀ CUNG CẤP" sortable)
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
-                  el-button(type="primary" icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
+                  el-button(type="warning" icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="openDeleteConfirmModal")
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 50]"
-            :page-size="20"
+            :page-size="10"
             layout="total, sizes, prev, pager, next"
             :total="tableData.length")
     el-dialog(title="Xác nhận xóa sản phẩm" :visible.sync="confirmDialogVisible" width="30%" center)

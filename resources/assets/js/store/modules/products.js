@@ -48,5 +48,11 @@ export default createCrudModule({
   },
   onCreateError: () => {
     Message.error('Tạo sản phẩm thất bại');
+  },
+  onUpdateSuccess: () => {
+    Message.success('Cập nhật sản phẩm thành công');
+  },
+  onUpdateError: () => {
+    Message.error('Cập nhật sản phẩm thất bại');
   }
 });

@@ -11,7 +11,7 @@
           span.header-text {{ panelTitle }}
       .kpi-edit__form
         .kpi-edit__form-item
-          product-form
+          product-form(ref="productUpdateForm")
       .kpi-edit__save
         el-button(type="primary" size="mini" @click="save")
           svg-icon(icon-class="fa-solid save")
@@ -24,7 +24,7 @@
 import { mapGetters, mapActions, mapState } from 'vuex';
 import ProductForm from './Form';
 
-const panelDefaultPosition = 263;
+const panelDefaultPosition = 200;
 
 export default {
   name: 'edit-panel',
@@ -40,7 +40,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      productById: 'products/byId'
+      productById: 'products/byId',
+      getFormProduct: 'products/getFormProduct'
     }),
 
     ...mapState({
@@ -83,7 +84,11 @@ export default {
     },
 
     save() {
-      this.closeProductEditPanel();
+      this.$refs.productUpdateForm.isValidForm().then((valid) => {
+        if (valid && productId) {
+          this.updateProduct({ id: productId, data: this.getFormProduct });
+        }
+      });
     },
 
     cancel() {
@@ -92,7 +97,8 @@ export default {
 
     ...mapActions({
       openProductEditPanel: 'common/openProductEditPanel',
-      closeProductEditPanel: 'common/closeProductEditPanel'
+      closeProductEditPanel: 'common/closeProductEditPanel',
+      updateProduct: 'products/update'
     })
   },
   watch: {
