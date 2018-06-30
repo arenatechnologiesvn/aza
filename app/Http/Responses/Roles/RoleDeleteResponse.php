@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 6/23/2018
- * Time: 11:11 AM
+ * Date: 6/28/2018
+ * Time: 12:47 AM
  */
 
 namespace App\Http\Responses\Roles;
@@ -11,7 +11,7 @@ namespace App\Http\Responses\Roles;
 
 use Illuminate\Contracts\Support\Responsable;
 
-class RoleEditResponse implements Responsable
+class RoleDeleteResponse implements Responsable
 {
     protected $role;
     public function __construct($role)
@@ -28,16 +28,8 @@ class RoleEditResponse implements Responsable
     public function toResponse($request)
     {
         // TODO: Implement toResponse() method.
-        return response()->json(['data' => $this->convertToDto()], 200);
+        return response()->json(['data' => $this->role->id], 200);
+
     }
 
-
-    private function convertToDto() {
-        return [
-            'id' => $this->role->id,
-            'title' => $this->role->title,
-            'description' => $this->role->description,
-            'is_employee' => $this->role->is_employee
-        ];
-    }
 }

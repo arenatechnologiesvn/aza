@@ -13,22 +13,18 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
   export default {
     name: 'RoleControl',
     props: {
       selection: {}
     },
     methods: {
-      ...mapActions('roles', {
-        deleteSelection: 'deleteSelection'
-      }),
       handleAdd () {
         this.$emit('on-add')
       },
       onDeleteSelect () {
-        const ids = this.selection.map(item => item.id)
-        this.deleteSelection(ids)
+        const ids = this.selection.map(item => item.id.toString())
+        this.$emit('on-delete-selection', ids);
       }
     }
   }

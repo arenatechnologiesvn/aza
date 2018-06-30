@@ -11,9 +11,20 @@ namespace App;
 
 use App\Observers\ByUserObserver;
 use Baum\Extensions\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 abstract class BaseModel extends Model
 {
+    use SoftDeletes;
+    public $soft_deletable = true;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
     public static function boot()
     {
         $class = get_called_class();

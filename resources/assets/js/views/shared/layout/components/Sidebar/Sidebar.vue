@@ -1,7 +1,7 @@
 <template lang="pug">
   div.menu-sidebar__container
     slot(name="logo")
-    el-scrollbar(wrapClass="scrollbar-wrapper")
+    el-scrollbar(wrapClass="scrollbar-wrapper" style="z-index: 99px;")
       sidebar-account(:collapse="collapse" :avatar="userLogo" :info="info")
       el-menu(:default-active="activeName"
         :unique-opened="accordion"
