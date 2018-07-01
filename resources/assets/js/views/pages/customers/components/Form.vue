@@ -1,36 +1,36 @@
 <template lang="pug">
   el-row
-    el-col(:span="4")
+    el-col(:span="5" style="padding-right: 10px;")
       media-manager-modal(type="profile" v-model="selectedImage" ref="mediaCustomerModal")
       img(:src="selectedImage" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
         el-button(type="success" @click="$refs.mediaCustomerModal.dialogVisible = true;") Thay đổi
-    el-col(:span="20")
+    el-col(:span="19")
       el-form(ref="form" v-model="customer")
         el-col(:span="24")
           el-form-item
             el-input(v-model="customer.code" :disabled="isUpdate" placeholder="Mã khách hàng")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.first_name" placeholder="Tên")
+            el-input(v-model="customer.first_name" clearable placeholder="Tên")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.last_name" placeholder="Họ")
+            el-input(v-model="customer.last_name" clearable placeholder="Họ")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.phone" placeholder="Điện thoại")
+            el-input(v-model="customer.phone" clearable placeholder="Điện thoại")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.name" placeholder="Tên đăng nhập")
+            el-input(v-model="customer.name" clearable placeholder="Tên đăng nhập")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.password" v-if="!isUpdate" type="password" placeholder="Mật khẩu")
+            el-input(v-model="customer.password" clearable v-if="!isUpdate" type="password" placeholder="Mật khẩu")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.email" v-if="!isUpdate" type="email" placeholder="Email")
+            el-input(v-model="customer.email" clearable v-if="!isUpdate" type="email" placeholder="Email")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.address" placeholder="Địa chỉ")
+            el-input(v-model="customer.address" clearable placeholder="Địa chỉ")
         el-col(:span="6")
           el-form-item
             el-select(v-model="customer.employee_id" clearable placeholder="Nhân viên" style="width: 100%")
@@ -38,16 +38,13 @@
         el-col(:span="6")
           el-form-item
             el-select(v-model="customer.customer_type" clearable placeholder="Loại khách hàng" style="width: 100%")
-              el-option(label="Vip" value="1")
-              el-option(label="Thường" value="2")
+              el-option(label="Vip" :value="1")
+              el-option(label="Thường" :value="0")
         el-col(:span="24")
           administrative-select(v-model="customer.selectedProvince")
         el-col(:span="24")
-          el-form-item(style="margin: 0 10px")
-            el-checkbox(label="Online activities")
-        el-col(:span="24")
-          el-form-item(style="margin: 0 10px")
-            el-checkbox(label="Active")
+          el-form-item
+            el-checkbox(v-model="customer.is_active" label="Kích hoạt")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
             el-button(type="primary" @click="handleSubmit")
@@ -62,7 +59,7 @@
   import MediaManagerModal from '~/components/MediaManager/modal';
   import dummyImage from '~/assets/login_images/dummy-image.jpg';
   import AdministrativeSelect from '~/components/AdministrativeSelect'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'EmployeeForm',
@@ -100,24 +97,34 @@
       }
     },
     computed: {
-      ...mapGetters('employee', {
-        'employees': 'list'
+      ...mapGetters('employees', {
+        employees: 'list'
       }),
       employeesList () {
-        return this.employees.map(item => {
+        return this.employees.filter(item => item.role_id === 3).map(item => {
           return {
             id: item.id,
-            name: item.name
+            name: item.full_name
           }
         })
       }
     },
     methods: {
+      ...mapActions('employees', {
+        fetchEmployees: 'fetchList'
+      }),
+      ...mapActions('customers', {
+        createCustomer: 'create',
+        updateCustomer: 'update'
+      }),
       back () {
         this.$router.go(-1)
       },
       update () {
-        this.$store.dispatch('customer/update', this.customer).then(res => {
+        this.updateCustomer({
+          id: this.$route.params.id,
+          data: this.customer
+        }).then(res => {
           this.$router.push({name: 'customers', replace: true})
         }).catch(err => {
           console.log(err)
@@ -125,7 +132,9 @@
         })
       },
       create () {
-        this.$store.dispatch('customer/create', this.customer).then(res => {
+        this.createCustomer({
+          data: this.customer
+        }).then(res => {
           this.$router.push({name: 'customers'})
         }).catch(err => {
           console.log(err)
@@ -135,6 +144,9 @@
       handleSubmit () {
         this.isUpdate ? this.update() : this.create()
       }
+    },
+    created () {
+      this.fetchEmployees()
     }
   }
 </script>

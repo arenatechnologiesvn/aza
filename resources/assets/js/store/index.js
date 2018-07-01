@@ -5,8 +5,8 @@ import user from './modules/user';
 import permission from './modules/permission';
 import roles from './modules/roles';
 import employees from './modules/employees';
-import customer from './modules/customer';
-import shop from './modules/shop';
+import customers from './modules/customers';
+import shops from './modules/shops';
 import products from './modules/products';
 import categories from './modules/categories';
 import providers from './modules/providers';
@@ -22,8 +22,8 @@ const store = new Vuex.Store({
     user,
     permission,
     employees,
-    shop,
-    customer,
+    shops,
+    customers,
     roles,
     products,
     categories,

@@ -2,13 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
 use App\Http\Requests\Customers\CustomerCreateRequest;
 use App\Http\Responses\Customers\CustomerCreateResponse;
+use App\Http\Responses\Customers\CustomerGetByIdResponse;
 use App\Http\Responses\Customers\CustomerIndexResponse;
+use App\Http\Responses\Customers\CustomerUpdateResponse;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    protected $customer;
+
+    public function __construct(Customer $customer)
+    {
+        $this->customer = $customer;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -41,6 +51,9 @@ class CustomerController extends Controller
     public function show($id)
     {
         //
+        $customer = $this->customer->find($id);
+        return $customer ? new CustomerGetByIdResponse($customer) :
+            new FailedResponse(404, "File not found");;
     }
 
     /**
@@ -64,6 +77,15 @@ class CustomerController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $data = $request->all();
+        unset($data['password']);
+        $data['province_code'] = $data['selectedProvince']['selectedProvince'];
+        $data['district_code'] = $data['selectedProvince']['selectedDistrict'];
+        $data['ward_code'] = $data['selectedProvince']['selectedWard'];
+        $customer = $this->customer->find($id);
+        $customer->update($data);
+        $customer->user->update($data);
+        return new CustomerUpdateResponse($customer);
     }
 
     /**

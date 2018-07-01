@@ -88,6 +88,14 @@
 .el-table--small td, .el-table--small th {
   padding: 8px 0;
 }
-button:not(.is-round) svg {
+.el-dropdown-menu svg,
+.control__wrapper svg {
   margin-right: 5px;
+}
+.control__wrapper {
+  margin: 10px 0;
+}
+.el-form-item__label {
+  margin-left: 5px;
+  font-size: .7em;
 }

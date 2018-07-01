@@ -2,20 +2,25 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 6/24/2018
- * Time: 5:18 AM
+ * Date: 7/1/2018
+ * Time: 6:35 AM
  */
 
-namespace App\Http\Responses\Customers;
+namespace App\Http\Responses\Employees;
 
 
-use App\Customer;
-use App\Dto\CustomerDto;
 use App\Helper\ApiResponse;
 use Illuminate\Contracts\Support\Responsable;
 
-class CustomerIndexResponse implements Responsable
+class EmployeeDeleteByIdResponse implements Responsable
 {
+    protected $employee;
+
+    public function __construct($employee)
+    {
+        $this->employee = $employee;
+    }
+
     /**
      * Create an HTTP response that represents the object.
      *
@@ -24,8 +29,7 @@ class CustomerIndexResponse implements Responsable
      */
     public function toResponse($request)
     {
-        return response()->json(new ApiResponse('Get Customer successful', CustomerDto::toListDto(Customer::all()), 200));
         // TODO: Implement toResponse() method.
-
+        return response()->json(new ApiResponse('Delete Employee Successful', ['id' => $this->employee->id], 200 ));
     }
 }

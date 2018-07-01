@@ -10,6 +10,7 @@ namespace App\Http\Responses\Employees;
 
 
 use App\Employee;
+use App\Helper\ApiResponse;
 use App\Http\Responses\FailedResponse;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
@@ -26,7 +27,7 @@ class EmployeeCreateResponse implements Responsable
     {
         try {
             $employee = $this->saveEmployee($request->all());
-            return  $employee ? response()->json($employee, 200) : new FailedResponse();
+            return  $employee ? response()->json(new ApiResponse('Create Employee successful', $employee, 200)) : new FailedResponse();
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -42,7 +43,8 @@ class EmployeeCreateResponse implements Responsable
                 'email' => $data['email'],
                 'role_id' => $data['role_id'],
                 'password' => bcrypt($data['password']),
-                'phone' => $data['phone']
+                'phone' => $data['phone'],
+                'is_active' => $data['is_active']
             ]);
             if ($user) {
                 return Employee::create([

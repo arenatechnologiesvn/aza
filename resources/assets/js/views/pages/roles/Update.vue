@@ -39,7 +39,7 @@
       fetchData () {
         this.fetchRole({
           id: this.$route.params.id
-        })
+        }).catch(() => this.$router.push({name: 'roles'}))
       }
     },
     watch: {

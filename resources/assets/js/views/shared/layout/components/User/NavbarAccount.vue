@@ -4,17 +4,17 @@
       svg-icon(icon-class="fa-solid bell")
     el-dropdown(trigger="click")
       div.header-account__control
-        img.user__avatar(:src="avatar")
-        span Nguyễn Linh
+        img.user__avatar(:src="info.avatar" style="border-radius: 50%;")
+        span {{(info.full_name.length > 5 && info.full_name) || info.name}}
         i.el-icon-caret-bottom
       el-dropdown-menu.header-account__dropdown(slot="dropdown")
         el-dropdown-item
-          router-link(class="inlineBlock" to="/")
+          router-link(class="inlineBlock" :to="`/profile/${info.id}`")
             svg-icon(icon-class="fa-solid user")
             span(style="margin-left: 5px") Thông tin cá nhân
         el-dropdown-item(divided)
         el-dropdown-item
-          router-link(class="inlineBlock" to="/")
+          router-link(class="inlineBlock" :to="`/setting/${info.id}`")
             svg-icon(icon-class="fa-solid cog")
             span(style="margin-left: 5px") Cài đặt
         el-dropdown-item
@@ -28,7 +28,10 @@
   export default {
     name: 'NavbarAccount',
     props: {
-      avatar: String
+      info: {
+        type: Object,
+        default: () => {}
+      }
     },
     methods: {
       logout () {

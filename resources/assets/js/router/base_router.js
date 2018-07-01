@@ -20,13 +20,13 @@ const ConstBaseRouterMap = [
     ]
   },
   {
-    path: '/404', component: () => import('~/views/errors/404'), hidden: true
+    path: '/404', name: 'page404', component: () => import('~/views/errors/404'), hidden: true
   },
   {
-    path: '/401', component: () => import('~/views/errors/401'), hidden: true
+    path: '/401', name: 'page401', component: () => import('~/views/errors/401'), hidden: true
   },
   {
-    path: '/500', component: () => import('~/views/errors/500'), hidden: true
+    path: '/500', name: 'page500', component: () => import('~/views/errors/500'), hidden: true
   }
 ];
 export default ConstBaseRouterMap;

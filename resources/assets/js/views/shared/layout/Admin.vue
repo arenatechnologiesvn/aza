@@ -1,7 +1,7 @@
 <template lang="pug">
   el-container.main__container(direction="horizontal")
     el-aside.sidebar__container(:class="collapsed ? 'collapsed':''")
-      sidebar(:collapse="collapsed" :menuList="menuList" :active-name="$route.name" @on-select="turnToPage")
+      sidebar(:collapse="collapsed" :menuList="menuList" :active-name="$route.name" @on-select="turnToPage" :info="user_info")
         div.logo-con(slot="logo")
           img(:src="logo" key="max-logo")
           span.logo__title(v-show="!collapsed") PROJECT
@@ -9,7 +9,7 @@
       el-header.header__container(height="64px")
         navbar(:collapsed="collapsed" @on-coll-change="handleCollapsedChange" :listBreadcrumb="listBreadcrumb")
           div.account-con
-            navbar-account(:avatar="logo")
+            navbar-account(:info="user_info")
       el-main
         app-main
 </template>
@@ -52,7 +52,8 @@
     computed: {
       ...mapGetters([
         'name',
-        'roles'
+        'roles',
+        'user_info'
       ]),
       sidebar() {
         return this.$store.state.app.sidebar

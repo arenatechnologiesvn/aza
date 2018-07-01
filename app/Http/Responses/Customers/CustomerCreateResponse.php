@@ -10,6 +10,8 @@ namespace App\Http\Responses\Customers;
 
 
 use App\Customer;
+use App\Dto\CustomerDto;
+use App\Helper\ApiResponse;
 use App\Http\Responses\FailedResponse;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
@@ -28,7 +30,7 @@ class CustomerCreateResponse implements Responsable
         // TODO: Implement toResponse() method.
         try {
             $customer = $this->saveCustomer($request->all());
-            return  $customer ? response()->json($customer, 200) : new FailedResponse();
+            return  $customer ? response()->json(new ApiResponse('Create Customer successful', CustomerDto::toDto($customer), 200)) : new FailedResponse();
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

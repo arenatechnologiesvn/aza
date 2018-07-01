@@ -5,14 +5,14 @@
         el-table-column(type="selection" width="40")
         el-table-column(prop="title" label="TÊN QUYỀN" sortable)
         el-table-column(prop="description" label="MÔ TẢ" sortable width="180")
-        el-table-column(prop="id" label="TÁC VỤ" width="170")
+        el-table-column(prop="id" label="TÁC VỤ" width="120")
           template(slot-scope="scope")
-            el-button(type="warning" size="mini" @click="handleEdit(scope.row.id)")
-              svg-icon(icon-class="fa-solid user-edit")
-              span(style="margin-left: 5px") Sửa
-            el-button(type="danger" size="mini" @click="handleDelete(scope.row.id)")
-              svg-icon(icon-class="fa-solid trash-alt")
-              span(style="margin-left: 5px") Xóa
+            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
+              el-button(size="mini" @click="handleEdit(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid user-edit")
+            el-tooltip(effect="dark" content="Xóa" placement="top")
+              el-button(size="mini" type="danger" @click="handleDelete(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid trash-alt")
     <!--div.pagination__wrapper-->
       <!--el-pagination(@size-change="handleSizeChange"-->
         <!--@current-change="handleCurrentChange"-->

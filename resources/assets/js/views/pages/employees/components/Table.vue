@@ -6,7 +6,7 @@
         el-table-column(prop="avatar" width="60")
           template(slot-scope="scope")
             img(:src="scope.row.avatar" width="40" height="40")
-        el-table-column(prop="full_name" label="HỌ TÊN" sortable)
+        el-table-column(prop="full_name" label="HỌ TÊN" sortable min-width="200")
         el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable width="120")
         el-table-column(prop="email" label="EMAIL" sortable width="180")
         el-table-column(prop="customer_count" label="SỐ KHÁCH HÀNG" sortable width="140"  :formatter="(row, column) => `${row.customer_count} Khách hàng`")
@@ -14,7 +14,7 @@
         el-table-column(prop="is_active" label="TRẠNG THÁI" sortable width="120")
           template(slot-scope="scope")
             el-switch(v-model="scope.row.is_active" @change="onChangeStatus(scope.row.id, scope.row.is_active)")
-        el-table-column(prop="id" label="TÁC VỤ" width="130")
+        el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
               el-button(size="mini" @click="handleEdit(scope.row.id)" round)
@@ -40,7 +40,6 @@
     data () {
       return {
         currentPage: 1,
-        showDialog: false,
         pageSize: 10
       }
     },
@@ -66,7 +65,6 @@
       },
       onDelete (id) {
         this.$emit('on-delete', id)
-        alert(id)
       },
       onChangeStatus(id, isActive) {
         this.$emit('on-change-status', id, {

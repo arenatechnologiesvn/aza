@@ -1,43 +1,43 @@
 <template lang="pug">
   el-row
     media-manager-modal(type="profile" v-model="selectedImage" ref="mediaEmployeeModal")
-    el-col(:span="4")
+    el-col(:span="5" style="padding-right: 20px;")
       img(:src="selectedImage" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
         el-button(type="success" @click="$refs.mediaEmployeeModal.dialogVisible = true;") Thay đổi
-    el-col(:span="20")
-      el-form(ref="form" v-model="employee")
+    el-col(:span="19")
+      el-form(ref="form" v-model="employee" size="small")
         el-col(:span="24")
-          el-form-item
-            el-input(v-model="employee.code" :disabled="isUpdate" placeholder="Mã nhân viên")
+          el-form-item(label="MÃ NHÂN VIÊN")
+            el-input(v-model="employee.code" :disabled="isUpdate" placeholder="Mã nhân viên" clearable)
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="employee.first_name" placeholder="Tên")
+          el-form-item(label="TÊN")
+            el-input(v-model="employee.first_name" placeholder="Tên" clearable)
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="employee.last_name" placeholder="Họ")
+          el-form-item(label="HỌ")
+            el-input(v-model="employee.last_name" placeholder="Họ" clearable)
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="employee.phone" placeholder="Điện thoại")
+          el-form-item(label="SỐ ĐIỆN THOẠI")
+            el-input(v-model="employee.phone" placeholder="Điện thoại" clearable)
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="employee.name" placeholder="Tên đăng nhập")
+          el-form-item(label="TÊN ĐĂNG NHẬP")
+            el-input(v-model="employee.name" v-bind:disabled="isUpdate" placeholder="Tên đăng nhập" clearable)
+        el-col(:span="12" v-show="!isUpdate")
+          el-form-item(label="MẬT KHẨU")
+            el-input(v-model="employee.password" type="password" placeholder="Mật khẩu" clearable)
+        el-col(:span="isUpdate? 24 : 12")
+          el-form-item(label="THƯ ĐIỆN TỬ")
+            el-input(v-model="employee.email" v-bind:disabled="isUpdate" type="email" placeholder="Email" clearable)
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="employee.password" v-if="!isUpdate" type="password" placeholder="Mật khẩu")
+          el-form-item(label="NGÀY KÝ HỢP ĐỒNG")
+            el-date-picker(v-model="employee.start_datetime" type="date" placeholder="Ngày ký hợp đồng" style="width: 100%" clearable)
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="employee.email" v-if="!isUpdate" type="email" placeholder="Email")
-        el-col(:span="12")
-          el-form-item
-            el-date-picker(v-model="employee.start_datetime" type="date" placeholder="Ngày ký hợp đồng" style="width: 100%")
-        el-col(:span="12")
-          el-form-item
+          el-form-item(label="VAI TRÒ")
             el-select(v-model="employee.role_id" clearable placeholder="Vai trò" style="width: 100%")
               el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
         el-col(:span="24")
-          el-form-item(style="margin: 0 10px")
-            el-checkbox(label="Đang hoạt động" v-model="employee.is_active")
+          el-form-item
+            el-checkbox(label="Kích hoạt" v-model="employee.is_active")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
             el-button(type="primary" @click="handleSubmit")
@@ -105,8 +105,15 @@
       ...mapActions('roles', {
         fetchRoles: 'fetchList'
       }),
+      ...mapActions('employees', {
+        employeeCreate: 'create',
+        employeeUpdate: 'update'
+      }),
       update () {
-        this.$store.dispatch('employee/update', this.employee).then(res => {
+        this.employeeUpdate({
+          id: this.$route.params.id,
+          data: this.employee
+        }).then(res => {
           this.$router.push({name: 'employees', replace: true})
         }).catch(err => {
           console.log(err)
@@ -114,8 +121,10 @@
         })
       },
       create () {
-        this.$store.dispatch('employee/create', this.employee).then(res => {
-          this.$router.push({name: 'employees'})
+        this.employeeCreate({
+          data: this.employee
+        }).then(res => {
+          this.$router.push({name: 'employees', replace: true})
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot create employee');

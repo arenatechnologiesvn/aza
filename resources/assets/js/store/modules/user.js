@@ -6,7 +6,8 @@ const user = {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: {}
+    roles: {},
+    user_info: {}
   },
 
   mutations: {
@@ -21,6 +22,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles;
+    },
+    SET_USER_INFO (state, info) {
+      state.user_info = info;
     }
   },
 
@@ -41,8 +45,10 @@ const user = {
     GetInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
+          console.log(response);
           if (response.role) {
             commit('SET_ROLES', response.role);
+            commit('SET_USER_INFO', response);
           } else {
             reject('getInfo: role must be a non-null array !');
           }

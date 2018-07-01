@@ -2,49 +2,52 @@
   el-card
     div.clearfix(slot="header")
       span
-        svg-icon(icon-class="fa-solid list")
-        span(style="margin-left: 10px;") Cập nhật quyền
+        svg-icon(icon-class="fa-solid store-alt")
+        span(style="margin-left: 10px;") CẬP NHẬT CỬA HÀNG {{current && current.name}}
       span(style="float: right")
         svg-icon(icon-class="fa-solid ")
     div.card-content
-      employee-form(:employee="currentEmployee" :is-update="true")
+      aza-form(:shop="current" :is-update="true")
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex'
-  import EmployeeForm from './components/Form'
-
+  import { mapActions, mapGetters, mapState} from 'vuex'
+  import AzaForm from './components/Form'
+  import BaseMixin from '../mixin'
   export default {
-    name: 'EmployeeUpdate',
+    name: 'ShopUpdate',
+    mixins: [BaseMixin],
     components: {
-      EmployeeForm
+      AzaForm
     },
     computed: {
-      ...mapGetters('employee', {
-        employeeById : 'byId'
+      ...mapGetters('shops', {
+        ById : 'byId',
+        isLoading: 'isLoading'
       }),
-      currentEmployee () {
-        return this.employeeById(this.$route.params.id);
+      ...mapState([
+        'route', // vuex-router-sync
+      ]),
+      current () {
+        return this.ById(this.$route.params.id);
       }
     },
     methods: {
-      ...mapActions('employee', {
-        'getById': 'getById'
+      ...mapActions('shops', {
+        fetchUpdate: 'fetchSingle'
       }),
-      getByIdRoute () {
-        const id = this.$route.params.id
-        this.getById(id)
-      },
+      fetchData () {
+        return this.fetchUpdate({
+          id: this.$route.params.id
+        }).catch(() => this.$router.push({name: 'page404'}))
+      }
     },
     watch: {
-      $route: 'getByIdRoute'
+      $route: 'fetchData'
     },
     created () {
-      this.getByIdRoute()
+      this.fetchData()
+      this.loading()
     }
   }
 </script>
-
-<style scoped>
-
-</style>

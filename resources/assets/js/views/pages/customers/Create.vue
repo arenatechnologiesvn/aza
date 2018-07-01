@@ -2,8 +2,8 @@
   el-card
     div.clearfix(slot="header")
       span
-        svg-icon(icon-class="fa-solid user")
-        span(style="margin-left: 10px;") Thêm mới khách hàng
+        svg-icon(icon-class="fa-solid user-plus")
+        span(style="margin-left: 10px;") THÊM MỚI KHÁCH HÀNG
       span(style="float: right")
         svg-icon(icon-class="fa-solid arrow-alt-left")
     div.card-content

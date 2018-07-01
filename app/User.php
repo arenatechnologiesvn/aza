@@ -3,6 +3,7 @@
 namespace App;
 
 //use Illuminate\Support\Facades\Auth;
+use App\Dto\UserDto;
 use App\Observers\ByUserObserver;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -127,20 +128,21 @@ class User extends Authenticatable implements JWTSubject
 
     public function detail($user)
     {
-        return self::with(['role.permissions' => function ($query) {
-            $query->where('parent_id', '0');
-        }, 'role.permissions.children' => function ($query) use ($user) {
-            $query->whereIn('id',
-                RolePermission::query()
-                    ->where('role_id', $user->role_id)
-                    ->get(['permission_id'])
-                    ->toArray());
-        }, 'role.permissions.children.children' => function ($query) use ($user) {
-            $query->whereIn('id',
-                RolePermission::query()
-                    ->where('role_id', $user->role_id)
-                    ->get(['permission_id'])
-                    ->toArray());
-        }])->find($user->id);
+//        return self::with(['role.permissions' => function ($query) {
+//            $query->where('parent_id', '0');
+//        }, 'role.permissions.children' => function ($query) use ($user) {
+//            $query->whereIn('id',
+//                RolePermission::query()
+//                    ->where('role_id', $user->role_id)
+//                    ->get(['permission_id'])
+//                    ->toArray());
+//        }, 'role.permissions.children.children' => function ($query) use ($user) {
+//            $query->whereIn('id',
+//                RolePermission::query()
+//                    ->where('role_id', $user->role_id)
+//                    ->get(['permission_id'])
+//                    ->toArray());
+//        }])->find($user->id);
+        return UserDto::toDto($user);
     }
 }

@@ -6,25 +6,24 @@
         span(style="margin-left: 10px;") DANH SÁCH NHÂN VIÊN
     div.search__wrapper(style="margin: 10px 0 20px")
       div.form-search__wrapper
-        el-form.search
+        el-form.search(v-model="search" size="small")
           el-row(style="margin: 0 -10px;")
             el-col(:span="16")
               el-form-item
-                el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%")
+                el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%" clearable)
             el-col(:span="4")
               el-form-item
-                el-select(placeholder="Vai trò" v-model="search.role_id" )
-                  el-option(label="Vai trò 1" value="1")
-                  el-option(label="Vai trò 2" value="2")
+                el-select(placeholder="Vai trò" v-model="search.role_id" @change="onChangeRole" clearable)
+                  el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
             el-col(:span="4")
               el-form-item
-                el-select(placeholder="Trạng thái" v-model="search.status")
-                  el-option(label="Đang hoạt động" value="2")
-                  el-option(label="Đang bị khóa" value="3")
-    div.control__wraper
+                el-select(placeholder="Trạng thái" v-model="search.status" clearable)
+                  el-option(label="Đang hoạt động" :value="true")
+                  el-option(label="Đang bị khóa" :value="false")
+    div.control__wrapper
       aza-control(@on-add="handAddClick")
     div.index__wrapper
-      aza-table(ref="table" :employees="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
+      aza-table(ref="table" @on-delete="deleteHandle" :employees="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
 </template>
 
 <script>
@@ -35,7 +34,7 @@
   import BaseMixin from '../mixin'
 
   export default {
-    name: 'RoleIndex',
+    name: 'EmployeeIndex',
     mixins: [BaseMixin],
     components: {
       AzaTable,
@@ -47,6 +46,17 @@
         employees: 'list',
         isLoading: 'isLoading'
       }),
+      ...mapGetters('roles', {
+        roles: 'list'
+      }),
+      roleList () {
+        return this.roles.filter(item => item.is_employee).map(item => {
+          return {
+            id: item.id,
+            value: item.description
+          }
+        })
+      },
       current () {
         return this.employees
           .filter(item => {
@@ -81,10 +91,14 @@
     },
     methods: {
       ...mapActions('employees', {
-        fetchRoles: 'fetchList',
+        fetchEmployees: 'fetchList',
         fetchSearch: 'search',
         deleteSelection: 'deleteSelection',
-        updateRole: 'update'
+        updateRole: 'update',
+        destroy: 'destroy'
+      }),
+      ...mapActions('roles', {
+        fetchRoles: 'fetchList'
       }),
       changeStatusHandle (id, data) {
         this.updateRole({
@@ -93,15 +107,35 @@
         })
       },
       fetchFind () {
-        // this.fetchSearch(this.search)
+        this.fetchSearch(this.search)
       },
       fetchData() {
-        return this.fetchRoles()
+        return this.fetchEmployees()
       },
       handAddClick () {
         this.$router.push({
           name: 'employee_create'
         })
+      },
+      deleteHandle (id) {
+        this.$confirm('Bạn muốn xóa nhân viên này?', 'Xác nhận xóa', {
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Hủy bỏ',
+          type: 'warning',
+          confirmButtonClass: 'el-button el-button--danger'
+        }).then(() => {
+          this.destroy(id).then(() => {
+            this.$message({
+              type: 'success',
+              message: `Delete completed ${id}`
+            })
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: 'Delete canceled'
+          });
+        });
       },
       handUpdateClick (id) {
         this.$router.push({
@@ -113,6 +147,9 @@
       },
       onSelected (selection) {
         this.selection = selection
+      },
+      onChangeRole () {
+        this.current.filter(item => item.role_id === this.search.role_id)
       },
       onDeleteSelect (ids) {
         this.confirm(() => {
@@ -136,6 +173,7 @@
     created () {
       this.loading()
       this.fetchData()
+      this.fetchRoles()
     }
   }
 </script>

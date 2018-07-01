@@ -1,8 +1,7 @@
 <template lang="pug">
   div.header-bar
     sider-trigger(:collapsed="collapsed" @on-change="handleCollapsedChange")
-    <!--bread-crumb(:list="breadCrumbList")-->
-    bread-crumb2
+    bread-crumb2.bread-crumb__custom
     slot
 </template>
 

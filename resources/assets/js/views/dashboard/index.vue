@@ -26,7 +26,7 @@
               svg-icon(icon-class="fa-solid user-graduate")
               span(style="margin-left: 10px;") NHÂN VIÊN XUẤT SẮC
           div
-            employee-table(:employees="employees" :total="total")
+            employee-table(:employees="employees")
     div.clearfix(style="margin: 10px 0;")
     el-row
       el-col(:span="24")
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import MediaManagerModal from '~/components/MediaManager/modal';
 import AdministrativeSelect from '~/components/AdministrativeSelect';
 import BarChart from './BarChart'
@@ -54,12 +54,14 @@ export default {
       'name',
       'roles'
     ]),
-    ...mapGetters('employee', {
+    ...mapGetters('employees', {
       employees: 'list'
-    }),
-    total () {
-      return this.employees.length
-    }
+    })
+  },
+  methods: {
+    ...mapActions('employees', {
+      fetchEmployees: 'fetchList'
+    })
   },
   components: {
     ElCard,
@@ -69,44 +71,8 @@ export default {
     EmployeeTable,
     ProductTable
   },
-  data() {
-    return {
-      selectedProvince: {},
-      mediaDialogVisible: false,
-      selectedImageUrl: 'abc',
-      tableData: [{
-        stt: '1',
-        name: 'SẢN PHẨM 1',
-        phone: '01687767557',
-        total: '600.000',
-        totalPrice: '900.000'
-      },{
-          stt: '2',
-          name: 'SẢN PHẨM 1',
-          phone: '01687767557',
-          total: '600.000',
-          totalPrice: '900.000'
-      }, {
-          stt: '3',
-          name: 'SẢN PHẨM 1',
-          phone: '01687767557',
-          total: '600.000',
-          totalPrice: '900.000'
-      }, {
-          stt: '4',
-          name: 'SẢN PHẨM 1',
-          phone: '01687767557',
-          total: '600.000',
-          totalPrice: '900.000'
-      }, {
-          stt: '5',
-          name: 'SẢN PHẨM 1',
-          phone: '01687767557',
-          total: '600.000',
-          totalPrice: '900.000'
-      }
-      ]
-    }
+  created () {
+    this.fetchEmployees()
   }
 }
 </script>

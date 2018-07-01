@@ -2,7 +2,18 @@
   div.control
     el-row
       el-col(:span="12")
-        h4.control__info(style="margin: 0;") Đã chọn {{selected}} khách hàng
+        el-dropdown(split-button size="small" trigger="click") Đã chọn {{selected}} khách hàng
+          el-dropdown-menu(slot="dropdown")
+            el-dropdown-item
+              svg-icon(icon-class="fa-solid unlock-alt")
+              span Kich hoạt
+            el-dropdown-item
+              svg-icon(icon-class="fa-solid user-lock")
+              span Khóa tài khoản
+            el-dropdown-item
+              svg-icon(icon-class="fa-solid trash-alt")
+              span Xóa
+        h4.control__info(style="margin: 0;")
       el-col(:span="12" style="text-align: right;")
         el-button(type="success" size="small")
           svg-icon(icon-class="fa-solid file-excel")

@@ -12,7 +12,7 @@
               span Khóa tài khoản
             el-dropdown-item
               svg-icon(icon-class="fa-solid trash-alt")
-              sapn Xóa
+              span Xóa
         h4.control__info(style="margin: 0;")
       el-col(:span="12" style="text-align: right;")
         el-button(type="success" size="small")

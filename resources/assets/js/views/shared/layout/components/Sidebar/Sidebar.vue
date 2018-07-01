@@ -2,7 +2,7 @@
   div.menu-sidebar__container
     slot(name="logo")
     el-scrollbar(wrapClass="scrollbar-wrapper" style="z-index: 99px;")
-      sidebar-account(:collapse="collapse" :avatar="userLogo" :info="info")
+      sidebar-account(:collapse="collapse" :info="info")
       el-menu(:default-active="activeName"
         :unique-opened="accordion"
         :default-openeds="openedNames"
@@ -36,10 +36,6 @@
     data () {
       return {
         userLogo,
-        info: {
-          role: 'ADMIN',
-          description: 'Quản trị viên cao cấp'
-        },
         openedNames: []
       }
     },
@@ -62,6 +58,10 @@
       openNames: {
         type: Array,
         default: () => []
+      },
+      info: {
+        type: Object,
+        default: () => {}
       }
     },
     methods: {

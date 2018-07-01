@@ -1,38 +1,31 @@
 <template lang="pug">
   div.index__container
     div.table
-      el-table(:data="shops" border  style="width: 100%")
+      el-table(:data="shops.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
         el-table-column(type="selection" width="40")
-        el-table-column(prop="preview_image" width="80" label="AVATAR")
+        el-table-column(prop="preview_image" width="60")
           template(slot-scope="scope")
-            img(:src="scope.row.preview_image" width="50" height="50")
-        el-table-column(prop="name" label="TÊN CỬA HÀNG" sortable)
+            img(:src="scope.row.preview_image" width="40" height="40")
+        el-table-column(prop="name" label="TÊN CỬA HÀNG" min-width="200" sortable)
         el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable width="180")
-        el-table-column(prop="description" label="GIỚI THIỆU")
         el-table-column(prop="customer_name" label="CHỦ CỬA HÀNG" sortable width="180")
         el-table-column(prop="address" label="ĐỊA CHỈ" sortable width="180")
-        el-table-column(prop="id" label="TÁC VỤ" width="100")
+        el-table-column(prop="id" label="TÁC VỤ" width="120" fixed="right")
           template(slot-scope="scope")
-            el-button(type="text" size="small" @click="handleEdit(scope.row.id)") Edit
-            label(style="width: 15px; display: inline-block; text-align: center") /
-            el-button(size="small" type="text" style="color: red;" @click="shopDel= true") Delete
+            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
+              el-button(size="mini" @click="onEdit(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid user-edit")
+            el-tooltip(effect="dark" content="Xóa" placement="top")
+              el-button(size="mini" type="danger" @click="onDelete(scope.row.id)" round)
+                  svg-icon(icon-class="fa-solid trash-alt")
     div.pagination__wrapper
       el-pagination(@size-change="handleSizeChange"
         @current-change="handleCurrentChange"
           :current-page.sync="currentPage"
-          :page-sizes="[5, 10, 20, 40]"
-          :page-size="10"
-        layout="total, sizes, prev, pager, next"
-        :total="total")
-    div
-      el-dialog(title="Xóa cửa hàng"
-        :visible.sync="shopDel"
-        width="30%"
-        center)
-        span  Bạn muốn xóa của hàng này
-        span(slot="footer" class="dialog-footer")
-          el-button(@click="shopDel = false") Hủy
-          el-button(type="primary" @click="shopDel = false") Đồng ý
+          :page-sizes="[1, 5, 10, 20, 40]"
+          :page-size="pageSize"
+      layout="total, sizes, prev, pager, next"
+        :total="shops.length")
 
 </template>
 
@@ -43,8 +36,7 @@
     data () {
       return {
         currentPage: 1,
-        showDialog: false,
-        shopDel: false
+        pageSize: 10
       }
     },
     props: {
@@ -59,18 +51,16 @@
     },
     methods: {
       handleSizeChange (size) {
-        this.$emit('on-size-change', size)
+        this.pageSize = size
       },
       handleCurrentChange (current) {
-        this.$emit('on-current-change', current)
         this.currentPage = current
       },
-      handleEdit (id) {
+      onEdit (id) {
         this.$emit('on-update', id)
       },
       onDelete (id) {
         this.$emit('on-delete', id)
-        this.showDialog = false
       }
     }
   }

@@ -122,7 +122,7 @@ export const asyncRouterMapChild = [
         }
       },
       {
-        path: ':id',
+        path: ':id(\\d+)',
         name: 'employee_update',
         component: () => import('~/views/pages/employees/Update'),
         hidden: true,
@@ -159,12 +159,12 @@ export const asyncRouterMapChild = [
         }
       },
       {
-        path: ':id',
+        path: ':id(\\d+)',
         name: 'customer_update',
         component: () => import('~/views/pages/customers/Update'),
         hidden: true,
         meta: {
-          title: 'Cập nhật nhân viên',
+          title: 'Cập nhật khách hàng',
           icon: 'fa-solid lock'
         }
       },
@@ -196,7 +196,7 @@ export const asyncRouterMapChild = [
         }
       },
       {
-        path: ':id',
+        path: ':id(\\d+)',
         name: 'shop_update',
         component: () => import('~/views/pages/shops/Update'),
         hidden: true,

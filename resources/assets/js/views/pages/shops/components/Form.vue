@@ -1,11 +1,11 @@
 <template lang="pug">
   el-row
-    el-col(:span="4")
+    el-col(:span="5" style="padding-right: 10px;")
       media-manager-modal(type="shop" v-model="selectedImage" ref="mediaShopModal")
       img(:src="selectedImage" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
         el-button(type="success" @click="$refs.mediaShopModal.dialogVisible = true;") Thay đổi
-    el-col(:span="20")
+    el-col(:span="19")
       el-form(ref="form" v-model="shop")
         el-col(:span="12")
           el-form-item
@@ -13,7 +13,7 @@
         el-col(:span="12")
           el-form-item
             el-select(v-model="shop.customer_id" clearable placeholder="Khách hàng" style="width: 100%")
-              el-option(v-for="item in customerList" :key="item.id" :label="item.name" :value="item.id")
+              el-option(v-for="item in customerList" :key="item.id" :label="item.value" :value="item.id")
         el-col(:span="12")
           el-form-item
             el-input(v-model="shop.phone" placeholder="Điện thoại")
@@ -24,7 +24,7 @@
           el-form-item
             el-input(v-model="shop.address" placeholder="Địa chỉ")
         el-col(:span="24")
-          administrative-select(v-model="shop.selectedProvince")
+          administrative-select(v-model="shop.selectedProvince" :selectedAdministrative="shop.selectedProvince")
         el-col(:span="24")
           el-form-item
             el-input(v-model="shop.description" rows="5" type="textarea")
@@ -42,7 +42,7 @@
   import AdministrativeSelect from '~/components/AdministrativeSelect'
   import MediaManagerModal from '~/components/MediaManager/modal';
   import dummyImage from '~/assets/login_images/dummy-image.jpg';
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'EmployeeForm',
@@ -77,24 +77,34 @@
       }
     },
     computed: {
-      ...mapGetters('customer', {
-        'customers': 'list'
+      ...mapGetters('customers', {
+        customers: 'list'
       }),
       customerList () {
         return this.customers.map(item => {
           return {
             id: item.id,
-            name: item.name
+            value: item.full_name
           }
         })
       }
     },
     methods: {
+      ...mapActions('customers', {
+        fetchCustomers: 'fetchList'
+      }),
+      ...mapActions('shops', {
+        createShop: 'create',
+        updateShop: 'update'
+      }),
       back () {
         this.$router.go(-1)
       },
       update () {
-        this.$store.dispatch('shop/update', this.shop).then(res => {
+        this.updateShop({
+          id: this.$route.params.id,
+          data: this.shop
+        }).then(res => {
           this.$router.push({name: 'shops', replace: true})
         }).catch(err => {
           console.log(err)
@@ -102,7 +112,9 @@
         })
       },
       create () {
-        this.$store.dispatch('shop/create', this.shop).then(res => {
+        this.createShop({
+          data: this.shop
+        }).then(res => {
           this.$router.push({name: 'shops'})
         }).catch(err => {
           console.log(err)
@@ -112,6 +124,9 @@
       handleSubmit () {
         this.isUpdate ? this.update() : this.create()
       }
+    },
+    created () {
+      this.fetchCustomers();
     }
   }
 </script>
