@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Gate;
 class ProductController extends Controller
 {
     private $product_validation = [
-        'product_code' => 'required|unique:products|max:255',
+        'product_code' => 'required|max:255',
         'name' => 'required|string|max:255',
         'price' => 'required|numeric',
         'discount_price' => 'numeric',
@@ -145,30 +145,26 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        // return response([ 'data' => $request->all()], 200);
         if (!$product) {
             return response(['message' => 'Invalid param'], 433);
         }
 
         $data = $request->validate($this->product_validation);
 
-        $edit_product = Product::create([
-            'product_code' => $data['product_code'],
-            'name' => $data['name'],
-            'unit' => $data['unit'],
-            'price' => $data['price'],
-            'discount_price' => $data['discount_price'],
-            'preview_images' => $data['preview_images'],
-            'featured_images' => $data['featured_images'],
-            'category_id' => $data['category_id'],
-            'provider_id' => $data['provider_id'],
-            'description' => $data['description'],
-        ]);
+        $product['product_code'] = $data['product_code'];
+        $product['name'] = $data['name'];
+        $product['unit'] = $data['unit'];
+        $product['price'] = $data['price'];
+        $product['discount_price'] = $data['discount_price'];
+        $product['preview_images'] = $data['preview_images'];
+        $product['featured_images'] = $data['featured_images'];
+        $product['category_id'] = $data['category_id'];
+        $product['provider_id'] = $data['provider_id'];
+        $product['description'] = $data['description'];
+        $product->save();
 
-        if (!$edit_product) {
-            return response(['data' => ['message' => 'fail']], 433);
-        }
-
-        return response([ 'data' => $edit_product], 200);
+        return response([ 'data' => $product], 200);
     }
 
     /**

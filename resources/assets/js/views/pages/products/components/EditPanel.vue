@@ -85,8 +85,12 @@ export default {
 
     save() {
       this.$refs.productUpdateForm.isValidForm().then((valid) => {
-        if (valid && productId) {
-          this.updateProduct({ id: productId, data: this.getFormProduct });
+        if (valid && this.productId) {
+          this.updateProduct({ id: this.productId, data: this.getFormProduct }).then(() => {
+            this.fetchProducts().then(() => {
+              this.closeProductEditPanel();
+            });
+          });
         }
       });
     },
@@ -98,7 +102,8 @@ export default {
     ...mapActions({
       openProductEditPanel: 'common/openProductEditPanel',
       closeProductEditPanel: 'common/closeProductEditPanel',
-      updateProduct: 'products/update'
+      updateProduct: 'products/update',
+      fetchProducts: 'products/fetchList'
     })
   },
   watch: {
