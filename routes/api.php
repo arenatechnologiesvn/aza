@@ -48,9 +48,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('media/delete', 'MediaManager\MediaManagerController@deleteMediaImage');
 
     // Product category
-    Route::get('categories', 'Product\CategoryController@index');
-    Route::post('category/update', 'Product\CategoryController@update');
-    Route::post('category/delete', 'Product\CategoryController@delete');
+    Route::resource('categories', 'Product\CategoryController');
 
     // Product provider
     Route::get('providers', 'Product\ProviderController@index');

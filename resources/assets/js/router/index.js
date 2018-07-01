@@ -68,6 +68,46 @@ export const asyncRouterMapChild = [
     ]
   },
   {
+    path: '/category',
+    redirect: 'category',
+    name: 'CategoryContainer',
+    component: ParentView,
+    meta: { title: 'Danh mục sản phẩm', icon: 'fa-solid th-list' },
+    children: [
+      {
+        path: '',
+        name: 'category',
+        component: () => import('~/views/pages/categories'),
+        meta: {
+          title: 'Danh sách danh mục',
+          icon: 'fa-solid shop',
+          roles: ['Admin']
+        }
+      },
+      {
+        path: 'add',
+        name: 'add_category',
+        component: () => import('~/views/pages/categories/Create'),
+        meta: {
+          title: 'Thêm mới danh mục',
+          icon: 'fa-solid shop',
+          roles: ['Admin']
+        }
+      },
+      {
+        path: ':id',
+        name: 'update_category',
+        component: () => import('~/views/pages/categories/Create'),
+        hidden: true,
+        meta: {
+          title: 'Cập nhật danh mục',
+          icon: 'fa-solid shop',
+          roles: ['Admin']
+        }
+      }
+    ]
+  },
+  {
     path: '/users',
     redirect: 'roles',
     component: ParentView,
@@ -211,6 +251,44 @@ export const asyncRouterMapChild = [
         component: () => import('~/views/pages/shops/Create'),
         meta: {
           title: 'Thêm mới cừa hàng',
+          icon: 'fa-solid lock'
+        }
+      }
+    ]
+  },
+  {
+    path: '/providers',
+    redirect: 'providers',
+    component: ParentView,
+    name: 'ProviderContainer',
+    meta: { title: 'Quản lý nhà cung cấp', icon: 'fa-solid truck' },
+    children: [
+      {
+        path: '',
+        name: 'providers',
+        component: () => import('~/views/pages/providers'),
+        meta: {
+          title: 'Danh sách nhà cung cấp',
+          icon: 'fa-solid truck'
+        }
+      },
+      {
+        path: ':id',
+        name: 'provider_update',
+        component: () => import('~/views/pages/providers/Update'),
+        hidden: true,
+        meta: {
+          title: 'Cập nhật nhà cung cấp',
+          icon: 'fa-solid lock'
+        }
+      },
+      {
+        path: 'add',
+        name: 'providers_create',
+        component: () => import('~/views/pages/providers/Create'),
+        hidden: true,
+        meta: {
+          title: 'Thêm mới nhà cung cấp',
           icon: 'fa-solid lock'
         }
       }
