@@ -18,14 +18,13 @@ export default {
   },
   computed: {
     iconName() {
-      return `#icon-${this.iconClass}`
+      const iconName = this.iconClass;
+      if (iconName.indexOf(' ') > 0) return `#${iconName.replace(' ', '_')}`;
+      return `#${iconName}`;
     },
     svgClass() {
-      if (this.className) {
-        return 'svg-icon ' + this.className
-      } else {
-        return 'svg-icon'
-      }
+      if (this.className) return `svg-icon ${this.className}`;
+      return 'svg-icon';
     }
   }
 }

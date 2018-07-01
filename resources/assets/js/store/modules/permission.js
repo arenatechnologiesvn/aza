@@ -1,34 +1,39 @@
-import { asyncRouterMap, constantRouterMap } from '@/router'
-
+import { asyncRouterMap, asyncRouterMapChild, constantRouterMap } from '~/router';
+import { getIntersection } from '~/utils/tools';
+import { getMenuByRouter } from '~/utils/util';
 /**
- * 通过meta.role判断是否与当前用户权限匹配
- * @param roles
+ * Determine whether to match the current user authority by meta.role
+ * @param role
  * @param route
  */
-function hasPermission(roles, route) {
+function hasPermission (role, route) {
   if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.indexOf(role) >= 0)
-  } else {
-    return true
+    return route.meta.roles.indexOf(role.title) >= 0;
   }
+
+  return true;
 }
 
 /**
- * 递归过滤异步路由表，返回符合用户角色权限的路由表
+ * Recursively filter the asynchronous routing table
+ * and return the routing table that matches the user's role permissions
  * @param asyncRouterMap
- * @param roles
+ * @param role
  */
-function filterAsyncRouter(asyncRouterMap, roles) {
+function filterAsyncRouter (asyncRouterMap, role) {
   const accessedRouters = asyncRouterMap.filter(route => {
-    if (hasPermission(roles, route)) {
+    if (hasPermission(role, route)) {
       if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
+        route.children = filterAsyncRouter(route.children, role);
       }
-      return true
+
+      return true;
     }
-    return false
-  })
-  return accessedRouters
+
+    return false;
+  });
+
+  return accessedRouters;
 }
 
 const permission = {
@@ -38,26 +43,29 @@ const permission = {
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers
-      state.routers = constantRouterMap.concat(routers)
+      state.addRouters = routers;
+      state.routers = getIntersection(constantRouterMap, routers);
     }
   },
   actions: {
-    GenerateRoutes({ commit }, data) {
+    GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
-        const { roles } = data
-        let accessedRouters
-        if (roles.indexOf('admin') >= 0) {
-          accessedRouters = asyncRouterMap
+        const { role } = data;
+        let accessedRouters;
+        if (role.title === 'Admin') {
+          accessedRouters = asyncRouterMap;
         } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+          accessedRouters = filterAsyncRouter(asyncRouterMap, role);
         }
-        console.log(accessedRouters)
-        commit('SET_ROUTERS', accessedRouters)
-        resolve()
-      })
-    }
-  }
-}
 
-export default permission
+        commit('SET_ROUTERS', accessedRouters);
+        resolve();
+      });
+    }
+  },
+  getters: {
+    menuList: (state, getters, rootState) => getMenuByRouter(asyncRouterMapChild, rootState.user.role)
+  }
+};
+
+export default permission;

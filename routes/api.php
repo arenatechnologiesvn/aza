@@ -16,20 +16,54 @@ use Illuminate\Http\Request;
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // User
+    Route::post('user', 'Auth\RegisterController@register');
+    Route::get('user', 'UserController@detail');
+    Route::post('user/uploadavatar', 'Auth\RegisterController@uploadProfilePicture');
 
+    // Settings
     Route::patch('settings/profile', 'Settings\ProfileController@update');
     Route::patch('settings/password', 'Settings\PasswordController@update');
+
+    // Role and permission
+//    Route::post('role', 'RoleController@create');
+//    Route::put('role/{id}', 'RoleController@update');
+
+//    Route::post('user', 'UserController@create')->middleware('can:create,App\User');
+//    Route::post('user', 'Auth\RegisterController@register');
+//    Route::post('role', 'RoleController@create');
+//    Route::put('role/{id}', 'RoleController@update');
+    Route::resource('role', 'RoleController');
+    Route::delete('roles/deletes', 'RoleController@deletes');
+    Route::resource('roles', 'RoleController');
+    Route::resource('employees', 'EmployeeController');
+    Route::resource('customers', 'CustomerController');
+    Route::resource('shops', 'ShopController');
+
+    Route::post('permissions', 'PermissionController@create');
+
+    // Media manager
+    Route::get('media', 'MediaManager\MediaManagerController@index');
+    Route::post('media/upload', 'MediaManager\MediaManagerController@uploadMediaImage');
+    Route::post('media/delete', 'MediaManager\MediaManagerController@deleteMediaImage');
+
+    // Product category
+    Route::resource('categories', 'Product\CategoryController');
+
+    // Product provider
+    Route::get('providers', 'Product\ProviderController@index');
+    Route::post('provider/update', 'Product\ProviderController@update');
+    Route::post('provider/delete', 'Product\ProviderController@delete');
+
+    // Products
+    Route::resource('products', 'Product\ProductController');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {
     Route::post('login', 'Auth\LoginController@login');
-    Route::post('register', 'Auth\RegisterController@register');
     Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
     Route::post('password/reset', 'Auth\ResetPasswordController@reset');
-
+    Route::post('register', 'Auth\RegisterController@register');
     Route::post('oauth/{driver}', 'Auth\OAuthController@redirectToProvider');
     Route::get('oauth/{driver}/callback', 'Auth\OAuthController@handleProviderCallback')->name('oauth.callback');
 });
