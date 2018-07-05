@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Provider extends Model
+class Provider extends BaseModel
 {
     protected $table = 'providers';
+
+    protected $primaryKey = 'id';
 }

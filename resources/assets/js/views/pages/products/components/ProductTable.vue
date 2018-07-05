@@ -47,8 +47,8 @@
             el-table-column(prop="provider.name" label="NHÀ CUNG CẤP" sortable)
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
-                  el-button(type="warning" icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
+                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
+                  el-button(icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneProduct(scope.row.id)")
         div.pagination__wrapper

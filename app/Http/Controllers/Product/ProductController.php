@@ -18,8 +18,8 @@ class ProductController extends Controller
         'unit' => 'required|string|max:255',
         'preview_images'=> 'required|string|max:500',
         'featured_images'=> 'required|string|max:500',
-        'category_id' => 'required|exists:categories,id',
-        'provider_id' => 'required|exists:providers,id',
+        'category_id' => 'numeric|exists:categories,id',
+        'provider_id' => 'numeric|exists:providers,id',
         'description'=> 'string|max:500',
     ];
 
