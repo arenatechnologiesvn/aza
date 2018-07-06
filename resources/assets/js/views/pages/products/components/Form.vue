@@ -19,11 +19,11 @@
               el-option(v-for="(item, index) in productUnits" :key="index" :label="item" :value="item")
         el-col(:span="12")
           el-form-item(prop="price" label="Giá sản phẩm:")
-            el-input(v-model.number="product.price" placeholder="Giá sản phẩm")
+            el-input(v-model.number="product.price" placeholder="Ví dụ: 24000")
               template(slot="append") VNĐ
         el-col(:span="12")
           el-form-item(prop="discount_price" label="Giá khuyến mãi:")
-            el-input(v-model.number="product.discount_price" placeholder="Giá khuyến mãi")
+            el-input(v-model.number="product.discount_price" placeholder="Ví dụ: 23500")
               template(slot="append") VNĐ
         el-col(:span="12")
           el-form-item(prop="category_id" label="Danh mục sản phẩm:")
@@ -68,10 +68,10 @@ export default {
     const validatePrice = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('Giá sản phẩm không được trống'));
-      } else if (typeof value !== "number") {
-        callback(new Error('Giá sản phẩm phải là số'));
+      } else if (!Number.isInteger(value)) {
+        callback(new Error('Giá sản phẩm không đúng'));
       } else if (this.product.discount_price && value <= this.product.discount_price) {
-        callback(new Error('Giá sản phẩm không được nhỏ hơn giá khuyến mãi'));
+        callback(new Error('Giá sản phẩm phải lớn hơn giá khuyến mãi'));
       } else {
         callback();
       }
@@ -79,10 +79,10 @@ export default {
 
     const validateDiscountPrice = (rule, value, callback) => {
       if (value) {
-        if (typeof value !== "number") {
-          callback(new Error('Giá khuyến mãi phải là số'));
+        if (!Number.isInteger(value)) {
+          callback(new Error('Giá sản phẩm không đúng'));
         } else if (value >= this.product.price) {
-          callback(new Error('Giá khuyễn mãi không được lớn hơn giá giá sản phẩm'));
+          callback(new Error('Giá khuyễn mãi phải nhỏ hơn giá sản phẩm'));
         } else {
           callback();
         }

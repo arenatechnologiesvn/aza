@@ -18,8 +18,8 @@ class CreateProductsTable extends Migration
             $table->string('product_code', 255);
             $table->string('name', 255)->nullable();
             $table->string('description', 500)->nullable();
-            $table->unsignedDecimal('price', 8, 2)->nullable();
-            $table->unsignedDecimal('discount_price', 8, 2)->nullable();
+            $table->unsignedDecimal('price')->nullable();
+            $table->unsignedDecimal('discount_price')->nullable();
             $table->string('unit', 255)->nullable();
             $table->string('preview_images', 500)->nullable();
             $table->string('featured_images', 500)->nullable();
