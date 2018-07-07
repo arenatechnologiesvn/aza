@@ -1,0 +1,49 @@
+.social__container {
+  color: white;
+  .social {
+    span {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      line-height: 30px;
+      vertical-align: middle;
+      margin: 0 3px;
+      text-align: center;
+      &.facebook {
+        background-color: #054BB4;
+      }
+      &.gplus {
+        background-color: #b40505;
+      }
+      &.twitter {
+        background-color: #0E95C7;
+      }
+    }
+  }
+}
+.footer-item {
+  color: white;
+  line-height: 30px;
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  strong {
+    margin-right: 5px;
+  }
+  .footer-item__title {
+    text-transform: uppercase;
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 110%;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background-color: #0E56A5;
+    }
+  }
+}

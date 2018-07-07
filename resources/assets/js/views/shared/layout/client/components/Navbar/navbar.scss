@@ -1,0 +1,130 @@
+.navbar__container {
+  width: 100%;
+  margin: 0 auto;
+  color: white;
+  line-height: 50px;
+  svg {
+    margin-right: 7px;
+  }
+  .navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 9999;
+    top: 0;
+    background-color: white;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    .top {
+
+      background-color: #2d3a4b;
+      .container {
+        display: flex;
+        height: 50px;
+        justify-content: space-between;
+      }
+      .top__right {
+        text-align: right;
+        svg {
+          margin-right: 10px;
+        }
+        .el-badge__content.is-fixed {
+          top: 9px;
+          right: 15px;
+        }
+        .el-badge__content {
+          padding: 0 3px;
+        }
+      }
+      .unstyle {
+        list-style: none;
+        margin: 0;
+        li {
+          display: inline-block;
+          height: 100%;
+          min-width: 130px;
+          .top__alert {
+            span {
+              margin-left: 10px;
+            }
+          }
+          .avatar__container {
+            display: inline-block;
+            position: relative;
+            .avatar {
+              margin-top: 5px;
+              width: 30px;
+              height: 30px;
+              border-radius: 50%;
+              margin-right: 7px;
+              position: absolute;
+              top: 5px;
+              left: -35px;
+            }
+          }
+          .top__dropdown {
+            cursor: pointer;
+            color: white;
+          }
+        }
+      }
+    }
+    .main {
+      display: flex;
+      .logo__container {
+        .img__container {
+          display: inline-block;
+          img {
+            height: 40px;
+            width: 40px;
+            bottom: 50%;
+            top: 7px;
+            position: relative;
+          }
+        }
+        .name__container {
+          margin-left: 10px;
+        }
+        span {
+          font-weight: bolder;
+          font-size: 30px;
+          text-transform: uppercase;
+          &.logo__aza {
+            color: green;
+          }
+          &.logo__com {
+            color: red;
+          }
+        }
+
+      }
+      .el-menu--horizontal {
+        box-shadow: unset;
+      }
+      .nav__menu {
+        margin: 0 auto;
+        text-align: center;
+      }
+      .el-menu--horizontal>.el-menu-item.is-active {
+        background-color: #409EFF !important;
+        color: white;
+      }
+    }
+    .form-search {
+      text-align: right;
+      margin: 0;
+      .shopcart {
+        width: 30px;
+        text-align: center;
+        margin-left: 10px;
+        font-size: 1.3em;
+        .el-badge__content {
+          top: 10px;
+          padding: 0 4px;
+        }
+      }
+      .el-input {
+        display: inline-block;
+        width: calc(100% - 40px);
+      }
+    }
+  }
+}
