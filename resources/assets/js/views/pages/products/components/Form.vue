@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     fetchPrepareData() {
-      this.product = this.getFormProduct;
+      this.product = JSON.parse(JSON.stringify(this.getFormProduct));
       this.fetchCategories();
       this.fetchProviders();
     },
@@ -97,12 +97,16 @@ export default {
     ...mapActions({
       openMediaModal: 'common/openMediaManagerModal',
       fetchCategories: 'categories/fetchList',
-      fetchProviders: 'providers/fetchList'
+      fetchProviders: 'providers/fetchList',
+      setFormProduct: 'products/setFormProduct'
     })
   },
   watch: {
     productId() {
-      if (this.productId) this.product = JSON.parse(JSON.stringify(this.currentProduct));
+      if (this.productId) {
+        this.product = JSON.parse(JSON.stringify(this.currentProduct));
+        this.setFormProduct(this.product);
+      }
     },
 
     selectedImageUrl() {

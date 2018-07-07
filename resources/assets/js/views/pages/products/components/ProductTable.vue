@@ -50,23 +50,14 @@
                 el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
                   el-button(type="warning" icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
-                  el-button(type="danger" icon="el-icon-delete" size="mini" round @click="openDeleteConfirmModal")
+                  el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneProduct(scope.row.id)")
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 50]"
             :page-size="10"
             layout="total, sizes, prev, pager, next"
             :total="tableData.length")
-    el-dialog(title="Xác nhận xóa sản phẩm" :visible.sync="confirmDialogVisible" width="30%" center)
-      el-row(type="flex" justify="center")
-        span Bạn có chắc chắn muốn xóa sản phẩm này!
-      span(slot="footer" class="dialog-footer")
-        el-button(type="danger" @click="closeDeleteConfirmModal")
-          svg-icon(icon-class="fa-solid ban")
-          span  Hủy
-        el-button(type="primary" @click="deleteOneProduct")
-          svg-icon(icon-class="fa-solid check")
-          span  Xác nhận
+
     edit-panel
     media-manager-modal(type="product")
 </template>
@@ -99,15 +90,14 @@ export default {
       multipleSelection: [],
       searchWord: '',
       selectedCategory: '',
-      selectedProvider: '',
-      confirmDialogVisible: false,
-      deleteProductId: ''
+      selectedProvider: ''
     }
   },
   methods: {
     ...mapActions({
       fetchProducts: 'products/fetchList',
       fetchProduct: 'products/fetchSingle',
+      deleteProduct: 'products/destroy',
       setEditProductId: 'common/setEditProductId',
       openProductEditPanel: 'common/openProductEditPanel'
     }),
@@ -157,37 +147,30 @@ export default {
     handleSelectionChange(val) {
         this.multipleSelection = val;
     },
+
     redirectToAddingPage() {
       this.$router.push({path: '/products/add'});
     },
-    deleteOneProduct() {
-      // openDeleteConfirmModal(scope.row.id)
 
-      deleteProduct(this.deleteProductId).then(response => {
-        this.products = response.data;
-        
-        // remove deleted item out of table data
-        this.tableData = this.tableData.filter(item => {
-          return item.id !== this.deleteProductId;
-        }) || [];
-        
-        closeDeleteConfirmModal();     
-      }).catch(error => {
-        closeDeleteConfirmModal(); 
+    deleteOneProduct(productId) {
+      this.$confirm('Bạn có chắc chắn muốn xóa sản phẩm này?', 'Xác nhận', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Hủy',
+        type: 'warning'
+      }).then(() => {
+        this.deleteProduct({ id: productId }).then(() => {
+          this.fetchData();
+        });
       });
-    },
-    openDeleteConfirmModal(id) {
-      this.confirmDialogVisible = true;
-      this.deleteProductId = id;
-    },
-    closeDeleteConfirmModal() {
-      this.confirmDialogVisible = false;
-      this.deleteProductId = '';
     }
   },
   watch: {
     searchWord() {
       this.filterData();
+    },
+
+    products() {
+      this.tableData = JSON.parse(JSON.stringify(this.products));
     }
   }
 }
