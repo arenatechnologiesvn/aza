@@ -64,4 +64,14 @@ class ByUserObserver
     {
         $model->deleted_by = $this->userId;
     }
+
+    public function deleting($model)
+    {
+        $model->deleted_by = $this->userId;
+    }
+
+    public function deleted($model)
+    {
+        $model->deleted_by = $this->userId;
+    }
 }

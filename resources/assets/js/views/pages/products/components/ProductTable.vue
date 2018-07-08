@@ -1,29 +1,27 @@
 <template lang="pug">
   div
-    div.form-search__wrapper
-      el-form.search
-        el-row(:gutter="10")
-          el-col(:span="16")
-            el-form-item
-              el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
-          el-col(:span="4")
-            el-form-item
-              el-select(v-model="selectedCategory" @change="filterData" @clear="filterData" clearable placeholder="Danh mục")
-                el-option(v-for="item in categories" :key="item.id" :label="item.name" :value="item.id")
-                  svg-icon(:icon-class="item.icon")
-                  span(style="margin-left: 5px") {{ item.name }}
-          el-col(:span="4")
-            el-form-item
-              el-select(v-model="selectedProvider" @change="filterData" @clear="filterData" clearable placeholder="Nhà cung cấp")
-                el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
-    div.control__wrapper
+    el-row.search-wrapper(:gutter="5")
+      el-col(:span="16")
+        span.search-wrapper__title Tìm kiếm:
+        el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
+      el-col(:span="4")
+        span.search-wrapper__title Danh mục:
+        el-select(v-model="selectedCategory" @change="filterData" @clear="filterData" clearable placeholder="Danh mục")
+          el-option(v-for="item in categories" :key="item.id" :label="item.name" :value="item.id")
+            svg-icon(:icon-class="item.icon")
+            span(style="margin-left: 5px") {{ item.name }}
+      el-col(:span="4")
+        span.search-wrapper__title Nhà cung cấp:
+        el-select(v-model="selectedProvider" @change="filterData" @clear="filterData" clearable placeholder="Nhà cung cấp")
+          el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
+    .control-wrapper
       el-row
         el-col(:span="12")
           el-dropdown(split-button type="primary" size="small")
             span Đã chọn {{ multipleSelection.length }} sản phẩm
             el-dropdown-menu(slot="dropdown")
               el-dropdown-item Xóa
-        el-col(:span="12" style="text-align: right;")
+        el-col(:span="12" style="text-align: right")
           el-button(type="success" size="small")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
@@ -43,12 +41,16 @@
               template(slot-scope="scope")
                 span {{ Number(scope.row.price).toLocaleString('de-DE') }}
             el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
-            el-table-column(prop="category.name" label="DANH MỤC" sortable)
-            el-table-column(prop="provider.name" label="NHÀ CUNG CẤP" sortable)
+            el-table-column(prop="category_name" label="DANH MỤC" sortable)
+              template(slot-scope="scope")
+                span {{ scope.row.category_name || '-' }}
+            el-table-column(prop="provider_name" label="NHÀ CUNG CẤP" sortable)
+              template(slot-scope="scope")
+                span {{ scope.row.provider_name || '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
-                  el-button(type="warning" icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
+                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
+                  el-button(icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneProduct(scope.row.id)")
         div.pagination__wrapper
@@ -103,13 +105,9 @@ export default {
     }),
 
     fetchData() {
-      this.fetchProductData().then(() => {
+      this.fetchProducts().then(() => {
         this.tableData = JSON.parse(JSON.stringify(this.products));
       });
-    },
-
-    fetchProductData() {
-      return this.fetchProducts();
     },
 
     openEditPanel(productId) {
@@ -133,13 +131,13 @@ export default {
 
       if (this.selectedCategory) {
         this.tableData = this.tableData.filter(item => {
-          return item.category && item.category.id === this.selectedCategory;
+          return item.category_id === this.selectedCategory;
         });
       }
 
       if (this.selectedProvider) {
         this.tableData = this.tableData.filter(item => {
-          return item.provider && item.provider.id === this.selectedProvider;
+          return item.provider_id === this.selectedProvider;
         });
       }
     },
@@ -177,7 +175,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.control__wrapper {
+.control-wrapper {
   margin: 10px 0;
+}
+
+.search-wrapper {
+  margin: 10px 0 20px;
+
+  &__title {
+    font-size: 12px;
+  }
 }
 </style>

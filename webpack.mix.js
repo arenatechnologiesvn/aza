@@ -51,5 +51,8 @@ mix.webpackConfig({
         loader: 'pug-plain-loader'
       }
     ]
+  },
+  node: {
+    fs: 'empty'
   }
 });

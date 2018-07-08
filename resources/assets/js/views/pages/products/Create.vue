@@ -3,7 +3,7 @@
     el-card
       div.clearfix(slot="header")
         span
-          svg-icon(icon-class="fa-solid piggy-bank")
+          svg-icon(icon-class="fa-solid plus-circle")
           span(style="margin-left: 10px;") Thêm mới sản phẩm
         el-dropdown(style="float: right; padding-right: 7px; cursor: pointer;")
           span.el-dropdown-link
@@ -41,11 +41,6 @@
       ProductForm,
       MediaManagerModal
     },
-    computed: {
-      ...mapGetters({
-        getFormProduct: 'products/getFormProduct'
-      })
-    },
     methods: {
       save() {
         this.$confirm('Bạn có muốn tạo sản phẩm này không?', 'Xác nhận', {
@@ -53,11 +48,9 @@
           cancelButtonText: 'Hủy',
           type: 'success'
         }).then(() => {
-          this.$refs.productCreateForm.isValidForm().then((valid) => {
-            if (valid) {
-              this.createProduct({ data: this.getFormProduct });
-            }
-          });
+          this.$refs.productCreateForm.create();
+        }).catch(() => {
+          // Do nothing
         });
       },
 
@@ -68,16 +61,10 @@
           type: 'warning'
         }).then(() => {
           this.$router.push({ path: '/products' });
+        }).catch(() => {
+          // Do nothing
         });
-      },
-
-      ...mapActions({
-        createProduct: 'products/create'
-      })
+      }
     }
   }
 </script>
-
-<style scoped>
-
-</style>

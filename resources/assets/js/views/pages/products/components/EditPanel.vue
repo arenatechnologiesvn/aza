@@ -40,8 +40,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      productById: 'products/byId',
-      getFormProduct: 'products/getFormProduct'
+      productById: 'products/byId'
     }),
 
     ...mapState({
@@ -84,15 +83,7 @@ export default {
     },
 
     save() {
-      this.$refs.productUpdateForm.isValidForm().then((valid) => {
-        if (valid && this.productId) {
-          this.updateProduct({ id: this.productId, data: this.getFormProduct }).then(() => {
-            this.fetchProducts().then(() => {
-              this.closeProductEditPanel();
-            });
-          });
-        }
-      });
+      this.$refs.productUpdateForm.update();
     },
 
     cancel() {
@@ -101,9 +92,7 @@ export default {
 
     ...mapActions({
       openProductEditPanel: 'common/openProductEditPanel',
-      closeProductEditPanel: 'common/closeProductEditPanel',
-      updateProduct: 'products/update',
-      fetchProducts: 'products/fetchList'
+      closeProductEditPanel: 'common/closeProductEditPanel'
     })
   },
   watch: {
