@@ -10,9 +10,6 @@ Vue.use(Router);
 /* Layout */
 import Layout from '../views/shared/layout/Admin';
 import ParentView from '~/components/parent-view';
-import ClientLayout from '~/views/shared/layout/client/Client';
-import AccountParent from '~/views/pages/client/accounts/AccountLayout';
-
 import BaseRouter from './base_router';
 
 /**
@@ -302,91 +299,18 @@ export const asyncRouterMap = [
   {
     path: '/',
     component: Layout,
-    redirect: 'dashboard',
+    redirect: 'products',
     meta: { title: 'Dashboard', icon: 'fa-solid tachometer-alt' },
     children: [...asyncRouterMapChild]
   },
-  {
-    path: '/home',
-    component: ClientLayout,
-    redirect: 'home',
-    children: [
-      {
-        path: '',
-        name: 'home',
-        component: () => import('~/views/pages/client/Home'),
-        meta: {
-          title: 'Trang chủ',
-          icon: 'fa-solid home'
-        }
-      },
-      {
-        path: 'products',
-        name: 'home_product',
-        component: () => import('~/views/pages/client/Products'),
-        meta: {
-          title: 'SẢN PHẨM',
-          icon: 'fa-solid home'
-        }
-      },
-      {
-        path: 'products/:id',
-        name: 'product_detail',
-        component: () => import('~/views/pages/client/ProductDetail'),
-        meta: {
-          title: 'SẢN PHẨM MỚI',
-          icon: 'fa-solid home'
-        }
-      },
-      {
-        path: 'accounts',
-        name: 'home_account',
-        component: AccountParent,
-        redirect: '/home/accounts',
-        meta: {
-          title: 'TÀI KHOẢN'
-        },
-        children: [
-          {
-            path: '',
-            name: 'home_account_index',
-            component: () => import('~/views/pages/client/accounts/pages/Index'),
-            meta: {
-              title: 'THÔNG TIN CÁ NHÂN',
-              icon: 'fa-solid user'
-            }
-          },
-          {
-            path: 'alert',
-            name: 'home_account_alert',
-            component: () => import('~/views/pages/client/accounts/pages/Alert'),
-            meta: {
-              title: 'THÔNG BÁO CÁ NHÂN',
-              icon: 'fa-solid bell'
-            }
-          },
-          {
-            path: 'order',
-            name: 'home_account_order',
-            component: () => import('~/views/pages/client/accounts/pages/Order'),
-            meta: {
-              title: 'QUẢN LÝ ĐƠN HÀNG',
-              icon: 'fa-solid cart'
-            }
-          },
-          {
-            path: 'favorite',
-            name: 'home_account_favorite',
-            component: () => import('~/views/pages/client/accounts/pages/Favorite'),
-            meta: {
-              title: 'SẢN PHẨM YÊU THÍCH',
-              icon: 'fa-solid heart'
-            }
-          }
-        ]
-      }
-    ]
-  },
+  // {
+  //   path: '/dashboard7',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Quản lý thành viên',
+  //   meta: { title: 'Quản lý thành viên', icon: 'fa-solid user' },
+  //   children: []
+  // },
   // {
   //   path: '/dashboard8',
   //   component: Layout,

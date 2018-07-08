@@ -33,7 +33,7 @@ abstract class BaseModel extends Model
         parent::boot();
     }
 
-    protected function getDateFormat()
+    public function getDateFormat()
     {
         return 'U';
     }

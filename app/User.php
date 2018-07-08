@@ -61,7 +61,7 @@ class User extends Authenticatable implements JWTSubject
         'photo_url',
     ];
 
-    protected function getDateFormat()
+    public function getDateFormat()
     {
         return 'U';
     }

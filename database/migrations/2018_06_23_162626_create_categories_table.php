@@ -16,11 +16,10 @@ class CreateCategoriesTable extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code', 30);
-            $table->string('name', 100)->nullable();
-            $table->string('title', 170)->nullable();
+            $table->string('name', 100);
+            $table->string('icon', 100);
             $table->string('url', 170)->nullable();
             $table->string('description', 255)->nullable();
-            $table->string('icon', 100)->nullable();
             $table->integer('level')->nullable();
             $table->integer('parent_id')->nullable();
             $table->integer('lft')->nullable();
@@ -31,6 +30,7 @@ class CreateCategoriesTable extends Migration
             $table->integer('updated_by')->nullable();
             $table->integer('deleted_at')->nullable();
             $table->integer('deleted_by')->nullable();
+            $table->unique(['code']);
         });
     }
 
