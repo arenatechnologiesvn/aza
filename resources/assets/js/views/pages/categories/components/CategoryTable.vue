@@ -1,17 +1,20 @@
 <template lang="pug">
   div
-    .control__wrapper
+    div.control__wrapper
       el-row
-        el-col(:span="8")
+        el-col(:span="6")
           el-dropdown(split-button type="primary" size="small")
             span Đã chọn {{ multipleSelection.length }} danh mục
             el-dropdown-menu(slot="dropdown")
               el-dropdown-item Xóa
-        el-col(:span="16" style="text-align: right")
-          el-button(type="primary" size="small" @click="redirectToAddingPage")
-            svg-icon(icon-class="fa-solid plus-circle")
-            span.ml-5  Thêm mới
-          el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="max-width: 200px; margin-left: 5px;" size="small")
+        el-col(:span="18")
+          el-row(:gutter="10" type="flex" justify="end")
+            el-col(:span="4")
+              el-button(type="primary" size="small" @click="redirectToAddingPage")
+                svg-icon(icon-class="fa-solid plus-circle")
+                span.ml-5  Thêm mới
+            el-col(:span="10")
+              el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%" size="small")
     div.table__wrapper
       div.index__container
         div.table
@@ -22,12 +25,10 @@
                 svg-icon(:icon-class="scope.row.icon")
             el-table-column(prop="name" label="TÊN DANH MỤC" sortable)
             el-table-column(prop="description" label="MÔ TẢ" sortable)
-              template(slot-scope="scope")
-                span {{ scope.row.description || '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
-                  el-button(icon="el-icon-edit" size="mini" round  @click="update(scope.row.id)")
+                  el-button(type="warning" icon="el-icon-edit" size="mini" round  @click="update(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneCategory(scope.row.id)")
         div.pagination__wrapper
