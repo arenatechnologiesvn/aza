@@ -57,7 +57,7 @@ class ProductController extends Controller
     public function store(StoreProduct $request)
     {
         if ($request->input('discount_price') &&
-            ($datarequest->input('discount_price') > $request->input('price'))) {
+            ($request->input('discount_price') > $request->input('price'))) {
             return response(['message' => 'price must be greater than discount price'], 433);
         }
 
@@ -128,7 +128,7 @@ class ProductController extends Controller
         }
 
         if ($request->input('discount_price') &&
-            ($datarequest->input('discount_price') > $request->input('price'))) {
+            ($request->input('discount_price') > $request->input('price'))) {
             return response(['message' => 'price must be greater than discount price'], 433);
         }
 
