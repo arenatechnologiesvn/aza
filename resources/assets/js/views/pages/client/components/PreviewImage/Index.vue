@@ -15,8 +15,10 @@
 </template>
 
 <script>
-  import avatar from '~/assets/products/linh-nguyen.jpg'
-  import avatar2 from '~/assets/products/404.png'
+  import avatar from '~/assets/products/p1.jpg'
+  import avatar2 from '~/assets/products/p2.jpg'
+  import avatar3 from '~/assets/products/p3.jpg'
+  import avatar4 from '~/assets/products/p4.jpg'
   import './preview_image.scss'
   export default {
     name: 'PreviewImage',
@@ -34,11 +36,11 @@
           },
           {
             id: 3,
-            img: avatar
+            img: avatar3
           },
           {
             id: 4,
-            img: avatar2
+            img: avatar4
           },
         ]
       },

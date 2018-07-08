@@ -4,13 +4,15 @@
       div.product-item__image
         img(:src="product")
       div.product-item__des
-        div.product-item__title Bikini Hàn Quốc, độn ngực, thun co giản, sôi động mùa hè
-        div.product-item__description BIKINI
+        div.product-item__title
+          router-link(to="/home/products/2") [HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018
+        div.product-item__description
+          router-link(to="/home/products") THỰC PHẨM
         div.line
         div.product-item__control
           div.product-item__control--left
             span.product-item__price 45.000(VNĐ)
-            span.product-item__price--discount 35.000(VNĐ)
+            span.product-item__price--discount 85.000(VNĐ)
           div.product-item__control--right
             span.heart
               svg-icon(icon-class="fa-solid heart")
@@ -19,7 +21,7 @@
 </template>
 
 <script>
-  import product from '~/assets/products/linh-nguyen.jpg'
+  import product from '~/assets/products/p1.jpg'
   export default {
     name: 'ItemProduct',
     data () {

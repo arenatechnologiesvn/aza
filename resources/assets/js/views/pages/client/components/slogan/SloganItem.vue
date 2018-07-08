@@ -4,15 +4,26 @@
       img(:src="background")
     div.slogan-item__mask
     div.slogan-item__content
-      h4.slogan-item__title ĐẶT HÀNG
+      h4.slogan-item__title {{title}}
       div.line
-      p.slogan-item__description 2:00AM - 9:00AM
+      p.slogan-item__description {{description}}
 </template>
 
 <script>
-  import background from '~/assets/404_images/404.png'
+  import background from '~/assets/products/dh.png'
   export default {
     name: 'SloganItem',
+    props: {
+      title: {
+        type: String,
+        default: 'ĐẶT HÀNG'
+      },
+      description: {
+        type: String,
+        default: '2:00AM - 9:00AM'
+      },
+      // img: background
+    },
     data () {
       return {
         background
@@ -20,7 +31,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>

@@ -6,7 +6,7 @@
         div.product__control
           el-row(type="flex")
             el-col(:span="12")
-              h4 20 sản phẩm được tìm trong "ÁO SƠ MI"
+              h4 20 sản phẩm được tìm trong "SẢN PHẨM MỚI"
             el-col(:span="12" style="text-align: right")
               span.product--order
                 span.order__title Sắp xếp theo
@@ -37,20 +37,14 @@
     data() {
       return {
         options: [{
-          value: 'Option1',
-          label: 'Option1'
+          value: '1',
+          label: 'Giá giảm dần'
         }, {
-          value: 'Option2',
-          label: 'Option2'
+          value: '2',
+          label: 'Giá tăng dần'
         }, {
-          value: 'Option3',
-          label: 'Option3'
-        }, {
-          value: 'Option4',
-          label: 'Option4'
-        }, {
-          value: 'Option5',
-          label: 'Option5'
+          value: '4',
+          label: 'Tên sản phẩm'
         }],
         value: ''
       }

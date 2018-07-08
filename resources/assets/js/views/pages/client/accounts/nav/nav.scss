@@ -26,9 +26,18 @@
       display: block;
       height: 40px;
       padding: 5px 0;
-      border-top: 1px solid #d6d6d6 ;
+      border-top: 1px solid #d6d6d6;
+      &.active {
+        background-color: #0E56A5;
+        a {
+          color: white;
+        }
+      }
       &:hover {
-        background-color: #d6d6d6;
+        background-color: #0E95C7;
+        a {
+          color: #d6d6d6;
+        }
       }
       margin-top: 1px;
       a {
