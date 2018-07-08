@@ -334,7 +334,7 @@ export const asyncRouterMap = [
         name: 'product_detail',
         component: () => import('~/views/pages/client/ProductDetail'),
         meta: {
-          title: 'SẢN PHẨM BIKINI',
+          title: 'SẢN PHẨM MỚI',
           icon: 'fa-solid home'
         }
       },
@@ -342,7 +342,10 @@ export const asyncRouterMap = [
         path: 'accounts',
         name: 'home_account',
         component: AccountParent,
-        redirect: 'home_account_index',
+        redirect: '/home/accounts',
+        meta: {
+          title: 'TÀI KHOẢN'
+        },
         children: [
           {
             path: '',
@@ -360,6 +363,24 @@ export const asyncRouterMap = [
             meta: {
               title: 'THÔNG BÁO CÁ NHÂN',
               icon: 'fa-solid bell'
+            }
+          },
+          {
+            path: 'order',
+            name: 'home_account_order',
+            component: () => import('~/views/pages/client/accounts/pages/Order'),
+            meta: {
+              title: 'QUẢN LÝ ĐƠN HÀNG',
+              icon: 'fa-solid cart'
+            }
+          },
+          {
+            path: 'favorite',
+            name: 'home_account_favorite',
+            component: () => import('~/views/pages/client/accounts/pages/Favorite'),
+            meta: {
+              title: 'SẢN PHẨM YÊU THÍCH',
+              icon: 'fa-solid heart'
             }
           }
         ]

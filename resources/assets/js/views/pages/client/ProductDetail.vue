@@ -9,10 +9,10 @@
           el-col(:span="16")
             el-row.product-detail__title(type="flex")
               el-col(:span="20").left
-                h4.title Bikini Hàn Quốc, độn ngực, thun co giản, sôi động mùa hè, hàng xuất khẩu, chất lượng cao
+                h4.title [HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018
                 span.category
                   strong Danh mục:
-                  span.category__name BIKINI
+                  span.category__name SẢN PHẨM MỚI
                 span.rating
                   span.score(v-for="item in 5" @click="rate(item)" :key="item" :style="{color: item <= rating ? 'orange' : ''}")
                     svg-icon(icon-class="fa-solid star")
@@ -24,7 +24,8 @@
                     svg-icon(icon-class="fa-solid angle-right")
             el-row(:span="24")
               p.description In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In retailing, products are called merchandise. In manufacturing, products are bought as raw materials and sold as finished goods. In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In retailing, products are called merchandise. In manufacturing, products are bought as raw materials and sold as finished goods.In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In retailing, products are called merchandise. In manufacturing, products are bought as raw materials and sold as finished goods.
-              div.price 480,000 VNĐ
+              div.price 45,000 VNĐ
+                span(style="margin-left: 20px; font-size=18px; color: #d6d6d6; text-decoration: line-through;") 85,000 VNĐ
               div.submit
                 span.input
                   el-input(placeholder="1" style="width: 150px;")

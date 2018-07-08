@@ -1,7 +1,8 @@
 <template lang="pug">
   div.list-item
     div.list-item__title(v-if="control")
-      h4.title SẢN PHẨM MỚI
+      h4.title
+        router-link(to="/home/products") SẢN PHẨM MỚI
       span.controls
         el-button(size="mini")
           svg-icon(icon-class="fa-solid angle-left")

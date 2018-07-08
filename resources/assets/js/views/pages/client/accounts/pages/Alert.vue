@@ -14,7 +14,7 @@
             el-col(:span="16")
               span Thông báo về tin tức khuyến mãi ngày 28/08 khuyến mãi về sản phẩm mới
             el-col(:span="4")
-              el-button(type="danger" size="mini" icon="el-icon-delete" circle)
+              el-button(type="danger" size="mini" icon="el-icon-delete" round)
 </template>
 
 <script>
@@ -28,6 +28,7 @@
     vertical-align: middle;
   }
   .account-alert {
+    background-color: white;
     .h-line {
       display: block;
       margin: 5px 0;
@@ -41,7 +42,11 @@
         font-size: 25px;
         display: block;
         line-height: 25px;
-        width: 40px;
+        width: 35px;
+        background-color: #d6d6d6;
+        &:first-child {
+          border-bottom: 2px solid black;
+        }
       }
     }
     .account-alert__title {
@@ -57,11 +62,17 @@
       line-height: 30px;
       list-style: none;
       padding: 20px 0;
+      background-color: #eeeeee;
       li {
         min-height: 70px;
-        padding: 20px;
+        padding: 10px 0;
         width: 100%;
         vertical-align: middle;
+        background-color: white;
+        margin: 10px 0;
+        &:first-child {
+          margin-top: -20px;
+        }
       }
     }
   }
