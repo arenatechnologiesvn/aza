@@ -86,6 +86,8 @@ export default {
         } else {
           callback();
         }
+      } else {
+        callback();
       }
     };
 
@@ -145,6 +147,10 @@ export default {
       });
     },
 
+    resetForm(formName) {
+      this.$refs.form.resetFields();
+    },
+
     ...mapActions({
       openMediaModal: 'common/openMediaManagerModal',
       fetchCategories: 'categories/fetchList',
@@ -158,6 +164,7 @@ export default {
   watch: {
     panelOpen() {
       if (this.panelOpen && this.productId) {
+        this.resetForm();
         this.product = JSON.parse(JSON.stringify(this.currentProduct));
       }
     },

@@ -28,14 +28,10 @@ class ProductController extends Controller
                 'discount_price' => $item['discount_price'] ? $item['discount_price'] : '',
                 'preview_images' => $item['preview_images'],
                 'featured_images' => $item['featured_images'],
-                'category' => [
-                    'id' => $item['category_id'] ? $item['category_id'] : '',
-                    'name' => $item->category ? $item->category->name : ''
-                ],
-                'provider' => [
-                    'id' => $item['provider_id'] ? $item['provider_id'] : '',
-                    'name' => $item->provider ? $item->provider->name : ''
-                ],
+                'category_id' => $item['category_id'],
+                'category_name' => $item->category ? $item->category->name : '',
+                'provider_id' => $item['provider_id'],
+                'provider_name' => $item->provider ? $item->provider->name : ''
             ];
         });
         return response()->json(['data' => $products], 200);
@@ -60,6 +56,11 @@ class ProductController extends Controller
      */
     public function store(StoreProduct $request)
     {
+        if ($request->input('discount_price') &&
+            ($datarequest->input('discount_price') > $request->input('price'))) {
+            return response(['message' => 'price must be greater than discount price'], 433);
+        }
+
         \DB::beginTransaction();
         try {
             $product = Product::create($request->all());
@@ -94,7 +95,9 @@ class ProductController extends Controller
             'preview_images' => $product['preview_images'],
             'featured_images' => $product['featured_images'],
             'category_id' => $product['category_id'],
-            'provider_id' => $product['provider_id']
+            'category_name' => $product->category->name,
+            'provider_id' => $product['provider_id'],
+            'provider_name' => $product->provider->name
         ];
 
         return response()->json(['data' => $data], 200);
@@ -122,6 +125,11 @@ class ProductController extends Controller
     {
         if (!$product) {
             return response(['message' => 'Invalid param'], 433);
+        }
+
+        if ($request->input('discount_price') &&
+            ($datarequest->input('discount_price') > $request->input('price'))) {
+            return response(['message' => 'price must be greater than discount price'], 433);
         }
 
         \DB::beginTransaction();

@@ -4,19 +4,12 @@ namespace App\Http\Controllers\Product;
 
 use App\Category;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Product\StoreCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
-    private $categories_validation = [
-        'code' => 'required|max:255',
-        'name' => 'required|string|max:255',
-        'icon' => 'required|string|max:255',
-        'description'=> 'string|max:500'
-    ];
-
     /**
      * Display a listing of the resource.
      *
@@ -53,23 +46,19 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCategory $request)
     {
-        // Retrieve the validated input data...
-        $data = $request->validate($this->categories_validation);
+        $category = Category::create($request->all());
 
-        $category = Category::create([
-            'code' => $data['code'],
-            'name' => $data['name'],
-            'icon' => $data['icon'],
-            'description' => $data['description'],
-        ]);
-
-        if (!$category) {
-            return response(['data' => ['message' => 'fail']], 433);
+        \DB::beginTransaction();
+        try {
+            $category = Category::create($request->all());
+            \DB::commit();
+            return response([ 'data' => $category ], 200);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response(['message' => $e], 433);
         }
-
-        return response([ 'data' => $category], 200);
     }
 
     /**
@@ -113,21 +102,21 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(StoreCategory $request, Category $category)
     {
         if (!$category) {
             return response(['message' => 'Invalid param'], 433);
         }
 
-        $data = $request->validate($this->categories_validation);
-
-        $category['code'] = $data['code'];
-        $category['name'] = $data['name'];
-        $category['icon'] = $data['icon'];
-        $category['description'] = $data['description'];
-        $category->save();
-
-        return response([ 'data' => $category], 200);
+        \DB::beginTransaction();
+        try {
+            $category->update($request->all());
+            \DB::commit();
+            return response([ 'data' => $category ], 200);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response(['message' => 'Failed'], 433);
+        }
     }
 
     /**
