@@ -10,7 +10,7 @@ export default createCrudModule({
     Message.error('Không thể tải xuống danh mục sản phẩm');
   },
   onFetchSingleError: () => {
-    Message.error('Không thể tải xuống danh mục sản phẩm');
+    Message.error('Không thể tải xuống danh mục này');
   },
   onCreateSuccess: () => {
     Message.success('Tạo danh mục sản phẩm thành công');
