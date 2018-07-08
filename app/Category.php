@@ -5,6 +5,7 @@ namespace App;
 class Category extends BaseModel
 {
     protected $table = 'categories';
+
     protected $fillable = [
         'code',
         'name',
@@ -16,4 +17,6 @@ class Category extends BaseModel
         'lft',
         'rght'
     ];
+
+    protected $primaryKey = 'id';
 }

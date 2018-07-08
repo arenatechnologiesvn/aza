@@ -4,7 +4,7 @@ namespace App\Http\Requests\Product;
 
 use App\Http\Requests\BaseFormRequest;
 
-class StoreProduct extends BaseFormRequest
+class StoreCategory extends BaseFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,15 +24,9 @@ class StoreProduct extends BaseFormRequest
     public function rules()
     {
         return [
-            'product_code' => 'required|string|max:255',
+            'code' => 'required|max:255',
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
-            'unit' => 'required|string|max:255',
-            'preview_images'=> 'required|string|max:500',
-            'featured_images'=> 'required|string|max:500',
-            'category_id' => 'nullable|numeric|exists:categories,id',
-            'provider_id' => 'nullable|numeric|exists:providers,id',
+            'icon' => 'required|string|max:255',
             'description'=> 'nullable|string|max:500'
         ];
     }
