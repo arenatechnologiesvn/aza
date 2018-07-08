@@ -9,7 +9,7 @@ class UserDetail extends Model
     //
     protected $table = 'userdetails';
 
-    public function getDateFormat()
+    protected function getDateFormat()
     {
         return 'U';
     }

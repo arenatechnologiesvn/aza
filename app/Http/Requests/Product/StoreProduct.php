@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Product;
 
-use App\Http\Requests\BaseFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProduct extends BaseFormRequest
+class StoreProduct extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StoreProduct extends BaseFormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,16 +24,15 @@ class StoreProduct extends BaseFormRequest
     public function rules()
     {
         return [
-            'product_code' => 'required|string|max:255',
+            'code' => 'required|unique:products|max:255',
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
-            'unit' => 'required|string|max:255',
-            'preview_images'=> 'required|string|max:500',
-            'featured_images'=> 'required|string|max:500',
-            'category_id' => 'nullable|numeric|exists:categories,id',
-            'provider_id' => 'nullable|numeric|exists:providers,id',
-            'description'=> 'nullable|string|max:500'
+            'price' => 'required|numberic',
+            'discountPrice' => 'numberic',
+            'unit' => 'required|numberic',
+            'imageUrl'=> 'required|string|max:500',
+            'categoryId' => 'required|exists:categories,id',
+            'providerId' => 'required|exists:companies,id',
+            'description'=> 'string|max:500',
         ];
     }
 }
