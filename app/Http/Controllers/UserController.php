@@ -94,6 +94,6 @@ class UserController extends Controller
     }
 
     public function detail(Request $request) {
-        return $this->user->detail($request->user());
+        return $this->api_success_response($this->user->detail($request->user()));
     }
 }

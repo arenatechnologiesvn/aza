@@ -4,9 +4,14 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\RestApiResponse;
+
+define("ALREADY_AUTHENTICATED_CODE", 401);
 
 class RedirectIfAuthenticated
 {
+    use RestApiResponse;
+
     /**
      * Handle an incoming request.
      *
@@ -18,7 +23,7 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return response()->json(['error' => 'Already authenticated.'], 400);
+            return $this->api_error_response('Already authenticated.', ALREADY_AUTHENTICATED_CODE);
         }
 
         return $next($request);
