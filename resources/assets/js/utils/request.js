@@ -3,8 +3,6 @@ import { Message, MessageBox } from 'element-ui';
 import store from '../store';
 import { getToken } from '~/utils/auth';
 
-const RESPONSE_OK_STATUS = 200;
-
 const TIME_1_SECOND = 1000;
 const ERROR_NOTIFY_DURATION_TIME = 5 * TIME_1_SECOND;
 const API_SERVICE_TIMEOUT = 15 * TIME_1_SECOND;
@@ -37,13 +35,12 @@ service.interceptors.request.use((config) => {
 
 // Response interceptor
 service.interceptors.response.use((response) => {
-  const status = response.status;
+  const responseData = response.data;
+  if (responseData.success) return responseData.data;
+  setErrorNotify(responseData);
 
-  if (response.status === RESPONSE_OK_STATUS) return response.data;
-
-  setErrorNotify(response.data.message);
   // 50008: illegal token; 50012: other client logged in; 50014: Token expired;
-  if (status >= 500 || (status === 401 && store.getters.token)) {
+  if (responseData.error >= 50000 || (responseData.error === 401 && store.getters.token)) {
     MessageBox.confirm(
       'You have been logged out, you can cancel to stay on this page, or log in again',
       'Confirm logout',

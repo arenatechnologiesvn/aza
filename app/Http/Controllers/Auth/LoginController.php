@@ -39,8 +39,7 @@ class LoginController extends Controller
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
-
-        return $this->sendFailedLoginResponse($request);
+        return $this->api_error_response('username or password incorrect', 5001);
     }
 
     /**
@@ -73,11 +72,11 @@ class LoginController extends Controller
         $token = (string)$this->guard()->getToken();
         $expiration = $this->guard()->getPayload()->get('exp');
 
-        return response()->json([
+        return $this->api_success_response([
             'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => $expiration - time()
-        ], 200);
+        ]);
     }
 
     /**
@@ -89,11 +88,6 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $this->guard()->logout();
-        return response()->json(['message' => 'Logout Ok'], 200);
-    }
-
-    protected function sendFailedLoginResponse(Request $request)
-    {
-        return response()->json(['message' => 'username or password incorrect'], 501);
+        return $this->api_success_response();
     }
 }
