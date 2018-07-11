@@ -34,8 +34,7 @@ class ProductController extends Controller
                 'provider_name' => $item->provider ? $item->provider->name : ''
             ];
         });
-        return $this->api_success_response($products);
-        return response()->json(['data' => $products], 200);
+        return $this->api_success_response(['data' => $products]);
     }
 
 

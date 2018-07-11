@@ -73,9 +73,11 @@ class LoginController extends Controller
         $expiration = $this->guard()->getPayload()->get('exp');
 
         return $this->api_success_response([
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => $expiration - time()
+            'data' => [
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => $expiration - time()
+            ]
         ]);
     }
 

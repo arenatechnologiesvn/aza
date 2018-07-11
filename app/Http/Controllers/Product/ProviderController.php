@@ -18,6 +18,6 @@ class ProviderController extends Controller
     public function index()
     {
         $providers = Provider::all();
-        return response()->json(['data' => $providers], 200);
+        return $this->api_success_response(['data' => $providers]);
     }
 }

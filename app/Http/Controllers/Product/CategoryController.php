@@ -26,7 +26,8 @@ class CategoryController extends Controller
                 'description' => $item['description']
             ];
         });
-        return response()->json(['data' => $categories], 200);
+
+        return $this->api_success_response(['data' => $categories]);
     }
 
 
