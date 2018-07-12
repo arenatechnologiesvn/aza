@@ -17,7 +17,7 @@
         div.table
           el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange")
             el-table-column(type="selection" header-align="center" align="center" width="40")
-            el-table-column(prop="icon" align="center" width="60")
+            el-table-column(prop="icon" label="ICON" align="center" width="60")
               template(slot-scope="scope")
                 svg-icon(:icon-class="scope.row.icon")
             el-table-column(prop="name" label="TÊN DANH MỤC" sortable)
@@ -26,7 +26,7 @@
                 span {{ scope.row.description || '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-tooltip(class="item" effect="dark" content="Cập nhật" placement="top")
+                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
                   el-button(icon="el-icon-edit" size="mini" round  @click="update(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneCategory(scope.row.id)")

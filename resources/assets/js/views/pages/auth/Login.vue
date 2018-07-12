@@ -23,6 +23,7 @@
 
 <script>
   import { isValidateEmail } from '~/utils/validate'
+  import { Message } from 'element-ui';
 
   export default {
     name: 'Login',
@@ -62,7 +63,8 @@
             this.$store.dispatch('Login', this.loginForm).then(() => {
               this.loading = false
               this.$router.push({path: '/'})
-            }).catch(() => {
+            }).catch((error) => {
+              Message.error(error)
               this.loading = false
             })
           } else {
