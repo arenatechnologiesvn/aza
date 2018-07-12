@@ -40,7 +40,7 @@
   import { mapActions, mapState, mapGetters } from 'vuex';
 
   export default {
-    name: 'CreateProduct',
+    name: 'CreateCategory',
     computed: {
       ...mapGetters({
         categoryById: 'categories/byId',
@@ -72,7 +72,7 @@
             { required: true, message: 'Icon không được trống', trigger: 'blur' }
           ],
           description: [
-            { min: 1, max: 500, message: 'Chiều dài phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+            { min: 1, max: 500, message: 'Chiều dài phải nhỏ hơn 500 ký tự', trigger: 'blur' }
           ]
         },
         icons: []

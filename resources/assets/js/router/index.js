@@ -276,20 +276,9 @@ export const asyncRouterMapChild = [
         }
       },
       {
-        path: ':id',
-        name: 'provider_update',
-        component: () => import('~/views/pages/providers/Update'),
-        hidden: true,
-        meta: {
-          title: 'Cập nhật nhà cung cấp',
-          icon: 'fa-solid lock'
-        }
-      },
-      {
         path: 'add',
         name: 'providers_create',
         component: () => import('~/views/pages/providers/Create'),
-        hidden: true,
         meta: {
           title: 'Thêm mới nhà cung cấp',
           icon: 'fa-solid lock'
