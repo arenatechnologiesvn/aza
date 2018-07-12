@@ -8,9 +8,9 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use App\Traits\RestApiResponse;
 
+define("TOKEN_ABSENT_CODE", 400);
 define("TOKEN_EXPIRED_CODE", 401);
-define("TOKEN_INVALID_CODE", 402);
-define("TOKEN_ABSENT_CODE", 403);
+define("TOKEN_INVALID_CODE", 403);
 define("USER_NOT_FOUND", 404);
 
 class VerifyJWTToken

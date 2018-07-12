@@ -17,16 +17,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all()->map(function($item) {
-            return [
-                'id' => $item['id'],
-                'code' => $item['code'],
-                'name' => $item['name'],
-                'icon' => $item['icon'],
-                'description' => $item['description']
-            ];
-        });
-
+        $categories = Category::select('id', 'code', 'name', 'icon', 'description')->get();
         return $this->api_success_response(['data' => $categories]);
     }
 
@@ -49,16 +40,14 @@ class CategoryController extends Controller
      */
     public function store(StoreCategory $request)
     {
-        $category = Category::create($request->all());
-
         \DB::beginTransaction();
         try {
             $category = Category::create($request->all());
             \DB::commit();
-            return response([ 'data' => $category ], 200);
+            return $this->api_success_response([ 'data' => $category ]);
         } catch (\Exception $e) {
             \DB::rollback();
-            return response(['message' => $e], 433);
+            return $this->api_error_response($e->getMessage(), 500);
         }
     }
 
@@ -70,10 +59,6 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        if (!$category) {
-            return response(['message' => 'Invalid param'], 433);
-        }
-
         $data = [
             'id' => $category['id'],
             'code' => $category['code'],
@@ -82,7 +67,7 @@ class CategoryController extends Controller
             'description' => $category['description']
         ];
 
-        return response()->json(['data' => $data], 200);
+        return $this->api_success_response(['data' => $data]);
     }
 
     /**
@@ -105,18 +90,14 @@ class CategoryController extends Controller
      */
     public function update(StoreCategory $request, Category $category)
     {
-        if (!$category) {
-            return response(['message' => 'Invalid param'], 433);
-        }
-
         \DB::beginTransaction();
         try {
             $category->update($request->all());
             \DB::commit();
-            return response([ 'data' => $category ], 200);
+            return $this->api_success_response(['data' => $category]);
         } catch (\Exception $e) {
             \DB::rollback();
-            return response(['message' => 'Failed'], 433);
+            return $this->api_error_response($e->getMessage(), 500);
         }
     }
 
@@ -128,20 +109,14 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        if (!$category) {
-            return response(['message' => 'Invalid param'], 433);
+        \DB::beginTransaction();
+        try {
+            $result = $category->delete();
+            \DB::commit();
+            return $this->api_success_response();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $this->api_error_response($e->getMessage(), 500);
         }
-
-        $category->delete();
-        $categories = Category::all()->map(function($item) {
-            return [
-                'id' => $item['id'],
-                'code' => $item['code'],
-                'name' => $item['name'],
-                'description' => $item['description']
-            ];
-        });
-
-        return response()->json(['data' => $categories], 200);
     }
 }

@@ -1,24 +1,15 @@
 import axios from 'axios';
-import { Message, MessageBox } from 'element-ui';
 import store from '../store';
 import { getToken } from '~/utils/auth';
+import { MessageBox } from 'element-ui';
 
 const TIME_1_SECOND = 1000;
-const ERROR_NOTIFY_DURATION_TIME = 5 * TIME_1_SECOND;
 const API_SERVICE_TIMEOUT = 15 * TIME_1_SECOND;
 
+const TOKEN_ABSENT_CODE = 400;
 const TOKEN_EXPIRED_CODE = 401;
-const TOKEN_INVALID_CODE = 402;
-const TOKEN_ABSENT_CODE = 403;
+const TOKEN_INVALID_CODE = 403;
 const USER_NOT_FOUND = 404;
-
-const setErrorNotify = (error) => {
-  return new Message({
-    message: error.message,
-    type: 'error',
-    duration: ERROR_NOTIFY_DURATION_TIME
-  });
-};
 
 // Create axios instance
 const service = axios.create({
@@ -42,8 +33,6 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use((response) => {
   const responseData = response.data;
   if (responseData.success) return responseData.data;
-  setErrorNotify(responseData);
-
   if ([TOKEN_INVALID_CODE, TOKEN_ABSENT_CODE, USER_NOT_FOUND].includes(responseData.error) ||
     (responseData.error === TOKEN_EXPIRED_CODE && store.getters.token)) {
     MessageBox.confirm(
