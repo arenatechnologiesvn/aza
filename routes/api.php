@@ -44,9 +44,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('categories', 'Product\CategoryController');
 
     // Product provider
-    Route::get('providers', 'Product\ProviderController@index');
-    Route::post('provider/update', 'Product\ProviderController@update');
-    Route::post('provider/delete', 'Product\ProviderController@delete');
+    Route::resource('providers', 'Product\ProviderController');
 
     // Products
     Route::resource('products', 'Product\ProductController');

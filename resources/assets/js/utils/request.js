@@ -6,10 +6,10 @@ import { MessageBox } from 'element-ui';
 const TIME_1_SECOND = 1000;
 const API_SERVICE_TIMEOUT = 15 * TIME_1_SECOND;
 
-const TOKEN_ABSENT_CODE = 400;
-const TOKEN_EXPIRED_CODE = 401;
-const TOKEN_INVALID_CODE = 403;
-const USER_NOT_FOUND = 404;
+const TOKEN_ABSENT_CODE = 4000;
+const TOKEN_EXPIRED_CODE = 4001;
+const TOKEN_INVALID_CODE = 4003;
+const USER_NOT_FOUND = 4004;
 
 // Create axios instance
 const service = axios.create({

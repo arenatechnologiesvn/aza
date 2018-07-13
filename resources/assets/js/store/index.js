@@ -12,6 +12,7 @@ import categories from './modules/categories';
 import providers from './modules/providers';
 import common from './modules/common';
 import media from './modules/media';
+import administrative from './modules/administrative';
 import getters from './getters';
 
 Vue.use(Vuex);
@@ -29,7 +30,8 @@ const store = new Vuex.Store({
     categories,
     providers,
     common,
-    media
+    media,
+    administrative
   },
   getters
 });
