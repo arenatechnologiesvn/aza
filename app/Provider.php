@@ -16,6 +16,7 @@ class Provider extends BaseModel
         'home_phone',
         'province_code',
         'district_code',
+        'zone',
         'ward_code',
         'contract_at'
     ];

@@ -53,29 +53,21 @@ class ProviderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Category  $category
+     * @param  \App\Provider  $provider
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(Provider $provider)
     {
-        $data = [
-            'id' => $category['id'],
-            'code' => $category['code'],
-            'name' => $category['name'],
-            'icon' => $category['icon'],
-            'description' => $category['description']
-        ];
-
-        return $this->api_success_response(['data' => $data]);
+        return $this->api_success_response(['data' => $provider]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Category  $category
+     * @param  \App\Provider  $provider
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit(Provider $provider)
     {
         //
     }
@@ -84,16 +76,16 @@ class ProviderController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Category  $category
+     * @param  \App\Provider  $provider
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreCategory $request, Category $category)
+    public function update(StoreProvider $request, Provider $provider)
     {
         \DB::beginTransaction();
         try {
-            $category->update($request->all());
+            $provider->update($request->all());
             \DB::commit();
-            return $this->api_success_response(['data' => $category]);
+            return $this->api_success_response(['data' => $provider]);
         } catch (\Exception $e) {
             \DB::rollback();
             return $this->api_error_response($e->getMessage(), 500);
@@ -103,14 +95,14 @@ class ProviderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Category  $category
+     * @param  \App\Provider  $provider
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Provider $provider)
     {
         \DB::beginTransaction();
         try {
-            $result = $category->delete();
+            $result = $provider->delete();
             \DB::commit();
             return $this->api_success_response();
         } catch (\Exception $e) {

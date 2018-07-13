@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import originDistricts from './district.json';
+import { mapGetters } from 'vuex';
 import { filterObject } from './mixins'
 
 export default {
@@ -24,6 +24,11 @@ export default {
       required: true
     }
   },
+  computed: {
+    ...mapGetters({
+      originDistricts: 'administrative/getDistricts'
+    })
+  },
   data() {
     return {
       districts: [],
@@ -32,7 +37,7 @@ export default {
   },
   methods: {
     filterDistrict(parentCode) {
-      const objects = JSON.parse(JSON.stringify(originDistricts));
+      const objects = JSON.parse(JSON.stringify(this.originDistricts));
       this.districts = filterObject(objects, parentCode);
     },
 
@@ -50,7 +55,13 @@ export default {
 
       this.selectedDistrict = '';
       this._sendSelectedObjectToParent();
-    }
+    },
+
+    // district() {
+    //   if (this.selectedDistrict !== this.district) {
+    //     this.selectedDistrict = this.district;
+    //   }
+    // }
   }
 }
 </script>

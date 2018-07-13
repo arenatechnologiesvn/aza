@@ -46,7 +46,7 @@ export const asyncRouterMapChild = [
     redirect: 'products',
     name: 'ProductContainer',
     component: ParentView,
-    meta: { title: 'Quản lý sản phẩm', icon: 'fa-solid home' },
+    meta: { title: 'Quản lý sản phẩm', icon: 'fa-solid box' },
     children: [
       {
         path: '',
@@ -282,6 +282,17 @@ export const asyncRouterMapChild = [
         meta: {
           title: 'Thêm mới nhà cung cấp',
           icon: 'fa-solid lock'
+        }
+      },
+      {
+        path: ':id',
+        name: 'update_provider',
+        component: () => import('~/views/pages/providers/Create'),
+        hidden: true,
+        meta: {
+          title: 'Cập nhật nhà cung cấp',
+          icon: 'fa-solid shop',
+          roles: ['Admin']
         }
       }
     ]

@@ -71,7 +71,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      providerById: 'providers/byId'
+      providerById: 'providers/byId',
+      selectedLogoUrl: 'media/selectedMediaUrl',
+      getZoneByProvince: 'administrative/getZoneByProvince',
+      getZoneByDistrict: 'administrative/getZoneByDistrict',
+      getZoneByWard: 'administrative/getZoneByWard'
     }),
 
     ...mapState([
@@ -86,6 +90,7 @@ export default {
         logo: dummyImage,
         description: '',
         address: '',
+        zone: '',
         phone: '',
         home_phone: '',
         province_code: '',
@@ -127,6 +132,7 @@ export default {
       }).then(() => {
         this.$refs.providerForm.validate((valid) => {
           if (valid) {
+            this.providerForm.zone = this.renderZone();
             if (this.route.params.id) {
               this.updateProvider({ id: this.route.params.id, data: this.providerForm }).then(() => {
                 this.$router.push({ path: '/providers' });
@@ -161,6 +167,22 @@ export default {
       });
     },
 
+    renderZone() {
+      if (this.providerForm.ward_code) {
+        return this.getZoneByWard(this.providerForm.ward_code);
+      }
+
+      if (this.providerForm.district_code) {
+        return this.getZoneByDistrict(this.providerForm.district_code);
+      }
+
+      if (this.providerForm.province_code) {
+        return this.getZoneByProvince(this.providerForm.province_code);
+      }
+
+      return '';
+    },
+
     ...mapActions({
       createProvider: 'providers/create',
       fetchProvider: 'providers/fetchSingle',
@@ -174,6 +196,12 @@ export default {
         this.fetchData();
       } else if (this.$refs.providerForm) {
         this.$refs.providerForm.resetFields();
+      }
+    },
+
+    selectedLogoUrl() {
+      if (this.selectedLogoUrl) {
+        this.providerForm.logo = this.selectedLogoUrl;
       }
     }
   },

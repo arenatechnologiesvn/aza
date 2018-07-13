@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import originProvinces from './province.json';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'province-select',
@@ -19,15 +19,26 @@ export default {
   props: {
     province: String
   },
+  computed: {
+    ...mapGetters({
+      provinces: 'administrative/getProvinces'
+    })
+  },
   data() {
     return {
-      provinces: JSON.parse(JSON.stringify(originProvinces)),
-      selectedProvince: ''
+      selectedProvince: this.province
     };
   },
   methods: {
     _sendSelectedObjectToParent() {
       this.$emit('change', this.selectedProvince);
+    }
+  },
+  watch: {
+    province() {
+      if (this.selectedProvince !== this.province) {
+        this.selectedProvince = this.province
+      }
     }
   }
 }

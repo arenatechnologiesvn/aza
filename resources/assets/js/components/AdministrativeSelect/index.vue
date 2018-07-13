@@ -30,9 +30,7 @@
 </template>
 
 <script>
-import originProvinces from './province.json';
-import originDistricts from './district.json';
-import originWards from './ward.json';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'administrative-select',
@@ -43,9 +41,16 @@ export default {
   props: {
     selectedAdministrative: Object
   },
+  computed: {
+    ...mapGetters({
+      originProvinces: 'administrative/getProvinces',
+      originDistricts: 'administrative/getDistricts',
+      originWards: 'administrative/getWards'
+    })
+  },
   data() {
     return {
-      provinces: JSON.parse(JSON.stringify(originProvinces)),
+      provinces: JSON.parse(JSON.stringify(this.originProvinces)),
       districts: {},
       wards: {},
       selectedProvince: '',
@@ -55,14 +60,14 @@ export default {
   },
   methods: {
     filterDistrict(provinceCode) {
-      const objects = JSON.parse(JSON.stringify(originDistricts));
+      const objects = JSON.parse(JSON.stringify(this.originDistricts));
       this.districts = this._filterObject(objects, provinceCode);
       this.selectedDistrict = '';
       this.selectedWard = '';
       this._sendSelectedObjectToParent();
     },
     filterWard(districtCode) {
-      const objects = JSON.parse(JSON.stringify(originWards));
+      const objects = JSON.parse(JSON.stringify(this.originWards));
       this.wards = this._filterObject(objects, districtCode);
       this.selectedWard = '';
       this._sendSelectedObjectToParent();

@@ -34,6 +34,7 @@ class StoreProvider extends BaseFormRequest
             'province_code' => 'nullable|numeric|min:0',
             'district_code' => 'nullable|numeric|min:0',
             'ward_code' => 'nullable|numeric|min:0',
+            'ward_code' => 'nullable|string|max:255',
             'contract_at' => 'nullable|numeric|min:0'
         ];
     }
