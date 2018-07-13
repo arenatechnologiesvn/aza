@@ -9,23 +9,48 @@
 
 <script>
 import originWards from './ward.json';
+import { filterObject } from './mixins'
 
 export default {
   name: 'ward-select',
   model: {
-    prop: 'selectedWard',
+    prop: 'ward',
     event: 'change'
   },
   props: {
-    selectedWard: String
+    ward: String,
+    parentCode: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
-      wards: JSON.parse(JSON.stringify(originWards))
+      wards: [],
+      selectedWard: ''
     };
   },
   methods: {
+    filterWard(parentCode) {
+      const objects = JSON.parse(JSON.stringify(originWards));
+      this.wards = filterObject(objects, parentCode);
+    },
 
+    _sendSelectedObjectToParent() {
+      this.$emit('change', this.selectedWard);
+    }
+  },
+  watch: {
+    parentCode() {
+      if (this.parentCode) {
+        this.filterWard(this.parentCode);
+      } else {
+        this.wards = [];
+      }
+
+      this.selectedWard = '';
+      this._sendSelectedObjectToParent();
+    }
   }
 }
 </script>

@@ -2,13 +2,19 @@
   div
     div.form-search__wrapper
       el-form.search
-        el-row(:gutter="10")
+        el-row(:gutter="5")
           el-col(:span="12")
-            el-form-item
+            el-form-item(label="Tìm kiếm:")
               el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
-          el-col(:span="12")
-            el-form-item
-              administrative-select(v-model="selectedAdministrative")
+          el-col(:span="4")
+            el-form-item(label="Tỉnh/TP:")
+              province-select(v-model="selectedProvince")
+          el-col(:span="4")
+            el-form-item(label="Huyện/Quận:")
+              district-select(v-model="selectedDistrict" :parent-code="selectedProvince")
+          el-col(:span="4")
+            el-form-item(label="Xã/Phường:")
+              ward-select(v-model="selectedWard" :parent-code="selectedDistrict")
     div.control__wrapper
       el-row
         el-col(:span="12")
@@ -49,7 +55,9 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
-import AdministrativeSelect from '~/components/AdministrativeSelect'
+import ProvinceSelect from '~/components/AdministrativeSelect/Province';
+import DistrictSelect from '~/components/AdministrativeSelect/District';
+import WardSelect from '~/components/AdministrativeSelect/Ward';
 
 export default {
   name: 'provider-table',
@@ -59,7 +67,9 @@ export default {
     })
   },
   components: {
-    AdministrativeSelect
+    ProvinceSelect,
+    DistrictSelect,
+    WardSelect
   },
   created() {
     this.fetchData();
@@ -70,7 +80,9 @@ export default {
       currentPage: 1,
       multipleSelection: [],
       searchWord: '',
-      selectedAdministrative: {}
+      selectedProvince: '',
+      selectedDistrict: '',
+      selectedWard: ''
     }
   },
   methods: {

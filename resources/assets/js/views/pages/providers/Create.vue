@@ -34,21 +34,22 @@
                 province-select(v-model="providerForm.province_code")
             el-col(:span="8")
               el-form-item(prop="district_code" label="Huyện/Quận:")
-                district-select(v-model="providerForm.district_code")
+                district-select(v-model="providerForm.district_code" :parent-code="providerForm.province_code")
             el-col(:span="8")
               el-form-item(prop="ward_code" label="Xã/Phường:")
-                ward-select(v-model="providerForm.ward_code")
+                ward-select(v-model="providerForm.ward_code" :parent-code="providerForm.district_code")
             el-col(:span="24")
               el-form-item(label="Mô tả" prop="description")
                 el-input(type="textarea" v-model="providerForm.description" rows="8" placeholder="Mô tả")
 
-            el-form-item
-              el-button(type="primary" size="small" @click="save")
-                svg-icon(icon-class="fa-solid save")
-                span  Lưu
-              el-button(type="info" size="small" @click="cancel")
-                svg-icon(icon-class="fa-solid ban")
-                span  Hủy bỏ
+            el-col(:span="24" )
+              el-form-item(style="text-align: right")
+                el-button(type="info" size="small" @click="cancel")
+                  svg-icon(icon-class="fa-solid ban")
+                  span  Hủy bỏ
+                el-button(type="primary" size="small" @click="save")
+                  svg-icon(icon-class="fa-solid save")
+                  span  Lưu
     media-manager-modal(type="provider")
 </template>
 

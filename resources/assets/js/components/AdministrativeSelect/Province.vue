@@ -1,5 +1,5 @@
 <template lang="pug">
-  el-select(v-model="selectedProvince" clearable style="width: 100%" filterable placeholder="Tỉnh/TP")
+  el-select(v-model="selectedProvince" clearable style="width: 100%" filterable placeholder="Tỉnh/TP" @change="_sendSelectedObjectToParent")
     el-option(
       v-for="item in provinces"
       :key="item.code"
@@ -13,25 +13,22 @@ import originProvinces from './province.json';
 export default {
   name: 'province-select',
   model: {
-    prop: 'selectedProvince',
+    prop: 'province',
     event: 'change'
   },
   props: {
-    selectedProvince: String
+    province: String
   },
   data() {
     return {
-      provinces: JSON.parse(JSON.stringify(originProvinces))
+      provinces: JSON.parse(JSON.stringify(originProvinces)),
+      selectedProvince: ''
     };
   },
   methods: {
-    // _sendSelectedObjectToParent() {
-    //   this.$emit('change', {
-    //     selectedProvince: this.selectedProvince,
-    //     selectedDistrict: this.selectedDistrict,
-    //     selectedWard: this.selectedWard
-    //   });
-    // }
+    _sendSelectedObjectToParent() {
+      this.$emit('change', this.selectedProvince);
+    }
   }
 }
 </script>

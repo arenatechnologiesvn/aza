@@ -1,5 +1,5 @@
 <template lang="pug">
-  el-select(v-model="selectedDistrict" clearable style="width: 100%" filterable placeholder="Huyện Quận")
+  el-select(v-model="selectedDistrict" clearable style="width: 100%" filterable placeholder="Huyện/Quận" @change="_sendSelectedObjectToParent")
     el-option(
       v-for="item in districts"
       :key="item.code"
@@ -9,22 +9,48 @@
 
 <script>
 import originDistricts from './district.json';
+import { filterObject } from './mixins'
 
 export default {
   name: 'district-select',
   model: {
-    prop: 'selectedDistrict',
+    prop: 'district',
     event: 'change'
   },
   props: {
-    selectedDistrict: String
+    district: String,
+    parentCode: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
-      districts: JSON.parse(JSON.stringify(originDistricts))
+      districts: [],
+      selectedDistrict: ''
     };
   },
   methods: {
+    filterDistrict(parentCode) {
+      const objects = JSON.parse(JSON.stringify(originDistricts));
+      this.districts = filterObject(objects, parentCode);
+    },
+
+    _sendSelectedObjectToParent() {
+      this.$emit('change', this.selectedDistrict);
+    }
+  },
+  watch: {
+    parentCode() {
+      if (this.parentCode) {
+        this.filterDistrict(this.parentCode);
+      } else {
+        this.districts = [];
+      }
+
+      this.selectedDistrict = '';
+      this._sendSelectedObjectToParent();
+    }
   }
 }
 </script>

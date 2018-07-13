@@ -14,7 +14,7 @@ use App\Http\Controllers\Controller;
 
 class MediaManagerController extends Controller
 {
-    private static $OBJECT_TYPES = ['profile', 'shop', 'product'];
+    private static $OBJECT_TYPES = ['profile', 'shop', 'product', 'provider'];
 
     /**
      * Get the list of images for Media Manager.
@@ -24,12 +24,12 @@ class MediaManagerController extends Controller
     public function index(Request $request)
     {
         if (!$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
-            return response(['message' => 'params is invalid'], 433);
+            return $this->api_error_response('params is invalid', 433);
         }
 
         $uploadUser = Auth::user();
         $images = $uploadUser->getMedia($request->input('type'));
-        return response()->json(['data' => $images], 200);
+        return $this->api_success_response(['data' => $images]);
     }
 
     /**
@@ -48,11 +48,11 @@ class MediaManagerController extends Controller
 
         // if there are validation errors, show that
         if ($validator->fails()) {
-            return response(['message' => $validator->errors()], 433);
+            return $this->api_error_response($validator->errors(), 433);
         }
 
         if (!$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
-            return response(['message' => 'params is invalid'], 433);
+            return $this->api_error_response('params is invalid', 433);
         }
 
         $file = $request->file('file');
@@ -90,7 +90,7 @@ class MediaManagerController extends Controller
             })
             ->save(public_path($folder) . $thumbFileName);
 
-        return response()->json(['data' => 'success'], 200);
+        return $this->api_success_response();
     }
 
     /**
