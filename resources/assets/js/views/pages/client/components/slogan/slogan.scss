@@ -24,7 +24,7 @@
     .slogan-item__content {
       position: relative;
       margin: 0 auto;
-      width: 170px;
+      width: 70%;
       height: auto;
       top: 50px;
       color: white;
@@ -33,6 +33,12 @@
       border: 2px solid #ddd;
       .line {
         margin: 10px 0;
+      }
+      .slogan-item__title {
+        font-size: 1em;
+      }
+      .slogan-item__description {
+        font-size: .8em;
       }
     }
   }

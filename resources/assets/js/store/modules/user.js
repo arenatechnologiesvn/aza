@@ -35,7 +35,7 @@ const user = {
         login(email, userInfo.password).then(response => {
           setToken(response.token);
           commit('SET_TOKEN', response.token);
-          resolve();
+          resolve(response);
         }).catch(error => {
           reject(error);
         });

@@ -59,9 +59,13 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.loading = true
-            this.$store.dispatch('Login', this.loginForm).then(() => {
+            this.$store.dispatch('Login', this.loginForm).then((res) => {
               this.loading = false
-              this.$router.push({path: '/'})
+              if(res.user.role_id === 1) {
+                this.$router.push({path: '/'})
+              } else {
+                this.$router.push({path: '/home'})
+              }
             }).catch(() => {
               this.loading = false
             })

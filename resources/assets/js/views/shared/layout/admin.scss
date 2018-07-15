@@ -60,6 +60,10 @@
     }
   }
 }
+.sidebar {
+  width: 250px;
+}
+
 @media screen and (max-width: 700px) {
   .bread-crumb__custom {
     display: none !important;

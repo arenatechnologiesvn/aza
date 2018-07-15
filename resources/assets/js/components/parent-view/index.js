@@ -1,2 +1,2 @@
-import ParentView from './ParentView'
-export default ParentView
+import ParentView from './ParentView';
+export default ParentView;

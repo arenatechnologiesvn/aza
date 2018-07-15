@@ -1,5 +1,12 @@
 const path = require('path');
 const mix = require('laravel-mix');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+mix.webpackConfig({
+  plugins: [
+    new CleanWebpackPlugin(['public/js', 'public/css'])
+  ]
+});
 
 mix
   .js('resources/assets/js/app.js', 'public/js')

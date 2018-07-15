@@ -12,23 +12,43 @@ const showThisMenuEle = (item, access) => {
   return true;
 };
 
-export const getMenuByRouter = (list, access) => {
+// export const getMenuByRouter = (list, access) => {
+//   const res = [];
+//   forEach(list, item => {
+//     if (!item.hidden) {
+//       const obj = {
+//         icon: (item.meta && item.meta.icon) || '',
+//         name: item.name,
+//         meta: item.meta
+//       };
+//
+//       if (hasChild(item) && showThisMenuEle(item, access)) {
+//         obj.children = getMenuByRouter(item.children, access);
+//       }
+//
+//       if (showThisMenuEle(item, access)) res.push(obj);
+//     }
+//   });
+//
+//   return res;
+// };
+export const getMenuByRouter = (list) => {
   const res = [];
   forEach(list, item => {
-    if (!item.hidden) {
+    if (item.meta.show === 1 && item.meta.menu === 1) {
       const obj = {
         icon: (item.meta && item.meta.icon) || '',
         name: item.name,
         meta: item.meta
       };
 
-      if (hasChild(item) && showThisMenuEle(item, access)) {
-        obj.children = getMenuByRouter(item.children, access);
+      if (hasChild(item)) {
+        obj.children = getMenuByRouter(item.children);
       }
 
-      if (showThisMenuEle(item, access)) res.push(obj);
+      res.push(obj);
     }
   });
 
   return res;
-};
+}

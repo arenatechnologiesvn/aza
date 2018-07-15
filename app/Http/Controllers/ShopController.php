@@ -8,27 +8,17 @@ use App\Http\Responses\Shops\ShopCreateResponse;
 use App\Http\Responses\Shops\ShopGetIndexByIdResponse;
 use App\Http\Responses\Shops\ShopIndexResponse;
 use App\Http\Responses\Shops\ShopUpdateResponse;
+use App\Service\ShopService;
 use App\Shop;
 use Illuminate\Http\Request;
 
-class ShopController extends Controller
+class ShopController extends CrudController
 {
     protected $shop;
-
-    public function __construct(Shop $shop)
+    public function __construct(Shop $shop, ShopService $service)
     {
         $this->shop = $shop;
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-        return new ShopIndexResponse();
+        $this->service = $service;
     }
 
     /**
@@ -39,23 +29,13 @@ class ShopController extends Controller
      */
     public function store(ShopCreateRequest $request)
     {
-        //
-        return new ShopCreateResponse();
+        try {
+            $data = $this->service->create($request->all());
+            return $this->api_success_response(['data' => $data]);
+        } catch (\Exception $e){
+            return $this->api_error_response(['message' => 'Error server']);
+        }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-        $shop = $this->shop->find($id);
-        return $shop ? new ShopGetIndexByIdResponse($shop) : new FailedResponse(404, 'File Not Found');
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -65,24 +45,11 @@ class ShopController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        $data = $request->all();
-        $data['province_code'] = $data['selectedProvince']['selectedProvince'];
-        $data['district_code'] = $data['selectedProvince']['selectedDistrict'];
-        $data['ward_code'] = $data['selectedProvince']['selectedWard'];
-        $shop = $this->shop->find($id);
-        $shop->update($data);
-        return new ShopUpdateResponse($shop);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        try{
+            $updated  = $this->service->update($id, $request->all());
+            return $this->api_success_response(['data' => $updated]);
+        } catch (\Exception $e){
+            return $this->api_error_response(['message' => 'Error message']);
+        }
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -74,6 +75,7 @@ class LoginController extends Controller
 
         return $this->api_success_response([
             'token' => $token,
+            'user' => Auth::user(),
             'token_type' => 'bearer',
             'expires_in' => $expiration - time()
         ]);

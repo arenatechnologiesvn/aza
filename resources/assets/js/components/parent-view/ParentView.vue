@@ -7,7 +7,3 @@
     name: 'ParentView'
   }
 </script>
-
-<style scoped>
-
-</style>
