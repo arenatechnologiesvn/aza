@@ -33,8 +33,9 @@ const user = {
       const email = userInfo.email.trim();
       return new Promise((resolve, reject) => {
         login(email, userInfo.password).then(response => {
-          setToken(response.token);
-          commit('SET_TOKEN', response.token);
+          const data = response.data;
+          setToken(data.token);
+          commit('SET_TOKEN', data.token);
           resolve(response);
         }).catch(error => {
           reject(error);
@@ -45,16 +46,16 @@ const user = {
     GetInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
-          console.log(response);
-          if (response.role) {
-            commit('SET_ROLES', response.role);
-            commit('SET_USER_INFO', response);
+          const data = response.data;
+          if (data.role) {
+            commit('SET_ROLES', data.role);
+            commit('SET_USER_INFO', data);
           } else {
             reject('getInfo: role must be a non-null array !');
           }
-          commit('SET_NAME', response.name);
-          commit('SET_AVATAR', response.photo_url);
-          resolve(response);
+          commit('SET_NAME', data.name);
+          commit('SET_AVATAR', data.photo_url);
+          resolve(data);
         }).catch(error => {
           reject(error);
         });

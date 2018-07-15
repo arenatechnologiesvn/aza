@@ -8,9 +8,12 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Traits\RestApiResponse;
 
 class Handler extends ExceptionHandler
 {
+    use RestApiResponse;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -54,17 +57,16 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof NotFoundHttpException) {
-            return response()->json(['message'=> 'File not found'], 404);
+            return $this->api_error_response('File not found', 404);
         }
-//        return parent::render($request, $exception);
-        return response()->json([
-            'message' => 'Error Server',
-            'exception' => [
-                'message' => $exception->getMessage(),
-                'code' => $exception->getCode(),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine()
-            ]
-        ], 501);
+
+        $custom_exception = [
+            'message' => $exception->getMessage(),
+            'code' => $exception->getCode(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine()
+        ];
+
+        return $this->api_error_response($custom_exception, 500);
     }
 }

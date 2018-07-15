@@ -46,7 +46,7 @@ export const asyncRouterMapChild = [
     redirect: 'products',
     name: 'ProductContainer',
     component: ParentView,
-    meta: { title: 'Quản lý sản phẩm', icon: 'fa-solid home' },
+    meta: { title: 'Quản lý sản phẩm', icon: 'fa-solid box' },
     children: [
       {
         path: '',
@@ -276,23 +276,23 @@ export const asyncRouterMapChild = [
         }
       },
       {
-        path: ':id',
-        name: 'provider_update',
-        component: () => import('~/views/pages/providers/Update'),
-        hidden: true,
+        path: 'add',
+        name: 'providers_create',
+        component: () => import('~/views/pages/providers/Create'),
         meta: {
-          title: 'Cập nhật nhà cung cấp',
+          title: 'Thêm mới nhà cung cấp',
           icon: 'fa-solid lock'
         }
       },
       {
-        path: 'add',
-        name: 'providers_create',
+        path: ':id',
+        name: 'update_provider',
         component: () => import('~/views/pages/providers/Create'),
         hidden: true,
         meta: {
-          title: 'Thêm mới nhà cung cấp',
-          icon: 'fa-solid lock'
+          title: 'Cập nhật nhà cung cấp',
+          icon: 'fa-solid shop',
+          roles: ['Admin']
         }
       }
     ]

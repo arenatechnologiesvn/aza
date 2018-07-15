@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RestApiResponse;
 
-define("ALREADY_AUTHENTICATED_CODE", 401);
+define("ALREADY_AUTHENTICATED_CODE", 403);
 
 class RedirectIfAuthenticated
 {

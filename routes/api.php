@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => 'auth:api'], function () {
+Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::post('logout', 'Auth\LoginController@logout');
 
     // User
@@ -27,13 +27,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::patch('settings/password', 'Settings\PasswordController@update');
 
     // Role and permission
-//    Route::post('role', 'RoleController@create');
-//    Route::put('role/{id}', 'RoleController@update');
-
-//    Route::post('user', 'UserController@create')->middleware('can:create,App\User');
-//    Route::post('user', 'Auth\RegisterController@register');
-//    Route::post('role', 'RoleController@create');
-//    Route::put('role/{id}', 'RoleController@update');
     Route::resource('role', 'RoleController');
     Route::delete('roles/deletes', 'RoleController@deletes');
     Route::resource('roles', 'RoleController');
@@ -53,9 +46,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('categories', 'Product\CategoryController');
 
     // Product provider
-    Route::get('providers', 'Product\ProviderController@index');
-    Route::post('provider/update', 'Product\ProviderController@update');
-    Route::post('provider/delete', 'Product\ProviderController@delete');
+    Route::resource('providers', 'Product\ProviderController');
 
     // Products
     Route::resource('products', 'Product\ProductController');
