@@ -3,7 +3,7 @@
   padding: 10px 15px;
   line-height: 30px;
   border-radius: 5px 5px 0 0;
-  height: 50px;
+  min-height: 50px;
   box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
   .title__page {
     width: 50%;
@@ -15,5 +15,19 @@
   .breadcrumb {
     float: right;
     line-height: 30px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .breadcrumb__container {
+    .title__page,
+    .breadcrumb {
+      float: unset;
+      display: block;
+      width: 100%;
+    }
+    .title__page {
+      border-bottom: 1px solid #dddddd;
+    }
   }
 }

@@ -300,13 +300,6 @@ export const asyncRouterMapChild = [
 ];
 export const asyncRouterMap = [
   {
-    path: '/',
-    component: Layout,
-    redirect: 'dashboard',
-    meta: { title: 'Dashboard', icon: 'fa-solid tachometer-alt' },
-    children: [...asyncRouterMapChild]
-  },
-  {
     path: '/home',
     component: ClientLayout,
     redirect: 'home',

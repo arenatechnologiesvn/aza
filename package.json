@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "clean-webpack-plugin": "^0.1.19",
     "echarts": "3.8.5",
     "element-ui": "2.3.4",
     "eslint-plugin-vue-libs": "^3.0.0",

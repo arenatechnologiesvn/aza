@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.form-search
+  div.form-search(style="float: right")
     span.form-group
       el-input(placeholder="Tìm kiếm danh mục, sản phẩm" prefix-icon="el-icon-search")
     span.shopcart(style="color: black;")

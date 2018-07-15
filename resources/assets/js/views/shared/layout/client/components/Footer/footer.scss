@@ -1,5 +1,6 @@
 .social__container {
   color: white;
+
   .social {
     span {
       display: inline-block;
@@ -44,6 +45,13 @@
       width: 50px;
       height: 3px;
       background-color: #0E56A5;
+    }
+  }
+}
+@media only screen and (max-width: 600px) {
+  .footer {
+    .el-col-xs-12 {
+      min-height: 300px;
     }
   }
 }

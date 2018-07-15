@@ -24,7 +24,7 @@ abstract class BaseModel extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
-
+    protected $selectable = [];
     public static function boot()
     {
         $class = get_called_class();
@@ -37,5 +37,4 @@ abstract class BaseModel extends Model
     {
         return 'U';
     }
-
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Shop extends BaseModel
 {
     protected $table = 'shops';
+
     protected $fillable = [
         'name',
         'preview_image',
@@ -20,6 +21,7 @@ class Shop extends BaseModel
         'ward_code',
         'customer_id'
     ];
+
     public function customer() {
         return $this->belongsTo(Customer::class);
     }

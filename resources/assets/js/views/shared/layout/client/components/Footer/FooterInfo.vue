@@ -1,7 +1,7 @@
 <template lang="pug">
   div.footer-info__container
-    el-row(type="flex")
-      el-col(:span="6" v-for="item in infos" :key="item.title")
+    el-row(:gutter="20")
+      el-col(:md="6" :sm="12" :xs="12" :lg="6" :xl="6" v-for="item in infos" :key="item.title")
         info-item(:title="item.title")
           template(slot="footer-content")
             ul.footer-info__content

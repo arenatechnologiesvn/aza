@@ -3,7 +3,9 @@
     nav-top
     div.main.container
       logo
-      nav-menu.nav__menu
+      nav-menu.nav__menu(:isShow="isShow")
+      span(class="show-xs control" @click="toggleShow")
+        svg-icon(:icon-class="isShow ? 'fa-solid times' : 'fa-solid bars'")
       form-search
 </template>
 
@@ -20,6 +22,16 @@
       Logo,
       NavMenu,
       FormSearch
+    },
+    data () {
+      return {
+        isShow: false
+      }
+    },
+    methods: {
+      toggleShow () {
+        this.isShow = !this.isShow
+      }
     }
   }
 </script>

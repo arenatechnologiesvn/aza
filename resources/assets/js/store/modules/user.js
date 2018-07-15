@@ -36,7 +36,7 @@ const user = {
           const data = response.data;
           setToken(data.token);
           commit('SET_TOKEN', data.token);
-          resolve();
+          resolve(response);
         }).catch(error => {
           reject(error);
         });

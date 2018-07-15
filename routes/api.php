@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,8 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('customers', 'CustomerController');
     Route::resource('shops', 'ShopController');
 
-    Route::post('permissions', 'PermissionController@create');
+    Route::get('permissions/roles','PermissionController@getByRole');
+    Route::resource('permissions', 'PermissionController');
 
     // Media manager
     Route::get('media', 'MediaManager\MediaManagerController@index');

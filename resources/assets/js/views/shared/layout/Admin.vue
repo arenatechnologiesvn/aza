@@ -19,7 +19,6 @@
   import './admin.scss'
   import { mapGetters, mapMutations } from 'vuex'
   import AppMain from '../components/AppMain'
-  import ResizeMixin from '../mixin/ResizeHandler'
   import Navbar from './components/Navbar'
   import Sidebar from './components/Sidebar'
   import logo from '~/assets/login_images/logo-login-page.png'
@@ -27,7 +26,6 @@
 
   export default {
     name: "admin",
-    mixins: [ResizeMixin],
     components: {
       AppMain,
       Navbar,

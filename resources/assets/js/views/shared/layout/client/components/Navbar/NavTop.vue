@@ -2,8 +2,10 @@
   div.top
     div.container
       div.top__left
-        svg-icon(icon-class="fa-solid mobile-alt")
-        span Tải Aza App - Ưu đãi ngay trên tay
+        a(href="#")
+          svg-icon(icon-class="fa-solid mobile-alt")
+          span Tải Aza App
+          span(class="hidden-sm-and-down") - Ưu đãi ngay trên tay
       div.top__right
         ul.unstyle
           li
@@ -11,7 +13,7 @@
               div.top__alert
                 el-badge(:value="10" class="item")
                   svg-icon(icon-class="fa-solid bell")
-                span Thông báo
+                span(class="hidden-sm-and-down") Thông báo
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item Item 1
                 el-dropdown-item Item 2
@@ -19,7 +21,7 @@
             el-dropdown.top__dropdown
               div.avatar__container
                 img.avatar(:src="avatar")
-                span Kelvin Hiếu
+                span.hidden-sm-and-down Kelvin Hiếu
                 i.el-icon-caret-bottom(style="margin-left: 5px")
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item
@@ -50,6 +52,6 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>

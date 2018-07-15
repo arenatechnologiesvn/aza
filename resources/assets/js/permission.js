@@ -28,6 +28,7 @@ router.beforeEach((to, from, next) => {
           store.dispatch('GenerateRoutes', { role }).then(() => {
             // Add dynamically accessible routing tables
             router.addRoutes(store.getters.addRouters);
+            // console.log(store.getters.addRouters);
 
             // Hack method to ensure that addRoutes is complete
             // Set the replace: true so the navigation will not leave a history record

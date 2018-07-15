@@ -10,7 +10,13 @@ class Permission extends BaseModel
         'name',
         'title',
         'url_action',
-        'icon'
+        'icon',
+        'path',
+        'redirect',
+        'parent_id',
+        'is_menu',
+        'is_show',
+        'authorize'
     ];
     //
     protected $table = 'permissions';

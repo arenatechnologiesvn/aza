@@ -2,7 +2,7 @@
   div.logo__container
     div.img__container
       img.logo(:src="logo")
-    span.name__container
+    span.name__container(class="hidden-md-and-down")
       span.logo__aza AZAVN.
       span.logo__com COM
 </template>
