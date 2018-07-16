@@ -28,7 +28,6 @@ class PermissionCreateRequest extends BaseFormRequest
             'title' => 'required|string|max:255|unique:permissions',
             'url_action' => 'required|string',
             'level'=>'required',
-            "path" => "required|string"
         ];
     }
 }

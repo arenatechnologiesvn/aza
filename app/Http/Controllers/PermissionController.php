@@ -26,13 +26,7 @@ class PermissionController extends CrudController
      */
     public function store(PermissionCreateRequest $request)
     {
-        try {
-            $data = $this->service->create($request->all());
-            return $this->api_success_response(['data' => $data]);
-        } catch (\Exception $e){
-            return $this->api_error_response(['message' => 'Error server']);
-        }
-
+       return $this->save($request->all());
     }
 
     /**
@@ -44,8 +38,7 @@ class PermissionController extends CrudController
      */
     public function update(PermissionUpdateRequest $request, $id)
     {
-        //
-
+        return $this->edit($request->all(), $id);
     }
 
     public function getByRole(){

@@ -62,7 +62,8 @@
             this.loading = true
             this.$store.dispatch('Login', this.loginForm).then((res) => {
               this.loading = false
-              if(res.user.role_id === 1) {
+              const {data} = res;
+              if(data.user.role_id === 1) {
                 this.$router.push({path: '/'})
               } else {
                 this.$router.push({path: '/home'})

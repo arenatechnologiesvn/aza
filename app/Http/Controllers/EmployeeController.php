@@ -10,53 +10,30 @@ use App\Http\Responses\Employees\EmployeeGetByIdResponse;
 use App\Http\Responses\Employees\EmployeeIndexResponse;
 use App\Http\Responses\Employees\EmployeeUpdateResponse;
 use App\Http\Responses\FailedResponse;
+use App\Service\EmployeeService;
 use App\User;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 
-class EmployeeController extends Controller
+class EmployeeController extends CrudController
 {
-    protected $employee;
 
-    public function __construct(Employee $employee)
+    public function __construct(Employee $employee, EmployeeService $service)
     {
-        $this->employee = $employee;
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return EmployeeIndexResponse
-     */
-    public function index()
-    {
-        //
-        return new EmployeeIndexResponse();
+        $this->model = $employee;
+        $this->service = $service;
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return EmployeeCreateResponse
+     * @return
      */
     public function store(EmployeeCreateRequest $request)
     {
-        return new EmployeeCreateResponse();
+        return $this->save($request->all());
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $employee = $this->employee->find($id);
-        return $employee ? new EmployeeGetByIdResponse($employee)
-            : new FailedResponse(404, "File not found");
-    }
-
 
     /**
      * Update the specified resource in storage.
@@ -69,14 +46,7 @@ class EmployeeController extends Controller
     {
         //
         $data = $request->all();
-        unset($data['password']);
-        if (isset($data['start_datetime'])) {
-            $data['start_datetime'] = strtotime($data['start_datetime']);
-        }
-        $employee = $this->employee->find($id);
-        $employee->update($data);
-        $employee->user->update($data);
-        return new EmployeeUpdateResponse($employee);
+        return $this->edit($data, $id);
     }
 
     /**
@@ -85,11 +55,4 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
-        $this->employee->find($id)->delete();
-        $employeeDeleted = $this->employee->onlyTrashed()->find($id);
-        return $employeeDeleted ? new EmployeeDeleteByIdResponse($employeeDeleted) : new FailedResponse();
-    }
 }

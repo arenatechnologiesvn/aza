@@ -2,24 +2,21 @@
   div
     el-menu(:default-active="$route.name" mode="horizontal"  background-color="#fff" text-color="#333" :router="true" class="hidden-md-and-down")
       el-menu-item(index="home" :route="{name: 'home'}") TRANH CHỦ
-      el-menu-item(index="2") GIỚI THIỆU
-      <!--el-menu-item(index="home_product" :route="{name: 'home_product'}") GIỚI THIỆU-->
+      el-menu-item(index="home_introduce" :route="{name: 'home_introduce'}") GIỚI THIỆU
       el-submenu(index="3")
         template(slot="title") SẢN PHẨM
-        el-menu-item(index="3-1") THỰC PHẨM TƯỚI SỐNG
-      <!--el-menu-item(index="product_detail" :route="{name: 'product_detail', params: {id: 2}}") TIN TỨC-->
-      el-menu-item(index="5") TIN TỨC
-      el-menu-item(index="5") LIÊN HỆ
+        el-menu-item(index="home_product" :route="{name: 'home_product'}") THỰC PHẨM TƯỚI SỐNG
+      el-menu-item(index="home_post" :route="{name: 'home_post'}") TIN TỨC
+      el-menu-item(index="home_contact" :route="{name: 'home_contact'}") LIÊN HỆ
     el-menu.show-xs.menu-mobile(:default-active="$route.name" mode="vertical" :class="isShow? 'isShow' : ''"  background-color="#fff" text-color="#333" :router="true")
       el-menu-item(index="home" :route="{name: 'home'}") TRANH CHỦ
-      el-menu-item(index="2") GIỚI THIỆU
-      <!--el-menu-item(index="home_product" :route="{name: 'home_product'}") GIỚI THIỆU-->
+      el-menu-item(index="home_introduce" :route="{name: 'home_introduce'}") GIỚI THIỆU
       el-submenu(index="3")
         template(slot="title") SẢN PHẨM
-        el-menu-item(index="3-1") THỰC PHẨM TƯỚI SỐNG
+        el-menu-item(index="home_product" :route="{name: 'home_product'}") THỰC PHẨM TƯỚI SỐNG
       <!--el-menu-item(index="product_detail" :route="{name: 'product_detail', params: {id: 2}}") TIN TỨC-->
-      el-menu-item(index="5") TIN TỨC
-      el-menu-item(index="5") LIÊN HỆ
+      el-menu-item(index="home_post" :route="{name: 'home_post'}") TIN TỨC
+      el-menu-item(index="home_contact" :route="{name: 'home_contact'}") LIÊN HỆ
 </template>
 
 <script>

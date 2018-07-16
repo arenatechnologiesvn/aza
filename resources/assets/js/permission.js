@@ -23,7 +23,6 @@ router.beforeEach((to, from, next) => {
       if (!store.getters.roles.title) {
         store.dispatch('GetInfo').then(res => {
           const role = res.role;
-
           // Generates an accessible routing table based on roles permission
           store.dispatch('GenerateRoutes', { role }).then(() => {
             // Add dynamically accessible routing tables

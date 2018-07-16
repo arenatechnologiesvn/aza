@@ -17,20 +17,16 @@
                   svg-icon(icon-class="fa-solid th-large")
                 el-button(size="mini")
                   svg-icon(icon-class="fa-solid th-list")
-
         div.list
           products(:control="false")
-
 </template>
 
 <script>
   import BreadCrumb from './components/BreadCrumb'
   import Products from './components/products'
-  import ElRow from "element-ui/packages/row/src/row";
   export default {
     name: 'HomeProduct',
     components: {
-      ElRow,
       BreadCrumb,
       Products
     },

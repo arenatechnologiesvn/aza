@@ -42,7 +42,7 @@ import Layout from '~/views/shared/layout/Admin';
 const processRouter = data => data.map(item => ({
   path: item.path,
   component: () => import(`~/${item.url_action}`),
-  redirect: item.redirect,
+  redirect: item.redirect ? { name: item.redirect } : null,
   name: item.name,
   meta: {
     title: item.title,
@@ -62,7 +62,6 @@ const permission = {
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      console.log(routers)
       state.addRouters = routers.asyncRouter;
       state.menus = routers.menu;
       state.routers = getIntersection(constantRouterMap, routers.asyncRouter);
@@ -77,31 +76,19 @@ const permission = {
         }).then(res => {
           const data = processRouter(res.data);
           const menu = getMenuByRouter(data);
-          console.log(menu);
-          const asyncRouter = [{
+          const asyncRouter = [];
+          asyncRouter.push({
             path: '/',
             component: Layout,
-            redirect: 'products',
+            redirect: 'dashboard',
             meta: { title: 'Dashboard', icon: 'fa-solid tachometer-alt' },
             children: [...data]
-          }];
+          });
           asyncRouter.push(...asyncRouterMap);
           commit('SET_ROUTERS', { asyncRouter, menu });
           resolve();
         });
       });
-      // return new Promise(resolve => {
-      //   const { role } = data;
-      //   let accessedRouters;
-      //   if (role.title === 'Admin') {
-      //     accessedRouters = asyncRouterMap;
-      //   } else {
-      //     accessedRouters = filterAsyncRouter(asyncRouterMap, role);
-      //   }
-      //
-      //   commit('SET_ROUTERS', accessedRouters);
-      //   resolve();
-      // });
     }
   },
   getters: {

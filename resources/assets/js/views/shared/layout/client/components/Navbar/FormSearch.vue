@@ -4,7 +4,8 @@
       el-input(placeholder="Tìm kiếm danh mục, sản phẩm" prefix-icon="el-icon-search")
     span.shopcart(style="color: black;")
       el-badge(:value="12" class="item")
-        svg-icon(icon-class="fa-solid shopping-cart")
+        router-link(to="/home/cart")
+          svg-icon(icon-class="fa-solid shopping-cart")
 </template>
 
 <script>

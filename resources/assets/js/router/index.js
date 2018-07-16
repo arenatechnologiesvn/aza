@@ -323,6 +323,42 @@ export const asyncRouterMap = [
         }
       },
       {
+        path: 'posts',
+        name: 'home_post',
+        component: () => import('~/views/pages/client/Post'),
+        meta: {
+          title: 'Tin tức',
+          icon: 'fa-solid blog'
+        }
+      },
+      {
+        path: 'cart',
+        name: 'home_cart',
+        component: () => import('~/views/pages/client/Cart'),
+        meta: {
+          title: 'Quản lý giỏ hàng',
+          icon: 'fa-solid shopping-cart'
+        }
+      },
+      {
+        path: 'contact',
+        name: 'home_contact',
+        component: () => import('~/views/pages/client/Contact'),
+        meta: {
+          title: 'Liên hệ',
+          icon: 'fa-solid handshake'
+        }
+      },
+      {
+        path: 'introduce',
+        name: 'home_introduce',
+        component: () => import('~/views/pages/client/Introduce'),
+        meta: {
+          title: 'Giới Thiệu về Aza',
+          icon: 'fa-solid question-circle'
+        }
+      },
+      {
         path: 'products/:id',
         name: 'product_detail',
         component: () => import('~/views/pages/client/ProductDetail'),
