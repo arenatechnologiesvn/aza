@@ -62,8 +62,8 @@
           .filter(item => {
             for(let index in this.search) {
               if (index === 'key') {
-                return item.full_name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
-                  item.name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
+                return item.user.first_name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
+                  item.user.name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
               } else if(typeof this.search[index] === 'string') {
                   return item[index].toLowerCase().indexOf(this.search[index].toLowerCase()) > -1
               } else {

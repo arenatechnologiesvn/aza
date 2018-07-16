@@ -12,7 +12,7 @@
               el-form-item
                 el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%")
             el-col(:span="12")
-              administrative-select(v-model="search.location")
+              <!--administrative-select(v-model="search.location")-->
             el-col(:span="4")
               el-form-item
                 el-select(placeholder="Khách hàng" v-model="search.customer_id")

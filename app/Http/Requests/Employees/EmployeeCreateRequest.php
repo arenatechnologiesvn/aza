@@ -24,12 +24,12 @@ class EmployeeCreateRequest extends BaseFormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:100|unique:users',
+//            'name' => 'required|string|max:100|unique:users',
+//            'email' => 'required|string|email|max:255|unique:users',
+//            'role_id' => 'required|exists:roles,id',
+//            'password' => 'required|string|min:6',
+//            'phone' => 'required|string|unique:users',
             'code' => 'required|string|max:20|unique:employees',
-            'email' => 'required|string|email|max:255|unique:users',
-            'role_id' => 'required|exists:roles,id',
-            'password' => 'required|string|min:6',
-            'phone' => 'required|string|unique:users'
         ];
     }
 }

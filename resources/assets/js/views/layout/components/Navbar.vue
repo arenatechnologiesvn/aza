@@ -10,7 +10,7 @@
         span(style="margin-left: 10px") LINH NGUYỄN
         i.el-icon-caret-bottom
       el-dropdown-menu.user-dropdown(slot="dropdown")
-        router-link(class="inlineBlock" to="/")
+        router-link(class="inlineBlock" to="/home")
           el-dropdown-item Trang chủ
         el-dropdown-item(divided)
           span(@click="logout" style="display:block;") Đăng xuất
@@ -45,7 +45,7 @@ export default {
     },
     logout() {
       this.$store.dispatch('LogOut').then(() => {
-        location.reload() // 为了重新实例化vue-router对象 避免bug
+        this.$router.push({path: '/'})
       })
     }
   }

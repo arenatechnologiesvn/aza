@@ -57,9 +57,9 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-    protected $appends = [
-        'photo_url',
-    ];
+//    protected $appends = [
+//        'photo_url',
+//    ];
 
     public function getDateFormat()
     {

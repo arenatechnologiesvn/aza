@@ -14,10 +14,9 @@ use Illuminate\Http\Request;
 
 class ShopController extends CrudController
 {
-    protected $shop;
     public function __construct(Shop $shop, ShopService $service)
     {
-        $this->shop = $shop;
+        $this->model = $shop;
         $this->service = $service;
     }
 
@@ -29,12 +28,7 @@ class ShopController extends CrudController
      */
     public function store(ShopCreateRequest $request)
     {
-        try {
-            $data = $this->service->create($request->all());
-            return $this->api_success_response(['data' => $data]);
-        } catch (\Exception $e){
-            return $this->api_error_response(['message' => 'Error server']);
-        }
+        return $this->save($request->all());
     }
     /**
      * Update the specified resource in storage.
@@ -45,11 +39,6 @@ class ShopController extends CrudController
      */
     public function update(Request $request, $id)
     {
-        try{
-            $updated  = $this->service->update($id, $request->all());
-            return $this->api_success_response(['data' => $updated]);
-        } catch (\Exception $e){
-            return $this->api_error_response(['message' => 'Error message']);
-        }
+        return $this->edit($request->all(), $id);
     }
 }

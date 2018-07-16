@@ -1,19 +1,20 @@
 <template lang="pug">
   div.index__container
     div.table
-      el-table(:data="employees.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
+      el-table(:data="permissions.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
         el-table-column(type="selection" width="40")
-        el-table-column(prop="user.avatar" width="60")
+        el-table-column(prop="user.icon" width="60" style="text-align: center; margin: 0 auto;")
           template(slot-scope="scope")
-            img(:src="scope.row.user.avatar" width="40" height="40")
-        el-table-column(prop="user.first_name" label="HỌ TÊN" sortable min-width="200")
-        el-table-column(prop="user.phone" label="ĐIỆN THOẠI" sortable width="120")
-        el-table-column(prop="user.email" label="EMAIL" sortable width="180")
-        el-table-column(prop="customers.length" label="SỐ KHÁCH HÀNG" sortable width="140"  :formatter="(row, column) => `${row.customers.length} Khách hàng`")
-        el-table-column(prop="user.role.title" label="VAI TRÒ" sortable width="180")
-        el-table-column(prop="is_active" label="TRẠNG THÁI" sortable width="120")
+            svg-icon(:icon-class="scope.row.icon")
+        el-table-column(prop="title" label="Tiêu đề" sortable min-width="200")
           template(slot-scope="scope")
-            el-switch(v-model="scope.row.status === 1" @change="onChangeStatus(scope.row.id, scope.row.status)")
+            span {{'|==>'.repeat(scope.row.level - 1)}}
+            span(style="margin-left: 5px;") {{scope.row.title}}
+        el-table-column(prop="name" label="Tên permission" sortable width="250")
+        el-table-column(prop="path" label="Đường dẫn" sortable width="300")
+        el-table-column(prop="is_menu" label="Là Menu link" sortable width="120")
+          template(slot-scope="scope")
+            el-switch(v-model="!!scope.row.is_menu" @change="onChangeStatus(scope.row.id, scope.row.status)")
         el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
@@ -29,14 +30,14 @@
           :page-sizes="[1, 5, 10, 20, 40]"
           :page-size="pageSize"
       layout="total, sizes, prev, pager, next"
-        :total="employees.length")
+        :total="permissions.length")
 
 </template>
 
 <script>
 
   export default {
-    name: 'EmployeeTable',
+    name: 'PermissionTable',
     data () {
       return {
         currentPage: 1,
@@ -44,7 +45,7 @@
       }
     },
     props: {
-      employees: {
+      permissions: {
         type: Array,
         default: () => []
       },

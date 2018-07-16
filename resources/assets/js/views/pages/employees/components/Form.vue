@@ -12,32 +12,32 @@
             el-input(v-model="employee.code" :disabled="isUpdate" placeholder="Mã nhân viên" clearable)
         el-col(:span="12")
           el-form-item(label="TÊN")
-            el-input(v-model="employee.first_name" placeholder="Tên" clearable)
+            el-input(v-model="employee.user.first_name" placeholder="Tên" clearable)
         el-col(:span="12")
           el-form-item(label="HỌ")
-            el-input(v-model="employee.last_name" placeholder="Họ" clearable)
+            el-input(v-model="employee.user.last_name" placeholder="Họ" clearable)
         el-col(:span="12")
           el-form-item(label="SỐ ĐIỆN THOẠI")
-            el-input(v-model="employee.phone" placeholder="Điện thoại" clearable)
+            el-input(v-model="employee.user.phone" placeholder="Điện thoại" clearable)
         el-col(:span="12")
           el-form-item(label="TÊN ĐĂNG NHẬP")
-            el-input(v-model="employee.name" v-bind:disabled="isUpdate" placeholder="Tên đăng nhập" clearable)
+            el-input(v-model="employee.user.name" v-bind:disabled="isUpdate" placeholder="Tên đăng nhập" clearable)
         el-col(:span="12" v-show="!isUpdate")
           el-form-item(label="MẬT KHẨU")
-            el-input(v-model="employee.password" type="password" placeholder="Mật khẩu" clearable)
+            el-input(v-model="employee.user.password" type="password" placeholder="Mật khẩu" clearable)
         el-col(:span="isUpdate? 24 : 12")
           el-form-item(label="THƯ ĐIỆN TỬ")
-            el-input(v-model="employee.email" v-bind:disabled="isUpdate" type="email" placeholder="Email" clearable)
+            el-input(v-model="employee.user.email" v-bind:disabled="isUpdate" type="email" placeholder="Email" clearable)
         el-col(:span="12")
           el-form-item(label="NGÀY KÝ HỢP ĐỒNG")
-            el-date-picker(v-model="employee.start_datetime" type="date" placeholder="Ngày ký hợp đồng" style="width: 100%" clearable)
+            el-date-picker(v-model="employee.start_datetime" value-format="MM-dd-YYYY" type="date" placeholder="Ngày ký hợp đồng" style="width: 100%" clearable)
         el-col(:span="12")
           el-form-item(label="VAI TRÒ")
-            el-select(v-model="employee.role_id" clearable placeholder="Vai trò" style="width: 100%")
+            el-select(v-model="employee.user.role_id" clearable placeholder="Vai trò" style="width: 100%")
               el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
         el-col(:span="24")
           el-form-item
-            el-checkbox(label="Kích hoạt" v-model="employee.is_active")
+            el-checkbox(label="Kích hoạt" v-model="employee.user.is_active === 1")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
             el-button(type="primary" @click="handleSubmit")
@@ -76,6 +76,7 @@
             password: '',
             email: '',
             role_id: '',
+            user: {},
             start_datetime: null
           }
         }

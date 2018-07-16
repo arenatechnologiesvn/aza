@@ -42,11 +42,11 @@ abstract class BaseService
 
     public function create(array $data)
     {
-        if (method_exists($this, 'beforeSave')) {
-            $data = $this->beforeSave();
-        }
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
+            if (method_exists($this, 'beforeCreate')) {
+                $data = $this->beforeCreate($data);
+            }
             $saved = $this->model->create($data);
             DB::commit();
             return $saved;
@@ -58,15 +58,15 @@ abstract class BaseService
 
     public function update($id, array $data)
     {
-        if (method_exists($this, 'beforeSave')) {
-            $data = $this->beforeSave();
-        }
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             $updated = $this->model->find($id);
+            if (method_exists($this, 'beforeUpdate')) {
+                $data = $this->beforeUpdate($updated, $data);
+            }
             $updated->update($data);
             DB::commit();
-            return $updated;
+            return $this->getById($id);
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

@@ -49,6 +49,38 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function save($data){
+        try {
+            $entity = $this->service->create($data);
+            return $this->api_success_response(['data' => $entity]);
+        } catch (\Exception $e){
+            return $this->api_error_response(['message' => 'Error server']);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($data, $id)
+    {
+        try{
+            $entity = $this->service->update($id, $data);
+            return $this->api_success_response(['data' => $entity]);
+        } catch (\Exception $e){
+            return $this->api_error_response(['message' => 'Error message']);
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -63,4 +95,5 @@ abstract class CrudController extends Controller
             return $this->api_error_response(['message' => 'Error message']);
         }
     }
+
 }
