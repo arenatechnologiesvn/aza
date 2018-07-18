@@ -1,10 +1,14 @@
 <?php
+/*
+*   Refer from Plank/Laravel-Mediable
+*   Link: https://laravel-mediable.readthedocs.io/en/latest/index.html
+*/
 
 namespace App\Service;
 
 use Plank\Mediable\Media;
 
-class MediaService extends BaseService
+class MediaService
 {
     protected $selectable = [
         'id',

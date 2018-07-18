@@ -2,7 +2,7 @@
   el-row
     el-col.side-form(:span="6")
       .image-container
-        // img.image-preview(:src="product.preview_images" width="100%")
+        img.image-preview(:src="featuredImageUrl(product)" width="100%")
       div(style="margin-top: 10px;")
         el-button(type="success" size="small" @click="openMediaModal") Thay đổi
     el-col(:span="18")
@@ -41,6 +41,7 @@
 </template>
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
 
@@ -150,6 +151,11 @@ export default {
 
     resetForm(formName) {
       this.$refs.form.resetFields();
+    },
+
+    featuredImageUrl(product) {
+      if (!product.featured_image) return dummyImage;
+      return product.featured_image.url;
     },
 
     ...mapActions({

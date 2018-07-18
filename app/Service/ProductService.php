@@ -29,7 +29,7 @@ class ProductService extends BaseService
 
     public function getAllProducts()
     {
-        $products = $this->model::all()->map(function($item) {
+        $products = $this->model::all()->map(function ($item) {
             return $this->transformData($item);
         });
 
@@ -51,7 +51,7 @@ class ProductService extends BaseService
             throw new \Exception('Product is not exist');
         }
 
-        return $products->map(function($item) {
+        return $products->map(function ($item) {
             return $this->transformData($item);
         });
     }
@@ -99,6 +99,14 @@ class ProductService extends BaseService
 
     private function transformData($data)
     {
+        $featured_image = $this->mediaService->getMedia($data, 'featured')->first();
+        $preview_images = $this->mediaService->getMedia($data, 'preview')->map(function ($media) {
+            return [
+                'id' => $media->id,
+                'url' => $media->disk . '/' . $media->directory . '/' . $media->filename . '.' .  $media->extension
+            ];
+        });
+
         return [
             'id' => $data['id'],
             'product_code' => $data['product_code'],
@@ -107,8 +115,11 @@ class ProductService extends BaseService
             'unit' => $data['unit'],
             'price' => $data['price'],
             'discount_price' => $data['discount_price'],
-            'preview_images' => $this->mediaService->getMedia($data, 'preview'),
-            'featured_image' => $this->mediaService->getMedia($data, 'featured'),
+            'preview_images' => $preview_images,
+            'featured_image' => $featured_image ? [
+                'id' => $featured_image->id,
+                'url' => $featured_image->disk . '/' . $featured_image->directory . '/' . $featured_image->filename . '.' .  $featured_image->extension
+            ] : null,
             'category_id' => $data['category_id'],
             'category' => $data->category,
             'provider_id' => $data['provider_id'],

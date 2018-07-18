@@ -1,7 +1,6 @@
 import createCrudModule from 'vuex-crud';
 import defaultClient from '~/utils/request';
 import { Message } from 'element-ui';
-import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const form = {
   state: {
@@ -12,7 +11,7 @@ const form = {
       discount_price: '',
       unit: '',
       preview_images: [],
-      featured_image: dummyImage,
+      featured_image: null,
       category_id: '',
       provider_id: '',
       description: ''
