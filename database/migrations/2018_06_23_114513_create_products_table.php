@@ -21,8 +21,6 @@ class CreateProductsTable extends Migration
             $table->integer('price')->nullable();
             $table->integer('discount_price')->nullable();
             $table->string('unit', 255)->nullable();
-            $table->string('preview_images', 500)->nullable();
-            $table->string('featured_images', 500)->nullable();
             $table->integer('provider_id')->nullable();
             $table->integer('category_id')->nullable();
             $table->string('note', 500)->nullable();

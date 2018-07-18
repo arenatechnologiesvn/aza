@@ -18,5 +18,14 @@ class Category extends BaseModel
         'rght'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'created_by',
+        'updated_at',
+        'updated_by',
+        'deleted_at',
+        'deleted_by'
+    ];
+
     protected $primaryKey = 'id';
 }

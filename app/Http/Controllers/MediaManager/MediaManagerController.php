@@ -79,10 +79,6 @@ class MediaManagerController extends Controller
             ->toDirectory($folder)
             ->upload();
 
-        // Set mediable object
-        $uploadUser = Auth::user();
-        $uploadUser->attachMedia($media, $request->input('type'));
-
         $thumbImage = Image::make($request->file('file'))
             ->resize(400, null, function ($constraint) {
                 $constraint->aspectRatio();

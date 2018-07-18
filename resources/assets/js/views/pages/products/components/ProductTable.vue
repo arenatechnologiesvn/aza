@@ -35,7 +35,7 @@
             el-table-column(type="selection" header-align="center" align="center" width="40")
             el-table-column(prop="preview_images" align="center" width="60")
               template(slot-scope="scope")
-                img(:src="scope.row.preview_images" :width="40" :height="40")
+                // img(:src="scope.row.preview_images" :width="40" :height="40")
             el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable)
             el-table-column(prop="price" label="GIÁ (VND)" sortable width="180")
               template(slot-scope="scope")
@@ -43,10 +43,10 @@
             el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
             el-table-column(prop="category_name" label="DANH MỤC" sortable)
               template(slot-scope="scope")
-                span {{ scope.row.category_name || '-' }}
+                span {{ scope.row.category ? scope.row.category.name : '-' }}
             el-table-column(prop="provider_name" label="NHÀ CUNG CẤP" sortable)
               template(slot-scope="scope")
-                span {{ scope.row.provider_name || '-' }}
+                span {{ scope.row.provider ? scope.row.provider.name : '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
@@ -114,6 +114,8 @@ export default {
       this.fetchProduct({ id: productId }).then(() => {
         this.setEditProductId({ productId: productId });
         this.openProductEditPanel();
+      }).catch((error) => {
+        // Do nothing
       });
     },
 
@@ -147,7 +149,7 @@ export default {
     },
 
     redirectToAddingPage() {
-      this.$router.push({path: '/products/add'});
+      this.$router.push({path: '/products/create'});
     },
 
     deleteOneProduct(productId) {

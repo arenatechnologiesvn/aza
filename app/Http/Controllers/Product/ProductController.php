@@ -5,11 +5,17 @@ namespace App\Http\Controllers\Product;
 use App\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProduct;
+use App\Service\ProductService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
+    public function __construct(ProductService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,23 +23,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all()->map(function($item) {
-            return [
-                'id' => $item['id'],
-                'product_code' => $item['product_code'],
-                'name' => $item['name'],
-                'description' => $item['description'] ? $item['description'] : '',
-                'unit' => $item['unit'],
-                'price' => $item['price'],
-                'discount_price' => $item['discount_price'] ? $item['discount_price'] : '',
-                'preview_images' => $item['preview_images'],
-                'featured_images' => $item['featured_images'],
-                'category_id' => $item['category_id'],
-                'category_name' => $item->category ? $item->category->name : '',
-                'provider_id' => $item['provider_id'],
-                'provider_name' => $item->provider ? $item->provider->name : ''
-            ];
-        });
+        $products = $this->service->getAllProducts();
         return $this->api_success_response(['data' => $products]);
     }
 
@@ -58,49 +48,23 @@ class ProductController extends Controller
     {
         if ($request->input('discount_price') &&
             ($request->input('discount_price') > $request->input('price'))) {
-            return response(['message' => 'price must be greater than discount price'], 433);
+            return $this->api_error_response('price must be greater than discount price', 401);
         }
 
-        \DB::beginTransaction();
-        try {
-            $product = Product::create($request->all());
-            \DB::commit();
-            return response([ 'data' => $product ], 200);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return response(['message' => 'Failed'], 433);
-        }
+        $product = $this->service->storeProduct($request->all());
+        return $this->api_success_response(['data' => $product]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  \App\Product  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        if (!$product) {
-            return response(['message' => 'Invalid param'], 433);
-        }
-
-        $data = [
-            'id' => $product['id'],
-            'product_code' => $product['product_code'],
-            'name' => $product['name'],
-            'description' => $product['description'],
-            'unit' => $product['unit'],
-            'price' => $product['price'],
-            'discount_price' => $product['discount_price'],
-            'preview_images' => $product['preview_images'],
-            'featured_images' => $product['featured_images'],
-            'category_id' => $product['category_id'],
-            'category_name' => $product->category->name,
-            'provider_id' => $product['provider_id'],
-            'provider_name' => $product->provider->name
-        ];
-
-        return response()->json(['data' => $data], 200);
+        $product = $this->service->getProductById($id);
+        return $this->api_success_response(['data' => $product]);
     }
 
     /**
@@ -121,26 +85,15 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreProduct $request, Product $product)
+    public function update(Product $product, StoreProduct $request)
     {
-        if (!$product) {
-            return response(['message' => 'Invalid param'], 433);
-        }
-
         if ($request->input('discount_price') &&
             ($request->input('discount_price') > $request->input('price'))) {
-            return response(['message' => 'price must be greater than discount price'], 433);
+            return $this->api_error_response('price must be greater than discount price', 401);
         }
 
-        \DB::beginTransaction();
-        try {
-            $product->update($request->all());
-            \DB::commit();
-            return response([ 'data' => $product ], 200);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return response(['message' => 'Failed'], 433);
-        }
+        $product = $this->service->updateProduct($product, $request->all());
+        return $this->api_success_response(['data' => $product]);
     }
 
     /**
@@ -149,42 +102,9 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        if (!$product) {
-            return response(['message' => 'Invalid param'], 433);
-        }
-
-        \DB::beginTransaction();
-        try {
-            $product->delete();
-            \DB::commit();
-
-            $products = Product::all()->map(function($item) {
-                return [
-                    'id' => $item['id'],
-                    'product_code' => $item['product_code'],
-                    'name' => $item['name'],
-                    'description' => $item['description'],
-                    'unit' => $item['unit'],
-                    'price' => $item['price'],
-                    'discount_price' => $item['discount_price'],
-                    'preview_images' => $item['preview_images'],
-                    'featured_images' => $item['featured_images'],
-                    'category' => [
-                        'id' => $item['category_id'],
-                        'name' => $item->category->name
-                    ],
-                    'provider' => [
-                        'id' => $item['provider_id'],
-                        'name' => $item->provider->name
-                    ],
-                ];
-            });
-            return response([ 'data' => $products ], 200);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return response(['message' => 'Failed'], 433);
-        }
+        $this->service->deleteProduct($id);
+        return $this->api_success_response();
     }
 }
