@@ -103,7 +103,7 @@ class ProductService extends BaseService
         $preview_images = $this->mediaService->getMedia($data, 'preview')->map(function ($media) {
             return [
                 'id' => $media->id,
-                'url' => $media->disk . '/' . $media->directory . '/' . $media->filename . '.' .  $media->extension
+                'url' => '/' . $media->directory . '/' . $media->filename . '.' .  $media->extension
             ];
         });
 
@@ -118,7 +118,7 @@ class ProductService extends BaseService
             'preview_images' => $preview_images,
             'featured_image' => $featured_image ? [
                 'id' => $featured_image->id,
-                'url' => $featured_image->disk . '/' . $featured_image->directory . '/' . $featured_image->filename . '.' .  $featured_image->extension
+                'url' => '/' . $featured_image->directory . '/' . $featured_image->filename . '.' .  $featured_image->extension
             ] : null,
             'category_id' => $data['category_id'],
             'category' => $data->category,

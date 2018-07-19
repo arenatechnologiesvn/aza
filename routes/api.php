@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
 
     // Products
     Route::resource('products', 'Product\ProductController');
+    Route::get('products/category/{id}','Product\ProductController@getByCategory');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {

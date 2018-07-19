@@ -41,16 +41,11 @@ class MediaManagerController extends Controller
         foreach ($mediables as $mediable) {
             $medias = $this->service->getMedia($mediable, $tags);
             if ($medias->count()) {
-                $results = $results->union($medias->map(function ($media) {
-                    return [
-                        'id' => $media->id,
-                        'url' => $media->disk . '/' . $media->directory . '/' . $media->filename . '.' .  $media->extension
-                    ];
-                }));
+                $results = $results->concat($medias);
             }
         };
 
-        return $this->api_success_response(['data' => $results]);
+        return $this->api_success_response(['data' => $results->unique('id')]);
     }
 
     /**

@@ -107,4 +107,16 @@ class ProductController extends Controller
         $this->service->deleteProduct($id);
         return $this->api_success_response();
     }
+
+    /**
+     * Get products by category.
+     *
+     * @param  \App\Product  $categoryId
+     * @return \Illuminate\Http\Response
+     */
+    public function getByCategory($id)
+    {
+        $products = $this->service->getProductByCategory($id);
+        return $this->api_success_response(['data' => $products]);
+    }
 }
