@@ -1,9 +1,12 @@
 <?php
 
 namespace App;
+use Plank\Mediable\Mediable;
 
 class Product extends BaseModel
 {
+    use Mediable;
+
     protected $table = 'products';
 
     /**
@@ -18,8 +21,6 @@ class Product extends BaseModel
         'unit',
         'price',
         'discount_price',
-        'preview_images',
-        'featured_images',
         'category_id',
         'provider_id'
     ];

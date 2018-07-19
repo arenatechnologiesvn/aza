@@ -105,7 +105,7 @@
         deleteMedia(this.type, this.selectedImage.id).then(() => {
           this.getMediaData();
         }).catch(error => {
-          console.log(error);
+          // Do nothing
         });
       },
 

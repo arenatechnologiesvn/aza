@@ -33,20 +33,20 @@
         div.table
           el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange")
             el-table-column(type="selection" header-align="center" align="center" width="40")
-            el-table-column(prop="preview_images" align="center" width="60")
+            el-table-column(prop="featured_image" align="center" width="60")
               template(slot-scope="scope")
-                img(:src="scope.row.preview_images" :width="40" :height="40")
-            el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable)
-            el-table-column(prop="price" label="GIÁ (VND)" sortable width="180")
+                img(:src="featuredImageUrl(scope.row)" :width="40" :height="40")
+            el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable min-width="200")
+            el-table-column(prop="price" label="GIÁ (VND)" align="right" sortable min-width="150")
               template(slot-scope="scope")
                 span {{ Number(scope.row.price).toLocaleString('de-DE') }}
-            el-table-column(prop="unit" label="ĐƠN VỊ" sortable)
-            el-table-column(prop="category_name" label="DANH MỤC" sortable)
+            el-table-column(prop="unit" label="ĐƠN VỊ" sortable min-width="100")
+            el-table-column(prop="category_name" label="DANH MỤC" sortable min-width="150")
               template(slot-scope="scope")
-                span {{ scope.row.category_name || '-' }}
-            el-table-column(prop="provider_name" label="NHÀ CUNG CẤP" sortable)
+                span {{ scope.row.category ? scope.row.category.name : '-' }}
+            el-table-column(prop="provider_name" label="NHÀ CUNG CẤP" sortable min-width="150")
               template(slot-scope="scope")
-                span {{ scope.row.provider_name || '-' }}
+                span {{ scope.row.provider ? scope.row.provider.name : '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
@@ -68,6 +68,7 @@
 import { mapGetters, mapActions, mapState } from 'vuex';
 import EditPanel from './EditPanel';
 import MediaManagerModal from '~/components/MediaManager/modal';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 export default {
   name: 'product-table',
@@ -114,6 +115,8 @@ export default {
       this.fetchProduct({ id: productId }).then(() => {
         this.setEditProductId({ productId: productId });
         this.openProductEditPanel();
+      }).catch((error) => {
+        // Do nothing
       });
     },
 
@@ -147,7 +150,7 @@ export default {
     },
 
     redirectToAddingPage() {
-      this.$router.push({path: '/products/add'});
+      this.$router.push({path: '/products/create'});
     },
 
     deleteOneProduct(productId) {
@@ -160,6 +163,11 @@ export default {
           this.fetchData();
         });
       });
+    },
+
+    featuredImageUrl(row) {
+      if (!row.featured_image) return dummyImage;
+      return row.featured_image.url;
     }
   },
   watch: {

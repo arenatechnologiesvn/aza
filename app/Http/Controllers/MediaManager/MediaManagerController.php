@@ -11,10 +11,16 @@ use Intervention\Image\Facades\Image;
 use Plank\Mediable\Media;
 use Plank\Mediable\MediaUploader;
 use App\Http\Controllers\Controller;
+use App\Service\MediaService;
 
 class MediaManagerController extends Controller
 {
     private static $OBJECT_TYPES = ['profile', 'shop', 'product', 'provider'];
+
+    public function __construct(MediaService $service)
+    {
+        $this->service = $service;
+    }
 
     /**
      * Get the list of images for Media Manager.
@@ -24,12 +30,22 @@ class MediaManagerController extends Controller
     public function index(Request $request)
     {
         if (!$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
-            return $this->api_error_response('params is invalid', 433);
+            return $this->api_error_response('Params is invalid', 433);
         }
 
-        $uploadUser = Auth::user();
-        $images = $uploadUser->getMedia($request->input('type'));
-        return $this->api_success_response(['data' => $images]);
+        $tags = $this->getMediaTags($request->input('type'));
+        $model = "App\\" . ucwords($request->input('type'));
+        $mediables = $model::all();
+
+        $results = collect([]);
+        foreach ($mediables as $mediable) {
+            $medias = $this->service->getMedia($mediable, $tags);
+            if ($medias->count()) {
+                $results = $results->concat($medias);
+            }
+        };
+
+        return $this->api_success_response(['data' => $results->unique('id')]);
     }
 
     /**
@@ -78,10 +94,6 @@ class MediaManagerController extends Controller
         $media = $mediaUploader->fromSource(public_path($folder) . $mainFileName)
             ->toDirectory($folder)
             ->upload();
-
-        // Set mediable object
-        $uploadUser = Auth::user();
-        $uploadUser->attachMedia($media, $request->input('type'));
 
         $thumbImage = Image::make($request->file('file'))
             ->resize(400, null, function ($constraint) {
@@ -139,5 +151,10 @@ class MediaManagerController extends Controller
         $media->save();
 
         return $media;
+    }
+
+    private function getMediaTags($type)
+    {
+        return $type == 'product' ? ['preview', 'featured'] : $type;
     }
 }

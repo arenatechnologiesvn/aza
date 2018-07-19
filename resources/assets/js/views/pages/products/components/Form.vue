@@ -2,7 +2,7 @@
   el-row
     el-col.side-form(:span="6")
       .image-container
-        img.image-preview(:src="product.preview_images" width="100%")
+        img.image-preview(:src="featuredImageUrl(product)" width="100%")
       div(style="margin-top: 10px;")
         el-button(type="success" size="small" @click="openMediaModal") Thay đổi
     el-col(:span="18")
@@ -41,6 +41,7 @@
 </template>
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
 
@@ -51,6 +52,7 @@ export default {
       productById: 'products/byId',
       getFormProduct: 'products/getFormProduct',
       selectedImageUrl: 'media/selectedMediaUrl',
+      selectedImage: 'media/selectedMedia',
       categories: 'categories/list',
       providers: 'providers/list'
     }),
@@ -151,6 +153,11 @@ export default {
       this.$refs.form.resetFields();
     },
 
+    featuredImageUrl(product) {
+      if (!product.featured_image) return dummyImage;
+      return product.featured_image.url;
+    },
+
     ...mapActions({
       openMediaModal: 'common/openMediaManagerModal',
       fetchCategories: 'categories/fetchList',
@@ -171,8 +178,7 @@ export default {
 
     selectedImageUrl() {
       if (this.selectedImageUrl) {
-        this.product.preview_images = this.selectedImageUrl;
-        this.product.featured_images = this.selectedImageUrl;
+        this.product.featured_image = this.selectedImage.id;
       }
     }
   },
