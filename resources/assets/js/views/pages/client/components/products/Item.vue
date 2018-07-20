@@ -2,6 +2,8 @@
   el-card.product-item(class="box-card")
     div.card__contain
       div.product-item__image
+        div(v-if="product.added").label ĐÃ THÊM VÀO GIỎ HÀNG
+        div(v-if="product.inventory <= 0").label.no HẾT HÀNG
         img(:src="product.img")
       div.product-item__des
         div.product-item__title
@@ -14,8 +16,8 @@
             span.product-item__price {{product.price + 'VNĐ'}}
             span.product-item__price--discount {{product.discount + 'VNĐ'}}
           div.product-item__control--right
-            span.heart
-              svg-icon(icon-class="fa-solid heart")
+            span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
+              svg-icon( icon-class="fa-solid heart")
             span.shop(@click="addToCart(product)")
               svg-icon(icon-class="fa-solid cart-plus")
 </template>
@@ -36,7 +38,48 @@
       }),
       addToCart (product) {
         this.addProductToCart(product)
+      },
+      toggleFavorite (product) {
+        alert(product.id)
+        if (product.favorite) {
+          this.removeProductFromFavorite(product.id)
+        } else {
+          this.addProductToFavorite(product.id)
+        }
+      },
+      removeProductFromFavorite (id) {
+        this.$store.dispatch('favorite/removeFromFavorite', id)
+      },
+      addProductToFavorite (id) {
+        this.$store.dispatch('favorite/addProductToFavorite', id)
       }
     }
   }
 </script>
+<style lang="scss" scoped>
+  .product-item {
+    position: relative;
+  }
+  .label {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    font-size: 14px;
+    background-color: rgba(255,255,255,0.7);
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    top: 0;
+    left: 0;
+    color: darkgreen;
+    font-weight: bolder;
+    text-align: left;
+    padding-left: 5px;
+    z-index: 999999;
+    &.no {
+      top: calc(50% - 20px);
+      text-align: center;
+      color: red;
+    }
+  }
+</style>

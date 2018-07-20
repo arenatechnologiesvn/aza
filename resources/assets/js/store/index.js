@@ -16,6 +16,7 @@ import media from './modules/media';
 import administrative from './modules/administrative';
 import getters from './getters';
 import cproduct from './modules/cproducts';
+import favorite from './modules/favorite';
 import cart from './modules/cart';
 Vue.use(Vuex);
 
@@ -36,6 +37,7 @@ const store = new Vuex.Store({
     media,
     administrative,
     cproduct,
+    favorite,
     cart
   },
   getters

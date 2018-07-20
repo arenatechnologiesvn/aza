@@ -137,7 +137,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 10
+    inventory: 10,
+    added: false,
+    favorite: false
   },
   {
     id: 2,
@@ -146,7 +148,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 20
+    inventory: 20,
+    added: false,
+    favorite: false
   },
   {
     id: 3,
@@ -155,7 +159,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 10
+    inventory: 10,
+    added: false,
+    favorite: false
   },
   {
     id: 4,
@@ -164,7 +170,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 25
+    inventory: 25,
+    added: false,
+    favorite: false
   },
   {
     id: 5,
@@ -173,7 +181,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 25
+    inventory: 25,
+    added: false,
+    favorite: false
   },
   {
     id: 6,
@@ -182,7 +192,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 25
+    inventory: 25,
+    added: false,
+    favorite: false
   },
   {
     id: 7,
@@ -191,7 +203,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 25
+    inventory: 25,
+    added: false,
+    favorite: false
   },
   {
     id: 8,
@@ -200,7 +214,9 @@ const data = [
     category: 'TRÁI CÂY',
     price: 30000,
     discount: 45000,
-    inventory: 25
+    inventory: 25,
+    added: false,
+    favorite: false
   },
   {
     id: 9,
@@ -209,7 +225,9 @@ const data = [
     category: 'THỰC PHẨM',
     price: 30000,
     discount: 45000,
-    inventory: 10
+    inventory: 10,
+    added: false,
+    favorite: false
   }
 ];
 export const getProducts = () => {
@@ -220,8 +238,7 @@ export const getProducts = () => {
 
 export const getProductById = (id) => {
   return new Promise(resolve => {
-    let byId = data.find(p => p.id == id)
-    console.log(byId)
+    const byId = data.find(p => p.id == id)
     setTimeout(() => resolve(byId), 1000);
-  })
-}
+  });
+};

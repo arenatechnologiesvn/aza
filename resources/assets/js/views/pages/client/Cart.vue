@@ -5,7 +5,7 @@
       el-row(:gutter="10")
         el-col(:xs="24" :sm="16" :md="16" :lg="16")
           div.grid-content.bg-puple
-            el-table(border style="width: 100%" :data="cart.products" size="mini")
+            el-table(border style="width: 100%" :data="products" size="mini")
               el-table-column(prop="name" label="Sản phẩm" min-width="200")
                 template(slot-scope="scope")
                   div.detail
@@ -17,12 +17,12 @@
               el-table-column(prop="price" label="GIÁ" :formatter="row => `${row.price} (VNĐ)`")
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="150")
                 template(slot-scope="scope")
-                  el-input(placeholder="1" style="width: 130px;" size="mini")
+                  el-input(placeholder="1" style="width: 130px;" size="mini" v-model="scope.row.quantity")
                     template(slot="prepend")
                       el-button(size="mini" type="danger") -
                     template(slot="append")
                       el-button(size="mini" type="success") +
-              el-table-column(prop="total" label="Tổng cộng" :formatter="row =>`${row.total} (VNĐ)`")
+              el-table-column(prop="total" label="Tổng cộng" :formatter="row =>`${row.price * row.quantity} (VNĐ)`")
         el-col(:xs="24" :sm="8" :md="8" :lg="8")
           div.cart(style="background-color: #ffffff")
             div.cart__detail
@@ -60,12 +60,16 @@
 <script>
   import BreadCrumb from './components/BreadCrumb'
   import product from '~/assets/products/p1.jpg'
-  import ElRow from "element-ui/packages/row/src/row";
+  import { mapGetters } from 'vuex'
   export default {
     name: 'CustomerCart',
     components: {
-      ElRow,
       BreadCrumb
+    },
+    computed: {
+      ...mapGetters('cart', {
+        products: 'cartProducts'
+      })
     },
     props: {
       cart: {

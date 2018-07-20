@@ -14,9 +14,24 @@ const cProducts = {
     decrementProductInventory (state, { id }) {
       const product = state.all.find(product => product.id === id);
       product.inventory--;
+      product.added = true;
     },
     SET_SINGLE (state, product) {
-      state.all.push(product)
+      state.all.push(product);
+    },
+    returnProductInventory (state, item) {
+      console.log(item);
+      const product = state.all.find(product => product.id === item.id);
+      product.inventory += item.quantity;
+      product.added = false;
+    },
+    addFavorite (state, id) {
+      const product = state.all.find(product => product.id === id);
+      product.favorite = true;
+    },
+    removeFavorite (state, id) {
+      const product = state.all.find(product => product.id === id);
+      product.favorite = false;
     }
   },
   actions: {
@@ -29,10 +44,10 @@ const cProducts = {
       const product = state.all.find(p => p.id === id);
       product.inventory--;
     },
-    fetchSingle ({commit}, id) {
+    fetchSingle ({ commit }, id) {
       getProductById(id).then(data => {
-        commit('SET_SINGLE', data)
-      })
+        commit('SET_SINGLE', data);
+      });
     }
   },
   getters: {

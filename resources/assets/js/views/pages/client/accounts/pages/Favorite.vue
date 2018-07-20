@@ -5,7 +5,7 @@
       template SẢN PHẨM YÊU THÍCH
     div.h-line
     div.account-favorite__content
-      el-table(:data="tableData" style="width: 100%" border :show-header="false")
+      el-table(:data="favoriteProducts" style="width: 100%" border :show-header="false")
         el-table-column
           template(slot-scope="scope")
             el-row.item(:gutter="10")
@@ -33,6 +33,7 @@
 
 <script>
   import avatar from '~/assets/products/linh-nguyen.jpg'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'AccountAlert',
     data () {
@@ -75,6 +76,11 @@
           }
         ]
       }
+    },
+    computed: {
+      ...mapGetters('favorite', {
+        favoriteProducts: 'products'
+      })
     }
   }
 </script>
