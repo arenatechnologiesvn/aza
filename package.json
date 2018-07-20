@@ -19,6 +19,7 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
     "js-cookie": "2.2.0",
+    "lodash": "^4.17.10",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "pixl-xml": "^1.0.13",

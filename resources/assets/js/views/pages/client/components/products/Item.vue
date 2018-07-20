@@ -16,17 +16,26 @@
           div.product-item__control--right
             span.heart
               svg-icon(icon-class="fa-solid heart")
-            span.shop
+            span.shop(@click="addToCart(product)")
               svg-icon(icon-class="fa-solid cart-plus")
 </template>
 
 <script>
+  import { mapActions } from 'vuex'
   export default {
     name: 'ItemProduct',
     props: {
       product: {
         type: Object,
         default: () => {}
+      }
+    },
+    methods: {
+      ...mapActions('cart', {
+        addProductToCart: 'addProductToCart'
+      }),
+      addToCart (product) {
+        this.addProductToCart(product)
       }
     }
   }
