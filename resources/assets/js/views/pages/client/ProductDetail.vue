@@ -42,13 +42,15 @@
       div.product-detail__relative
         h4 SẢN PHẨM LIÊN QUAN
         div
-          products(:control="false" :items="1")
+          p {{product}}
+          // products(:control="false" :items="1")
 </template>
 
 <script>
   import BreadCrumb from './components/BreadCrumb'
   import PreviewImage from './components/PreviewImage'
   import Products from './components/products'
+  import { mapGetters, mapActions } from 'vuex'
   export default {
     name: 'ProductDetail',
     components: {
@@ -56,18 +58,38 @@
       PreviewImage,
       Products
     },
+    computed: {
+      ...mapGetters('cproduct', {
+        ById: 'byId'
+      }),
+      product () {
+        return this.ById(this.$route.params.id)
+      }
+    },
     data () {
       return {
         rating: 5
       }
     },
+    watch: {
+      $route: 'getById'
+    },
     methods: {
+      ...mapActions('cproduct', {
+        fetchData : 'fetchSingle'
+      }),
       minus () {
         alert('minus')
       },
       rate (score) {
         this.rating = score
+      },
+      getById () {
+        this.fetchData(this.$route.params.id)
       }
+    },
+    created () {
+      this.getById()
     }
   }
 </script>

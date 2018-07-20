@@ -5,7 +5,7 @@
         img(:src="product.img")
       div.product-item__des
         div.product-item__title
-          router-link(to="/home/products/2") {{product.title}}
+          router-link(:to="`/home/products/${product.id}`") {{product.title}}
         div.product-item__description
           router-link(to="/home/products") {{product.category}}
         div.line

@@ -86,11 +86,11 @@
     "vue-loader": "13.5.0",
     "vue-style-loader": "3.0.3",
     "vue-template-compiler": "^2.5.16",
+    "vue2-dropzone": "^3.2.2",
     "webpack": "3.10.0",
     "webpack-bundle-analyzer": "^2.11.2",
     "webpack-dev-server": "2.9.7",
-    "webpack-merge": "4.1.1",
-    "vue2-dropzone": "^3.2.2"
+    "webpack-merge": "4.1.1"
   },
   "engines": {
     "node": ">= 4.0.0",

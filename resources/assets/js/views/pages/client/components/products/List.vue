@@ -4,23 +4,27 @@
       h4.title
         router-link(to="/home/products") {{category}}
       span.controls
-        el-button(size="mini")
+        el-button(size="mini" @click="next")
           svg-icon(icon-class="fa-solid angle-left")
-        el-button(size="mini")
+        el-button(size="mini" @click="prev")
           svg-icon(icon-class="fa-solid angle-right")
-    el-row(:gutter="20")
-      el-col(:span="6" v-for="item in products" :key="item.id")
-        product-item(:product="item")
+    el-carousel(height="500px" :interval="1000000" :autoplay="false" ref="productCarousel" indicator-position="none" arrow="never")
+      el-carousel-item(v-for="items in chunk(products, len)" :key="items[0].id")
+        el-row(:gutter="20")
+          el-col(:span="span" v-for="item in items" :key="item.id")
+            product-item(:product="item")
 </template>
 
 <script>
   import ProductItem from './Item'
-  import p1 from '~/assets/products/p/p1.jpg'
-  import p2 from '~/assets/products/p/p2.jpg'
-  import p3 from '~/assets/products/p/p3.jpg'
-  import p4 from '~/assets/products/p/p4.jpg'
   export default {
     name: 'ListProduct',
+    data () {
+      return {
+        span: 6,
+        len: 2
+      }
+    },
     props: {
       type: {
         type: String,
@@ -36,44 +40,51 @@
       },
       products: {
         type: Array,
-        default: () => [
-          {
-            id: 1,
-            title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-            img: p1,
-            category: 'THỰC PHẨM',
-            price: 30000,
-            discount: 45000
-          },
-          {
-            id: 2,
-            title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-            img: p2,
-            category: 'THỰC PHẨM',
-            price: 30000,
-            discount: 45000
-          },
-          {
-            id: 3,
-            title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-            img: p3,
-            category: 'THỰC PHẨM',
-            price: 30000,
-            discount: 45000
-          },
-          {
-            id: 4,
-            title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-            img: p4,
-            category: 'THỰC PHẨM',
-            price: 30000,
-            discount: 45000
-          }
-        ]
+        default: () => []
       }
     },
     components: {
       ProductItem
+    },
+    methods: {
+      next () {
+        this.$refs.productCarousel.next()
+      },
+      prev () {
+        this.$refs.productCarousel.prev()
+      },
+      chunk (array, size) {
+        var results = [];
+        var b = array.slice(0);
+        while (b.length) {
+          results.push(b.splice(0, size));
+        }
+        return results;
+      },
+      handleWindowResize () {
+        this.$nextTick(()=> {
+          if(window.outerWidth < 500) {
+            this.span = 24
+            this.len = 1
+          } else if(window.outerWidth < 780) {
+            this.span = 12
+            this.len = 2
+          } else if(window.outerWidth < 960){
+            this.span = 8
+            this.len = 3
+          } else {
+            this.span = 6
+            this.len = 4
+          }
+        })
+      }
+    },
+    mounted() {
+      window.addEventListener('resize', this.handleWindowResize);
+      this.handleWindowResize()
+    },
+    created () {
+      // console.log(this.chunk(this.products, 2))
     }
   }
 </script>

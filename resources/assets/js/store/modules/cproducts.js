@@ -1,9 +1,11 @@
-import { getProducts } from '~/api/products';
+import { getProducts, getProductById } from '~/api/products';
+import Vue from 'vuex'
 
 const cProducts = {
   namespaced: true,
   state: {
-    all: []
+    all: [],
+    current: {}
   },
   mutations: {
     SET_PRODUCT (state, products) {
@@ -12,6 +14,9 @@ const cProducts = {
     decrementProductInventory (state, { id }) {
       const product = state.all.find(product => product.id === id);
       product.inventory--;
+    },
+    SET_SINGLE (state, product) {
+      state.all.push(product)
     }
   },
   actions: {
@@ -23,10 +28,16 @@ const cProducts = {
     decrementProductInventory (state, { id }) {
       const product = state.all.find(p => p.id === id);
       product.inventory--;
+    },
+    fetchSingle ({commit}, id) {
+      getProductById(id).then(data => {
+        commit('SET_SINGLE', data)
+      })
     }
   },
   getters: {
-    list: (state) => state.all
+    list: (state) => state.all,
+    byId: (state) => id => state.all.find(p => p.id == id)
   }
 };
 export default cProducts;

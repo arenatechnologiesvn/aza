@@ -169,6 +169,42 @@ const data = [
   {
     id: 5,
     title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
+    img: n1,
+    category: 'TRÁI CÂY',
+    price: 30000,
+    discount: 45000,
+    inventory: 25
+  },
+  {
+    id: 6,
+    title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
+    img: n2,
+    category: 'TRÁI CÂY',
+    price: 30000,
+    discount: 45000,
+    inventory: 25
+  },
+  {
+    id: 7,
+    title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
+    img: n3,
+    category: 'TRÁI CÂY',
+    price: 30000,
+    discount: 45000,
+    inventory: 25
+  },
+  {
+    id: 8,
+    title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
+    img: n4,
+    category: 'TRÁI CÂY',
+    price: 30000,
+    discount: 45000,
+    inventory: 25
+  },
+  {
+    id: 9,
+    title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
     img: c1,
     category: 'THỰC PHẨM',
     price: 30000,
@@ -181,3 +217,11 @@ export const getProducts = () => {
     setTimeout(() => resolve(data), 1000);
   });
 };
+
+export const getProductById = (id) => {
+  return new Promise(resolve => {
+    let byId = data.find(p => p.id == id)
+    console.log(byId)
+    setTimeout(() => resolve(byId), 1000);
+  })
+}
