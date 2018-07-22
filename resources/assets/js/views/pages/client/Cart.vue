@@ -28,18 +28,22 @@
             div.cart__detail
               h4 ĐỊA ĐIỂM
               el-col(:span="18")
-                el-input(v-model="cart.address" disabled placeholder="Địa chỉ giao hàng")
+                el-input(v-model="iCart.address" size="small" disabled placeholder="Địa chỉ giao hàng")
               el-col(:span="6" style="margin-top: 10px")
-                span THAY ĐỔI
+                span(style="font-size: 13px; cursor: pointer;") THAY ĐỔI
             div.line
             div.cart__detail
               h4 KHUNG GIỜ
-              el-col(:span="10" style="margin-top: 10px")
-                span 30/10/18
-              el-col(:span="14")
-                el-select(v-model="cart.hour" clearable placeholder="Chọn khung giờ" size="small" style="width: 100%")
-                  el-option(label="Vip" :value="1")
-                  el-option(label="Thường" :value="0")
+              el-row(type="flex")
+                el-col(:span="12")
+                  el-date-picker(v-model="iCart.delivery" type="date" size="small" placeholder="Ngày đặt hàng")
+                el-col(:span="12")
+                  el-select(v-model="iCart.delivery_type" clearable placeholder="Chọn khung giờ" size="small")
+                    el-option(label="9h - 11h" :value="1")
+                    el-option(label="11h - 13h" :value="2")
+                    el-option(label="13h - 15h" :value="2")
+                    el-option(label="15h - 17h" :value="2")
+                    el-option(label="17h - 19h" :value="2")
             div.line
             div.cart__detail
               h4 THÔNG TIN ĐẶT HÀNG
@@ -49,11 +53,11 @@
                 el-col(:span="12" style="text-align: right;")
                   span 15,000,00 VNĐ
               div(style="margin-top: 10px;")
-                el-input(placeholder="Please input" v-model="cart.discount" class="input-with-select")
+                el-input(placeholder="Mã giảm giá" size="small" v-model="iCart.discount" class="input-with-select")
                   el-button(slot="append") ÁP DỤNG
             div.line
             div.cart__detail
-              el-button(type="success") CẬP NHẬT
+              el-button(type="success") ĐẶT HÀNG
               el-button(type="danger") HỦY BỎ
 </template>
 
@@ -69,7 +73,19 @@
     computed: {
       ...mapGetters('cart', {
         products: 'cartProducts'
-      })
+      }),
+      ...mapGetters([
+        'user_info'
+      ]),
+      iCart () {
+        const user = this.user_info
+        return {
+          address: user.customer ? user.customer.address : '',
+          delivery: '',
+          delivery_type: null,
+          discount: '',
+        }
+      }
     },
     props: {
       cart: {

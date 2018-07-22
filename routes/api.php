@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::delete('roles/deletes', 'RoleController@deletes');
     Route::resource('roles', 'RoleController');
     Route::resource('employees', 'EmployeeController');
+    Route::resource('favorites', 'FavoriteController');
     Route::resource('customers', 'CustomerController');
     Route::resource('shops', 'ShopController');
 

@@ -37,6 +37,7 @@ class User extends Authenticatable implements JWTSubject
         'avatar'
     ];
 
+
     public static function boot()
     {
         User::observe(new ByUserObserver());

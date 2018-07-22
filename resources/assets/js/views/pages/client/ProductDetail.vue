@@ -39,6 +39,11 @@
           el-col(:span="24")
             h4.content__title MÔ TẢ CHI TIẾT
             p A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted.
+        el-row.comment
+          el-col(:span="24")
+            el-button(:type="commentShow? 'default' : 'primary'" size="mini" @click="commentShow = !commentShow") {{commentShow ? 'X Hủy' : 'Gửi đánh giá của bạn về sản phẩm'}}
+          el-col(:span="24")
+            comment(v-if="commentShow")
       div.product-detail__relative
         h4 SẢN PHẨM LIÊN QUAN
         div
@@ -50,13 +55,15 @@
   import BreadCrumb from './components/BreadCrumb'
   import PreviewImage from './components/PreviewImage'
   import Products from './components/products'
+  import Comment from './components/Comment'
   import { mapGetters, mapActions } from 'vuex'
   export default {
     name: 'ProductDetail',
     components: {
       BreadCrumb,
       PreviewImage,
-      Products
+      Products,
+      Comment
     },
     computed: {
       ...mapGetters('cproduct', {
@@ -68,7 +75,8 @@
     },
     data () {
       return {
-        rating: 5
+        rating: 5,
+        commentShow: false
       }
     },
     watch: {

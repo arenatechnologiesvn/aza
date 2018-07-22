@@ -6,7 +6,7 @@
         div(v-if="product.inventory <= 0").label.no HẾT HÀNG
         img(:src="product.img")
       div.product-item__des
-        div.product-item__title
+        div.product-item__title(style="min-height: 50px; overflow: hidden;")
           router-link(:to="`/home/products/${product.id}`") {{product.title}}
         div.product-item__description
           router-link(to="/home/products") {{product.category}}
@@ -40,7 +40,6 @@
         this.addProductToCart(product)
       },
       toggleFavorite (product) {
-        alert(product.id)
         if (product.favorite) {
           this.removeProductFromFavorite(product.id)
         } else {
@@ -51,7 +50,15 @@
         this.$store.dispatch('favorite/removeFromFavorite', id)
       },
       addProductToFavorite (id) {
-        this.$store.dispatch('favorite/addProductToFavorite', id)
+        if (this.$store.state.favorite.items.length > 5){
+          this.$notify({
+            title: 'Cảnh báo giới hạn',
+            message: 'Danh sách yêu thích đã vượt quá số lượng cho phép',
+            type: 'warning'
+          });
+        } else {
+          this.$store.dispatch('favorite/addProductToFavorite', id)
+        }
       }
     }
   }

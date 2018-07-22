@@ -58,7 +58,7 @@ export default {
   line-height: 50px;
   border-radius: 0px !important;
   box-shadow: 2px 4px 20px -4px rgba(0,0,0,.3);
-  z-index: 9999;
+  z-index: 9;
   width: 100%;
   position: fixed;
   .hamburger-container {

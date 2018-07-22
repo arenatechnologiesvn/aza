@@ -10,126 +10,10 @@ import c1 from '~/assets/products/c/c1.jpg';
 import c2 from '~/assets/products/c/c2.jpg';
 import c3 from '~/assets/products/c/c3.jpg';
 import c4 from '~/assets/products/c/c4.jpg';
-// productByCategory: {
-//   type: Array,
-//   default: () => [
-//     {
-//       id: 1,
-//       category: 'TRÁI CÂY',
-//       products: [
-//         {
-//           id: 1,
-//           title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
-//           img: p1,
-//           category: 'TRÁI CÂY',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 2,
-//           title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
-//           img: p2,
-//           category: 'TRÁI CÂY',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 3,
-//           title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
-//           img: p3,
-//           category: 'TRÁI CÂY',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 4,
-//           title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
-//           img: p4,
-//           category: 'TRÁI CÂY',
-//           price: 30000,
-//           discount: 45000
-//         }
-//       ]
-//     },
-//     {
-//       id: 2,
-//       category: 'NƯỚC UỐNG',
-//       products: [
-//         {
-//           id: 1,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: n1,
-//           category: 'NƯỚC UỐNG',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 2,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: n2,
-//           category: 'NƯỚC UỐNG',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 3,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: n3,
-//           category: 'NƯỚC UỐNG',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 4,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: n4,
-//           category: 'NƯỚC UỐNG',
-//           price: 30000,
-//           discount: 45000
-//         }
-//       ]
-//     },
-//     {
-//       id: 3,
-//       category: 'ĐỒ CHƠI TRẺ EM',
-//       products: [
-//         {
-//           id: 1,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: c1,
-//           category: 'NĐỒ CHƠI TRẺ EM',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 2,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: c2,
-//           category: 'ĐỒ CHƠI TRẺ EM',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 3,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: c3,
-//           category: 'ĐỒ CHƠI TRẺ EM',
-//           price: 30000,
-//           discount: 45000
-//         },
-//         {
-//           id: 4,
-//           title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-//           img: c4,
-//           category: 'ĐỒ CHƠI TRẺ EM',
-//           price: 30000,
-//           discount: 45000
-//         }
-//       ]
-//     }
-//   ]
+import { all } from '~/api/favorite';
+import request from '~/utils/request';
 
-const data = [
+const products = [
   {
     id: 1,
     title: 'Cà chua thượng hạng Nhật Bản, tự nhiên không chất bảo quản',
@@ -232,13 +116,38 @@ const data = [
 ];
 export const getProducts = () => {
   return new Promise(resolve => {
-    setTimeout(() => resolve(data), 1000);
+    all().then(data => {
+      request({
+        url: '/api/products',
+        method: 'get'
+      }).then(res => {
+        const products = res.data;
+        let p = products.map(item => {
+          let favorite = false;
+          if (data.indexOf(item.id) > 0) {
+            favorite = true;
+          }
+          return {
+            id: item.id,
+            title: item.name,
+            img: item.featured_image.url,
+            category: item.category ? item.category.name : 'Chưa xác định',
+            price: item.price,
+            discount: item.discount_price || item.price,
+            inventory: 10,
+            added: false,
+            favorite: favorite
+          };
+        });
+        resolve(p);
+      });
+    });
   });
 };
 
 export const getProductById = (id) => {
   return new Promise(resolve => {
-    const byId = data.find(p => p.id == id)
+    const byId = products.find(p => p.id == id)
     setTimeout(() => resolve(byId), 1000);
   });
 };
