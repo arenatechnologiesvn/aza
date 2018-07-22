@@ -5,7 +5,7 @@
       template SẢN PHẨM YÊU THÍCH
     div.h-line
     div.account-favorite__content
-      el-table(:data="tableData" style="width: 100%" border :show-header="false")
+      el-table(:data="favoriteProducts" style="width: 100%" border :show-header="false")
         el-table-column
           template(slot-scope="scope")
             el-row.item(:gutter="10")
@@ -14,10 +14,10 @@
               el-col(:span="18")
                 h4 {{scope.row.title}}
                 div
-                  span(v-for="item in 5" :key="item")
+                  span(v-for="item in 5" :key="item" :style="{color: item <= scope.row.rating ? 'red': 'black'}")
                     svg-icon(icon-class="fa-solid star")
                 div
-                  span
+                  span(@click="removeFromFavorite(scope.row.id)" style="cursor: pointer;")
                     svg-icon(icon-class="fa-solid trash")
         el-table-column(width="200")
           template(slot-scope="scope")
@@ -27,12 +27,13 @@
               div {{((scope.row.discount / scope.row.price) * 100).toFixed(2) }}%
         el-table-column(prop="address" label="Date" width="100")
           template(slot-scope="scope")
-            el-button(size="mini" type="warning")
+            el-button(size="mini" type="warning" @click="addToCart(scope.row)")
               svg-icon(icon-class="fa-solid cart-plus")
 </template>
 
 <script>
   import avatar from '~/assets/products/linh-nguyen.jpg'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'AccountAlert',
     data () {
@@ -75,6 +76,28 @@
           }
         ]
       }
+    },
+    computed: {
+      ...mapGetters('favorite', {
+        favoriteProducts: 'products'
+      })
+    },
+    watch: {
+      $route: 'fetchData'
+    },
+    methods: {
+      addToCart (item) {
+        this.$store.dispatch('cart/addProductToCart', item)
+      },
+      removeFromFavorite (id) {
+        this.$store.dispatch('favorite/removeFromFavorite', id)
+      },
+      fetchData () {
+        this.$store.dispatch('favorite/fetchList');
+      }
+    },
+    created () {
+      this.fetchData()
     }
   }
 </script>

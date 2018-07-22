@@ -9,13 +9,16 @@
 namespace App\Dto;
 
 
+use App\Customer;
+use App\Helper\RoleConstant;
+
 class UserDto implements BaseDto
 {
 
     public static function toDto($item)
     {
         // TODO: Implement toDto() method.
-        return [
+        $data = [
             'id' => $item->id,
             'email' => $item->email,
             'name' => $item->name,
@@ -28,6 +31,11 @@ class UserDto implements BaseDto
             'first_name' => $item->first_name,
             'last_name' => $item->last_name,
         ];
+        if ($item->role->id === RoleConstant::Customer) {
+            $customer = Customer::where('user_id', $item->id)->firstOrFail();
+            $data['customer'] = $customer;
+        }
+        return $data;
     }
 
     public static function toListDto($items)

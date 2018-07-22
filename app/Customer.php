@@ -16,7 +16,16 @@ class Customer extends BaseModel
         'employee_id',
         'province_code',
         'district_code',
-        'ward_code'
+        'ward_code',
+        'favorites'
+    ];
+    protected $hidden = [
+        'created_at',
+        'created_by',
+        'updated_at',
+        'updated_by',
+        'deleted_at',
+        'deleted_by'
     ];
     public function employee() {
         return $this->belongsTo(Employee::class);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Customer;
+use App\Helper\RoleConstant;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -76,7 +78,7 @@ class LoginController extends Controller
         return $this->api_success_response([
             'data' => [
                 'token' => $token,
-                'user' => Auth::user(),
+                'user' => $this->infoUser(),
                 'token_type' => 'bearer',
                 'expires_in' => $expiration - time()
             ]
@@ -93,5 +95,14 @@ class LoginController extends Controller
     {
         $this->guard()->logout();
         return $this->api_success_response();
+    }
+
+    private function infoUser(){
+        $user = Auth::user();
+       if($user->role_id  == RoleConstant::Customer){
+           $customer = Customer::where('user_id', $user->id)->firstOrFail();
+           $user['customer'] = $customer;
+       }
+       return $user;
     }
 }

@@ -1,0 +1,11 @@
+.star {
+  font-size: 20px;
+  color: gray;
+  cursor: pointer;
+  &:hover {
+    color: orange;
+  }
+  &.check {
+    color: orange;
+  }
+}
