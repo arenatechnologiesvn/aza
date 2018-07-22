@@ -2,9 +2,9 @@
   el-row
     el-col.side-form(:span="6")
       .image-container
-        img.image-preview(:src="featuredImageUrl(product)" width="100%")
+        img.image-featured(:src="product.featured_image.url" width="100%")
       div(style="margin-top: 10px;")
-        el-button(type="success" size="small" @click="openMediaModal") Thay đổi
+        el-button(type="success" size="small" @click="openMediaModal") Thay đổi ảnh đại diện
     el-col(:span="18")
       el-form(ref="form" :rules="rules" :model="product" size="small")
         el-col(:span="24")
@@ -41,7 +41,6 @@
 </template>
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
-import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
 
@@ -51,8 +50,8 @@ export default {
     ...mapGetters({
       productById: 'products/byId',
       getFormProduct: 'products/getFormProduct',
-      selectedImageUrl: 'media/selectedMediaUrl',
-      selectedImage: 'media/selectedMedia',
+      selectedSingleImage: 'media/selectedSingleMedia',
+      selectedMultiImage: 'media/selectedMultiMedia',
       categories: 'categories/list',
       providers: 'providers/list'
     }),
@@ -153,11 +152,6 @@ export default {
       this.$refs.form.resetFields();
     },
 
-    featuredImageUrl(product) {
-      if (!product.featured_image) return dummyImage;
-      return product.featured_image.url;
-    },
-
     ...mapActions({
       openMediaModal: 'common/openMediaManagerModal',
       fetchCategories: 'categories/fetchList',
@@ -176,9 +170,9 @@ export default {
       }
     },
 
-    selectedImageUrl() {
-      if (this.selectedImageUrl) {
-        this.product.featured_image = this.selectedImage.id;
+    selectedSingleImage() {
+      if (this.selectedSingleImage) {
+        this.product.featured_image = this.selectedSingleImage;
       }
     }
   },
@@ -208,7 +202,7 @@ export default {
       padding-top: 100%;
       margin-top: 10px;
 
-      .image-preview {
+      .image-featured {
         position: absolute;
         top: 0;
         left: 0;

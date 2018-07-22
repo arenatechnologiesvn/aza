@@ -1,13 +1,6 @@
 <template lang="pug">
     el-dialog.media-modal(:visible.sync="visible" width="60%")
-      media-manager(:type="type" ref="mediaManager")
-      span.dialog-footer(slot="footer")
-        el-button(type="primary" size="small" @click="setSelectedImage" :disabled="!previewImageUrl")
-          svg-icon(icon-class="fa-solid check")
-          span  Thay đổi
-        el-button(size="small" type="info" @click="closeModal")
-          svg-icon(icon-class="fa-solid ban")
-          span  Hủy
+      media-manager(:type="type" select-mode="selectMode" ref="mediaManager")
 </template>
 
 <script>
@@ -23,17 +16,21 @@ export default {
     type: {
       type: String,
       required: true
+    },
+    selectMode: {
+      type: String,
+      default: () => {
+        return 'single'
+      }
     }
   },
   computed: {
     ...mapGetters({
-      selectedImage: 'media/selectedMedia',
-      previewImage: 'media/previewMedia',
-      previewImageUrl: 'media/previewMediaUrl'
     }),
 
     ...mapState({
-      dialogVisible: state => state.common.media.dialogVisible
+      dialogVisible: state => state.common.media.dialogVisible,
+      mediaList: state => state.media.mediaList
     })
   },
   data() {
@@ -42,15 +39,13 @@ export default {
     }
   },
   methods: {
-    setSelectedImage() {
-      this.setMedia(this.previewImage);
-
+    setMedia() {
       // close modal
       this.closeModal();
     },
+
     ...mapActions({
       closeModal: 'common/closeMediaManagerModal',
-      setMedia: 'media/setMedia'
     })
   },
   watch: {
