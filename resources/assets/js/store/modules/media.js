@@ -1,7 +1,8 @@
 import { getMedia, deleteMedia } from '~/api/media';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const mediaUrl = (media) => {
-  if (!media.filename) return '';
+  if (!media) return dummyImage;
   return `/${media.directory}/${media.filename}.${media.extension}`;
 };
 
@@ -9,19 +10,10 @@ const media = {
   namespaced: true,
 
   state: {
-    selectedMedia: {
-      directory: '',
-      filename: '',
-      extension: '',
-      size: ''
-    },
-    previewMedia: {
-      directory: '',
-      filename: '',
-      extension: '',
-      size: ''
-    },
-    mediaList: []
+    mediaList: [],
+    selectedSingleMedia: {},
+    selectedMultiMedia: [],
+    previewMedia: {}
   },
 
   getters: {
@@ -29,12 +21,20 @@ const media = {
       return state.mediaList;
     },
 
-    selectedMedia: (state) => {
-      return state.selectedMedia;
+    selectedSingleMedia: (state) => {
+      return {
+        id: state.selectedSingleMedia.id,
+        url: mediaUrl(state.selectedSingleMedia)
+      };
     },
 
-    selectedMediaUrl: (state) => {
-      return mediaUrl(state.selectedMedia);
+    selectedMultiMedia: (state) => {
+      return state.selectedMultiMedia.map(media => {
+        return {
+          id: media.id,
+          url: mediaUrl(media)
+        };
+      });
     },
 
     previewMedia: (state) => {
@@ -51,8 +51,18 @@ const media = {
       state.mediaList = list;
     },
 
-    SET_MEDIA: (state, media) => {
-      state.selectedMedia = media;
+    SET_SELECTED_SINGLE_MEDIA: (state, media) => {
+      state.selectedSingleMedia = media;
+    },
+
+    SET_SELECTED_MULTI_MEDIA: (state) => {
+      const mediaList = Object.keys(state.mediaList).map((key) => {
+        return state.mediaList[key];
+      });
+
+      state.selectedMediaList = mediaList.filter((item) => {
+        return item.selectStatus && item.selectStatus === 1;
+      }) || [];
     },
 
     SET_PREVIEW_MEDIA: (state, media) => {
@@ -72,8 +82,12 @@ const media = {
       });
     },
 
-    setMedia ({ commit }, media) {
-      commit('SET_MEDIA', media);
+    setSelectedSingleMedia ({ commit }, media) {
+      commit('SET_SELECTED_SINGLE_MEDIA', media);
+    },
+
+    setSelectedMultiMedia ({ commit }) {
+      commit('SET_SELECTED_MULTI_MEDIA');
     },
 
     setPreviewMedia ({ commit }, media) {

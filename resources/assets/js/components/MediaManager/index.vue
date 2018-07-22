@@ -8,37 +8,44 @@
         el-col(:span="6")
           el-input(size="small" placeholder="Tìm kiếm")
             i(slot="suffix" class="el-input__icon el-icon-search")
-        el-col(:span="2" v-if="images.length")
-          el-button(type="danger" size="small" @click="deleteImage" disabled)
-            svg-icon(icon-class="fa-solid trash-alt")
-            span  Xóa
+        el-col(:span="6")
+          el-button(type="primary" size="small" @click="")
+            svg-icon(icon-class="fa-solid check")
+            span  Thay đổi
+          el-button(size="small" type="info" @click="")
+            svg-icon(icon-class="fa-solid ban")
+            span  Hủy
+          // el-button(type="danger" size="small" @click="deleteImage" disabled)
+          //   svg-icon(icon-class="fa-solid trash-alt")
+          //   span  Xóa
       el-container.media-container
-        el-aside.aside-container(width="200px")
-          img.aside-image(:src="previewImageUrl || dummyImage")
-          el-row.aside-info
-            .row-info
-              span.image-info Tên
-              span {{ previewImage.filename }}.{{ previewImage.extension }}
-            .row-info
-              span.image-info Size
-              span {{ bytesToSize(previewImage.size) }}
-            .row-info
-              span.image-info Loại file
-              span {{ previewImage.mime_type }}
-        el-main
-          div.clearfix
-            ul.__file-box-container
-              li.attach-image(v-for="(image, index) in images" :key="index")
-                div.__file-box(v-touch:tap="selectImage(image)" :class="[image.id == previewImage.id ? 'selected': '']")
-                  div.__box-data
-                      div.__box-preview
-                        div.__box-img
-                          img(:src="'/' + image.directory + '/' + image.filename + '.' + image.extension")
+        el-container
+          el-aside.aside-container(width="200px")
+            img.aside-image(:src="previewImageUrl")
+            el-row.aside-info
+              .row-info
+                span.image-info Tên
+                span(v-if="previewImage") {{ previewImage.filename }}.{{ previewImage.extension }}
+              .row-info
+                span.image-info Size
+                span(v-if="previewImage") {{ bytesToSize(previewImage.size) }}
+              .row-info
+                span.image-info Loại file
+                span(v-if="previewImage") {{ previewImage.mime_type }}
+          el-main
+            div.clearfix
+              ul.__file-box-container
+                li.attach-image(v-for="(image, index) in images" :key="index")
+                  div.__file-box(v-touch:tap="selectMedia(image)" :class="[selectedClass(image) ? 'selected' : '']")
+                    div.__box-data
+                        div.__box-preview
+                          div.__box-img
+                            img(:src="'/' + image.directory + '/' + image.filename + '.' + image.extension")
 
-                      div.__box-info
-                        div
-                          span {{ image.filename + '.' + image.extension }}
-                        small.__info-file-size {{ bytesToSize(image.size) }}
+                        div.__box-info
+                          div
+                            span {{ image.filename + '.' + image.extension }}
+                          small.__info-file-size {{ bytesToSize(image.size) }}
     el-tab-pane
       span(slot="label")
         svg-icon(icon-class="fa-solid upload")
@@ -47,10 +54,9 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapState } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
   import { getToken } from '~/utils/auth';
   import Dropzone from 'vue2-dropzone';
-  import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
   const MEDIA_UPLOAD_API = `http://${location.host}/api/media/upload`;
   const FILE_SIZES = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -64,6 +70,12 @@
       type: {
         type: String,
         required: true
+      },
+      selectMode: {
+        type: String,
+        default: () => {
+          return 'single'
+        }
       }
     },
     computed: {
@@ -86,14 +98,17 @@
           params: {
             type: this.type
           }
-        },
-        dummyImage: dummyImage
+        }
       }
     },
     methods: {
-      selectImage(image) {
+      selectMedia(media) {
         return () => {
-          this.setPreviewMedia(image);
+          if (!media.selectStatus) {
+            media.selectStatus = 1;
+          } else {
+            media.selectStatus = media.selectStatus * -1;
+          }
         };
       },
 
@@ -120,9 +135,16 @@
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + FILE_SIZES[i];
       },
 
+      selectedClass(media) {
+        console.log('selected');
+        return media.selectStatus === 1;
+      },
+
       ...mapActions({
         fetchMedia: 'media/fetchMedia',
-        setPreviewMedia: 'media/setPreviewMedia'
+        setPreviewMedia: 'media/setPreviewMedia',
+        setSelectedSingleMedia: 'media/setSelectedSingleMedia',
+        setSelectedMultiMedia: 'media/setSelectedMultiMedia'
       })
 
       // handleImageMetaDataSave() {
@@ -214,7 +236,7 @@
       position: relative;
       overflow: hidden;
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.2rem;
       cursor: pointer;
       transition: all 0.25s;
       color: darken($active_theme, 60%);
@@ -224,8 +246,7 @@
       line-height: 1.4;
 
       &.selected,
-      &.bulk-selected,
-      &:hover {
+      &.bulk-selected {
         color: $white;
         border-color: darken($blue, 5%);
         background: $blue;
