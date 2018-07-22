@@ -9,10 +9,10 @@
           el-col(:span="16")
             el-row.product-detail__title(type="flex")
               el-col(:span="20").left
-                h4.title [HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018
+                h4.title {{product.title}}
                 span.category
                   strong Danh mục:
-                  span.category__name SẢN PHẨM MỚI
+                  span.category__name {{product.category}}
                 span.rating
                   span.score(v-for="item in 5" @click="rate(item)" :key="item" :style="{color: item <= rating ? 'orange' : ''}")
                     svg-icon(icon-class="fa-solid star")
@@ -23,9 +23,9 @@
                   el-button(size="mini")
                     svg-icon(icon-class="fa-solid angle-right")
             el-row(:span="24")
-              p.description In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In retailing, products are called merchandise. In manufacturing, products are bought as raw materials and sold as finished goods. In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In retailing, products are called merchandise. In manufacturing, products are bought as raw materials and sold as finished goods.In marketing, a product is anything that can be offered to a market that might satisfy a want or need. In retailing, products are called merchandise. In manufacturing, products are bought as raw materials and sold as finished goods.
-              div.price 45,000 VNĐ
-                span(style="margin-left: 20px; font-size=18px; color: #d6d6d6; text-decoration: line-through;") 85,000 VNĐ
+              p.description {{product.description}}
+              div.price {{product.discount}}
+                span(style="margin-left: 20px; font-size=18px; color: #d6d6d6; text-decoration: line-through;") {{product.price}} VNĐ
               div.submit
                 span.input
                   el-input(placeholder="1" style="width: 150px;")
@@ -38,7 +38,7 @@
         el-row.content
           el-col(:span="24")
             h4.content__title MÔ TẢ CHI TIẾT
-            p A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted. A product can be a service or an item. It can be physical or in virtual or cyber form. Every product is made at a cost and each is sold at a price. The price that can be charged depends on the market, the quality, the marketing and the segment that is targeted.
+            p {{product.description}}
         el-row.comment
           el-col(:span="24")
             el-button(:type="commentShow? 'default' : 'primary'" size="mini" @click="commentShow = !commentShow") {{commentShow ? 'X Hủy' : 'Gửi đánh giá của bạn về sản phẩm'}}
@@ -47,7 +47,6 @@
       div.product-detail__relative
         h4 SẢN PHẨM LIÊN QUAN
         div
-          p {{product}}
           // products(:control="false" :items="1")
 </template>
 
