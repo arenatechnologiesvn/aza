@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import MediaManager from '~/components/MediaManager'
 
 export default {
@@ -16,21 +16,12 @@ export default {
     type: {
       type: String,
       required: true
-    },
-    selectMode: {
-      type: String,
-      default: () => {
-        return 'single'
-      }
     }
   },
   computed: {
-    ...mapGetters({
-    }),
-
     ...mapState({
       dialogVisible: state => state.common.media.dialogVisible,
-      mediaList: state => state.media.mediaList
+      selectMode: state => state.common.media.mode
     })
   },
   data() {
@@ -39,11 +30,6 @@ export default {
     }
   },
   methods: {
-    setMedia() {
-      // close modal
-      this.closeModal();
-    },
-
     ...mapActions({
       closeModal: 'common/closeMediaManagerModal',
     })

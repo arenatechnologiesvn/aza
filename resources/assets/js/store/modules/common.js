@@ -25,7 +25,8 @@ const common = {
       editPanelVisible: false
     },
     media: {
-      dialogVisible: false
+      dialogVisible: false,
+      mode: 'single'
     },
     icons: []
   },
@@ -47,8 +48,9 @@ const common = {
       state.product.editPanelVisible = false;
     },
 
-    OPEN_MEDIA_MANAGER_MODAL: (state) => {
+    OPEN_MEDIA_MANAGER_MODAL: (state, mode) => {
       state.media.dialogVisible = true;
+      state.media.mode = mode;
     },
     CLOSE_MEDIA_MANAGER_MODAL: (state) => {
       state.media.dialogVisible = false;
@@ -66,8 +68,8 @@ const common = {
       commit('CLOSE_PRODUCT_EDIT_PANEL');
     },
 
-    openMediaManagerModal ({ commit }) {
-      commit('OPEN_MEDIA_MANAGER_MODAL');
+    openMediaManagerModal ({ commit }, { mode }) {
+      commit('OPEN_MEDIA_MANAGER_MODAL', mode);
     },
     closeMediaManagerModal ({ commit }) {
       commit('CLOSE_MEDIA_MANAGER_MODAL');

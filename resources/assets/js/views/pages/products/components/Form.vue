@@ -2,9 +2,9 @@
   el-row
     el-col.side-form(:span="6")
       .image-container
-        img.image-featured(:src="product.featured_image.url" width="100%")
+        img.image-featured(:src="featuredImageUrl()" width="100%")
       div(style="margin-top: 10px;")
-        el-button(type="success" size="small" @click="openMediaModal") Thay đổi ảnh đại diện
+        el-button(type="success" size="small" @click="openMediaModal('single')") Thay đổi ảnh đại diện
     el-col(:span="18")
       el-form(ref="form" :rules="rules" :model="product" size="small")
         el-col(:span="24")
@@ -150,6 +150,10 @@ export default {
 
     resetForm(formName) {
       this.$refs.form.resetFields();
+    },
+
+    featuredImageUrl() {
+      return this.product.featured_image ? this.product.featured_image.url : this.selectedSingleImage.url;
     },
 
     ...mapActions({

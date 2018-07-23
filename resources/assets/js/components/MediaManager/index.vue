@@ -12,7 +12,7 @@
           el-button(type="primary" size="small" @click="")
             svg-icon(icon-class="fa-solid check")
             span  Thay đổi
-          el-button(size="small" type="info" @click="")
+          el-button(size="small" type="info" @click="closeModal")
             svg-icon(icon-class="fa-solid ban")
             span  Hủy
           // el-button(type="danger" size="small" @click="deleteImage" disabled)
@@ -36,7 +36,7 @@
             div.clearfix
               ul.__file-box-container
                 li.attach-image(v-for="(image, index) in images" :key="index")
-                  div.__file-box(v-touch:tap="selectMedia(image)" :class="[selectedClass(image) ? 'selected' : '']")
+                  div.__file-box(v-touch:tap="selectMedia(image)" :class="selectedClass(image)")
                     div.__box-data
                         div.__box-preview
                           div.__box-img
@@ -98,30 +98,21 @@
           params: {
             type: this.type
           }
-        }
+        },
+        singleMedia: null,
+        multiMedia: []
       }
     },
     methods: {
       selectMedia(media) {
         return () => {
-          if (!media.selectStatus) {
-            media.selectStatus = 1;
-          } else {
-            media.selectStatus = media.selectStatus * -1;
-          }
+          media.selectStatus = media.selectStatus * -1;
+          this.setPreviewMedia(media);
         };
       },
 
       getMediaData() {
         this.fetchMedia(this.type);
-      },
-
-      deleteImage() {
-        deleteMedia(this.type, this.selectedImage.id).then(() => {
-          this.getMediaData();
-        }).catch(error => {
-          // Do nothing
-        });
       },
 
       showSuccess(file, response) {
@@ -136,16 +127,16 @@
       },
 
       selectedClass(media) {
-        console.log('selected');
-        return media.selectStatus === 1;
+        return media.selectStatus === 1  ? 'selected' : '';
       },
 
-      ...mapActions({
-        fetchMedia: 'media/fetchMedia',
-        setPreviewMedia: 'media/setPreviewMedia',
-        setSelectedSingleMedia: 'media/setSelectedSingleMedia',
-        setSelectedMultiMedia: 'media/setSelectedMultiMedia'
-      })
+      deleteImage() {
+        deleteMedia(this.type, this.selectedImage.id).then(() => {
+          this.getMediaData();
+        }).catch(error => {
+          // Do nothing
+        });
+      },
 
       // handleImageMetaDataSave() {
       //   this.currentImage.meta_data.currentImageId = this.currentImage.id
@@ -156,6 +147,14 @@
       //       console.log('error', error)
       //   })
       // },
+
+      ...mapActions({
+        fetchMedia: 'media/fetchMedia',
+        setSelectedSingleMedia: 'media/setSelectedSingleMedia',
+        setSelectedMultiMedia: 'media/setSelectedMultiMedia',
+        setPreviewMedia: 'media/setPreviewMedia',
+        closeModal: 'common/closeMediaManagerModal'
+      })
     }
   }
 </script>

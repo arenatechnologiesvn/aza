@@ -11,9 +11,9 @@ const media = {
 
   state: {
     mediaList: [],
-    selectedSingleMedia: {},
+    selectedSingleMedia: null,
     selectedMultiMedia: [],
-    previewMedia: {}
+    previewMedia: null
   },
 
   getters: {
@@ -23,7 +23,7 @@ const media = {
 
     selectedSingleMedia: (state) => {
       return {
-        id: state.selectedSingleMedia.id,
+        id: state.selectedSingleMedia ? state.selectedSingleMedia.id : null,
         url: mediaUrl(state.selectedSingleMedia)
       };
     },
@@ -48,6 +48,9 @@ const media = {
 
   mutations: {
     SET_MEDIA_LIST: (state, list) => {
+      Object.keys(list).forEach((key) => {
+        list[key].selectStatus = -1;
+      });
       state.mediaList = list;
     },
 
@@ -82,8 +85,8 @@ const media = {
       });
     },
 
-    setSelectedSingleMedia ({ commit }, media) {
-      commit('SET_SELECTED_SINGLE_MEDIA', media);
+    setSelectedSingleMedia ({ commit }) {
+      commit('SET_SELECTED_SINGLE_MEDIA');
     },
 
     setSelectedMultiMedia ({ commit }) {
