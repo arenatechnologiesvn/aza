@@ -1,10 +1,10 @@
 <template lang="pug">
   el-row
-    media-manager-modal(type="profile" v-model="selectedImage" ref="mediaEmployeeModal")
+    media-manager-modal(type="user")
     el-col(:span="5" style="padding-right: 20px;")
-      img(:src="selectedImage" style="width: 100%" height="230")
+      img(:src="avatarUrl()" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
-        el-button(type="success" @click="$refs.mediaEmployeeModal.dialogVisible = true;") Thay đổi
+        el-button(type="success" @click="openMediaModal('single')") Thay đổi
     el-col(:span="19")
       el-form(ref="form" v-model="employee" size="small")
         el-col(:span="24")
@@ -58,11 +58,6 @@
     components: {
       MediaManagerModal
     },
-    data () {
-      return {
-        selectedImage: dummyImage
-      }
-    },
     props: {
       employee: {
         type: Object,
@@ -77,6 +72,7 @@
             email: '',
             role_id: '',
             user: {},
+            avatar: null,
             start_datetime: null
           }
         }
@@ -90,6 +86,9 @@
       ...mapGetters('roles', {
         roles: 'list'
       }),
+      ...mapGetters({
+        selectedAvatar: 'media/selectedSingleMedia'
+      }),
       roleList () {
         return this.roles.filter(item => item.is_employee).map(item => {
           return {
@@ -101,7 +100,7 @@
     },
     methods: {
       back () {
-        this.$router.go(-1)
+        this.$router.push({ path: '/employees' });
       },
       ...mapActions('roles', {
         fetchRoles: 'fetchList'
@@ -109,6 +108,9 @@
       ...mapActions('employees', {
         employeeCreate: 'create',
         employeeUpdate: 'update'
+      }),
+      ...mapActions('common', {
+        openMediaModal: 'openMediaManagerModal'
       }),
       update () {
         this.employeeUpdate({
@@ -133,6 +135,16 @@
       },
       handleSubmit () {
         this.isUpdate ? this.update() : this.create()
+      },
+      avatarUrl() {
+        return this.employee.avatar ? this.employee.avatar.url : dummyImage;
+      }
+    },
+    watch: {
+      selectedAvatar() {
+        if (this.selectedAvatar) {
+          this.employee.avatar = this.selectedAvatar;
+        }
       }
     },
     created () {

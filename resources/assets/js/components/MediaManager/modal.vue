@@ -5,7 +5,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import MediaManager from '~/components/MediaManager'
+import MediaManager from '~/components/MediaManager';
 
 export default {
   name: 'media-manager-modal',

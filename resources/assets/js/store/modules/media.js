@@ -48,9 +48,7 @@ const media = {
 
   mutations: {
     SET_MEDIA_LIST: (state, list) => {
-      state.mediaList = Object.keys(list).map((key) => {
-        return list[key];
-      });
+      state.mediaList = list;
     },
 
     SET_SELECTED_MEDIA: (state, { mode, selected }) => {

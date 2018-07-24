@@ -57,6 +57,7 @@
 </template>
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
 
@@ -185,7 +186,7 @@ export default {
     },
 
     featuredImageUrl() {
-      return this.product.featured_image ? this.product.featured_image.url : this.selectedSingleImage.url;
+      return this.product.featured_image ? this.product.featured_image.url : dummyImage;
     },
 
     clearAllPreviewImages() {
