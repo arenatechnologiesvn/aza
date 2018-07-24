@@ -51,21 +51,22 @@ const media = {
       Object.keys(list).forEach((key) => {
         list[key].selectStatus = -1;
       });
-      state.mediaList = list;
-    },
 
-    SET_SELECTED_SINGLE_MEDIA: (state, media) => {
-      state.selectedSingleMedia = media;
-    },
-
-    SET_SELECTED_MULTI_MEDIA: (state) => {
-      const mediaList = Object.keys(state.mediaList).map((key) => {
-        return state.mediaList[key];
+      state.mediaList = Object.keys(list).map((key) => {
+        return list[key];
       });
+    },
 
-      state.selectedMediaList = mediaList.filter((item) => {
-        return item.selectStatus && item.selectStatus === 1;
-      }) || [];
+    SET_SELECTED_MEDIA: (state, mode) => {
+      if (mode === 'single') {
+        state.selectedSingleMedia = state.mediaList.find((media) => {
+          return media.selectStatus && media.selectStatus === 1;
+        });
+      } else {
+        state.selectedMultiMedia = state.mediaList.filter((media) => {
+          return media.selectStatus && media.selectStatus === 1;
+        }) || [];
+      }
     },
 
     SET_PREVIEW_MEDIA: (state, media) => {
@@ -85,12 +86,8 @@ const media = {
       });
     },
 
-    setSelectedSingleMedia ({ commit }) {
-      commit('SET_SELECTED_SINGLE_MEDIA');
-    },
-
-    setSelectedMultiMedia ({ commit }) {
-      commit('SET_SELECTED_MULTI_MEDIA');
+    setSelectedMedia ({ commit }, mode) {
+      commit('SET_SELECTED_MEDIA', mode);
     },
 
     setPreviewMedia ({ commit }, media) {

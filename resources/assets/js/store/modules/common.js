@@ -68,7 +68,7 @@ const common = {
       commit('CLOSE_PRODUCT_EDIT_PANEL');
     },
 
-    openMediaManagerModal ({ commit }, { mode }) {
+    openMediaManagerModal ({ commit }, mode) {
       commit('OPEN_MEDIA_MANAGER_MODAL', mode);
     },
     closeMediaManagerModal ({ commit }) {

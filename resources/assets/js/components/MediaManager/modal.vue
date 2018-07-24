@@ -1,6 +1,6 @@
 <template lang="pug">
     el-dialog.media-modal(:visible.sync="visible" width="60%")
-      media-manager(:type="type" select-mode="selectMode" ref="mediaManager")
+      media-manager(:type="type" :select-mode="selectMode" ref="mediaManager")
 </template>
 
 <script>

@@ -38,6 +38,19 @@
         el-col(:span="24")
           el-form-item(prop="description" label="Mô tả:")
             el-input(type="textarea" rows="10" v-model="product.description" placeholder="Mô tả sản phẩm")
+        el-col(:span="24")
+          el-form-item(prop="preview_images")
+            el-card
+              div.clearfix(slot="header")
+                span
+                  svg-icon(icon-class="fa-solid image")
+                  span(style="margin-left: 5px") Ảnh chi tiết sản phẩm
+                el-button(type="text" style="float: right" @click="openMediaModal('multi')") Thay đổi >>
+
+              ul.preview-container
+                li.preview-item(v-for="(image, index) in product.preview_images" :key="index")
+                  img.preview-image(:src="image.url" width="100%")
+
 </template>
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
@@ -178,6 +191,12 @@ export default {
       if (this.selectedSingleImage) {
         this.product.featured_image = this.selectedSingleImage;
       }
+    },
+
+    selectedMultiImage() {
+      if (this.selectedMultiImage.length) {
+        this.product.preview_images = this.selectedMultiImage;
+      }
     }
   },
   created() {
@@ -213,6 +232,31 @@ export default {
         bottom: 0;
         right: 0;
         border: 1px solid #dcdfe6;
+      }
+    }
+  }
+
+  .preview-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: row wrap;
+    
+    -webkit-flex-flow: row wrap;
+    align-content: flex-start;
+
+    .preview-item {
+      padding: 3px;
+
+      .preview-image {
+        width: 80px;
+        height: 80px;
       }
     }
   }

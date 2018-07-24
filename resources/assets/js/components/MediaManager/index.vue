@@ -9,43 +9,43 @@
           el-input(size="small" placeholder="Tìm kiếm")
             i(slot="suffix" class="el-input__icon el-icon-search")
         el-col(:span="6")
-          el-button(type="primary" size="small" @click="")
+          el-button(type="primary" size="small" @click="handleSelectedMedia" :disabled="!isHaveSelected()")
             svg-icon(icon-class="fa-solid check")
             span  Thay đổi
           el-button(size="small" type="info" @click="closeModal")
             svg-icon(icon-class="fa-solid ban")
             span  Hủy
-          // el-button(type="danger" size="small" @click="deleteImage" disabled)
+          // el-button(type="danger" size="small" @click="deleteMedia" disabled)
           //   svg-icon(icon-class="fa-solid trash-alt")
           //   span  Xóa
       el-container.media-container
         el-container
           el-aside.aside-container(width="200px")
-            img.aside-image(:src="previewImageUrl")
+            img.aside-image(:src="previewMediaUrl")
             el-row.aside-info
               .row-info
                 span.image-info Tên
-                span(v-if="previewImage") {{ previewImage.filename }}.{{ previewImage.extension }}
+                span(v-if="previewMedia") {{ previewMedia.filename }}.{{ previewMedia.extension }}
               .row-info
                 span.image-info Size
-                span(v-if="previewImage") {{ bytesToSize(previewImage.size) }}
+                span(v-if="previewMedia") {{ bytesToSize(previewMedia.size) }}
               .row-info
                 span.image-info Loại file
-                span(v-if="previewImage") {{ previewImage.mime_type }}
+                span(v-if="previewMedia") {{ previewMedia.mime_type }}
           el-main
             div.clearfix
               ul.__file-box-container
-                li.attach-image(v-for="(image, index) in images" :key="index")
-                  div.__file-box(v-touch:tap="selectMedia(image)" :class="selectedClass(image)")
+                li.attach-image(v-for="(media, index) in medias" :key="index")
+                  div.__file-box(v-touch:tap="selectMedia(media)" :class="selectedClass(media)")
                     div.__box-data
                         div.__box-preview
                           div.__box-img
-                            img(:src="'/' + image.directory + '/' + image.filename + '.' + image.extension")
+                            img(:src="'/' + media.directory + '/' + media.filename + '.' + media.extension")
 
                         div.__box-info
                           div
-                            span {{ image.filename + '.' + image.extension }}
-                          small.__info-file-size {{ bytesToSize(image.size) }}
+                            span {{ media.filename + '.' + media.extension }}
+                          small.__info-file-size {{ bytesToSize(media.size) }}
     el-tab-pane
       span(slot="label")
         svg-icon(icon-class="fa-solid upload")
@@ -80,9 +80,9 @@
     },
     computed: {
       ...mapGetters({
-        images: 'media/list',
-        previewImage: 'media/previewMedia',
-        previewImageUrl: 'media/previewMediaUrl'
+        medias: 'media/list',
+        previewMedia: 'media/previewMedia',
+        previewMediaUrl: 'media/previewMediaUrl'
       })
     },
     created () {
@@ -98,15 +98,26 @@
           params: {
             type: this.type
           }
-        },
-        singleMedia: null,
-        multiMedia: []
+        }
       }
     },
     methods: {
+      handleSelectedMedia() {
+        this.setSelectedMedia(this.selectMode);
+        // this.clearAllSelected();
+        this.closeModal();
+      },
+
       selectMedia(media) {
         return () => {
           media.selectStatus = media.selectStatus * -1;
+          console.log(media.selectStatus);
+          if (this.selectMode === 'single') {
+            this.medias.forEach(item => {
+              if (item.id !== media.id) item.selectStatus = -1;
+            });
+          }
+
           this.setPreviewMedia(media);
         };
       },
@@ -130,8 +141,21 @@
         return media.selectStatus === 1  ? 'selected' : '';
       },
 
-      deleteImage() {
-        deleteMedia(this.type, this.selectedImage.id).then(() => {
+      isHaveSelected() {
+        const selected = this.medias.filter(media => {
+          return media.selectStatus === 1;
+        });
+        return selected.length > 0;
+      },
+
+      clearAllSelected() {
+        this.medias.forEach(media => {
+          media.selectStatus = -1;
+        })
+      },
+
+      deletemedia() {
+        deleteMedia(this.type, this.selectedmedia.id).then(() => {
           this.getMediaData();
         }).catch(error => {
           // Do nothing
@@ -150,8 +174,7 @@
 
       ...mapActions({
         fetchMedia: 'media/fetchMedia',
-        setSelectedSingleMedia: 'media/setSelectedSingleMedia',
-        setSelectedMultiMedia: 'media/setSelectedMultiMedia',
+        setSelectedMedia: 'media/setSelectedMedia',
         setPreviewMedia: 'media/setPreviewMedia',
         closeModal: 'common/closeMediaManagerModal'
       })
