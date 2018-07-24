@@ -48,23 +48,19 @@ const media = {
 
   mutations: {
     SET_MEDIA_LIST: (state, list) => {
-      Object.keys(list).forEach((key) => {
-        list[key].selectStatus = -1;
-      });
-
       state.mediaList = Object.keys(list).map((key) => {
         return list[key];
       });
     },
 
-    SET_SELECTED_MEDIA: (state, mode) => {
+    SET_SELECTED_MEDIA: (state, { mode, selected }) => {
       if (mode === 'single') {
         state.selectedSingleMedia = state.mediaList.find((media) => {
-          return media.selectStatus && media.selectStatus === 1;
+          return media.id === selected;
         });
       } else {
         state.selectedMultiMedia = state.mediaList.filter((media) => {
-          return media.selectStatus && media.selectStatus === 1;
+          return selected && selected.includes(media.id);
         }) || [];
       }
     },
@@ -86,8 +82,8 @@ const media = {
       });
     },
 
-    setSelectedMedia ({ commit }, mode) {
-      commit('SET_SELECTED_MEDIA', mode);
+    setSelectedMedia ({ commit }, { mode, selected }) {
+      commit('SET_SELECTED_MEDIA', { mode, selected });
     },
 
     setPreviewMedia ({ commit }, media) {

@@ -98,28 +98,35 @@
           params: {
             type: this.type
           }
-        }
+        },
+        selectedMedia: null
       }
     },
     methods: {
       handleSelectedMedia() {
-        this.setSelectedMedia(this.selectMode);
-        // this.clearAllSelected();
+        this.setSelectedMedia({ mode: this.selectMode, selected: this.selectedMedia });
         this.closeModal();
       },
 
       selectMedia(media) {
         return () => {
-          media.selectStatus = media.selectStatus * -1;
-          console.log(media.selectStatus);
-          if (this.selectMode === 'single') {
-            this.medias.forEach(item => {
-              if (item.id !== media.id) item.selectStatus = -1;
-            });
-          }
-
           this.setPreviewMedia(media);
+          this.handleTempSelectedMedia(media);
         };
+      },
+
+      handleTempSelectedMedia(media) {
+        if (this.selectMode === "single") {
+          this.selectedMedia = this.selectedMedia && this.selectedMedia === media.id ? null : media.id;
+        } else {
+          if (!this.selectedMedia) this.selectedMedia = [];
+          if (this.selectedMedia.includes(media.id)) {
+            const index = this.selectedMedia.indexOf(media.id);
+            this.selectedMedia.splice(index, media.id);
+          } else {
+            this.selectedMedia.push(media.id);
+          }
+        }
       },
 
       getMediaData() {
@@ -138,20 +145,19 @@
       },
 
       selectedClass(media) {
-        return media.selectStatus === 1  ? 'selected' : '';
+        if (this.selectMode === "single") {
+          return this.selectedMedia && this.selectedMedia === media.id ? 'selected' : '';
+        } else {
+          return this.selectedMedia && this.selectedMedia.includes(media.id) ? 'selected' : '';
+        }
       },
 
       isHaveSelected() {
-        const selected = this.medias.filter(media => {
-          return media.selectStatus === 1;
-        });
-        return selected.length > 0;
+        return !!this.selectedMedia;
       },
 
       clearAllSelected() {
-        this.medias.forEach(media => {
-          media.selectStatus = -1;
-        })
+        this.selectedMedia = null;
       },
 
       deletemedia() {

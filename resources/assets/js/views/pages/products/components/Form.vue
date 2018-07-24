@@ -45,7 +45,10 @@
                 span
                   svg-icon(icon-class="fa-solid image")
                   span(style="margin-left: 5px") Ảnh chi tiết sản phẩm
-                el-button(type="text" style="float: right" @click="openMediaModal('multi')") Thay đổi >>
+                div(style="float: right")
+                  el-button(type="text" @click="openMediaModal('multi')") Thay đổi
+                  span  /
+                  el-button(type="text" style="color: red" @click="clearAllPreviewImages()")  Xóa tất cả
 
               ul.preview-container
                 li.preview-item(v-for="(image, index) in product.preview_images" :key="index")
@@ -142,7 +145,7 @@ export default {
     create() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.createProduct({ data: this.product }).then(() => {
+          this.createProduct({ data: this.prepareParams() }).then(() => {
             this.$router.push({ path: '/products' });
           });
         }
@@ -152,7 +155,7 @@ export default {
     update() {
       this.$refs.form.validate((valid) => {
         if (valid && this.productId) {
-          this.updateProduct({ id: this.productId, data: this.product }).then(() => {
+          this.updateProduct({ id: this.productId, data: this.prepareParams() }).then(() => {
             this.fetchProducts().then(() => {
               this.closeProductEditPanel();
             });
@@ -161,12 +164,32 @@ export default {
       });
     },
 
+    prepareParams() {
+      const params = JSON.parse(JSON.stringify(this.product));
+
+      if (this.product.featured_image) {
+        params.featured_image = this.product.featured_image.id;
+      } else {
+        delete params.featured_image;
+      }
+
+      params.preview_images = this.product.preview_images.map(image => {
+        return image.id;
+      });
+
+      return params;
+    },
+
     resetForm(formName) {
       this.$refs.form.resetFields();
     },
 
     featuredImageUrl() {
       return this.product.featured_image ? this.product.featured_image.url : this.selectedSingleImage.url;
+    },
+
+    clearAllPreviewImages() {
+      this.product.preview_images = [];
     },
 
     ...mapActions({

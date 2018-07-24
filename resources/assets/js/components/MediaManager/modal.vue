@@ -36,7 +36,10 @@ export default {
   },
   watch: {
     visible() {
-      if (!this.visible) this.closeModal();
+      if (!this.visible) {
+        this.closeModal();
+        this.$refs.mediaManager.clearAllSelected();
+      }
     },
 
     dialogVisible() {
