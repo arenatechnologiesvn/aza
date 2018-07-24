@@ -9,43 +9,43 @@
           el-input(size="small" placeholder="Tìm kiếm")
             i(slot="suffix" class="el-input__icon el-icon-search")
         el-col(:span="6")
-          el-button(type="primary" size="small" @click="")
+          el-button(type="primary" size="small" @click="handleSelectedMedia" :disabled="!isHaveSelected()")
             svg-icon(icon-class="fa-solid check")
             span  Thay đổi
-          el-button(size="small" type="info" @click="")
+          el-button(size="small" type="info" @click="closeModal")
             svg-icon(icon-class="fa-solid ban")
             span  Hủy
-          // el-button(type="danger" size="small" @click="deleteImage" disabled)
+          // el-button(type="danger" size="small" @click="deleteMedia" disabled)
           //   svg-icon(icon-class="fa-solid trash-alt")
           //   span  Xóa
       el-container.media-container
         el-container
           el-aside.aside-container(width="200px")
-            img.aside-image(:src="previewImageUrl")
+            img.aside-image(:src="previewMediaUrl")
             el-row.aside-info
               .row-info
                 span.image-info Tên
-                span(v-if="previewImage") {{ previewImage.filename }}.{{ previewImage.extension }}
+                span(v-if="previewMedia") {{ previewMedia.filename }}.{{ previewMedia.extension }}
               .row-info
                 span.image-info Size
-                span(v-if="previewImage") {{ bytesToSize(previewImage.size) }}
+                span(v-if="previewMedia") {{ bytesToSize(previewMedia.size) }}
               .row-info
                 span.image-info Loại file
-                span(v-if="previewImage") {{ previewImage.mime_type }}
+                span(v-if="previewMedia") {{ previewMedia.mime_type }}
           el-main
             div.clearfix
               ul.__file-box-container
-                li.attach-image(v-for="(image, index) in images" :key="index")
-                  div.__file-box(v-touch:tap="selectMedia(image)" :class="[selectedClass(image) ? 'selected' : '']")
+                li.attach-image(v-for="(media, index) in medias" :key="index")
+                  div.__file-box(v-touch:tap="selectMedia(media)" :class="selectedClass(media)")
                     div.__box-data
                         div.__box-preview
                           div.__box-img
-                            img(:src="'/' + image.directory + '/' + image.filename + '.' + image.extension")
+                            img(:src="'/' + media.directory + '/' + media.filename + '.' + media.extension")
 
                         div.__box-info
                           div
-                            span {{ image.filename + '.' + image.extension }}
-                          small.__info-file-size {{ bytesToSize(image.size) }}
+                            span {{ media.filename + '.' + media.extension }}
+                          small.__info-file-size {{ bytesToSize(media.size) }}
     el-tab-pane
       span(slot="label")
         svg-icon(icon-class="fa-solid upload")
@@ -80,9 +80,9 @@
     },
     computed: {
       ...mapGetters({
-        images: 'media/list',
-        previewImage: 'media/previewMedia',
-        previewImageUrl: 'media/previewMediaUrl'
+        medias: 'media/list',
+        previewMedia: 'media/previewMedia',
+        previewMediaUrl: 'media/previewMediaUrl'
       })
     },
     created () {
@@ -98,30 +98,39 @@
           params: {
             type: this.type
           }
-        }
+        },
+        selectedMedia: null
       }
     },
     methods: {
+      handleSelectedMedia() {
+        this.setSelectedMedia({ mode: this.selectMode, selected: this.selectedMedia });
+        this.closeModal();
+      },
+
       selectMedia(media) {
         return () => {
-          if (!media.selectStatus) {
-            media.selectStatus = 1;
-          } else {
-            media.selectStatus = media.selectStatus * -1;
-          }
+          this.setPreviewMedia(media);
+          this.handleTempSelectedMedia(media);
         };
+      },
+
+      handleTempSelectedMedia(media) {
+        if (this.selectMode === "single") {
+          this.selectedMedia = this.selectedMedia && this.selectedMedia === media.id ? null : media.id;
+        } else {
+          if (!this.selectedMedia) this.selectedMedia = [];
+          if (this.selectedMedia.includes(media.id)) {
+            const index = this.selectedMedia.indexOf(media.id);
+            this.selectedMedia.splice(index, media.id);
+          } else {
+            this.selectedMedia.push(media.id);
+          }
+        }
       },
 
       getMediaData() {
         this.fetchMedia(this.type);
-      },
-
-      deleteImage() {
-        deleteMedia(this.type, this.selectedImage.id).then(() => {
-          this.getMediaData();
-        }).catch(error => {
-          // Do nothing
-        });
       },
 
       showSuccess(file, response) {
@@ -136,16 +145,28 @@
       },
 
       selectedClass(media) {
-        console.log('selected');
-        return media.selectStatus === 1;
+        if (this.selectMode === "single") {
+          return this.selectedMedia && this.selectedMedia === media.id ? 'selected' : '';
+        } else {
+          return this.selectedMedia && this.selectedMedia.includes(media.id) ? 'selected' : '';
+        }
       },
 
-      ...mapActions({
-        fetchMedia: 'media/fetchMedia',
-        setPreviewMedia: 'media/setPreviewMedia',
-        setSelectedSingleMedia: 'media/setSelectedSingleMedia',
-        setSelectedMultiMedia: 'media/setSelectedMultiMedia'
-      })
+      isHaveSelected() {
+        return !!this.selectedMedia;
+      },
+
+      clearAllSelected() {
+        this.selectedMedia = null;
+      },
+
+      deletemedia() {
+        deleteMedia(this.type, this.selectedmedia.id).then(() => {
+          this.getMediaData();
+        }).catch(error => {
+          // Do nothing
+        });
+      },
 
       // handleImageMetaDataSave() {
       //   this.currentImage.meta_data.currentImageId = this.currentImage.id
@@ -156,6 +177,13 @@
       //       console.log('error', error)
       //   })
       // },
+
+      ...mapActions({
+        fetchMedia: 'media/fetchMedia',
+        setSelectedMedia: 'media/setSelectedMedia',
+        setPreviewMedia: 'media/setPreviewMedia',
+        closeModal: 'common/closeMediaManagerModal'
+      })
     }
   }
 </script>

@@ -115,10 +115,10 @@ export default {
 .kpi-edit {
   position: fixed;
   top: 17%;
-  right: -20px;
+  right: -40px;
   z-index: 9;
   height: 100%;
-  width: 720px;
+  width: 1000px;
   -webkit-transform: translateX(92.5%);
   transform: translateX(92.5%);
   -webkit-transition: -webkit-transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);

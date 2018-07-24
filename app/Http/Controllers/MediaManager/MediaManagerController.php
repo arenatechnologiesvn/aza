@@ -15,7 +15,7 @@ use App\Service\MediaService;
 
 class MediaManagerController extends Controller
 {
-    private static $OBJECT_TYPES = ['profile', 'shop', 'product', 'provider'];
+    private static $OBJECT_TYPES = ['user', 'shop', 'product', 'provider'];
 
     public function __construct(MediaService $service)
     {
@@ -33,19 +33,8 @@ class MediaManagerController extends Controller
             return $this->api_error_response('Params is invalid', 433);
         }
 
-        $tags = $this->getMediaTags($request->input('type'));
-        $model = "App\\" . ucwords($request->input('type'));
-        $mediables = $model::all();
-
-        $results = collect([]);
-        foreach ($mediables as $mediable) {
-            $medias = $this->service->getMedia($mediable, $tags);
-            if ($medias->count()) {
-                $results = $results->concat($medias);
-            }
-        };
-
-        return $this->api_success_response(['data' => $results->unique('id')]);
+        $medias = Media::where('directory', 'like', '%'.$request->input('type').'%')->get();
+        return $this->api_success_response(['data' => $medias]);
     }
 
     /**

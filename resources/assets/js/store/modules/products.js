@@ -11,7 +11,7 @@ const form = {
       discount_price: '',
       unit: '',
       preview_images: [],
-      featured_image: {},
+      featured_image: null,
       category_id: '',
       provider_id: '',
       description: ''

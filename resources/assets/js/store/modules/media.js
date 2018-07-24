@@ -11,9 +11,9 @@ const media = {
 
   state: {
     mediaList: [],
-    selectedSingleMedia: {},
+    selectedSingleMedia: null,
     selectedMultiMedia: [],
-    previewMedia: {}
+    previewMedia: null
   },
 
   getters: {
@@ -23,7 +23,7 @@ const media = {
 
     selectedSingleMedia: (state) => {
       return {
-        id: state.selectedSingleMedia.id,
+        id: state.selectedSingleMedia ? state.selectedSingleMedia.id : null,
         url: mediaUrl(state.selectedSingleMedia)
       };
     },
@@ -51,18 +51,16 @@ const media = {
       state.mediaList = list;
     },
 
-    SET_SELECTED_SINGLE_MEDIA: (state, media) => {
-      state.selectedSingleMedia = media;
-    },
-
-    SET_SELECTED_MULTI_MEDIA: (state) => {
-      const mediaList = Object.keys(state.mediaList).map((key) => {
-        return state.mediaList[key];
-      });
-
-      state.selectedMediaList = mediaList.filter((item) => {
-        return item.selectStatus && item.selectStatus === 1;
-      }) || [];
+    SET_SELECTED_MEDIA: (state, { mode, selected }) => {
+      if (mode === 'single') {
+        state.selectedSingleMedia = state.mediaList.find((media) => {
+          return media.id === selected;
+        });
+      } else {
+        state.selectedMultiMedia = state.mediaList.filter((media) => {
+          return selected && selected.includes(media.id);
+        }) || [];
+      }
     },
 
     SET_PREVIEW_MEDIA: (state, media) => {
@@ -82,12 +80,8 @@ const media = {
       });
     },
 
-    setSelectedSingleMedia ({ commit }, media) {
-      commit('SET_SELECTED_SINGLE_MEDIA', media);
-    },
-
-    setSelectedMultiMedia ({ commit }) {
-      commit('SET_SELECTED_MULTI_MEDIA');
+    setSelectedMedia ({ commit }, { mode, selected }) {
+      commit('SET_SELECTED_MEDIA', { mode, selected });
     },
 
     setPreviewMedia ({ commit }, media) {

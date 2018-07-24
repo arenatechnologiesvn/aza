@@ -1,11 +1,11 @@
 <template lang="pug">
     el-dialog.media-modal(:visible.sync="visible" width="60%")
-      media-manager(:type="type" select-mode="selectMode" ref="mediaManager")
+      media-manager(:type="type" :select-mode="selectMode" ref="mediaManager")
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
-import MediaManager from '~/components/MediaManager'
+import { mapActions, mapState } from 'vuex';
+import MediaManager from '~/components/MediaManager';
 
 export default {
   name: 'media-manager-modal',
@@ -16,21 +16,12 @@ export default {
     type: {
       type: String,
       required: true
-    },
-    selectMode: {
-      type: String,
-      default: () => {
-        return 'single'
-      }
     }
   },
   computed: {
-    ...mapGetters({
-    }),
-
     ...mapState({
       dialogVisible: state => state.common.media.dialogVisible,
-      mediaList: state => state.media.mediaList
+      selectMode: state => state.common.media.mode
     })
   },
   data() {
@@ -39,18 +30,16 @@ export default {
     }
   },
   methods: {
-    setMedia() {
-      // close modal
-      this.closeModal();
-    },
-
     ...mapActions({
       closeModal: 'common/closeMediaManagerModal',
     })
   },
   watch: {
     visible() {
-      if (!this.visible) this.closeModal();
+      if (!this.visible) {
+        this.closeModal();
+        this.$refs.mediaManager.clearAllSelected();
+      }
     },
 
     dialogVisible() {

@@ -27,7 +27,7 @@
           el-button(type="info" size="small" @click="cancel")
             svg-icon(icon-class="fa-solid ban")
             span(style="margin-left: 10px") Hủy bỏ
-    media-manager-modal(type="product" select-mode="multi")
+    media-manager-modal(type="product")
 </template>
 
 <script>

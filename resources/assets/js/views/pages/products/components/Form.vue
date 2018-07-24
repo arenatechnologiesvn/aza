@@ -2,9 +2,9 @@
   el-row
     el-col.side-form(:span="6")
       .image-container
-        img.image-featured(:src="product.featured_image.url" width="100%")
+        img.image-featured(:src="featuredImageUrl()" width="100%")
       div(style="margin-top: 10px;")
-        el-button(type="success" size="small" @click="openMediaModal") Thay đổi ảnh đại diện
+        el-button(type="success" size="small" @click="openMediaModal('single')") Thay đổi ảnh đại diện
     el-col(:span="18")
       el-form(ref="form" :rules="rules" :model="product" size="small")
         el-col(:span="24")
@@ -38,9 +38,26 @@
         el-col(:span="24")
           el-form-item(prop="description" label="Mô tả:")
             el-input(type="textarea" rows="10" v-model="product.description" placeholder="Mô tả sản phẩm")
+        el-col(:span="24")
+          el-form-item(prop="preview_images")
+            el-card
+              div.clearfix(slot="header")
+                span
+                  svg-icon(icon-class="fa-solid image")
+                  span(style="margin-left: 5px") Ảnh chi tiết sản phẩm
+                div(style="float: right")
+                  el-button(type="text" @click="openMediaModal('multi')") Thay đổi
+                  span  /
+                  el-button(type="text" style="color: red" @click="clearAllPreviewImages()")  Xóa tất cả
+
+              ul.preview-container
+                li.preview-item(v-for="(image, index) in product.preview_images" :key="index")
+                  img.preview-image(:src="image.url" width="100%")
+
 </template>
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
 
@@ -129,7 +146,7 @@ export default {
     create() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.createProduct({ data: this.product }).then(() => {
+          this.createProduct({ data: this.prepareParams() }).then(() => {
             this.$router.push({ path: '/products' });
           });
         }
@@ -139,7 +156,7 @@ export default {
     update() {
       this.$refs.form.validate((valid) => {
         if (valid && this.productId) {
-          this.updateProduct({ id: this.productId, data: this.product }).then(() => {
+          this.updateProduct({ id: this.productId, data: this.prepareParams() }).then(() => {
             this.fetchProducts().then(() => {
               this.closeProductEditPanel();
             });
@@ -148,8 +165,32 @@ export default {
       });
     },
 
+    prepareParams() {
+      const params = JSON.parse(JSON.stringify(this.product));
+
+      if (this.product.featured_image) {
+        params.featured_image = this.product.featured_image.id;
+      } else {
+        delete params.featured_image;
+      }
+
+      params.preview_images = this.product.preview_images.map(image => {
+        return image.id;
+      });
+
+      return params;
+    },
+
     resetForm(formName) {
       this.$refs.form.resetFields();
+    },
+
+    featuredImageUrl() {
+      return this.product.featured_image ? this.product.featured_image.url : dummyImage;
+    },
+
+    clearAllPreviewImages() {
+      this.product.preview_images = [];
     },
 
     ...mapActions({
@@ -173,6 +214,12 @@ export default {
     selectedSingleImage() {
       if (this.selectedSingleImage) {
         this.product.featured_image = this.selectedSingleImage;
+      }
+    },
+
+    selectedMultiImage() {
+      if (this.selectedMultiImage.length) {
+        this.product.preview_images = this.selectedMultiImage;
       }
     }
   },
@@ -209,6 +256,31 @@ export default {
         bottom: 0;
         right: 0;
         border: 1px solid #dcdfe6;
+      }
+    }
+  }
+
+  .preview-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: row wrap;
+    
+    -webkit-flex-flow: row wrap;
+    align-content: flex-start;
+
+    .preview-item {
+      padding: 3px;
+
+      .preview-image {
+        width: 80px;
+        height: 80px;
       }
     }
   }
