@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { all, add, update, remove } from '~/api/cart';
 const cart = {
   namespaced: true,
   state: {
@@ -33,9 +34,13 @@ const cart = {
       if (product.inventory > 0) {
         const cartItem = state.items.find(item => item.id === product.id)
         if (!cartItem) {
-          commit('pushProductToCart', { id: product.id });
+          add({ product_id: product.id, quantity: 1 }).then(() => {
+            commit('pushProductToCart', { id: product.id });
+          });
         } else {
-          commit('incrementItemQuantity', cartItem);
+          update(cartItem.id, { product_id: cartItem.id, quantity: cartItem.quantity + 1 }).then(() => {
+            commit('incrementItemQuantity', cartItem);
+          });
         }
         commit('cproduct/decrementProductInventory', { id: product.id }, { root: true });
       }

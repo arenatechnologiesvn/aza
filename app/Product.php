@@ -36,4 +36,8 @@ class Product extends BaseModel
     {
         return $this->belongsTo('App\Provider');
     }
+
+    public function orders() {
+        return $this->belongsToMany(Order::class,'order_product');
+    }
 }

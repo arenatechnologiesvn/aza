@@ -4,7 +4,7 @@
       div.container
         list-product.product__category(
         :control="control"
-        :category="item[0].category"
+        :category="item[0].categor || ''"
         :products="item")
 </template>
 

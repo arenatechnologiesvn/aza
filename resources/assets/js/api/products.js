@@ -11,6 +11,7 @@ import c2 from '~/assets/products/c/c2.jpg';
 import c3 from '~/assets/products/c/c3.jpg';
 import c4 from '~/assets/products/c/c4.jpg';
 import { all } from '~/api/favorite';
+import * as cart from '~/api/cart';
 import request from '~/utils/request';
 
 const products = [
@@ -117,29 +118,36 @@ const products = [
 export const getProducts = () => {
   return new Promise(resolve => {
     all().then(data => {
-      request({
-        url: '/api/products',
-        method: 'get'
-      }).then(res => {
-        const products = res.data;
-        let p = products.map(item => {
-          let favorite = false;
-          if (data.indexOf(item.id) > 0) {
-            favorite = true;
-          }
-          return {
-            id: item.id,
-            title: item.name,
-            img: item.featured_image.url,
-            category: item.category ? item.category.name : 'Chưa xác định',
-            price: item.price,
-            discount: item.discount_price || item.price,
-            inventory: 10,
-            added: false,
-            favorite: favorite
-          };
+      cart.all().then(data2 => {
+        request({
+          url: '/api/products',
+          method: 'get'
+        }).then(res => {
+          const products = res.data;
+          let p = products.map(item => {
+            let favorite = false;
+            let incart = false;
+            if (data.indexOf(item.id) > 0) {
+              favorite = true;
+            }
+            if (Array.isArray(data2) && data2.filter(c => c.id == item.id).length > 0) {
+              incart = true;
+            }
+            return {
+              id: item.id,
+              title: item.name,
+              img: item.featured_image.url,
+              category: item.category ? item.category.name : 'Chưa xác định',
+              price: item.price,
+              discount: item.discount_price || item.price,
+              inventory: 10,
+              added: incart,
+              favorite: favorite,
+              description: item.description
+            };
+          });
+          resolve(p);
         });
-        resolve(p);
       });
     });
   });

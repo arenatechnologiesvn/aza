@@ -1,8 +1,11 @@
 import { hasOneOf, forEach } from './tools';
+import _ from 'underscore.string';
 
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0;
 };
+
+
 
 const showThisMenuEle = (item, access) => {
   if (item.meta && item.meta.access && item.meta.access.length) {
@@ -10,6 +13,10 @@ const showThisMenuEle = (item, access) => {
   }
 
   return true;
+};
+export const formatNumber = (num) => {
+  const floatNumber = parseFloat(num)
+  return _.numberFormat(floatNumber, 2, '.', ',');
 };
 
 // export const getMenuByRouter = (list, access) => {
