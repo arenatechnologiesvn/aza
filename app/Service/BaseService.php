@@ -49,10 +49,10 @@ abstract class BaseService
             }
             $saved = $this->model->create($data);
             if(method_exists($this, 'afterSave')) {
-                $this->afterSave($saved, $data, true);
+                $this->afterSave($saved, $data, false);
             }
             DB::commit();
-            return $saved;
+            return $this->getById($saved->id);
         } catch (\Exception $e) {
             DB::rollBack();
             return $e;

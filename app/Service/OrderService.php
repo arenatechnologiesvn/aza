@@ -10,6 +10,9 @@ namespace App\Service;
 
 
 use App\Order;
+use App\ProductOrder;
+use function foo\func;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -55,8 +58,9 @@ class OrderService extends BaseService
     }
 
     public function beforeCreate($order) {
-        $order['order_code'] = 'DH'. Str::uuid();
+        $order['order_code'] = time();
         $order['title'] = 'Dơn hàng số 2';
+        $order['customer_id'] = Auth::user()->id;
         return $order;
     }
 
@@ -64,27 +68,13 @@ class OrderService extends BaseService
 
     // }
 
-    public function update($id, array $data)
-    {
-        try {
-            DB::beginTransaction();
-            $updated = $this->model->find($id);
-            if (method_exists($this, 'beforeUpdate')) {
-                $data = $this->beforeUpdate($updated, $data);
-            }
-            $updated->update($data);
-            if(method_exists($this, 'afterSave')) {
-                $this->afterSave($updated, $data, true);
-            }
-            DB::commit();
-            return $this->getById($id);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-    public function afterSave($order, $data, $update = true) {
+    public function afterSave($order, $data, $update = false) {
         if($data['product'] != false) {
+            if ($update) {
+                usort($data['product'], function($a, $b) {
+                    return $b['product_id'] > $a['product_id'];
+                });
+            }
             $order->products()->sync($data['product']);
         }
     }
