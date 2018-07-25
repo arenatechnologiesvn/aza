@@ -3,7 +3,9 @@
     div.clearfix(slot="header")
       span
         svg-icon(icon-class="fa-solid chart-pie")
-        span(style="margin-left: 10px;") Tổng doanh thu theo từng khách hàng và sản phẩm
+        span(style="margin-left: 10px;") Tổng lượng truy cập vào website
+    div(style="margin-bottom: 50px")
+      access-chart
     div
       .control__wrapper
         el-row
@@ -21,17 +23,11 @@
           div.table
             el-table(:data="tableData" border size="small" style="width: 100%")
               el-table-column(prop="icon" label="STT" align="center" width="60")
-              el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable min-width="200")
-              el-table-column(prop="description" label="SỐ LƯỢNG" sortable min-width="120")
+              el-table-column(prop="name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
+              el-table-column(prop="description" label="SỐ LẦN" sortable min-width="120")
                 template(slot-scope="scope")
                   span {{ scope.row.description || '-' }}
-              el-table-column(prop="description" label="ĐỊNH LƯỢNG" sortable min-width="120")
-                template(slot-scope="scope")
-                  span {{ scope.row.description || '-' }}
-              el-table-column(prop="description" label="KHỐI LƯỢNG" sortable min-width="120")
-                template(slot-scope="scope")
-                  span {{ scope.row.description || '-' }}
-              el-table-column(prop="description" label="DOANH SỐ " sortable min-width="120")
+              el-table-column(prop="description" label="NGÀY TRUY CẬP" sortable min-width="200")
                 template(slot-scope="scope")
                   span {{ scope.row.description || '-' }}
           div.pagination__wrapper
@@ -44,9 +40,13 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import AccessChart from '~/components/Chart/BarChart'
 
 export default {
-  name: 'customer-report',
+  name: 'statistical-access',
+  components: {
+    AccessChart
+  },
   computed: {
     ...mapGetters({
       customers: 'customers/list'

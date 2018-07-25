@@ -31,12 +31,12 @@
         div.table
           el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange")
             el-table-column(type="selection" header-align="center" align="center" width="40")
-            el-table-column(prop="name" label="TÊN" width="50px" sortable)
-            el-table-column(prop="phone" label="DI ĐỘNG" sortable)
-            el-table-column(prop="home_phone" label="ĐIỆN THOẠI" sortable)
-            el-table-column(prop="address" width="80px" label="ĐỊA CHỈ" sortable)
-            el-table-column(prop="zone" width="80" label="VÙNG" sortable)
-            el-table-column(prop="contract_at" label="NGÀY HỢP ĐỒNG" sortable)
+            el-table-column(prop="name" label="TÊN" sortable min-width="200")
+            el-table-column(prop="phone" label="DI ĐỘNG" sortable min-width="150")
+            el-table-column(prop="home_phone" label="ĐIỆN THOẠI" sortable min-width="150")
+            el-table-column(prop="address" label="ĐỊA CHỈ" sortable min-width="300")
+            el-table-column(prop="zone" label="VÙNG" sortable min-width="300")
+            el-table-column(prop="contract_at" label="NGÀY HỢP ĐỒNG" sortable min-width="200")
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
@@ -113,11 +113,11 @@ export default {
     },
 
     redirectToAddingPage() {
-      this.$router.push({path: '/providers/add'});
+      this.$router.push({path: '/products/provider/create'});
     },
 
     update(providerId) {
-      this.$router.push({path: `/providers/${providerId}`});
+      this.$router.push({path: `/products/provider/${providerId}`});
     },
 
     deleteOneProvider(providerId) {
