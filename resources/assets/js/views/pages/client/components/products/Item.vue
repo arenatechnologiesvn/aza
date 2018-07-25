@@ -6,15 +6,16 @@
         div(v-if="product.inventory <= 0").label.no HẾT HÀNG
         img(:src="product.img")
       div.product-item__des
-        div.product-item__title(style="min-height: 50px; overflow: hidden;")
+        div.product-item__title
           router-link(:to="`/home/products/${product.id}`") {{product.title}}
-        div.product-item__description
-          router-link(to="/home/products") {{product.category}}
+        div.product-item__description(style="color: black;")
+          router-link(to="/home/products" style="font-size: 1.1em;") {{product.category}}
+          p.description {{product.description}}
         div.line
         div.product-item__control
           div.product-item__control--left
-            span.product-item__price {{product.price + 'VNĐ'}}
-            span.product-item__price--discount {{product.discount + 'VNĐ'}}
+            span.product-item__price {{formatNumber(product.price) + ' VNĐ'}}
+            span.product-item__price--discount {{formatNumber(product.discount) + ' VNĐ'}}
           div.product-item__control--right
             span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
               svg-icon( icon-class="fa-solid heart")
@@ -24,6 +25,7 @@
 
 <script>
   import { mapActions } from 'vuex'
+  import { formatNumber } from '~/utils/util'
   export default {
     name: 'ItemProduct',
     props: {
@@ -59,6 +61,9 @@
         } else {
           this.$store.dispatch('favorite/addProductToFavorite', id)
         }
+      },
+      formatNumber (num) {
+        return formatNumber(num)
       }
     }
   }
@@ -88,5 +93,11 @@
       text-align: center;
       color: red;
     }
+  }
+  .description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 </style>

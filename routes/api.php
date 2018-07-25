@@ -32,8 +32,10 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('roles', 'RoleController');
     Route::resource('employees', 'EmployeeController');
     Route::resource('favorites', 'FavoriteController');
+    Route::resource('carts', 'CartController');
     Route::resource('customers', 'CustomerController');
     Route::resource('shops', 'ShopController');
+    Route::resource('orders', 'OrderController');
 
     Route::get('permissions/roles','PermissionController@getByRole');
     Route::resource('permissions', 'PermissionController');

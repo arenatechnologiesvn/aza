@@ -27,18 +27,16 @@ class FavoriteController extends Controller
     public function index(){
         $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
         $favorites = isset($customer->favorites) ? json_decode($customer->favorites, true) : [] ;
-        return $this->api_success_response( array_values($favorites));
+        return $favorites ? $this->api_success_response( array_values($favorites)) : $this->api_success_response('');
     }
 
     public function store (Request $request) {
         $product_id = $request->get('product_id');
         $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
         $favorites = isset($customer->favorites) ? json_decode($customer->favorites, true) : [] ;
-        if (!in_array($product_id, array_values($favorites))){
-            $favorites[] =$product_id;
-            $customer->favorites = json_encode($favorites);
-            $customer->save();
-        }
+        $favorites[] = $product_id;
+        $customer->favorites = json_encode($favorites);
+        $customer->save();
         return $this->api_success_response($favorites);
     }
 

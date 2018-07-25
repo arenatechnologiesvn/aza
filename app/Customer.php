@@ -17,7 +17,8 @@ class Customer extends BaseModel
         'province_code',
         'district_code',
         'ward_code',
-        'favorites'
+        'favorites',
+        'carts'
     ];
     protected $hidden = [
         'created_at',

@@ -57,7 +57,7 @@
                   el-button(slot="append") ÁP DỤNG
             div.line
             div.cart__detail
-              el-button(type="success") ĐẶT HÀNG
+              el-button(type="success" @click="checkout") ĐẶT HÀNG
               el-button(type="danger") HỦY BỎ
 </template>
 
@@ -84,61 +84,13 @@
           delivery: '',
           delivery_type: null,
           discount: '',
+          product: this.products
         }
       }
     },
-    props: {
-      cart: {
-        type: Object,
-        default: () => ({
-          hour: null,
-          discount: 0,
-          address: '3 CHU VAN AN - HCM',
-          products: [
-            {
-              img: product,
-              title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-              price: 30000,
-              quantity: 10,
-              total: 300000
-            },
-            {
-              img: product,
-              title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-              price: 30000,
-              quantity: 10,
-              total: 300000
-            },
-            {
-              img: product,
-              title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-              price: 30000,
-              quantity: 10,
-              total: 300000
-            },
-            {
-              img: product,
-              title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-              price: 30000,
-              quantity: 10,
-              total: 300000
-            },
-            {
-              img: product,
-              title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-              price: 30000,
-              quantity: 10,
-              total: 300000
-            },
-            {
-              img: product,
-              title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-              price: 30000,
-              quantity: 10,
-              total: 300000
-            }
-          ]
-        })
+    methods: {
+      checkout () {
+        console.log(this.iCart);
       }
     }
   }
