@@ -135,11 +135,11 @@ export default {
             this.providerForm.zone = this.renderZone();
             if (this.route.params.id) {
               this.updateProvider({ id: this.route.params.id, data: this.providerForm }).then(() => {
-                this.$router.push({ path: '/providers' });
+                this.$router.push({ path: '/products/providers' });
               });
             } else {
               this.createProvider({ data: this.providerForm }).then(() => {
-                this.$router.push({ path: '/providers' });
+                this.$router.push({ path: '/products/providers' });
               });
             }
           }
@@ -153,7 +153,9 @@ export default {
         cancelButtonText: 'Hủy',
         type: 'warning'
       }).then(() => {
-        this.$router.push({ path: '/providers' });
+        this.$router.push({ path: '/products/providers' });
+      }).catch(() => {
+        // Do nothing
       });
     },
 
@@ -163,7 +165,7 @@ export default {
       }).then(() => {
         this.providerForm = JSON.parse(JSON.stringify(this.providerById(this.route.params.id)));
       }).catch(() => {
-        this.$router.push({ path: '/providers' });
+        this.$router.push({ path: '/products/providers' });
       });
     },
 

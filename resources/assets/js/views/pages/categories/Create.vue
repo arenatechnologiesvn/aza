@@ -90,11 +90,11 @@
             if (valid) {
               if (this.route.params.id) {
                 this.updateCategory({ id: this.route.params.id, data: this.categoryForm }).then(() => {
-                  this.$router.push({ path: '/category' });
+                  this.$router.push({ path: '/products/categories' });
                 });
               } else {
                 this.createCategory({ data: this.categoryForm }).then(() => {
-                  this.$router.push({ path: '/category' });
+                  this.$router.push({ path: '/products/categories' });
                 });
               }
             }
@@ -108,7 +108,9 @@
           cancelButtonText: 'Hủy',
           type: 'warning'
         }).then(() => {
-          this.$router.push({ path: '/category' });
+          this.$router.push({ path: '/products/categories' });
+        }).catch(() => {
+          // Do nothing
         });
       },
 
@@ -118,7 +120,7 @@
         }).then(() => {
           this.categoryForm = JSON.parse(JSON.stringify(this.categoryById(this.route.params.id)));
         }).catch(() => {
-          this.$router.push({ path: '/category' });
+          this.$router.push({ path: '/products/categories' });
         });
       },
 

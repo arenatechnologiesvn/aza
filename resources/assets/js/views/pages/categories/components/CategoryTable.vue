@@ -89,11 +89,11 @@ export default {
     },
 
     redirectToAddingPage() {
-      this.$router.push({ path: 'products/category/add' });
+      this.$router.push({ path: '/products/category/create' });
     },
 
     update(categoryId) {
-      this.$router.push({ path: `products/category/${categoryId}` });
+      this.$router.push({ path: `/products/category/${categoryId}` });
     },
 
     deleteOneCategory(categoryId) {

@@ -20,10 +20,10 @@ class CustomerService
         $this->customer = $customer;
     }
 
-    public function handleGetAll()
+    public function getAll()
     {
-        return $this->customer->select(['employee_id', 'user_id'])->with(['user' => function ($query) {
-            $query->select(['id']);
+        return $this->customer->select(['id', 'code', 'employee_id', 'user_id'])->with(['user' => function ($query) {
+            $query->select(['id', 'name', 'first_name']);
         }, 'employee'])->get();
     }
 }
