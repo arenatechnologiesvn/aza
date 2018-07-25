@@ -54,6 +54,9 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     // Products
     Route::resource('products', 'Product\ProductController');
     Route::get('products/category/{id}','Product\ProductController@getByCategory');
+
+    // Report
+    Route::get('report/customer/revenue','ReportController@getCustomerRevenue');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {
