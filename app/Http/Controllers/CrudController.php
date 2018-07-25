@@ -59,7 +59,7 @@ abstract class CrudController extends Controller
             $entity = $this->service->create($data);
             return $this->api_success_response(['data' => $entity]);
         } catch (\Exception $e){
-            return $this->api_error_response(['message' => 'Error server']);
+            return $this->api_error_response(['message' => $e]);
         }
     }
 
@@ -76,7 +76,7 @@ abstract class CrudController extends Controller
             $entity = $this->service->update($id, $data);
             return $this->api_success_response(['data' => $entity]);
         } catch (\Exception $e){
-            return $this->api_error_response(['message' => 'Error message']);
+            return $this->api_error_response(['message' => $e]);
         }
     }
 

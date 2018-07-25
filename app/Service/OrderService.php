@@ -10,6 +10,8 @@ namespace App\Service;
 
 
 use App\Order;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class OrderService extends BaseService
 {
@@ -53,10 +55,37 @@ class OrderService extends BaseService
     }
 
     public function beforeCreate($order) {
-
+        $order['order_code'] = 'DH'. Str::uuid();
+        $order['title'] = 'Dơn hàng số 2';
+        return $order;
     }
 
-    public function beforeUpdate($employee, $data){
+    // public function beforeUpdate($employee, $data){
 
+    // }
+
+    public function update($id, array $data)
+    {
+        try {
+            DB::beginTransaction();
+            $updated = $this->model->find($id);
+            if (method_exists($this, 'beforeUpdate')) {
+                $data = $this->beforeUpdate($updated, $data);
+            }
+            $updated->update($data);
+            if(method_exists($this, 'afterSave')) {
+                $this->afterSave($updated, $data, true);
+            }
+            DB::commit();
+            return $this->getById($id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+    public function afterSave($order, $data, $update = true) {
+        if($data['product'] != false) {
+            $order->products()->sync($data['product']);
+        }
     }
 }

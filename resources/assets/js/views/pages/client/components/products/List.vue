@@ -9,7 +9,7 @@
         el-button(size="mini" @click="prev")
           svg-icon(icon-class="fa-solid angle-right")
     el-carousel(height="500px" :interval="1000000" :autoplay="false" ref="productCarousel" indicator-position="none" arrow="never")
-      el-carousel-item(v-for="items in chunk(products, len)" :key="items[0].id")
+      el-carousel-item(v-for="items in chunk(products, len)" :key="(items[0] && items[0].id) || items")
         el-row(:gutter="20")
           el-col(:span="span" v-for="item in items" :key="item.id")
             product-item(:product="item")

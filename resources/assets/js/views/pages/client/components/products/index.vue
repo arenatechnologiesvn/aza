@@ -4,7 +4,7 @@
       div.container
         list-product.product__category(
         :control="control"
-        :category="item[0].categor || ''"
+        :category="(item.length > 0 && item[0] && item[0].category) || 'Danh mục'"
         :products="item")
 </template>
 

@@ -48,11 +48,14 @@ abstract class BaseService
                 $data = $this->beforeCreate($data);
             }
             $saved = $this->model->create($data);
+            if(method_exists($this, 'afterSave')) {
+                $this->afterSave($saved, $data, true);
+            }
             DB::commit();
             return $saved;
         } catch (\Exception $e) {
             DB::rollBack();
-            throw $e;
+            return $e;
         }
     }
 
@@ -65,6 +68,9 @@ abstract class BaseService
                 $data = $this->beforeUpdate($updated, $data);
             }
             $updated->update($data);
+            if(method_exists($this, 'afterSave')) {
+                $this->afterSave($updated, $data, true);
+            }
             DB::commit();
             return $this->getById($id);
         } catch (\Exception $e) {

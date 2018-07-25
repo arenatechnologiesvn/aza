@@ -27,6 +27,7 @@ class Order extends BaseModel
         return $this->belongsTo(Customer::class);
     }
     public function products() {
-        return $this->belongsToMany(Product::class,'order_product');
+        return $this->belongsToMany(Product::class,'order_product')
+                ->withPivot('quantity', 'tmp_price', 'real_price');
     }
 }
