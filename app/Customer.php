@@ -37,4 +37,11 @@ class Customer extends BaseModel
     public function shops() {
         return $this->hasMany(Shop::class);
     }
+    public function favorites(){
+        return $this->belongsToMany(Product::class,'favorites', 'customer_id','product_id');
+    }
+    public function carts(){
+        return $this->belongsToMany(Product::class,'carts', 'customer_id','product_id')
+            ->withPivot('quantity');
+    }
 }

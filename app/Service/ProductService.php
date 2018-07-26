@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Product;
 use App\Service\MediaService;
+use Illuminate\Support\Facades\Auth;
 
 class ProductService extends BaseService
 {
@@ -130,7 +131,8 @@ class ProductService extends BaseService
             'category_id' => $data['category_id'],
             'category' => $data->category,
             'provider_id' => $data['provider_id'],
-            'provider' => $data->provider
+            'provider' => $data->provider,
+            'favorites'=> $data->customerFavorites->where('user_id', '=', 18)
         ];
     }
 }
