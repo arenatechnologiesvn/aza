@@ -13,12 +13,12 @@
         div.index__container
           div.table
             el-table(:data="tableData" border size="small" style="width: 100%")
-              el-table-column(prop="icon" label="STT" align="center" width="60")
-              el-table-column(prop="name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
-              el-table-column(prop="name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="200")
-              el-table-column(prop="description" label="ĐẶT HÀNG LẦN CUỐI" sortable min-width="200")
+              el-table-column(prop="num" label="STT" align="center" width="60")
+              el-table-column(prop="customer_name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
+              el-table-column(prop="employee_name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="200")
+              el-table-column(prop="last_order" label="ĐẶT HÀNG LẦN CUỐI" sortable min-width="200")
                 template(slot-scope="scope")
-                  span {{ scope.row.description || '-' }}
+                  span {{ scope.row.last_order || '-' }}
           div.pagination__wrapper
             el-pagination(:current-page.sync="currentPage"
               :page-sizes="[10, 20, 30, 50]"
@@ -34,11 +34,13 @@ export default {
   name: 'none-order',
   computed: {
     ...mapGetters({
-
+      noneOrderCustomers: 'report/noneOrderCustomers'
     })
   },
   created() {
-    // Do nothing
+    this.fetchNoneOrderCustomers().catch(() => {
+      //  Do nothing
+    })
   },
   data() {
     return {
@@ -49,8 +51,15 @@ export default {
   },
   methods: {
     ...mapActions({
-
+      fetchNoneOrderCustomers: 'report/fetchNoneOrderCustomers'
     })
+  },
+  watch: {
+    noneOrderCustomers() {
+      if (this.noneOrderCustomers) {
+        this.tableData = JSON.parse(JSON.stringify(this.noneOrderCustomers));
+      }
+    }
   }
 }
 </script>

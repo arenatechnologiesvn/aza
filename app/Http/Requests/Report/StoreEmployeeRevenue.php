@@ -4,7 +4,7 @@ namespace App\Http\Requests\Report;
 
 use App\Http\Requests\BaseFormRequest;
 
-class StoreCustomerRevenue extends BaseFormRequest
+class StoreEmployeeRevenue extends BaseFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class StoreCustomerRevenue extends BaseFormRequest
     public function rules()
     {
         return [
-            'customer_id' => 'required|numeric|exists:customers,id',
+            'employee_id' => 'required|numeric|exists:employees,id',
             'start_date' => 'required|date_format:d-m-Y|before:end_date',
             'end_date' => 'required|date_format:d-m-Y|before:tomorrow'
         ];
