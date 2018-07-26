@@ -30,11 +30,18 @@ class ProductService extends BaseService
 
     public function getAllProducts()
     {
-        $products = $this->model::all()->map(function ($item) {
+        /*
+          Select by orm
+        */
+        // return $this->model->with(['category', 'provider', 'featureds','preview'])->get();
+        /* 
+          Maping
+        */
+        $products = $this->model->get()->map(function ($item) {
             return $this->transformData($item);
         });
-
-        return $products;
+            
+        return $products;    
     }
 
     public function getProductById($id)
@@ -132,7 +139,8 @@ class ProductService extends BaseService
             'category' => $data->category,
             'provider_id' => $data['provider_id'],
             'provider' => $data->provider,
-            'favorites'=> $data->customerFavorites->where('user_id', '=', 18)
+            // 'customerFavorites'=> $data->customerFavorites->where('user_id', '=', Auth::user()->id),
+            // 'preview' => $data->preview
         ];
     }
 }

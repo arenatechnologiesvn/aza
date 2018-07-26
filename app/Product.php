@@ -2,6 +2,7 @@
 
 namespace App;
 use Plank\Mediable\Mediable;
+use Plank\Mediable\Media as Media;
 
 class Product extends BaseModel
 {
@@ -48,5 +49,21 @@ class Product extends BaseModel
 
     public function customerCarts () {
         return $this->belongsToMany(Customer::class,'carts', 'product_id','customer_id');
+    }
+    public function preview () {
+        return $this->morphToMany('Plank\Mediable\Media', 'mediable','mediables', 'mediable_id')
+        ->withPivot('mediable_type', 'tag')
+        ->where([
+            ['mediable_type', '=', 'App\Product'],
+            ['tag', '=', 'preview']
+        ]);
+    }
+    public function featureds () {
+        return $this->morphToMany('Plank\Mediable\Media', 'mediable','mediables', 'mediable_id')
+        ->withPivot('mediable_type', 'tag')
+        ->where([
+            ['mediable_type', '=', 'App\Product'],
+            ['tag', '=', 'featured']
+        ]);
     }
 }

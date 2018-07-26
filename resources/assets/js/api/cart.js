@@ -28,3 +28,11 @@ export function remove (productId) {
     method: 'delete'
   });
 }
+
+export function checkout (items) {
+  return request({
+    url: `/api/orders`,
+    method: 'post',
+    data: items
+  });
+}

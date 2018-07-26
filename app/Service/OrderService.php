@@ -15,7 +15,7 @@ use function foo\func;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
+use App\Customer;
 class OrderService extends BaseService
 {
     protected $selectable = [
@@ -58,9 +58,10 @@ class OrderService extends BaseService
     }
 
     public function beforeCreate($order) {
-        $order['order_code'] = time();
-        $order['title'] = 'Dơn hàng số 2';
-        $order['customer_id'] = Auth::user()->id;
+        $order['order_code'] = 'DH-'.time();
+        if(empty($order['customer_id']))
+            $order['customer_id'] = Customer::select(['id'])->where('user_id', '=',Auth::user()->id)->firstOrFail()->id;
+        $order['status'] = 1;
         return $order;
     }
 

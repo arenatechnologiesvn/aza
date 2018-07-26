@@ -82,15 +82,23 @@
         return {
           address: user.customer ? user.customer.address : '',
           delivery: '',
-          delivery_type: null,
+          customer_id: user.customer.id,
+          delivery_type: 1,
           discount: '',
-          product: this.products
+          title: 'Đơn Hàng ví dụ',
+          product: this.products.map(item => ({
+            product_id: item.id, 
+            quantity: item.quantity, 
+            tmp_price: item.tmp_price,
+			      real_price: item.real_price}))
         }
       }
     },
     methods: {
       checkout () {
-        console.log(this.iCart);
+        this.$store.dispatch('cart/checkout', this.iCart).then(res => {
+          console.log(res)
+        }).catch(err => console.log(err))
       }
     }
   }

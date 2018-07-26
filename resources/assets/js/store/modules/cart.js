@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { all, add, update, remove } from '~/api/cart';
+import { all, add, update, remove, checkout } from '~/api/cart';
+import { resolve } from 'path';
 const cart = {
   namespaced: true,
   state: {
@@ -51,10 +52,16 @@ const cart = {
     },
     checkout ({ commit, state }, products) {
       const savedCartItems = [...state.items];
-      console.log(savedCartItems);
-      console.log(products);
-      commit('setCheckoutStatus', null);
-      commit('setCartItems', { items: [] });
+      return new Promise((resolve, reject) => {
+        checkout(products).then((success) => {
+          commit('setCheckoutStatus', null);
+          commit('setCartItems', { items: [] });
+          resolve(success)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+      
     }
   },
   getters: {
@@ -65,7 +72,10 @@ const cart = {
         title: product.title,
         price: product.price,
         img: product.img,
-        quantity
+        quantity,
+        real_price: product.price,
+        tmp_price: product.price,
+        product_id: id
       };
     }),
     total: (state) => state.items.length > 0 ? _.map(state.items, 'quantity').reduce((a, b) => a + b) : 0
