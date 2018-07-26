@@ -22,7 +22,11 @@ export default {
     height: {
       type: String,
       default: '300px'
-    }
+    },
+    // options: {
+    //   type: Object,
+    //   required: true
+    // }
   },
   data() {
     return {
@@ -68,7 +72,7 @@ export default {
           containLabel: true
         },
         legend: {
-          data:['Bar', 'Line']
+          data:['Biểu đồ cột', 'Biểu đồ đường']
         },
         xAxis: [{
           type: 'category',
@@ -84,12 +88,12 @@ export default {
           interval: 50
         }],
         series: [{
-          name:'Bar',
+          name:'Biểu đồ cột',
           type:'bar',
           barWidth: '40%',
           data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 200, 32.6, 20.0, 6.4, 3.3]
         }, {
-          name:'Line',
+          name:'Biểu đồ đường',
           type:'line',
           yAxisIndex: 0,
           data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 200, 32.6, 20.0, 6.4, 3.3]

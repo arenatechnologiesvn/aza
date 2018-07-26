@@ -30,4 +30,10 @@ class ReportController extends Controller
         $customers = $this->service->getNoneOrderCustomers();
         return $this->api_success_response(['data' => $customers]);
     }
+
+    public function accessStatistical(StoreCustomerRevenue $request)
+    {
+        $statisticals = $this->service->accessStatistical($request);
+        return $this->api_success_response(['data' => $statisticals]);
+    }
 }

@@ -25,8 +25,8 @@ class StoreEmployeeRevenue extends BaseFormRequest
     {
         return [
             'employee_id' => 'required|numeric|exists:employees,id',
-            'start_date' => 'required|date_format:d-m-Y|before:end_date',
-            'end_date' => 'required|date_format:d-m-Y|before:tomorrow'
+            'start_date' => 'required|date_format:d-m-Y',
+            'end_date' => 'required|date_format:d-m-Y|after_or_equal:start_date'
         ];
     }
 }

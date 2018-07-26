@@ -25,8 +25,8 @@ class StoreCustomerRevenue extends BaseFormRequest
     {
         return [
             'customer_id' => 'required|numeric|exists:customers,id',
-            'start_date' => 'required|date_format:d-m-Y|before:end_date',
-            'end_date' => 'required|date_format:d-m-Y|before:tomorrow'
+            'start_date' => 'required|date_format:d-m-Y',
+            'end_date' => 'required|date_format:d-m-Y|after_or_equal:start_date'
         ];
     }
 }

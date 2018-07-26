@@ -20,7 +20,7 @@
               size="small"
             )
             el-select(v-model="selectedCustomer" clearable placeholder="Khách hàng" size="small")
-              el-option(v-for="item in customers" :key="item.id" :label="item.code + ' - ' + item.user.first_name" :value="item.id")
+              el-option(v-for="item in customers" :key="item.id" :label="item.user.last_name + ' ' + item.user.first_name" :value="item.id")
           el-col(:span="3" style="text-align: right")
             el-button(type="success" size="small" @click="getRevenue" :disabled="!canGetRevenue()")
               svg-icon(icon-class="fa-solid check")
@@ -30,6 +30,8 @@
           div.table
             el-table(:data="tableData" border size="small" style="width: 100%")
               el-table-column(prop="num" label="STT" align="center" width="60")
+                template(slot-scope="scope")
+                  span {{ scope.$index + 1 }}
               el-table-column(prop="product_name" label="TÊN SẢN PHẨM" sortable min-width="200")
               el-table-column(prop="quantity_total" label="SỐ LƯỢNG" sortable min-width="120")
               el-table-column(prop="unit" label="ĐỊNH LƯỢNG" sortable min-width="120")

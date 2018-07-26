@@ -17,7 +17,8 @@ class ReportService
     }
 
 
-    public function getCustomerRevenue($params) {
+    public function getCustomerRevenue($params)
+    {
         return DB::table('orders')
             ->select(
                 'order_product.product_id',
@@ -58,7 +59,8 @@ class ReportService
             ->get();
     }
 
-    public function getNoneOrderCustomers() {
+    public function getNoneOrderCustomers()
+    {
         $ordersUnder4Days = DB::table('orders')
             ->select(
                 DB::raw('DISTINCT customer_id')
@@ -89,5 +91,24 @@ class ReportService
             ->get();
 
         return $customers;
+    }
+
+    public function accessStatistical($params)
+    {
+        return DB::table('customers')
+            ->select(
+                DB::raw('CONCAT(users.last_name, " ", users.first_name) as name'),
+                DB::raw('COUNT(user_access_histories.user_id) as access_count'),
+                DB::raw('DATE_FORMAT(FROM_UNIXTIME(user_access_histories.created_at), "%d-%m-%Y") as access_day')
+            )
+            ->join('users', 'users.id', '=', 'customers.user_id')
+            ->join('user_access_histories', 'user_access_histories.user_id', '=', 'users.id')
+            ->where('customers.id', $params['customer_id'])
+            ->whereBetween('user_access_histories.created_at', [
+                strtotime($params['start_date'] . " 00:00:00"),
+                strtotime($params['end_date'] . ' 23:59:59')
+            ])
+            ->groupBy('users.first_name', 'users.last_name', 'access_day')
+            ->get();
     }
 }

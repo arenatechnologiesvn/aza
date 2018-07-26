@@ -1,4 +1,4 @@
-import { getCustomerRevenue, getEmployeeRevenue, getNoneOrderCustomers } from '~/api/report';
+import { getCustomerRevenue, getEmployeeRevenue, getNoneOrderCustomers, getAcsessStatistical } from '~/api/report';
 
 const report = {
   namespaced: true,
@@ -6,7 +6,8 @@ const report = {
   state: {
     customerRevenue: [],
     employeeRevenue: [],
-    noneOrderCustomers: []
+    noneOrderCustomers: [],
+    accessStatistical: []
   },
 
   getters: {
@@ -20,6 +21,10 @@ const report = {
 
     noneOrderCustomers: (state) => {
       return state.noneOrderCustomers;
+    },
+
+    accessStatistical: (state) => {
+      return state.accessStatistical;
     }
   },
 
@@ -34,6 +39,10 @@ const report = {
 
     SET_NONE_ORDER_CUSTOMERS: (state, customers) => {
       state.noneOrderCustomers = customers;
+    },
+
+    SET_ACCESS_STATISTICAL: (state, accessStatistical) => {
+      state.accessStatistical = accessStatistical;
     }
   },
 
@@ -69,6 +78,19 @@ const report = {
         getNoneOrderCustomers().then(response => {
           const data = response.data;
           commit('SET_NONE_ORDER_CUSTOMERS', data);
+
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
+    fetchCustomerAccessStatistical ({ commit }, { customerId, startDate, endDate }) {
+      return new Promise((resolve, reject) => {
+        getAcsessStatistical(customerId, startDate, endDate).then(response => {
+          const data = response.data;
+          commit('SET_ACCESS_STATISTICAL', data);
 
           resolve();
         }).catch(error => {

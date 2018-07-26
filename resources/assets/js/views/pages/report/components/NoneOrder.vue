@@ -14,6 +14,8 @@
           div.table
             el-table(:data="tableData" border size="small" style="width: 100%")
               el-table-column(prop="num" label="STT" align="center" width="60")
+                template(slot-scope="scope")
+                  span {{ scope.$index + 1 }}
               el-table-column(prop="customer_name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
               el-table-column(prop="employee_name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="200")
               el-table-column(prop="last_order" label="ĐẶT HÀNG LẦN CUỐI" sortable min-width="200")
@@ -50,11 +52,29 @@ export default {
     }
   },
   methods: {
+    filterData() {
+      this.tableData = JSON.parse(JSON.stringify(this.noneOrderCustomers));
+      const filterWord = this.searchWord && this.searchWord.toLowerCase();
+
+      if (filterWord !== '') {
+        filterWord.trim().split(/\s/).forEach(word => {
+          this.tableData = this.tableData.filter(item => {
+            return item.customer_name.toLowerCase().indexOf(word) > -1 ||
+              item.employee_name.toLowerCase().indexOf(word) > -1;
+          });
+        });
+      }
+    },
+
     ...mapActions({
       fetchNoneOrderCustomers: 'report/fetchNoneOrderCustomers'
     })
   },
   watch: {
+    searchWord() {
+      this.filterData();
+    },
+
     noneOrderCustomers() {
       if (this.noneOrderCustomers) {
         this.tableData = JSON.parse(JSON.stringify(this.noneOrderCustomers));
