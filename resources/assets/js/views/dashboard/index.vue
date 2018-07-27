@@ -26,7 +26,7 @@
               svg-icon(icon-class="fa-solid user-graduate")
               span(style="margin-left: 10px;") NHÂN VIÊN XUẤT SẮC
           div
-            employee-table(:employees="employees")
+
     div.clearfix(style="margin: 10px 0;")
     el-row
       el-col(:span="24")
@@ -36,43 +36,29 @@
               svg-icon(icon-class="fa-solid shipping-fast")
               span(style="margin-left: 10px;") SẢN PHẨM BÁN CHẠY
           div
-            product-table
+
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import MediaManagerModal from '~/components/MediaManager/modal';
-import AdministrativeSelect from '~/components/AdministrativeSelect';
-import BarChart from './BarChart'
-import ElCard from "element-ui/packages/card/src/main";
-import EmployeeTable from '../pages/employees/components/Table'
-import ProductTable from '../pages/products/components/ProductTable'
+import BarChart from './BarChart';
+
 export default {
   name: 'dashboard',
   computed: {
-    ...mapGetters([
-      'name',
-      'roles'
-    ]),
-    ...mapGetters('employees', {
-      employees: 'list'
+    ...mapGetters({
+
     })
   },
   methods: {
-    ...mapActions('employees', {
-      fetchEmployees: 'fetchList'
+    ...mapActions({
     })
   },
   components: {
-    ElCard,
-    MediaManagerModal,
-    AdministrativeSelect,
-    BarChart,
-    EmployeeTable,
-    ProductTable
+    BarChart
   },
   created () {
-    this.fetchEmployees()
+
   }
 }
 </script>

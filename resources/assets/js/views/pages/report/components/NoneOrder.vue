@@ -20,7 +20,7 @@
               el-table-column(prop="employee_name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="200")
               el-table-column(prop="last_order" label="ĐẶT HÀNG LẦN CUỐI" sortable min-width="200")
                 template(slot-scope="scope")
-                  span {{ scope.row.last_order || '-' }}
+                  span {{ scope.row.last_order || 'Chưa đặt hàng lần nào' }}
           div.pagination__wrapper
             el-pagination(:current-page.sync="currentPage"
               :page-sizes="[10, 20, 30, 50]"

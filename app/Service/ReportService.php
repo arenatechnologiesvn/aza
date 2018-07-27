@@ -6,6 +6,7 @@ use App\ProductOrder;
 use App\Order;
 use App\Product;
 use Illuminate\Support\Facades\DB;
+use App\Helper\DateTimeHelper;
 
 class ReportService
 {
@@ -70,24 +71,25 @@ class ReportService
                 return $item->customer_id;
             });
 
-        $customerIds = DB::table('orders')->select('customer_id')
-            ->whereNotIn('customer_id', $ordersUnder4Days)
-            ->groupBy('customer_id')
-            ->get()->map(function($item) {
-                return $item->customer_id;
-            });
-
         $customers = DB::table('customers')
             ->select(
                 'customers.id',
                 DB::raw('CONCAT(customer_user.last_name, " ", customer_user.first_name) as customer_name'),
                 'customers.employee_id',
-                DB::raw('CONCAT(employee_user.last_name, " ", employee_user.first_name) as employee_name')
+                DB::raw('CONCAT(employee_user.last_name, " ", employee_user.first_name) as employee_name'),
+                DB::raw('DATE_FORMAT(FROM_UNIXTIME(MAX(orders.created_at)), "%d-%m-%Y %H:%i:%s") as last_order')
             )
-            ->whereIn('customers.id', $customerIds)
+            ->whereNotIn('customers.id', $ordersUnder4Days)
             ->join('users as customer_user', 'customer_user.id', '=', 'customers.user_id')
             ->join('employees', 'employees.id', '=', 'customers.employee_id')
             ->join('users as employee_user', 'employee_user.id', '=', 'employees.user_id')
+            ->leftJoin('orders', 'orders.customer_id', '=', 'customers.id')
+            ->groupBy(
+                'customers.id',
+                'customer_name',
+                'customers.employee_id',
+                'employee_name'
+            )
             ->get();
 
         return $customers;
@@ -95,9 +97,10 @@ class ReportService
 
     public function accessStatistical($params)
     {
-        return DB::table('customers')
+        $results = [];
+
+        $access_count = DB::table('customers')
             ->select(
-                DB::raw('CONCAT(users.last_name, " ", users.first_name) as name'),
                 DB::raw('COUNT(user_access_histories.user_id) as access_count'),
                 DB::raw('DATE_FORMAT(FROM_UNIXTIME(user_access_histories.created_at), "%d-%m-%Y") as access_day')
             )
@@ -108,7 +111,28 @@ class ReportService
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
             ])
-            ->groupBy('users.first_name', 'users.last_name', 'access_day')
+            ->groupBy('access_day')
             ->get();
+
+        $dates = DateTimeHelper::getDates($params['start_date'], $params['end_date'], 'P1D');
+        foreach ($dates as $date) {
+            array_push($results, [
+                'access_day' => $date,
+                'access_count' => $this->getAccessCount($access_count, $date)
+            ]);
+        }
+
+        return $results;
+    }
+
+    /*================================ PRIVATE FUNCTIONS ================================*/
+
+    private function getAccessCount($access_count, $date)
+    {
+        foreach ($access_count as $item) {
+            if ($item->access_day == $date) return $item->access_count;
+        }
+
+        return 0;
     }
 }
