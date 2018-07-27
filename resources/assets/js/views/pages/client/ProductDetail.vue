@@ -24,17 +24,14 @@
                     svg-icon(icon-class="fa-solid angle-right")
             el-row(:span="24")
               p.description {{product.description}}
-              div.price {{product.discount}}
-                span(style="margin-left: 20px; font-size=18px; color: #d6d6d6; text-decoration: line-through;") {{product.price}} VNĐ
+              div.price {{formatNumber(product.price)}} (VNĐ)
+                span(style="margin-left: 20px; font-size=18px; color: #d6d6d6; text-decoration: line-through;") {{ formatNumber(product.discount)}} (VNĐ)
               div.submit
-                span.input
-                  el-input(placeholder="1" style="width: 150px;")
-                    template(slot="prepend")
-                      el-button(@click="minus") -
-                    template(slot="append")
-                      el-button +
                 span
-                  el-button(type="danger") Mua ngay
+                  el-button(type="success" @click="addToCart(product)" :disabled="product.added")
+                    span(style="margin-right: 10px;")
+                      svg-icon(icon-class="fa-solid cart-plus")
+                    template Thêm vào giỏ hàng
         el-row.content
           el-col(:span="24")
             h4.content__title MÔ TẢ CHI TIẾT
@@ -56,6 +53,8 @@
   import Products from './components/products'
   import Comment from './components/Comment'
   import { mapGetters, mapActions } from 'vuex'
+  import { formatNumber } from '~/utils/util'
+
   export default {
     name: 'ProductDetail',
     components: {
@@ -97,9 +96,10 @@
       ...mapActions('products', {
         fetchData : 'fetchSingle'
       }),
-      minus () {
-        alert('minus')
-      },
+      ...mapActions('cart', {
+        add2Cart: 'create',
+        updateCart: 'update'
+      }),
       rate (score) {
         this.rating = score
       },
@@ -107,6 +107,35 @@
         this.fetchData({
           id: this.$route.params.id
         })
+      },
+      formatNumber (num) {
+        return formatNumber(num)
+      },
+      addToCart (product) {
+        console.log(product)
+        if (product.added) {
+          const data = {
+            product_id: product.id,
+            quantity: this.$store.state.cart.entities[product.id].quantity + 1,
+            customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+          }
+          this.updateCart({
+            id: product.id,
+            data: data
+          })
+        } else {
+          this.add2Cart({
+            data: {
+              product_id: product.id,
+              quantity: 1,
+              customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+            }
+          }).then(res => {
+            this.fetchCart()
+            this.fetchProduct()
+          } )
+            .catch(err =>  console.log(err))
+        }
       }
     },
     created () {

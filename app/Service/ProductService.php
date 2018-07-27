@@ -51,11 +51,12 @@ class ProductService extends BaseService
 
     public function getProductById($id)
     {
-        if (!$product = $this->model::find($id)) {
-            throw new \Exception('Product is not exist');
-        }
+        // if (!$product = $this->model::find($id)) {
+        //     throw new \Exception('Product is not exist');
+        // }
 
-        return $this->transformData($product);
+        // return $this->transformData($product);
+        return $this->model->with($this->relative())->find($id);
     }
 
     public function getProductByCategory($categoryId)

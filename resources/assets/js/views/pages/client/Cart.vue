@@ -14,15 +14,11 @@
                     h4 {{scope.row.title}}
                     el-button.button(type="danger" size="mini" @click="remove(scope.row.id)")
                       svg-icon(icon-class="fa-solid trash")
-              el-table-column(prop="price" label="GIÁ")
-              el-table-column(prop="quantity" label="SỐ LƯỢNG" width="150")
+              el-table-column(prop="price" label="GIÁ" :formatter="row =>formatNumber(row.price) + ' (VNĐ)'")
+              el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
-                  el-input(placeholder="1" style="width: 130px;" size="mini" v-model="scope.row.quantity")
-                    template(slot="prepend")
-                      el-button(size="mini" type="danger") -
-                    template(slot="append")
-                      el-button(size="mini" type="success" @click="plus(scope.row.id, scope.row.quantity)") +
-              el-table-column(prop="total" label="Tổng cộng" :formatter="row =>`${row.price * row.quantity} (VNĐ)`")
+                  el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;" @change="changeQuantity(scope.row)")
+              el-table-column(prop="total" label="Tổng cộng" :formatter="row =>formatNumber(row.price * row.quantity) + ' (VNĐ)'")
         el-col(:xs="24" :sm="8" :md="8" :lg="8")
           div.cart(style="background-color: #ffffff")
             div.cart__detail
@@ -51,7 +47,7 @@
                 el-col(:span="12")
                   span Tạm tính
                 el-col(:span="12" style="text-align: right;")
-                  span(style="font-size: 1.3em; color: red;") {{total}} VNĐ
+                  span(style="font-size: 1.3em; color: red;") {{formatNumber(total)}} (VNĐ)
             div.line
             div.cart__detail
               el-button(type="success" @click="checkout") ĐẶT HÀNG
@@ -62,6 +58,9 @@
   import BreadCrumb from './components/BreadCrumb'
   import product from '~/assets/products/p1.jpg'
   import { mapGetters, mapActions } from 'vuex'
+  import _ from 'lodash'
+  import { formatNumber } from '~/utils/util'
+
   export default {
     name: 'CustomerCart',
     components: {
@@ -89,8 +88,8 @@
       },
       total () {
         return (this.products && this.products.length > 1) ?
-          this.products.reduce((a,b)=> ((a.price * a.quantity) + (b.price * b.quantity))):
-          this.products.length > 0 ? this.products[0].quantity * this.products[0].price :
+          this.products.reduce((a,b)=> (a + (b.price * b.quantity)), 0):
+          this.products.length === 1 ? this.products[0].quantity * this.products[0].price :
             0
       },
       iCart () {
@@ -126,10 +125,17 @@
           .then(res => console.log(res))
           .catch(err => console.log(err))
       },
-      plus (id, quantity) {
+      formatNumber (num) {
+        return formatNumber(num)
+      },
+      changeQuantity (value) {
         this.updateItem({
-          id,
-          quantity: parseInt(quantity) +  1
+          id: value.id,
+          data: {
+            product_id: value.id,
+            quantity: value.quantity,
+            customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+          }
         })
       }
     }

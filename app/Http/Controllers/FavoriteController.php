@@ -15,6 +15,7 @@ use App\Customer;
 use App\Favorite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Helper\RoleConstant;
 
 class FavoriteController extends Controller
 {
@@ -27,17 +28,18 @@ class FavoriteController extends Controller
 
     public function index(){
         try {
-            $carts = $this->model->where('customer_id', '=', $this->getCustomerId())->get();
-            return $this->api_success_response( ['data' => $carts ]);
+            $favorites = $this->model->where('customer_id', '=', $this->getCustomerId())->get();
+            return $this->api_success_response( ['data' => $favorites ]);
         } catch (\Exception $e) {
-            return $this->api_error_response( $e);
+            return $this->api_error_response($e);
         }
     }
 
     public function store (Request $request) {
         try {
-            $carts = $this->model->save($request->all());
-            return $this->api_success_response( $carts);
+            $favorite = new Favorite ;
+            $favorite->create($request->all());
+            return $this->api_success_response( ['data' => $this->getByProductId($request->get('product_id'))]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
@@ -48,9 +50,8 @@ class FavoriteController extends Controller
             $cart = $this->model->where([
                 ['customer_id', '=', $this->getCustomerId()],
                 ['product_id', '=', $id]
-            ])->firstOrFail();
-            if ($cart) $cart->update($request->all());
-            return $this->api_success_response(['data' => $cart]);
+            ])->update($request->all());
+            return $this->api_success_response(['data' => $this->getByProductId($id)]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
@@ -77,5 +78,12 @@ class FavoriteController extends Controller
         } catch (\Exception $e) {
             return 0;
         }
+    }
+
+    private function getByProductId ($product_id) {
+        return  $this->model->where([
+            ['customer_id', '=', $this->getCustomerId()],
+            ['product_id', '=', $product_id]
+        ])->firstOrFail();
     }
 }

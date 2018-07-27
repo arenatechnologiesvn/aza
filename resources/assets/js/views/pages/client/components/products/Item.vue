@@ -17,15 +17,23 @@
             span.product-item__price {{formatNumber(product.price) + ' VNĐ'}}
             span.product-item__price--discount {{formatNumber(product.discount) + ' VNĐ'}}
           div.product-item__control--right
-            span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
-              svg-icon( icon-class="fa-solid heart")
-            span.shop(@click="addToCart(product)")
-              svg-icon(icon-class="fa-solid cart-plus")
+            el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
+              span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
+                svg-icon( icon-class="fa-solid heart")
+            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
+              span.shop(@click="addToCart(product)")
+                svg-icon(icon-class="fa-solid cart-plus")
+            el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
+              span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
+                svg-icon(icon-class="fa-solid eraser")
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
   import { formatNumber } from '~/utils/util'
+  import Vue from 'vue';
+  import _ from 'lodash'
+
   export default {
     name: 'ItemProduct',
     props: {
@@ -37,16 +45,36 @@
     methods: {
       ...mapActions('cart', {
         add2Cart: 'create',
-        updateCart: 'update'
+        updateCart: 'update',
+        deletFromCart: 'destroy',
+        fetchCart: 'fetchList'
       }),
+      ...mapActions('favorite', {
+        addFavorite: 'create',
+        deletFavorite: 'destroy',
+        fetchFavorite: 'fetchList'
+      }),
+      ...mapActions('products', {
+        fetchProduct: 'fetchList'
+      }),
+      removeFromCart (id) {
+        this.deletFromCart({id})
+          .then(() => this.fetchProduct())
+      },
+      removeFromFavorite (id) {
+        this.deletFavorite({id})
+          .then(() =>{
+            this.fetchProduct()
+            this.fetchFavorite()
+          } )
+      },
       addToCart (product) {
         if (product.added) {
           const data = {
             product_id: product.id,
-            quantity: parseInt(product.quantity) + 1,
+            quantity: this.$store.state.cart.entities[product.id].quantity + 1,
             customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
           }
-          console.log(data)
           this.updateCart({
             id: product.id,
             data: data
@@ -58,29 +86,38 @@
               quantity: 1,
               customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
             }
-          }).then(res => console.log(res))
+          }).then(res => {
+            this.fetchCart()
+            this.fetchProduct()
+          } )
             .catch(err =>  console.log(err))
         }
       },
       toggleFavorite (product) {
         if (product.favorite) {
-          this.removeProductFromFavorite(product.id)
+          this.removeFromFavorite(product.id)
         } else {
           this.addProductToFavorite(product.id)
         }
       },
-      removeProductFromFavorite (id) {
-        this.$store.dispatch('favorite/removeFromFavorite', id)
-      },
       addProductToFavorite (id) {
-        if (this.$store.state.favorite.items.length > 5){
-          this.$notify({
-            title: 'Cảnh báo giới hạn',
-            message: 'Danh sách yêu thích đã vượt quá số lượng cho phép',
-            type: 'warning'
-          });
+        if(this.$store.state.favorite.list.length > 4) {
+          this.$notify(
+            {
+              title: 'Cảnh báo',
+              message: 'Số sản phẩm yêu thích vượt quá giới hạn',
+              type: 'warning'
+            })
         } else {
-          this.$store.dispatch('favorite/addProductToFavorite', id)
+          this.addFavorite({
+            data: {
+              product_id: id,
+              customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+            }
+          }).then(() =>  {
+            this.fetchProduct()
+            this.fetchFavorite()
+          })
         }
       },
       formatNumber (num) {

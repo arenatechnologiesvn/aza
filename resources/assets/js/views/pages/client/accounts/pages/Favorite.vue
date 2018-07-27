@@ -5,7 +5,7 @@
       template SẢN PHẨM YÊU THÍCH
     div.h-line
     div.account-favorite__content
-      el-table(:data="favoriteProducts" style="width: 100%" border :show-header="false")
+      el-table(:data="favorites" style="width: 100%" border :show-header="false")
         el-table-column
           template(slot-scope="scope")
             el-row.item(:gutter="10")
@@ -19,12 +19,11 @@
                 div
                   span(@click="removeFromFavorite(scope.row.id)" style="cursor: pointer;")
                     svg-icon(icon-class="fa-solid trash")
-        el-table-column(width="200")
+        el-table-column(width="250")
           template(slot-scope="scope")
             div(style="text-align: left;")
-              div.price {{scope.row.discount}} VNĐ
-              div.discount {{scope.row.price}} VNĐ
-              div {{((scope.row.discount / scope.row.price) * 100).toFixed(2) }}%
+              div.price {{formatNumber(scope.row.price)}} (VNĐ)
+              div.discount {{formatNumber(scope.row.discount)}} (VNĐ)
         el-table-column(prop="address" label="Date" width="100")
           template(slot-scope="scope")
             el-button(size="mini" type="warning" @click="addToCart(scope.row)")
@@ -33,59 +32,23 @@
 
 <script>
   import avatar from '~/assets/products/linh-nguyen.jpg'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
+  import { formatNumber } from '~/utils/util'
+
   export default {
     name: 'AccountAlert',
-    data () {
-      return {
-        tableData: [
-          {
-            img: avatar,
-            title: 'Bikini Hàn Quốc, độn ngực, thun co giản, sôi động mùa hè, độn ngực, thun co giản, sôi động mùa hè',
-            price: 470000,
-            discount: 32000,
-            rating: 3
-          },
-          {
-            img: avatar,
-            title: 'Bikini Hàn Quốc, độn ngực, thun co giản, sôi động mùa hè, độn ngực, thun co giản, sôi động mùa hè',
-            price: 470000,
-            discount: 32000,
-            rating: 3
-          },
-          {
-            img: avatar,
-            title: 'Bikini Hàn Quốc, độn ngực, thun co giản, sôi động mùa hè, độn ngực, thun co giản, sôi động mùa hè',
-            price: 470000,
-            discount: 32000,
-            rating: 3
-          },
-          {
-            img: avatar,
-            title: 'Bikini Hàn Quốc, độn ngực, thun co giản, sôi động mùa hè, độn ngực, thun co giản, sôi động mùa hè',
-            price: 470000,
-            discount: 32000,
-            rating: 3
-          },
-          {
-            img: avatar,
-            title: 'Bikini Hàn Quốc, độn ngực, thun co giản, sôi động mùa hè, độn ngực, thun co giản, sôi động mùa hè',
-            price: 470000,
-            discount: 32000,
-            rating: 3
-          }
-        ]
-      }
-    },
     computed: {
       ...mapGetters('favorite', {
-        favoriteProducts: 'products'
+        favorites: 'favoriteProducts'
       })
     },
     watch: {
       $route: 'fetchData'
     },
     methods: {
+      ...mapActions('favorite', {
+        fetchFavorite: 'fetchList'
+      }),
       addToCart (item) {
         this.$store.dispatch('cart/addProductToCart', item)
       },
@@ -93,7 +56,10 @@
         this.$store.dispatch('favorite/removeFromFavorite', id)
       },
       fetchData () {
-        this.$store.dispatch('favorite/fetchList');
+        this.fetchFavorite();
+      },
+      formatNumber (num) {
+        return formatNumber(num)
       }
     },
     created () {

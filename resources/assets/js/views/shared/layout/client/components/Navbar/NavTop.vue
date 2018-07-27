@@ -33,7 +33,11 @@
                     svg-icon(icon-class="fa-solid user")
                     span Thông tin tài khoản
                 el-dropdown-item
-                  router-link(to="/home/accounts")
+                  router-link(to="/home/accounts/favorite")
+                    svg-icon(icon-class="fa-solid heart")
+                    span Sản phẩm yêu thích
+                el-dropdown-item
+                  router-link(to="/home/accounts/order")
                     svg-icon(icon-class="fa-solid cart-arrow-down")
                     span Lịch sử đơn hàng
                 el-dropdown-item(divided)
