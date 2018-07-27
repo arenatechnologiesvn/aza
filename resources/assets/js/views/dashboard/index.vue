@@ -1,22 +1,12 @@
 <template lang="pug">
   div.dashboard-container
     el-row
-      el-col(:xs="24" :sm="12" :lg="12" style="padding-right: 5px")
-        el-card
-          div.clearfix(slot="header")
-            span
-              svg-icon(icon-class="fa-solid chart-bar")
-              span(style="margin-left: 10px;") DOANH THU THEO TUẦN
-          div
-            bar-chart
-      el-col(:xs="24" :sm="12" :lg="12" style="padding-left: 5px")
-        el-card
-          div.clearfix(slot="header")
-            span
-              svg-icon(icon-class="fa-solid chart-bar")
-              span(style="margin-left: 10px;") DOANH THU THEO THÁNG
-          div
-            bar-chart
+      el-col(:xs="24" :sm="24" :lg="24" style="padding-right: 5px")
+        month-revenue-reports
+    el-row
+      el-col(:xs="24" :sm="24" :lg="24" style="padding-left: 5px")
+        //month-revenue-reports
+
     div.clearfix(style="margin: 10px 0;")
     el-row
       el-col(:span="24")
@@ -40,11 +30,14 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import BarChart from './BarChart';
+import { mapGetters, mapActions } from 'vuex';
+import MonthRevenueReports from '~/views/pages/report/MonthRevenueReports';
 
 export default {
   name: 'dashboard',
+  components: {
+    MonthRevenueReports
+  },
   computed: {
     ...mapGetters({
 
@@ -53,9 +46,6 @@ export default {
   methods: {
     ...mapActions({
     })
-  },
-  components: {
-    BarChart
   },
   created () {
 

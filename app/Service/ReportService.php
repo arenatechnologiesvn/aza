@@ -17,6 +17,26 @@ class ReportService
         $this->productModel = $productModel;
     }
 
+    public function getRevenues($params)
+    {
+        $weekOrMonthSelect = '';
+        if ($params->type == 'week') {
+            $weekOrMonthSelect = 'CONCAT(WEEK(FROM_UNIXTIME(orders.updated_at))) as week';
+        } else {
+            $weekOrMonthSelect = 'DATE_FORMAT(FROM_UNIXTIME(orders.updated_at), "%m-%Y") as month';
+        }
+
+        return DB::table('orders')
+            ->select(
+                DB::raw($weekOrMonthSelect),
+                DB::raw('SUM(order_product.quantity) as quantity_total'),
+                DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
+            )
+            ->join('order_product', 'order_product.order_id', '=', 'orders.id')
+            ->where('orders.status', 1)
+            ->groupBy($params->type)
+            ->get();
+    }
 
     public function getCustomerRevenue($params)
     {

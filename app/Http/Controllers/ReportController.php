@@ -5,12 +5,19 @@ namespace App\Http\Controllers;
 use App\Service\ReportService;
 use App\Http\Requests\Report\StoreCustomerRevenue;
 use App\Http\Requests\Report\StoreEmployeeRevenue;
+use App\Http\Requests\Report\StoreRevenue;
 
 class ReportController extends Controller
 {
     public function __construct(ReportService $service)
     {
         $this->service = $service;
+    }
+
+    public function getRevenues(StoreRevenue $request)
+    {
+        $revenues = $this->service->getRevenues($request);
+        return $this->api_success_response(['data' => $revenues]);
     }
 
     public function getCustomerRevenue(StoreCustomerRevenue $request)

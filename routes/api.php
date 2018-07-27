@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::get('report/employee/revenue','ReportController@getEmployeeRevenue');
     Route::get('report/customer/none_order','ReportController@getNoneOrderCustomers');
     Route::get('report/customer/access_satistical','ReportController@accessStatistical');
+    Route::get('report/revenue','ReportController@getRevenues');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {
