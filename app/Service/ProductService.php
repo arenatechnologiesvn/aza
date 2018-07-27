@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use App\Helper\RoleConstant;
 use App\Product;
 use App\Service\MediaService;
+use Illuminate\Support\Facades\Auth;
 
 class ProductService extends BaseService
 {
@@ -27,22 +29,34 @@ class ProductService extends BaseService
         parent::__construct($model);
     }
 
+    /*
+    * Get All Product for home with favorite and card of customers
+    * */
+
     public function getAllProducts()
     {
-        $products = $this->model::all()->map(function ($item) {
-            return $this->transformData($item);
-        });
-
-        return $products;
+        /*
+          Select by orm
+        */
+         return $this->model->with($this->relative())->get();
+        /* 
+          Maping
+        */
+//        $products = $this->model->get()->map(function ($item) {
+//            return $this->transformData($item);
+//        });
+//
+//        return $products;
     }
 
     public function getProductById($id)
     {
-        if (!$product = $this->model::find($id)) {
-            throw new \Exception('Product is not exist');
-        }
+        // if (!$product = $this->model::find($id)) {
+        //     throw new \Exception('Product is not exist');
+        // }
 
-        return $this->transformData($product);
+        // return $this->transformData($product);
+        return $this->model->with($this->relative())->find($id);
     }
 
     public function getProductByCategory($categoryId)
@@ -130,7 +144,17 @@ class ProductService extends BaseService
             'category_id' => $data['category_id'],
             'category' => $data->category,
             'provider_id' => $data['provider_id'],
-            'provider' => $data->provider
+            'provider' => $data->provider,
+            // 'customerFavorites'=> $data->customerFavorites->where('user_id', '=', Auth::user()->id),
+            // 'preview' => $data->preview
         ];
+    }
+
+    private function relative() {
+        $relatives = ['category', 'provider', 'featured','previews'];
+        if(Auth::user()->role_id == RoleConstant::Customer){
+            array_push($relatives, 'customerFavorites', 'customerCarts');
+        }
+        return $relatives;
     }
 }

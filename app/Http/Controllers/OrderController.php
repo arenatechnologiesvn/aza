@@ -21,7 +21,6 @@ class OrderController extends CrudController
         $this->service = $service;
     }
 
-
     /**
      * Store a newly created resource in storage.
      *

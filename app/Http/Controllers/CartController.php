@@ -9,73 +9,79 @@
 namespace App\Http\Controllers;
 
 
+use App\Cart;
 use App\Customer;
+use App\Helper\RoleConstant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    private $customer;
+    private $model;
 
-    public function __construct(Customer $customer)
+    public function __construct(Cart $model)
     {
-        $this->customer = $customer;
+        $this->model = $model;
     }
 
     public function index(){
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $carts = isset($customer->favorites) ? json_decode($customer->carts, true) : [] ;
-        return $this->api_success_response( $carts);
-    }
-
-    public function show($id){
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $carts = isset($customer->favorites) ? json_decode($customer->carts, true) : [] ;
-        $cart = count($carts) > 0 ? array_filter($carts, function($item) use($id){
-            return $item['product_id'] == $id;
-        }) : [];
-        return $this->api_success_response( $cart);
+        try {
+            $carts = $this->model->where('customer_id', '=', $this->getCustomerId())->get();
+            return $this->api_success_response( ['data' => $carts ]);
+        } catch (\Exception $e) {
+            return $this->api_error_response( $e);
+        }
     }
 
     public function store (Request $request) {
-        $product_id = $request->get('product_id');
-        $quantity = $request->get('quantity');
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $carts = isset($customer->carts) ? json_decode($customer->carts, true) : [] ;
-        if (!$this->checkExist($product_id, $carts)){
-            $carts[] = ['product_id' => $product_id, 'quantity' => $quantity];
-            $customer->carts = json_encode($carts);
-            $customer->save();
+        try {
+            $cart = new Cart;
+            $cart->create($request->all());
+            return $this->api_success_response( ['data' => $this->getByProductId($request->get('product_id'))]);
+        } catch (\Exception $e) {
+            return $this->api_error_response($e);
         }
-        return $this->api_success_response($carts);
     }
 
-    public function update(Request $request, $id = null) {
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $carts = isset($customer->favorites) ? json_decode($customer->favorites, true) : [] ;
-        if (($key = array_search($id, array_column($carts, 'product_id'))) !== false){
-            $carts[$key] = ['product_id' => $id, 'quantity' => $request->get('quantity')];
-            $customer->carts = json_encode($carts);
-            $customer->save();
+    public function update(Request $request, $id) {
+        try {
+            $this->model->where([
+                ['customer_id', '=', $this->getCustomerId()],
+                ['product_id', '=', $id]
+            ])->update(['quantity' => $request->get('quantity')]);
+            return $this->api_success_response(['data' => $this->getByProductId($id)]);
+        } catch (\Exception $e) {
+            return $this->api_error_response($e);
         }
-        return $this->api_success_response($carts);
     }
 
     public function destroy($id) {
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $carts = isset($customer->favorites) ? json_decode($customer->favorites, true) : [] ;
-        if (($key = array_search($id, array_column($carts, 'product_id'))) !== false){
-            unset($carts[$key]);
-            $customer->carts = json_encode($carts);
-            $customer->save();
+        try {
+            $cart = $this->model->where([
+                ['customer_id', '=', $this->getCustomerId()],
+                ['product_id', '=', $id]
+            ])->delete();
+            return $this->api_success_response(['data' => $cart]);
+        } catch (\Exception $e) {
+            return $this->api_error_response($e);
         }
-        return $this->api_success_response($carts);
     }
 
-    private function checkExist ($product_id, $carts) {
-        if (count($carts) < 1) return false;
-        return array_filter($carts, function ($e) use ($product_id) {
-            return $e['product_id'] == $product_id;
-        });
+    private function getCustomerId (){
+        try {
+            if (Auth::user()->role_id == RoleConstant::Customer){
+                return Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    private function getByProductId ($product_id) {
+        return  $this->model->where([
+            ['customer_id', '=', $this->getCustomerId()],
+            ['product_id', '=', $product_id]
+        ])->firstOrFail();
     }
 }

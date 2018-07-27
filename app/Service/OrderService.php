@@ -9,13 +9,11 @@
 namespace App\Service;
 
 
+use App\Cart;
+use App\Helper\RoleConstant;
 use App\Order;
-use App\ProductOrder;
-use function foo\func;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-
+use App\Customer;
 class OrderService extends BaseService
 {
     protected $selectable = [
@@ -43,24 +41,22 @@ class OrderService extends BaseService
         return is_callable($selectable) ? $selectable() : $this->selectable();
     }
     protected function selectable(){
-        return $this->model->select($this->selectable)->with(['products'=> function($query) {
-            $query->select([
-                'id',
-                'name',
-                'description',
-                'price',
-                'unit',
-                'provider_id'
-            ])->with(['provider'=> function ($q2) {
-                $q2->select(['id', 'name']);
-            }]);
-        }]);
+        return $this->selectByRole();
     }
 
     public function beforeCreate($order) {
-        $order['order_code'] = time();
-        $order['title'] = 'Dơn hàng số 2';
-        $order['customer_id'] = Auth::user()->id;
+        $order['order_code'] = 'DH-'.time();
+        $order['status'] = 1;
+        // Delete cart before save order
+        $customer_id = Customer::select(['id'])->where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
+        if($customer_id) Cart::where('customer_id', '=', $customer_id)->delete();
+
+        if(empty($order['customer_id']))
+            $order['customer_id'] = Customer::select(['id'])->where('user_id', '=',Auth::user()->id)->firstOrFail()->id;
+        if(!empty($order['delivery'])) {
+            $order['delivery'] = strtotime($order['delivery']);
+        }
+        $order['apply_at'] = time();
         return $order;
     }
 
@@ -76,6 +72,36 @@ class OrderService extends BaseService
                 });
             }
             $order->products()->sync($data['product']);
+        }
+    }
+
+    private function selectByRole() {
+        if(Auth::user()->role_id == RoleConstant::Customer){
+            return $this->model->select($this->selectable)->with(['products'=> function($query) {
+                $query->select([
+                    'id',
+                    'name',
+                    'description',
+                    'price',
+                    'unit',
+                    'provider_id'
+                ])->with(['provider'=> function ($q2) {
+                    $q2->select(['id', 'name']);
+                }]);
+            }])->where('customer_id', '=', Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id);
+        } else {
+            return $this->model->select($this->selectable)->with(['products'=> function($query) {
+                $query->select([
+                    'id',
+                    'name',
+                    'description',
+                    'price',
+                    'unit',
+                    'provider_id'
+                ])->with(['provider'=> function ($q2) {
+                    $q2->select(['id', 'name']);
+                }]);
+            },'customer']);
         }
     }
 }

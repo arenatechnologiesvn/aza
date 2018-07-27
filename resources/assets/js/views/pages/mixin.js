@@ -34,7 +34,7 @@ export default {
       if (value) {
         this.loading();
       } else {
-        this.loader.close();
+        this.loader && this.loader.close();
       }
     }
   }

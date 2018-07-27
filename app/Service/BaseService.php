@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 abstract class BaseService
 {
-    public $model;
+    protected $model;
     protected $selectable = [
         'id'
     ];

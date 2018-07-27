@@ -22,7 +22,7 @@ class Order extends BaseModel
         'delivery_address',
         'total_money'
     ];
-    public function customers()
+    public function customer()
     {
         return $this->belongsTo(Customer::class);
     }

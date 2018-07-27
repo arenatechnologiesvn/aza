@@ -9,15 +9,15 @@
 <script>
   import AppMain from "../components/AppMain"
   import GuestFooter from "../components/GuestFooter"
-  import LoginLogo from "../components/LoginLogo";
+  import LoginLogo from "../components/LoginLogo"
   import '~/style/guest.scss'
 
   export default {
+    name: 'GuestLayout',
     components: {
       LoginLogo,
       GuestFooter,
       AppMain
-    },
-    name: 'GuestLayout'
+    }
   }
 </script>
