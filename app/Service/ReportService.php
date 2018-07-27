@@ -17,25 +17,57 @@ class ReportService
         $this->productModel = $productModel;
     }
 
-    public function getRevenues($params)
+    public function getRevenuesByMonth($month)
     {
-        $weekOrMonthSelect = '';
-        if ($params->type == 'week') {
-            $weekOrMonthSelect = 'CONCAT(WEEK(FROM_UNIXTIME(orders.updated_at))) as week';
-        } else {
-            $weekOrMonthSelect = 'DATE_FORMAT(FROM_UNIXTIME(orders.updated_at), "%m-%Y") as month';
-        }
-
-        return DB::table('orders')
+        $revenues = DB::table('orders')
             ->select(
-                DB::raw($weekOrMonthSelect),
-                DB::raw('SUM(order_product.quantity) as quantity_total'),
+                DB::raw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%d-%m-%Y") as day'),
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
             ->where('orders.status', 1)
-            ->groupBy($params->type)
+            ->whereRaw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%m-%Y")', $month)
+            ->groupBy('day')
             ->get();
+        
+        $firstDay = '01-'.$month;
+        $endDay = date('t-m-Y', strtotime($firstDay));
+        $dates = DateTimeHelper::getListDateTime($firstDay, $endDay, 'P1D', 'd-m-Y');
+
+        $results = [];
+        foreach ($dates as $date) {
+            array_push($results, [
+                'day' => $date,
+                'revenue' => $this->getRevenueByEachDate($revenues, $date)
+            ]);
+        }
+
+        return $results;
+    }
+
+    public function getRevenuesByYear($year)
+    {
+        $revenues = DB::table('orders')
+            ->select(
+                DB::raw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%m-%Y") as month'),
+                DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
+            )
+            ->join('order_product', 'order_product.order_id', '=', 'orders.id')
+            ->where('orders.status', 1)
+            ->whereRaw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y")', $year)
+            ->groupBy('month')
+            ->get();
+
+        $results = [];
+        for($month = 1; $month <= 12; $month++) {
+            $mkMonth = date('m', mktime(0,0,0,$month, 1, date('Y'))) . '-' . $year;
+            array_push($results, [
+                'month' => $mkMonth,
+                'revenue' => $this->getRevenueByEachMonth($revenues, $mkMonth)
+            ]);
+        }
+
+        return $results;
     }
 
     public function getCustomerRevenue($params)
@@ -51,7 +83,7 @@ class ReportService
             ->join('products', 'products.id', '=', 'order_product.product_id')
             ->where('customer_id', $params['customer_id'])
             ->where('orders.status', 1)
-            ->whereBetween('orders.updated_at', [
+            ->whereBetween('orders.apply_at', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
             ])
@@ -69,10 +101,10 @@ class ReportService
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
             ->join('customers', 'customers.id', '=', 'orders.customer_id')
             ->join('employees', 'employees.id', '=', 'customers.employee_id')
-            ->join('users', 'users.id', '=', 'customers.user_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
             ->where('customers.employee_id', $params['employee_id'])
             ->where('orders.status', 1)
-            ->whereBetween('orders.updated_at', [
+            ->whereBetween('orders.apply_at', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
             ])
@@ -134,7 +166,7 @@ class ReportService
             ->groupBy('access_day')
             ->get();
 
-        $dates = DateTimeHelper::getDates($params['start_date'], $params['end_date'], 'P1D');
+        $dates = DateTimeHelper::getListDateTime($params['start_date'], $params['end_date'], 'P1D', 'd-m-Y');
         foreach ($dates as $date) {
             array_push($results, [
                 'access_day' => $date,
@@ -145,12 +177,67 @@ class ReportService
         return $results;
     }
 
+    public function excellentEmployees()
+    {
+        return DB::table('orders')
+            ->select(
+                'employees.id',
+                DB::raw('CONCAT(users.last_name, " ", users.first_name) as name'),
+                DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
+            )
+            ->join('order_product', 'order_product.order_id', '=', 'orders.id')
+            ->join('customers', 'customers.id', '=', 'orders.customer_id')
+            ->join('employees', 'employees.id', '=', 'customers.employee_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
+            ->where('orders.status', 1)
+            ->groupBy('employees.id', 'users.first_name', 'users.last_name')
+            ->orderBy('revenue_total', 'desc')
+            ->take(5)
+            ->get();
+    }
+
+    public function soldWellProducts()
+    {
+        return DB::table('orders')
+            ->select(
+                'order_product.product_id',
+                'products.name as product_name',
+                DB::raw('SUM(order_product.quantity) as quantity_total'),
+                DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
+            )
+            ->join('order_product', 'order_product.order_id', '=', 'orders.id')
+            ->join('products', 'products.id', '=', 'order_product.product_id')
+            ->where('orders.status', 1)
+            ->groupBy('order_product.product_id', 'products.name')
+            ->orderBy('revenue_total', 'desc')
+            ->take(5)
+            ->get();
+    }
+
     /*================================ PRIVATE FUNCTIONS ================================*/
 
     private function getAccessCount($access_count, $date)
     {
         foreach ($access_count as $item) {
             if ($item->access_day == $date) return $item->access_count;
+        }
+
+        return 0;
+    }
+
+    private function getRevenueByEachDate($revenues, $date)
+    {
+        foreach ($revenues as $item) {
+            if ($item->day == $date) return $item->revenue_total;
+        }
+
+        return 0;
+    }
+
+    private function getRevenueByEachMonth($revenues, $month)
+    {
+        foreach ($revenues as $item) {
+            if ($item->month == $month) return $item->revenue_total;
         }
 
         return 0;

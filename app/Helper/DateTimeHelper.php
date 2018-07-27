@@ -4,7 +4,7 @@ namespace App\Helper;
 
 class DateTimeHelper
 {
-    public static function getDates($startDate, $endDate, $interval)
+    public static function getListDateTime($startDate, $endDate, $interval, $format)
     {
         $dates = [];
         $period = new \DatePeriod(
@@ -14,7 +14,7 @@ class DateTimeHelper
         );
 
         foreach ($period as $key => $value) {
-            array_push($dates, $value->format('d-m-Y'));
+            array_push($dates, $value->format($format));
         }
         array_push($dates, $endDate);
 

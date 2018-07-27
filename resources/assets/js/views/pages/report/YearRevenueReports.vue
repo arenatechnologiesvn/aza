@@ -4,8 +4,20 @@
       span
         svg-icon(icon-class="fa-solid chart-bar")
         span(style="margin-left: 10px;") DOANH THU THEO NĂM
-    div(style="margin-bottom: 50px")
-      year-revenue-chart(:options="chartOptions" ref="yearAccessChart")
+    div(style="margin-bottom: 20px")
+      year-revenue-chart(:options="chartOptions" ref="yearRevenueChart")
+    .control__wrapper
+      el-row
+        el-col(:span="24" style="text-align: right")
+          span(style="margin-right: 5px") Chọn năm:
+          el-date-picker(
+            v-model="selectedYear"
+            type="year"
+            format="yyyy"
+            value-format="yyyy"
+            placeholder="Kích vào để chọn năm"
+            size="small"
+          )
     .table__wrapper
       div.index__container
         div.table
@@ -13,8 +25,10 @@
             el-table-column(prop="num" label="STT" align="center" width="60")
               template(slot-scope="scope")
                 span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
-            el-table-column(prop="week" label="TUẦN" sortable min-width="200")
-            el-table-column(prop="revenue" label="DOANH THU" sortable min-width="120")
+            el-table-column(prop="month" label="THÁNG" sortable min-width="200")
+            el-table-column(prop="revenue" label="DOANH THU (VND)" sortable min-width="120")
+              template(slot-scope="scope")
+                span {{ Number(scope.row.revenue).toLocaleString('de-DE') }}
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[5, 10, 20, 30, 50]"
@@ -26,33 +40,34 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
-import YearRevenueChart from '~/components/Chart/BarChart'
+import YearRevenueChart from '~/components/Chart/BarChart';
+import moment from 'moment';
+
 const DEDAULT_PAGE_SIZE = 5;
 
 export default {
   name: 'year-revenue-reports',
   components: {
-    WeekRevenueChart
+    YearRevenueChart
   },
   computed: {
     ...mapGetters({
-      accessStatistical: 'report/accessStatistical'
+      yearRevenues: 'report/yearRevenues'
     }),
 
     tableData() {
-      return this.filteredData(this.accessStatistical);
+      return this.filteredData(this.yearRevenues);
     }
   },
   created() {
-
+    this.getRevenues();
   },
   data() {
     return {
       currentPage: 1,
       totalDataNum: 0,
       pageSize: DEDAULT_PAGE_SIZE,
-      selectedDate: [],
-      selectedCustomer: '',
+      selectedYear: moment().format('YYYY'),
       chartOptions: {
         tooltip: {
           trigger: 'axis',
@@ -82,9 +97,9 @@ export default {
         }],
         yAxis: [{
           type: 'value',
-          name: 'Số lần truy cập',
+          name: 'Doanh thu (VND)',
           min: 0,
-          interval: 50
+          interval: 100000000
         }],
         series: [{
           name:'Biểu đồ cột',
@@ -101,20 +116,15 @@ export default {
     }
   },
   methods: {
-    getStatistical() {
-      if (this.canGetStatistical()) {
-        this.fetchCustomerAccessStatistical({
-          customerId: this.selectedCustomer,
-          startDate: this.selectedDate[0],
-          endDate: this.selectedDate[1]
-        }).catch(() => {
-          // Do nothing
-        });
-      }
-    },
-
-    canGetStatistical() {
-      return this.selectedCustomer && this.selectedDate.length;
+    getRevenues() {
+      this.fetchRevenues({
+        type: 'year',
+        year: this.selectedYear
+      }).then(() => {
+        this.refreshChartOptions();
+      }).catch(() => {
+        // Do nothing
+      });
     },
 
     filteredData(data) {
@@ -140,33 +150,23 @@ export default {
     refreshChartOptions() {
       const xAxis = [];
       const serieData = [];
-      this.accessStatistical.forEach(item => {
-        xAxis.push(item.access_day);
-        serieData.push(item.access_count);
+      this.yearRevenues.forEach(item => {
+        xAxis.push(item.month);
+        serieData.push(item.revenue);
       });
       this.chartOptions.xAxis[0].data = xAxis;
       this.chartOptions.series[0].data = serieData;
       this.chartOptions.series[1].data = serieData;
-      this.$refs.yearAccessChart.refresh(this.chartOptions);
+      this.$refs.yearRevenueChart.refresh(this.chartOptions);
     },
 
     ...mapActions({
-      fetchCustomerAccessStatistical: 'report/fetchCustomerAccessStatistical'
+      fetchRevenues: 'report/fetchRevenues'
     })
   },
   watch: {
-    selectedCustomer() {
-      if (this.canGetStatistical()) this.getStatistical();
-    },
-
-    selectedDate() {
-      if (this.canGetStatistical()) this.getStatistical();
-    },
-
-    accessStatistical() {
-      if (this.accessStatistical.length) {
-        this.refreshChartOptions();
-      }
+    selectedYear() {
+      this.getRevenues();
     }
   }
 }

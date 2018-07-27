@@ -16,7 +16,13 @@ class ReportController extends Controller
 
     public function getRevenues(StoreRevenue $request)
     {
-        $revenues = $this->service->getRevenues($request);
+        $revenues = [];
+        if ($request->type == 'month') {
+            $revenues = $this->service->getRevenuesByMonth($request->month);
+        } else {
+            $revenues = $this->service->getRevenuesByYear($request->year);
+        }
+
         return $this->api_success_response(['data' => $revenues]);
     }
 
@@ -42,5 +48,17 @@ class ReportController extends Controller
     {
         $statisticals = $this->service->accessStatistical($request);
         return $this->api_success_response(['data' => $statisticals]);
+    }
+
+    public function excellentEmployees()
+    {
+        $employees = $this->service->excellentEmployees();
+        return $this->api_success_response(['data' => $employees]);
+    }
+
+    public function soldWellProducts()
+    {
+        $products = $this->service->soldWellProducts();
+        return $this->api_success_response(['data' => $products]);
     }
 }

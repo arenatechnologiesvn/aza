@@ -1,4 +1,12 @@
-import { getCustomerRevenue, getEmployeeRevenue, getNoneOrderCustomers, getAcsessStatistical } from '~/api/report';
+import {
+  getCustomerRevenue,
+  getEmployeeRevenue,
+  getNoneOrderCustomers,
+  getAcsessStatistical,
+  getRevenues,
+  getExcellentEmployees,
+  getSoldWellProducts
+} from '~/api/report';
 
 const report = {
   namespaced: true,
@@ -7,7 +15,11 @@ const report = {
     customerRevenue: [],
     employeeRevenue: [],
     noneOrderCustomers: [],
-    accessStatistical: []
+    accessStatistical: [],
+    monthRevenues: [],
+    yearRevenues: [],
+    excellentEmployees: [],
+    soldWellProducts: []
   },
 
   getters: {
@@ -25,6 +37,22 @@ const report = {
 
     accessStatistical: (state) => {
       return state.accessStatistical;
+    },
+
+    monthRevenues: (state) => {
+      return state.monthRevenues;
+    },
+
+    yearRevenues: (state) => {
+      return state.yearRevenues;
+    },
+
+    excellentEmployees: (state) => {
+      return state.excellentEmployees;
+    },
+
+    soldWellProducts: (state) => {
+      return state.soldWellProducts;
     }
   },
 
@@ -43,6 +71,22 @@ const report = {
 
     SET_ACCESS_STATISTICAL: (state, accessStatistical) => {
       state.accessStatistical = accessStatistical;
+    },
+
+    SET_MONTH_REVENUES: (state, monthRevenues) => {
+      state.monthRevenues = monthRevenues;
+    },
+
+    SET_YEAR_REVENUES: (state, yearRevenues) => {
+      state.yearRevenues = yearRevenues;
+    },
+
+    SET_EXCELLENT_EMPLOYEES: (state, employees) => {
+      state.excellentEmployees = employees;
+    },
+
+    SET_SOLD_WELL_PRODUCTS: (state, products) => {
+      state.soldWellProducts = products;
     }
   },
 
@@ -91,6 +135,50 @@ const report = {
         getAcsessStatistical(customerId, startDate, endDate).then(response => {
           const data = response.data;
           commit('SET_ACCESS_STATISTICAL', data);
+
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
+    fetchRevenues ({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getRevenues(params).then(response => {
+          const data = response.data;
+
+          if (params.type === 'month') {
+            commit('SET_MONTH_REVENUES', data);
+          } else {
+            commit('SET_YEAR_REVENUES', data);
+          }
+
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
+    fetchExcellentEmployees ({ commit }) {
+      return new Promise((resolve, reject) => {
+        getExcellentEmployees().then(response => {
+          const data = response.data;
+          commit('SET_EXCELLENT_EMPLOYEES', data);
+
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
+    fetchSoldWellProductss ({ commit }) {
+      return new Promise((resolve, reject) => {
+        getSoldWellProducts().then(response => {
+          const data = response.data;
+          commit('SET_SOLD_WELL_PRODUCTS', data);
 
           resolve();
         }).catch(error => {

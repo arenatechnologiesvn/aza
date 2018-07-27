@@ -24,7 +24,9 @@ class StoreRevenue extends BaseFormRequest
     public function rules()
     {
         return [
-            'type' => 'required|string|in:week,month'
+            'type' => 'required|string|in:month,year',
+            'month' => 'required_if:type,==,month|date_format:m-Y',
+            'year' => 'required_if:type,==,year|date_format:Y'
         ];
     }
 }

@@ -1,13 +1,14 @@
 <template lang="pug">
   div.dashboard-container
     el-row
-      el-col(:xs="24" :sm="24" :lg="24" style="padding-right: 5px")
+      el-col(:xs="24" :sm="24" :lg="24")
         month-revenue-reports
+    div.clearfix(style="margin: 15px 0;")
     el-row
-      el-col(:xs="24" :sm="24" :lg="24" style="padding-left: 5px")
-        //month-revenue-reports
+      el-col(:xs="24" :sm="24" :lg="24")
+        year-revenue-reports
 
-    div.clearfix(style="margin: 10px 0;")
+    div.clearfix(style="margin: 15px 0;")
     el-row
       el-col(:span="24")
         el-card
@@ -17,7 +18,7 @@
               span(style="margin-left: 10px;") NHÂN VIÊN XUẤT SẮC
           div
 
-    div.clearfix(style="margin: 10px 0;")
+    div.clearfix(style="margin: 15px 0;")
     el-row
       el-col(:span="24")
         el-card
@@ -32,23 +33,13 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import MonthRevenueReports from '~/views/pages/report/MonthRevenueReports';
+import YearRevenueReports from '~/views/pages/report/YearRevenueReports';
 
 export default {
   name: 'dashboard',
   components: {
-    MonthRevenueReports
-  },
-  computed: {
-    ...mapGetters({
-
-    })
-  },
-  methods: {
-    ...mapActions({
-    })
-  },
-  created () {
-
+    MonthRevenueReports,
+    YearRevenueReports
   }
 }
 </script>

@@ -2,20 +2,20 @@
   el-card
     div.clearfix(slot="header")
       span
-        svg-icon(icon-class="fa-solid chart-bar")
-        span(style="margin-left: 10px;") DOANH THU THEO THÁNG
+        svg-icon(icon-class="fa-solid user-graduate")
+        span(style="margin-left: 10px;") NHÂN VIÊN XUẤT SẮC
     div(style="margin-bottom: 20px")
-      month-revenue-chart(:options="chartOptions" ref="monthRevenueChart")
+      year-revenue-chart(:options="chartOptions" ref="yearRevenueChart")
     .control__wrapper
       el-row
         el-col(:span="24" style="text-align: right")
-          span(style="margin-right: 5px") Chọn tháng:
+          span(style="margin-right: 5px") Chọn năm:
           el-date-picker(
-            v-model="selectedMonth"
-            type="month"
-            format="MM-yyyy"
-            value-format="MM-yyyy"
-            placeholder="Kích vào để chọn tháng"
+            v-model="selectedYear"
+            type="year"
+            format="yyyy"
+            value-format="yyyy"
+            placeholder="Kích vào để chọn năm"
             size="small"
           )
     .table__wrapper
@@ -25,7 +25,7 @@
             el-table-column(prop="num" label="STT" align="center" width="60")
               template(slot-scope="scope")
                 span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
-            el-table-column(prop="day" label="NGÀY" sortable min-width="200")
+            el-table-column(prop="month" label="THÁNG" sortable min-width="200")
             el-table-column(prop="revenue" label="DOANH THU (VND)" sortable min-width="120")
               template(slot-scope="scope")
                 span {{ Number(scope.row.revenue).toLocaleString('de-DE') }}
@@ -40,23 +40,23 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
-import MonthRevenueChart from '~/components/Chart/BarChart';
+import YearRevenueChart from '~/components/Chart/BarChart';
 import moment from 'moment';
 
 const DEDAULT_PAGE_SIZE = 5;
 
 export default {
-  name: 'month-revenue-reports',
+  name: 'year-revenue-reports',
   components: {
-    MonthRevenueChart
+    YearRevenueChart
   },
   computed: {
     ...mapGetters({
-      monthRevenues: 'report/monthRevenues'
+      yearRevenues: 'report/yearRevenues'
     }),
 
     tableData() {
-      return this.filteredData(this.monthRevenues);
+      return this.filteredData(this.yearRevenues);
     }
   },
   created() {
@@ -67,7 +67,7 @@ export default {
       currentPage: 1,
       totalDataNum: 0,
       pageSize: DEDAULT_PAGE_SIZE,
-      selectedMonth: moment().format('MM-YYYY'),
+      selectedYear: moment().format('YYYY'),
       chartOptions: {
         tooltip: {
           trigger: 'axis',
@@ -118,8 +118,8 @@ export default {
   methods: {
     getRevenues() {
       this.fetchRevenues({
-        type: 'month',
-        month: this.selectedMonth
+        type: 'year',
+        year: this.selectedYear
       }).then(() => {
         this.refreshChartOptions();
       }).catch(() => {
@@ -150,14 +150,14 @@ export default {
     refreshChartOptions() {
       const xAxis = [];
       const serieData = [];
-      this.monthRevenues.forEach(item => {
-        xAxis.push(item.day);
+      this.yearRevenues.forEach(item => {
+        xAxis.push(item.month);
         serieData.push(item.revenue);
       });
       this.chartOptions.xAxis[0].data = xAxis;
       this.chartOptions.series[0].data = serieData;
       this.chartOptions.series[1].data = serieData;
-      this.$refs.monthRevenueChart.refresh(this.chartOptions);
+      this.$refs.yearRevenueChart.refresh(this.chartOptions);
     },
 
     ...mapActions({
@@ -165,7 +165,7 @@ export default {
     })
   },
   watch: {
-    selectedMonth() {
+    selectedYear() {
       this.getRevenues();
     }
   }
