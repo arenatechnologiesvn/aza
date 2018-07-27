@@ -65,11 +65,23 @@
       Comment
     },
     computed: {
-      ...mapGetters('cproduct', {
-        ById: 'byId'
+      ...mapGetters('products', {
+        data: 'byId'
       }),
       product () {
-        return this.ById(this.$route.params.id)
+        const item = this.data(this.$route.params.id)
+        return item ? {
+          id: item.id,
+          title: item.name,
+          img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+          category: item.category ? item.category.name : 'Chưa xác định',
+          price: item.price,
+          discount: item.discount_price || item.price,
+          inventory: 10,
+          added: item.customer_carts && item.customer_carts.length > 0,
+          favorite: item.customer_favorites && item.customer_favorites.length > 0,
+          description: item.description
+        }: {}
       }
     },
     data () {
@@ -82,7 +94,7 @@
       $route: 'getById'
     },
     methods: {
-      ...mapActions('cproduct', {
+      ...mapActions('products', {
         fetchData : 'fetchSingle'
       }),
       minus () {
@@ -92,7 +104,9 @@
         this.rating = score
       },
       getById () {
-        this.fetchData(this.$route.params.id)
+        this.fetchData({
+          id: this.$route.params.id
+        })
       }
     },
     created () {

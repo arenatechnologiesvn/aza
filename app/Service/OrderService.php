@@ -9,6 +9,7 @@
 namespace App\Service;
 
 
+use App\Helper\RoleConstant;
 use App\Order;
 use App\ProductOrder;
 use function foo\func;
@@ -43,25 +44,18 @@ class OrderService extends BaseService
         return is_callable($selectable) ? $selectable() : $this->selectable();
     }
     protected function selectable(){
-        return $this->model->select($this->selectable)->with(['products'=> function($query) {
-            $query->select([
-                'id',
-                'name',
-                'description',
-                'price',
-                'unit',
-                'provider_id'
-            ])->with(['provider'=> function ($q2) {
-                $q2->select(['id', 'name']);
-            }]);
-        }]);
+        return $this->selectByRole();
     }
 
     public function beforeCreate($order) {
         $order['order_code'] = 'DH-'.time();
+        $order['status'] = 1;
         if(empty($order['customer_id']))
             $order['customer_id'] = Customer::select(['id'])->where('user_id', '=',Auth::user()->id)->firstOrFail()->id;
-        $order['status'] = 1;
+        if(!empty($order['delivery'])) {
+            $order['delivery'] = strtotime($order['delivery']);
+        }
+        $order['apply_at'] = time();
         return $order;
     }
 
@@ -77,6 +71,36 @@ class OrderService extends BaseService
                 });
             }
             $order->products()->sync($data['product']);
+        }
+    }
+
+    private function selectByRole() {
+        if(Auth::user()->role_id == RoleConstant::Customer){
+            return $this->model->select($this->selectable)->with(['products'=> function($query) {
+                $query->select([
+                    'id',
+                    'name',
+                    'description',
+                    'price',
+                    'unit',
+                    'provider_id'
+                ])->with(['provider'=> function ($q2) {
+                    $q2->select(['id', 'name']);
+                }, 'preview']);
+            }])->where('customer_id', '=', Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id);
+        } else {
+            return $this->model->select($this->selectable)->with(['products'=> function($query) {
+                $query->select([
+                    'id',
+                    'name',
+                    'description',
+                    'price',
+                    'unit',
+                    'provider_id'
+                ])->with(['provider'=> function ($q2) {
+                    $q2->select(['id', 'name']);
+                }, 'preview']);
+            },'customer']);
         }
     }
 }

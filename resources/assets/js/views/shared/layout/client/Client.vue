@@ -12,6 +12,7 @@
   import AppMain from '~/views/shared/components/AppMain'
   import Navbar from './components/Navbar'
   import AsaFooter from './components/Footer'
+  import {mapActions} from 'vuex'
   import '~/style/client.scss'
   export default {
     name: 'ClientLayout',
@@ -19,6 +20,20 @@
       AppMain,
       Navbar,
       AsaFooter
+    },
+    watch: {
+      $route: 'fetchData'
+    },
+    methods: {
+      ...mapActions('products', {
+        fetchProducts: 'fetchList'
+      }),
+      fetchData () {
+        this.fetchProducts();
+      }
+    },
+    created (){
+      this.fetchData()
     }
   }
 </script>

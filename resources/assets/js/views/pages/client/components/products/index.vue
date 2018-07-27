@@ -1,10 +1,10 @@
 <template lang="pug">
   div.product__container
-    div.product__wrapper(v-for="item in products" :key="item.id")
+    div.product__wrapper(v-for="(item, key) in products" :key="key")
       div.container
         list-product.product__category(
         :control="control"
-        :category="(item.length > 0 && item[0] && item[0].category) || 'Danh mục'"
+        :category="key"
         :products="item")
 </template>
 
@@ -15,14 +15,6 @@
 
   export default {
     name: 'IndexProduct',
-    computed: {
-      ...mapGetters('cproduct', {
-        'listProducts': 'list'
-      }),
-      products () {
-        return _.groupBy(this.listProducts, 'category')
-      }
-    },
     props: {
       type: {
         type: String,
@@ -32,9 +24,9 @@
         type: Boolean,
         default: true
       },
-      items: {
-        type: Number,
-        default: 6
+      products: {
+        type: Object,
+        default: () => {}
       }
     },
     components: {

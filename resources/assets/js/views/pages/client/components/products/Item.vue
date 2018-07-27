@@ -36,10 +36,31 @@
     },
     methods: {
       ...mapActions('cart', {
-        addProductToCart: 'addProductToCart'
+        add2Cart: 'create',
+        updateCart: 'update'
       }),
       addToCart (product) {
-        this.addProductToCart(product)
+        if (product.added) {
+          const data = {
+            product_id: product.id,
+            quantity: parseInt(product.quantity) + 1,
+            customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+          }
+          console.log(data)
+          this.updateCart({
+            id: product.id,
+            data: data
+          })
+        } else {
+          this.add2Cart({
+            data: {
+              product_id: product.id,
+              quantity: 1,
+              customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+            }
+          }).then(res => console.log(res))
+            .catch(err =>  console.log(err))
+        }
       },
       toggleFavorite (product) {
         if (product.favorite) {

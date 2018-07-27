@@ -11,7 +11,7 @@
           div
             table.cart-dropdown
               tbody
-                tr(v-for="item in items" :key="item.id")
+                tr(v-for="item in products" :key="item.id")
                   td(style="width: 20%")
                     img(:src="item.img" width="50" height="50")
                   td(style="width: 60%")
@@ -29,21 +29,37 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex'
+  import _ from 'lodash'
   export default {
     name: 'FormSearch',
     computed: {
       ...mapGetters('cart', {
-        total: 'total',
-        items: 'cartProducts'
-      })
+        data: 'list',
+        cartData: 'cartProducts'
+      }),
+      total () {
+        return this.data.length === 0 ? 0 :
+          this.data.length === 1 ? this.data[0].quantity :
+          _.map(this.data, 'quantity').reduce((a, b) => a + b)
+      },
+      products () {
+        return this.cartData()
+      }
     },
     methods: {
       ...mapActions('cart', {
-        remove: 'removeFromCard'
+        remove: 'destroy',
+        fetchCart: 'fetchList'
       }),
+      fetchData () {
+        this.fetchCart()
+      },
       RemoveFromCart (item) {
         this.remove(item)
       }
+    },
+    created () {
+      this.fetchData()
     }
   }
 </script>

@@ -12,42 +12,70 @@ namespace App\Http\Controllers;
 use App\Customer;
 
 
+use App\Favorite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-    private $customer;
+    private $model;
 
-    public function __construct(Customer $customer)
+    public function __construct(Favorite $model)
     {
-        $this->customer = $customer;
+        $this->model = $model;
     }
 
     public function index(){
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $favorites = isset($customer->favorites) ? json_decode($customer->favorites, true) : [] ;
-        return $favorites ? $this->api_success_response( array_values($favorites)) : $this->api_success_response('');
+        try {
+            $carts = $this->model->where('customer_id', '=', $this->getCustomerId())->get();
+            return $this->api_success_response( ['data' => $carts ]);
+        } catch (\Exception $e) {
+            return $this->api_error_response( $e);
+        }
     }
 
     public function store (Request $request) {
-        $product_id = $request->get('product_id');
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $favorites = isset($customer->favorites) ? json_decode($customer->favorites, true) : [] ;
-        $favorites[] = $product_id;
-        $customer->favorites = json_encode($favorites);
-        $customer->save();
-        return $this->api_success_response($favorites);
+        try {
+            $carts = $this->model->save($request->all());
+            return $this->api_success_response( $carts);
+        } catch (\Exception $e) {
+            return $this->api_error_response($e);
+        }
     }
 
     public function update(Request $request, $id = null) {
-        $customer = $this->customer->where('user_id', Auth::user()->id)->firstOrFail();
-        $favorites = isset($customer->favorites) ? json_decode($customer->favorites, true) : [] ;
-        if (($key = array_search($id, $favorites)) !== false){
-            unset($favorites[$key]);
-            $customer->favorites = json_encode($favorites);
-            $customer->save();
+        try {
+            $cart = $this->model->where([
+                ['customer_id', '=', $this->getCustomerId()],
+                ['product_id', '=', $id]
+            ])->firstOrFail();
+            if ($cart) $cart->update($request->all());
+            return $this->api_success_response(['data' => $cart]);
+        } catch (\Exception $e) {
+            return $this->api_error_response($e);
         }
-        return $this->api_success_response($favorites);
+    }
+
+    public function destroy($id) {
+        try {
+            $cart = $this->model->where([
+                ['customer_id', '=', $this->getCustomerId()],
+                ['product_id', '=', $id]
+            ])->delete();
+            return $this->api_success_response($cart);
+        } catch (\Exception $e) {
+            return $this->api_error_response($e);
+        }
+    }
+
+    private function getCustomerId (){
+        try {
+            if (Auth::user()->role_id == RoleConstant::Customer){
+                return Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

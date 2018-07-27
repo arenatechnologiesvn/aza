@@ -18,6 +18,7 @@ import getters from './getters';
 import cproduct from './modules/cproducts';
 import favorite from './modules/favorite';
 import cart from './modules/cart';
+import orders from './modules/orders';
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -38,7 +39,8 @@ const store = new Vuex.Store({
     administrative,
     cproduct,
     favorite,
-    cart
+    cart,
+    orders
   },
   getters
 });

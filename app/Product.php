@@ -1,8 +1,11 @@
 <?php
 
 namespace App;
+use App\Helper\RoleConstant;
+use Illuminate\Support\Facades\Auth;
 use Plank\Mediable\Mediable;
 use Plank\Mediable\Media as Media;
+use Tymon\JWTAuth\Claims\Custom;
 
 class Product extends BaseModel
 {
@@ -44,13 +47,16 @@ class Product extends BaseModel
     }
 
     public function customerFavorites () {
-        return $this->belongsToMany(Customer::class,'favorites', 'product_id','customer_id');
+        return $this->belongsToMany(Customer::class,'favorites', 'product_id','customer_id')
+            ->where('customer_id', '=', $this->getCustomerId());
     }
 
     public function customerCarts () {
-        return $this->belongsToMany(Customer::class,'carts', 'product_id','customer_id');
+        return $this->belongsToMany(Customer::class,'carts', 'product_id','customer_id')
+            ->withPivot('quantity')
+            ->where('customer_id', '=', $this->getCustomerId());
     }
-    public function preview () {
+    public function previews () {
         return $this->morphToMany('Plank\Mediable\Media', 'mediable','mediables', 'mediable_id')
         ->withPivot('mediable_type', 'tag')
         ->where([
@@ -58,12 +64,23 @@ class Product extends BaseModel
             ['tag', '=', 'preview']
         ]);
     }
-    public function featureds () {
+    public function featured () {
         return $this->morphToMany('Plank\Mediable\Media', 'mediable','mediables', 'mediable_id')
         ->withPivot('mediable_type', 'tag')
         ->where([
             ['mediable_type', '=', 'App\Product'],
             ['tag', '=', 'featured']
         ]);
+    }
+
+    private function getCustomerId (){
+        try {
+            if (Auth::user()->role_id == RoleConstant::Customer){
+                return Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

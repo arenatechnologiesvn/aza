@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Helper\RoleConstant;
 use App\Product;
 use App\Service\MediaService;
 use Illuminate\Support\Facades\Auth;
@@ -28,20 +29,24 @@ class ProductService extends BaseService
         parent::__construct($model);
     }
 
+    /*
+    * Get All Product for home with favorite and card of customers
+    * */
+
     public function getAllProducts()
     {
         /*
           Select by orm
         */
-        // return $this->model->with(['category', 'provider', 'featureds','preview'])->get();
+         return $this->model->with($this->relative())->get();
         /* 
           Maping
         */
-        $products = $this->model->get()->map(function ($item) {
-            return $this->transformData($item);
-        });
-            
-        return $products;    
+//        $products = $this->model->get()->map(function ($item) {
+//            return $this->transformData($item);
+//        });
+//
+//        return $products;
     }
 
     public function getProductById($id)
@@ -142,5 +147,13 @@ class ProductService extends BaseService
             // 'customerFavorites'=> $data->customerFavorites->where('user_id', '=', Auth::user()->id),
             // 'preview' => $data->preview
         ];
+    }
+
+    private function relative() {
+        $relatives = ['category', 'provider', 'featured','previews'];
+        if(Auth::user()->role_id == RoleConstant::Customer){
+            array_push($relatives, 'customerFavorites', 'customerCarts');
+        }
+        return $relatives;
     }
 }

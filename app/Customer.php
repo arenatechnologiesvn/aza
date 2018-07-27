@@ -44,4 +44,7 @@ class Customer extends BaseModel
         return $this->belongsToMany(Product::class,'carts', 'customer_id','product_id')
             ->withPivot('quantity');
     }
+    public function orders(){
+        return $this->hasMany(Order::class);
+    }
 }

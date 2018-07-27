@@ -2,7 +2,7 @@
   div(style="margin: 0 auto;")
     slider.slider__container
     slogon.container
-    product
+    product(:products="products")
 </template>
 
 <script>
@@ -19,21 +19,39 @@
       Product,
       Slider
     },
+    watch: {
+      $route: 'fetchData'
+    },
     computed: {
-      ...mapGetters('cproduct', {
-        'listProducts': 'list'
+      ...mapGetters('products', {
+        'data': 'list'
       }),
       products () {
-        return _.groupBy(this.listProducts, 'category')
+        /*
+        * Mapping dat with server */
+        const products = this.data.map(item => ({
+          id: item.id,
+          title: item.name,
+          img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+          category: item.category ? item.category.name : 'Chưa xác định',
+          price: item.price,
+          discount: item.discount_price || item.price,
+          inventory: 10,
+          added: item.customer_carts && item.customer_carts.length > 0,
+          favorite: item.customer_favorites && item.customer_favorites.length > 0,
+          description: item.description,
+          quantity: (item.customer_carts && item.customer_carts.pivot && item.customer_carts.pivot.quantity) || 0
+        }));
+        return (products.length > 0 && _.groupBy(products, 'category')) || {}
       }
     },
     methods: {
-      ...mapActions('cproduct', {
-        'getProducts': 'getAllProducts'
-      })
-    },
-    created () {
-      this.getProducts()
+      ...mapActions('products', {
+        fetchProducts: 'fetchList'
+      }),
+      fetchData () {
+        this.fetchProducts();
+      }
     }
   }
 </script>
