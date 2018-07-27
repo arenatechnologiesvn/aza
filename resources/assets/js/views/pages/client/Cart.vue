@@ -19,36 +19,35 @@
                 template(slot-scope="scope")
                   el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;" @change="changeQuantity(scope.row)")
               el-table-column(prop="total" label="Tổng cộng" :formatter="row =>formatNumber(row.price * row.quantity) + ' (VNĐ)'")
+          div.total
+            p
+              strong Tạm tính:
+              template {{formatNumber(total)}} (VNĐ)
         el-col(:xs="24" :sm="8" :md="8" :lg="8")
           div.cart(style="background-color: #ffffff")
-            div.cart__detail
-              h4 ĐỊA ĐIỂM
-              el-col(:span="18")
-                el-input(v-model="order.address" size="small" disabled placeholder="Địa chỉ giao hàng")
-              el-col(:span="6" style="margin-top: 10px")
-                span(style="font-size: 13px; cursor: pointer;") THAY ĐỔI
-            div.line
-            div.cart__detail
-              h4 KHUNG GIỜ
-              el-row(type="flex" :gutter="10")
-                el-col(:span="24")
-                  el-date-picker(v-model="order.delivery" type="date" size="small" placeholder="Ngày đặt hàng")
-                el-col(:span="24")
-                  el-select(v-model="order.delivery_type" clearable placeholder="Chọn khung giờ" size="small")
-                    el-option(label="9h - 11h" :value="'9h-11h'")
-                    el-option(label="11h - 13h" :value="'11h-13h'")
-                    el-option(label="13h - 15h" :value="'13h-15h'")
-                    el-option(label="15h - 17h" :value="'15h-17h'")
-                    el-option(label="17h - 19h" :value="'17h-19h'")
-            div.line
-            div.cart__detail
-              h4 THÔNG TIN ĐẶT HÀNG
-              el-row(style="margin-bottom: 20px;")
-                el-col(:span="12")
-                  span Tạm tính
-                el-col(:span="12" style="text-align: right;")
-                  span(style="font-size: 1.3em; color: red;") {{formatNumber(total)}} (VNĐ)
-            div.line
+            h4.title__info
+              span
+                svg-icon(icon-class="fa-solid info-circle")
+              template Thông tin đặt hàng
+            el-form
+              el-form-item(label="Nội dung đơn hàng")
+                el-input(v-model="form.title" size="small" placeholder="Nhập nôi dung đơn hàng")
+              el-form-item(label="Mô tả chi tiết")
+                el-input(v-model="form.description" type="textarea" rows="5" size="small" placeholder="Nhập mô tả chi tiết đơn hàng")
+              el-form-item(label="Địa chỉ nhận hàng")
+                el-input(v-model="form.delivery_address" type="textarea" rows="3" size="small" placeholder="Địa chỉ giao hàng")
+              el-row(:gutter="5" type="flex")
+                el-col(:span="14")
+                  el-form-item(label="Ngày giao hàng")
+                    el-date-picker(v-model="form.delivery" type="date" size="small" placeholder="Ngày đặt hàng")
+                el-col(:span="10")
+                  el-form-item(label="Giờ giao hàng")
+                    el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" size="small")
+                      el-option(label="9h - 11h" :value="'9h-11h'")
+                      el-option(label="11h - 13h" :value="'11h-13h'")
+                      el-option(label="13h - 15h" :value="'13h-15h'")
+                      el-option(label="15h - 17h" :value="'15h-17h'")
+                      el-option(label="17h - 19h" :value="'17h-19h'")
             div.cart__detail
               el-button(type="success" @click="checkout") ĐẶT HÀNG
               el-button(type="danger") HỦY BỎ
@@ -60,20 +59,28 @@
   import { mapGetters, mapActions } from 'vuex'
   import _ from 'lodash'
   import { formatNumber } from '~/utils/util'
+  import ElRow from "element-ui/packages/row/src/row";
 
   export default {
     name: 'CustomerCart',
     components: {
+      ElRow,
       BreadCrumb
     },
     data () {
       return {
-        order: {
+        form: {
           delivery_type: '',
           delivery: '',
           title: '',
           address: ''
         }
+      }
+    },
+    watch: {
+      user_info : (value) => {
+        console.log(value)
+        this.form.delivery_address = value
       }
     },
     computed: {
@@ -92,15 +99,15 @@
           this.products.length === 1 ? this.products[0].quantity * this.products[0].price :
             0
       },
-      iCart () {
+      formCart () {
         const user = this.user_info
         return {
-          address:user.customer ? user.customer.address : '',
-          delivery: this.order.delivery,
+          delivery_address: this.form.delivery_address,
+          delivery: this.form.delivery,
           customer_id: user.customer.id,
-          delivery_type: this.order.delivery_type,
+          delivery_type: this.form.delivery_type,
           discount: '',
-          title: 'Đơn Hàng ví dụ',
+          title: this.form.title,
           total_money: this.total,
           product: this.products.map(item => ({
             product_id: item.id, 
@@ -111,15 +118,39 @@
       }
     },
     methods: {
-      checkout () {
-        this.$store.dispatch('cart/checkout', this.iCart).then(res => {
-          console.log(res)
-        }).catch(err => console.log(err))
-      },
       ...mapActions('cart', {
         'removeItem': 'destroy',
-        'updateItem': 'update'
+        'updateItem': 'update',
+        fetchCart: 'fetchList'
       }),
+      ...mapActions('orders', {
+        createOrder: 'create'
+      }),
+      ...mapActions('products', {
+        fetchProduct: 'fetchList'
+      }),
+      canExecute(message) {
+        return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Hủy',
+          type: 'success'
+        }).then(() => {
+          resolve(true);
+        }));
+      },
+      checkout () {
+        this.canExecute('Bạn muốn gửi đơn hàng nay?')
+          .then(() => this.createOrder({
+            data: this.formCart
+          }).then(() => {
+            this.fetchCart()
+          })).then(() => this.$notify(
+            {
+              title: 'Thông báo',
+              message: 'Đã thêm thành công sản phẩm vào danh sách yêu thích',
+              type: 'success'
+            })).then(() => this.$router.push({'name': 'home_account_order'}))
+      },
       remove (id) {
         this.removeItem({id})
           .then(res => console.log(res))
@@ -184,5 +215,26 @@
   }
   .cart__contain {
     margin-bottom: 20px;
+  }
+  .title__info {
+    margin: 5px 0 10px;
+    position: relative;
+    padding-bottom: 10px;
+    border-bottom: 1px solid gray;
+    svg {
+      margin-right: 10px;
+    }
+  }
+  .total {
+    margin: 10px 0;
+    text-align: right;
+    p {
+      font-size: 1.2em;
+      font-weight: bolder;
+      color: firebrick;
+      strong {
+        margin-right: 10px;
+      }
+    }
   }
 </style>

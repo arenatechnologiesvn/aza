@@ -9,13 +9,10 @@
 namespace App\Service;
 
 
+use App\Cart;
 use App\Helper\RoleConstant;
 use App\Order;
-use App\ProductOrder;
-use function foo\func;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use App\Customer;
 class OrderService extends BaseService
 {
@@ -50,6 +47,10 @@ class OrderService extends BaseService
     public function beforeCreate($order) {
         $order['order_code'] = 'DH-'.time();
         $order['status'] = 1;
+        // Delete cart before save order
+        $customer_id = Customer::select(['id'])->where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
+        if($customer_id) Cart::where('customer_id', '=', $customer_id)->delete();
+
         if(empty($order['customer_id']))
             $order['customer_id'] = Customer::select(['id'])->where('user_id', '=',Auth::user()->id)->firstOrFail()->id;
         if(!empty($order['delivery'])) {
@@ -86,7 +87,7 @@ class OrderService extends BaseService
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
-                }, 'preview']);
+                }]);
             }])->where('customer_id', '=', Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id);
         } else {
             return $this->model->select($this->selectable)->with(['products'=> function($query) {
@@ -99,7 +100,7 @@ class OrderService extends BaseService
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
-                }, 'preview']);
+                }]);
             },'customer']);
         }
     }

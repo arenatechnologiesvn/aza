@@ -48,22 +48,6 @@
         font-size: .8em;
         margin-top: 10px;
       }
-      .product-item__control--left {
-        float: left;
-        span {
-          display: block;
-          text-transform: uppercase;
-          &.product-item__price {
-            color: red;
-            font-weight: bolder;
-          }
-          &.product-item__price--discount {
-            text-decoration: line-through;
-            font-size: .8em;
-            color: #999;
-          }
-        }
-      }
       .product-item__control--right {
         float: right;
         span {

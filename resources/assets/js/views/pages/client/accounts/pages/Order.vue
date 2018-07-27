@@ -4,39 +4,63 @@
       svg-icon(icon-class="fa-solid cart-arrow-down")
       template LỊCH SỬ ĐƠN HÀNG
     div.h-line
-
-    div.account-order__content
-      el-table(:data="orders" style="width: 100%" border size="small")
+    div.main-control
+      div(style="margin-bottom: 10px;")
+        el-input(placeholder="Tìm kiếm đơn hàng" size="small")
+          i(slot="prefix" class="el-input__icon el-icon-search")
+      div
+        el-button-group
+          el-button(type="primary" size="small") Hôm nay
+          el-button(type="default" size="small") 7 ngày qua
+          el-button(type="default" size="small") 30 ngày tháng
+        el-select(size="small" style="margin-left: 10px;" placeholder="Trạng thái đơn hàng")
+          el-option(:value="1" label="Đang xử lý")
+          el-option(:value="0" label="Đang hoàn thành")
+        el-date-picker(type="date" style="margin-left: 10px;" size="small" placeholder="Ngày đặt hàng")
+    div.account-order__content(style="padding: 10px;")
+      el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
         el-table-column(type="expand")
           template(slot-scope="props")
             el-table.product(:data="props.row.products" border="border" size="mini")
               el-table-column
                 template(slot-scope="product")
                   img.product-img(:src="product.row.img")
-              el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="300")
+              el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
               el-table-column(prop="quantity" label="SL" width="40")
-              el-table-column(prop="price" label="GIÁ" width="70")
-              el-table-column(prop="total" label="TỔNG" width="70")
+              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
               el-table-column(prop="unit" label="Đơn vị tính" width="100")
-        el-table-column(prop="code" label="MÃ ĐƠN HÀNG" width="170")
-        el-table-column(prop="title" label="Tên đơn hàng" width="170")
-        el-table-column(label="TRẠNG THÁI" width="130")
+        el-table-column(prop="code" label="MÃ ĐƠN HÀNG")
+        el-table-column(label="TRẠNG THÁI")
           template(slot-scope="scope")
-            el-tag(:type="scope.row.status === 1 ? 'success': 'danger'") {{scope.row.status === 1 ? 'Đã hoàn thành': 'Đang xử lý'}}
-        el-table-column(prop="total" label="TỔNG TIỀN" width="120")
-        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row) => new Date(row.date)" )
+            el-tag(:type="scope.row.status === 0 ? 'success': 'danger'") {{scope.row.status === 1 ? 'Đang xử lý': 'Đã hoàn thành'}}
+        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" )
+        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
+        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
+      div.pagination__wrapper(style="padding: 10px 0;")
+        el-pagination(@size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-sizes="[10, 20, 40]"
+            :page-size="pageSize"
+        layout="total, sizes, prev, pager, next"
+          :total="orders.length")
 </template>
 
 <script>
   import avatar from '~/assets/products/p1.jpg'
-  import avatar2 from '~/assets/products/p2.jpg'
-  import avatar3 from '~/assets/products/p3.jpg'
   import { mapGetters, mapActions} from 'vuex'
+  import {formatNumber} from '~/utils/util'
+  import ElSelectDropdown from "element-ui/packages/select/src/select-dropdown";
+
   export default {
+    components: {ElSelectDropdown},
     name: 'AccountOrder',
     computed: {
       ...mapGetters('orders', {
-        order: 'list'
+        order: 'list',
+        loading: 'isLoading'
       }),
       orders () {
         return this.order.map(item => ({
@@ -45,6 +69,8 @@
           total: item.total_money,
           status: item.status,
           title: item.title,
+          delivery: item.delivery,
+          delivery_type: item.delivery_type,
           products: item.products.map(p => ({
             id: p.id,
             img: avatar,
@@ -57,160 +83,6 @@
         }))
       }
     },
-    data () {
-      return {
-        // tableData: [
-        //   {
-        //     code: '#20278900-78990-99',
-        //     date: '29/05/2018',
-        //     count: 5,
-        //     total: 800000,
-        //     status: 0,
-        //     products: [
-        //       {
-        //         id: 1,
-        //         img: avatar,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000,
-        //         status: 1
-        //       },
-        //       {
-        //         id: 2,
-        //         img: avatar2,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       },
-        //       {
-        //         id: 3,
-        //         img: avatar3,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     code: '#20278900-78990-99',
-        //     date: '29/05/2018',
-        //     count: 5,
-        //     total: 800000,
-        //     status: 1,
-        //     products: [
-        //       {
-        //         id: 1,
-        //         img: avatar3,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000,
-        //         status: 1
-        //       },
-        //       {
-        //         id: 2,
-        //         img: avatar,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       },
-        //       {
-        //         id: 3,
-        //         img: avatar3,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     code: '#20278900-78990-99',
-        //     date: '29/05/2018',
-        //     count: 5,
-        //     total: 800000,
-        //     status: 1,
-        //     products: [
-        //       {
-        //         id: 1,
-        //         img: avatar2,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000,
-        //         status: 1
-        //       },
-        //       {
-        //         id: 2,
-        //         img: avatar3,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       },
-        //       {
-        //         id: 3,
-        //         img: avatar,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     code: '#20278900-78990-99',
-        //     date: '29/05/2018',
-        //     count: 5,
-        //     total: 800000,
-        //     status: 0,
-        //     products: [
-        //       {
-        //         id: 1,
-        //         img: avatar,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000,
-        //         status: 1
-        //       },
-        //       {
-        //         id: 2,
-        //         img: avatar3,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       },
-        //       {
-        //         id: 3,
-        //         img: avatar,
-        //         quantity: 10,
-        //         title: '[HOT] Thuốc bổ thận tráng dương tốt nhất hiện nay được TIN dùng 2018',
-        //         receive: '03/06/2018',
-        //         price: 35000,
-        //         total: 350000
-        //       }
-        //     ]
-        //   }
-        // ]
-      }
-    },
     watch: {
       $route : 'fetchData'
     },
@@ -220,6 +92,28 @@
       }),
       fetchData () {
         this.fetchOrder()
+      },
+      formatNumber(num) {
+        return formatNumber(num)
+      },
+      formatDate(num) {
+        let date = new Date(num)
+        const day = date.getDay() < 10 ? '0'+  date.getDay() : date.getDay()
+        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
+        const year = date.getFullYear()
+        return day + '-' + month + '-' +year
+      },
+      handleSizeChange (size) {
+        this.pageSize = size
+      },
+      handleCurrentChange (current) {
+        this.currentPage = current
+      }
+    },
+    data () {
+      return {
+        currentPage: 1,
+        pageSize: 10
       }
     },
     created () {
@@ -229,6 +123,10 @@
 </script>
 
 <style lang="scss" scoped>
+  .main-control {
+    padding: 10px;
+    text-align: left;
+  }
   .account-order {
     background-color: white;
     .h-line {

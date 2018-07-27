@@ -5,7 +5,7 @@
       template SẢN PHẨM YÊU THÍCH
     div.h-line
     div.account-favorite__content
-      el-table(:data="favorites" style="width: 100%" border :show-header="false")
+      el-table(:data="favorites" style="width: 100%" border :show-header="false" v-loading="loading" size="mini")
         el-table-column
           template(slot-scope="scope")
             el-row.item(:gutter="10")
@@ -39,7 +39,8 @@
     name: 'AccountAlert',
     computed: {
       ...mapGetters('favorite', {
-        favorites: 'favoriteProducts'
+        favorites: 'favoriteProducts',
+        loading: 'isLoading'
       })
     },
     watch: {
@@ -73,18 +74,18 @@
     background-color: white;
     .price {
       color: darkred;
-      font-size: 25px;
+      font-size: 18px;
     }
     .discount {
       color: #d6d6d6;
       text-decoration: line-through;
-      font-size: 18px;
+      font-size: 16px;
     }
     .item {
       text-align: left;
       img {
         width: 100%;
-        height: 130px;
+        height: 100px;
         object-fit: cover;
       }
       h4 {
