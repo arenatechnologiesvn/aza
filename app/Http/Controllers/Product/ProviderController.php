@@ -5,11 +5,17 @@ namespace App\Http\Controllers\Product;
 use App\Provider;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProvider;
+use App\Service\ProviderService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ProviderController extends Controller
 {
+    public function __construct(ProviderService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +23,7 @@ class ProviderController extends Controller
      */
     public function index()
     {
-        $providers = Provider::all();
+        $providers = $this->service->getAll();
         return $this->api_success_response(['data' => $providers]);
     }
 
@@ -39,15 +45,8 @@ class ProviderController extends Controller
      */
     public function store(StoreProvider $request)
     {
-        \DB::beginTransaction();
-        try {
-            $provider = Provider::create($request->all());
-            \DB::commit();
-            return $this->api_success_response([ 'data' => $provider ]);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return $this->api_error_response($e->getMessage(), 500);
-        }
+        $provider = $this->service->create($request->all());
+        return $this->api_success_response(['data' => $provider]);
     }
 
     /**
@@ -56,8 +55,15 @@ class ProviderController extends Controller
      * @param  \App\Provider  $provider
      * @return \Illuminate\Http\Response
      */
-    public function show(Provider $provider)
+    public function show($id)
     {
+        $provider = $this->service->getById($id);
+        if ($provider && $provider->logo) {
+            $logo = $provider->logo;
+            unset($provider->logo);
+            $provider->logo = count($logo) ? $logo[0] : null;
+        }
+
         return $this->api_success_response(['data' => $provider]);
     }
 
@@ -79,17 +85,10 @@ class ProviderController extends Controller
      * @param  \App\Provider  $provider
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreProvider $request, Provider $provider)
+    public function update(StoreProvider $request, $id)
     {
-        \DB::beginTransaction();
-        try {
-            $provider->update($request->all());
-            \DB::commit();
-            return $this->api_success_response(['data' => $provider]);
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return $this->api_error_response($e->getMessage(), 500);
-        }
+        $provider = $this->service->update($id, $request->all());
+        return $this->api_success_response(['data' => $provider]);
     }
 
     /**
@@ -98,16 +97,9 @@ class ProviderController extends Controller
      * @param  \App\Provider  $provider
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Provider $provider)
+    public function destroy($id)
     {
-        \DB::beginTransaction();
-        try {
-            $result = $provider->delete();
-            \DB::commit();
-            return $this->api_success_response();
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return $this->api_error_response($e->getMessage(), 500);
-        }
+        $provider = $this->service->destroy($id);
+        return $this->api_success_response(['data' => $provider]);
     }
 }

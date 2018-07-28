@@ -9,7 +9,7 @@
       el-row
         el-col.side-form(:span="6")
           .image-container
-            img.image-preview(:src="providerForm.logo" width="100%")
+            img.image-preview(:src="logoUrl()" width="100%")
           div(style="margin-top: 10px")
             el-button(type="success" size="small" @click="openMediaModal('single')") Thay đổi
         el-col(:span="18")
@@ -34,10 +34,21 @@
                 province-select(v-model="providerForm.province_code")
             el-col(:span="8")
               el-form-item(prop="district_code" label="Huyện/Quận:")
-                district-select(v-model="providerForm.district_code" :parent-code="providerForm.province_code")
+                district-select(v-model="providerForm.district_code" :parent-code="providerForm.province_code || ''")
             el-col(:span="8")
               el-form-item(prop="ward_code" label="Xã/Phường:")
-                ward-select(v-model="providerForm.ward_code" :parent-code="providerForm.district_code")
+                ward-select(v-model="providerForm.ward_code" :parent-code="providerForm.district_code || ''")
+            el-col(:span="12")
+              el-form-item(prop="contract_at" label="Ngày ký hợp đồng:")
+                el-date-picker(
+                  v-model="providerForm.contract_at"
+                  type="date"
+                  placeholder="Ngày ký hợp đồng"
+                  format="dd-MM-yyyy"
+                  value-format="dd-MM-yyyy"
+                  size="small"
+                  style="width: 100%"
+                )
             el-col(:span="24")
               el-form-item(label="Mô tả" prop="description")
                 el-input(type="textarea" v-model="providerForm.description" rows="8" placeholder="Mô tả")
@@ -72,7 +83,7 @@ export default {
   computed: {
     ...mapGetters({
       providerById: 'providers/byId',
-      selectedLogoUrl: 'media/selectedMediaUrl',
+      selectedLogo: 'media/selectedSingleMedia',
       getZoneByProvince: 'administrative/getZoneByProvince',
       getZoneByDistrict: 'administrative/getZoneByDistrict',
       getZoneByWard: 'administrative/getZoneByWard'
@@ -87,7 +98,7 @@ export default {
       providerForm: {
         code: '',
         name: '',
-        logo: dummyImage,
+        logo: null,
         description: '',
         address: '',
         zone: '',
@@ -105,19 +116,19 @@ export default {
         ],
         name: [
           { required: true, message: 'Tên nhà cung cấp không được trống', trigger: 'blur' },
-          { min: 1, max: 255, message: 'Chiều dài phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+          { min: 1, max: 100, message: 'Chiều dài phải nhỏ hơn 100 ký tự', trigger: 'blur' }
         ],
         description: [
-          { min: 1, max: 500, message: 'Chiều dài phải nhỏ hơn 500 ký tự', trigger: 'blur' }
+          { min: 1, max: 500, message: 'Chiều dài phải nhỏ hơn 255 ký tự', trigger: 'blur' }
         ],
         address: [
           { min: 1, max: 255, message: 'Chiều dài phải nhỏ hơn 255 ký tự', trigger: 'blur' }
         ],
         phone: [
-          { min: 1, max: 25, message: 'Chiều dài phải nhỏ hơn 25 ký tự', trigger: 'blur' }
+          { min: 1, max: 25, message: 'Chiều dài phải nhỏ hơn 15 ký tự', trigger: 'blur' }
         ],
         home_phone: [
-          { min: 1, max: 25, message: 'Chiều dài phải nhỏ hơn 25 ký tự', trigger: 'blur' }
+          { min: 1, max: 25, message: 'Chiều dài phải nhỏ hơn 15 ký tự', trigger: 'blur' }
         ]
       }
     }
@@ -132,13 +143,15 @@ export default {
       }).then(() => {
         this.$refs.providerForm.validate((valid) => {
           if (valid) {
-            this.providerForm.zone = this.renderZone();
+            const params = JSON.parse(JSON.stringify(this.providerForm));
+            params.zone = this.renderZone();
+            params.logo = this.providerForm.logo && this.providerForm.logo.id;
             if (this.route.params.id) {
-              this.updateProvider({ id: this.route.params.id, data: this.providerForm }).then(() => {
+              this.updateProvider({ id: this.route.params.id, data: params }).then(() => {
                 this.$router.push({ path: '/products/providers' });
               });
             } else {
-              this.createProvider({ data: this.providerForm }).then(() => {
+              this.createProvider({ data: params }).then(() => {
                 this.$router.push({ path: '/products/providers' });
               });
             }
@@ -185,6 +198,10 @@ export default {
       return '';
     },
 
+    logoUrl() {
+      return this.providerForm.logo ? this.providerForm.logo.url : dummyImage;
+    },
+
     ...mapActions({
       createProvider: 'providers/create',
       fetchProvider: 'providers/fetchSingle',
@@ -201,9 +218,9 @@ export default {
       }
     },
 
-    selectedLogoUrl() {
-      if (this.selectedLogoUrl) {
-        this.providerForm.logo = this.selectedLogoUrl;
+    selectedLogo() {
+      if (this.selectedLogo) {
+        this.providerForm.logo = this.selectedLogo;
       }
     }
   },

@@ -4,11 +4,11 @@
       span(slot="label")
         svg-icon(icon-class="fa-solid images")
         span(slot="label")  Quản lý File
-      el-row(type="flex" justify="end" :gutter="10" style="padding: 0 10px 10px")
-        el-col(:span="6")
+      el-row(:gutter="5" style="padding-bottom: 10px")
+        el-col(:span="12")
           el-input(size="small" placeholder="Tìm kiếm")
             i(slot="suffix" class="el-input__icon el-icon-search")
-        el-col(:span="6")
+        el-col(:span="12" style="text-align:right")
           el-button(type="primary" size="small" @click="handleSelectedMedia" :disabled="!isHaveSelected()")
             svg-icon(icon-class="fa-solid check")
             span  Thay đổi
@@ -21,7 +21,7 @@
       el-container.media-container
         el-container
           el-aside.aside-container(width="200px")
-            img.aside-image(:src="previewMediaUrl")
+            img.aside-image(:src="previewMediaUrl()")
             el-row.aside-info
               .row-info
                 span.image-info Tên
@@ -35,7 +35,7 @@
           el-main
             div.clearfix
               ul.__file-box-container
-                li.attach-image(v-for="(media, index) in medias" :key="index")
+                li.attach-image(v-for="media in medias" :key="media.id")
                   div.__file-box(v-touch:tap="selectMedia(media)" :class="selectedClass(media)")
                     div.__box-data
                         div.__box-preview
@@ -57,6 +57,7 @@
   import { mapGetters, mapActions } from 'vuex';
   import { getToken } from '~/utils/auth';
   import Dropzone from 'vue2-dropzone';
+  import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
   const MEDIA_UPLOAD_API = `http://${location.host}/api/media/upload`;
   const FILE_SIZES = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -80,9 +81,7 @@
     },
     computed: {
       ...mapGetters({
-        medias: 'media/list',
-        previewMedia: 'media/previewMedia',
-        previewMediaUrl: 'media/previewMediaUrl'
+        medias: 'media/list'
       })
     },
     created () {
@@ -99,7 +98,8 @@
             type: this.type
           }
         },
-        selectedMedia: null
+        selectedMedia: null,
+        previewMedia: null
       }
     },
     methods: {
@@ -110,7 +110,6 @@
 
       selectMedia(media) {
         return () => {
-          this.setPreviewMedia(media);
           this.handleTempSelectedMedia(media);
         };
       },
@@ -118,19 +117,27 @@
       handleTempSelectedMedia(media) {
         if (this.selectMode === "single") {
           this.selectedMedia = this.selectedMedia && this.selectedMedia === media.id ? null : media.id;
+          this.previewMedia = this.selectedMedia ? media : null;
         } else {
           if (!this.selectedMedia) this.selectedMedia = [];
           if (this.selectedMedia.includes(media.id)) {
             const index = this.selectedMedia.indexOf(media.id);
             this.selectedMedia.splice(index, media.id);
+            this.previewMedia = null;
           } else {
             this.selectedMedia.push(media.id);
+            this.previewMedia = media;
           }
         }
       },
 
       getMediaData() {
         this.fetchMedia(this.type);
+      },
+
+      previewMediaUrl() {
+        if (!this.previewMedia) return dummyImage;
+          return `/${this.previewMedia.directory}/${this.previewMedia.filename}.${this.previewMedia.extension}`;
       },
 
       showSuccess(file, response) {
@@ -146,7 +153,7 @@
 
       selectedClass(media) {
         if (this.selectMode === "single") {
-          return this.selectedMedia && this.selectedMedia === media.id ? 'selected' : '';
+          return this.selectedMedia === media.id ? 'selected' : '';
         } else {
           return this.selectedMedia && this.selectedMedia.includes(media.id) ? 'selected' : '';
         }
@@ -157,6 +164,7 @@
       },
 
       clearAllSelected() {
+        this.previewMedia = null;
         this.selectedMedia = null;
       },
 
@@ -181,7 +189,6 @@
       ...mapActions({
         fetchMedia: 'media/fetchMedia',
         setSelectedMedia: 'media/setSelectedMedia',
-        setPreviewMedia: 'media/setPreviewMedia',
         closeModal: 'common/closeMediaManagerModal'
       })
     }

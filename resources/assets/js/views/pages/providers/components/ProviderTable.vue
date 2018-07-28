@@ -29,12 +29,25 @@
         div.table
           el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange")
             el-table-column(type="selection" header-align="center" align="center" width="40")
+            el-table-column(prop="logo" align="center" width="60")
+              template(slot-scope="scope")
+                img(:src="logoUrl(scope.row)" :width="40" :height="40")
             el-table-column(prop="name" label="TÊN" sortable min-width="200")
             el-table-column(prop="phone" label="DI ĐỘNG" sortable min-width="150")
+              template(slot-scope="scope")
+                span {{ scope.row.phone || '-' }}
             el-table-column(prop="home_phone" label="ĐIỆN THOẠI" sortable min-width="150")
+              template(slot-scope="scope")
+                span {{ scope.row.home_phone || '-' }}
             el-table-column(prop="address" label="ĐỊA CHỈ" sortable min-width="300")
+              template(slot-scope="scope")
+                span {{ scope.row.address || '-' }}
             el-table-column(prop="zone" label="VÙNG" sortable min-width="300")
+              template(slot-scope="scope")
+                span {{ scope.row.zone || '-' }}
             el-table-column(prop="contract_at" label="NGÀY HỢP ĐỒNG" sortable min-width="200")
+              template(slot-scope="scope")
+                span {{ scope.row.contract_at || '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
                 el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
@@ -55,6 +68,7 @@ import { mapGetters, mapActions, mapState } from 'vuex';
 import ProvinceSelect from '~/components/AdministrativeSelect/Province';
 import DistrictSelect from '~/components/AdministrativeSelect/District';
 import WardSelect from '~/components/AdministrativeSelect/Ward';
+import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
 const DEDAULT_PAGE_SIZE = 10;
 
@@ -112,6 +126,20 @@ export default {
         });
       }
 
+      if (this.selectedWard) {
+        data = data.filter(item => {
+          return item.ward_code === Number(this.selectedWard);
+        });
+      } else if (this.selectedDistrict) {
+        data = data.filter(item => {
+          return item.district_code === Number(this.selectedDistrict);
+        });
+      } else if (this.selectedProvince) {
+        data = data.filter(item => {
+          return item.province_code === Number(this.selectedProvince);
+        });
+      }
+
       return data;
     },
 
@@ -160,6 +188,11 @@ export default {
           this.fetchData();
         });
       });
+    },
+
+    logoUrl(row) {
+      if (row.logo.length) return row.logo[0].url;
+      return dummyImage;
     }
   }
 }

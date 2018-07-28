@@ -12,8 +12,7 @@ const media = {
   state: {
     mediaList: [],
     selectedSingleMedia: null,
-    selectedMultiMedia: [],
-    previewMedia: null
+    selectedMultiMedia: []
   },
 
   getters: {
@@ -35,14 +34,6 @@ const media = {
           url: mediaUrl(media)
         };
       });
-    },
-
-    previewMedia: (state) => {
-      return state.previewMedia;
-    },
-
-    previewMediaUrl: (state) => {
-      return mediaUrl(state.previewMedia);
     }
   },
 
@@ -61,10 +52,6 @@ const media = {
           return selected && selected.includes(media.id);
         }) || [];
       }
-    },
-
-    SET_PREVIEW_MEDIA: (state, media) => {
-      state.previewMedia = media;
     }
   },
 
@@ -82,10 +69,6 @@ const media = {
 
     setSelectedMedia ({ commit }, { mode, selected }) {
       commit('SET_SELECTED_MEDIA', { mode, selected });
-    },
-
-    setPreviewMedia ({ commit }, media) {
-      commit('SET_PREVIEW_MEDIA', media);
     }
   }
 };
