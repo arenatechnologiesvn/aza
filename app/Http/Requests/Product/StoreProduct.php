@@ -29,6 +29,7 @@ class StoreProduct extends BaseFormRequest
             'price' => 'required|numeric|min:0',
             'discount_price' => 'nullable|numeric|min:0',
             'unit' => 'required|string|max:255',
+            'quantitative' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'preview_images'=> 'nullable|array',
             'featured_image'=> 'nullable|numeric|exists:media,id',
             'category_id' => 'nullable|numeric|exists:categories,id',

@@ -23,6 +23,7 @@ class Product extends BaseModel
         'name',
         'description',
         'unit',
+        'quantitative',
         'price',
         'discount_price',
         'category_id',

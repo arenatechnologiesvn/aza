@@ -25,7 +25,7 @@ class ReportService
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
-            ->where('orders.status', 1)
+            ->where('orders.status', 0)
             ->whereRaw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%m-%Y")', $month)
             ->groupBy('day')
             ->get();
@@ -53,7 +53,7 @@ class ReportService
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
-            ->where('orders.status', 1)
+            ->where('orders.status', 0)
             ->whereRaw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y")', $year)
             ->groupBy('month')
             ->get();
@@ -76,18 +76,20 @@ class ReportService
             ->select(
                 'order_product.product_id',
                 'products.name as product_name',
+                'products.quantitative as product_quantitative',
+                DB::raw('SUM(order_product.quantity * products.quantitative) as mass_total'),
                 DB::raw('SUM(order_product.quantity) as quantity_total'),
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
             ->join('products', 'products.id', '=', 'order_product.product_id')
             ->where('customer_id', $params['customer_id'])
-            ->where('orders.status', 1)
+            ->where('orders.status', 0)
             ->whereBetween('orders.apply_at', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
             ])
-            ->groupBy('order_product.product_id', 'products.name')
+            ->groupBy('order_product.product_id', 'product_name', 'product_quantitative')
             ->get();
     }
 
@@ -103,7 +105,7 @@ class ReportService
             ->join('employees', 'employees.id', '=', 'customers.employee_id')
             ->join('users', 'users.id', '=', 'employees.user_id')
             ->where('customers.employee_id', $params['employee_id'])
-            ->where('orders.status', 1)
+            ->where('orders.status', 0)
             ->whereBetween('orders.apply_at', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
@@ -183,13 +185,14 @@ class ReportService
             ->select(
                 'employees.id',
                 DB::raw('CONCAT(users.last_name, " ", users.first_name) as name'),
+                DB::raw('COUNT(orders.id) as order_total'),
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
             ->join('customers', 'customers.id', '=', 'orders.customer_id')
             ->join('employees', 'employees.id', '=', 'customers.employee_id')
             ->join('users', 'users.id', '=', 'employees.user_id')
-            ->where('orders.status', 1)
+            ->where('orders.status', 0)
             ->groupBy('employees.id', 'users.first_name', 'users.last_name')
             ->orderBy('revenue_total', 'desc')
             ->take(5)
@@ -202,12 +205,12 @@ class ReportService
             ->select(
                 'order_product.product_id',
                 'products.name as product_name',
-                DB::raw('SUM(order_product.quantity) as quantity_total'),
+                DB::raw('COUNT(orders.id) as order_total'),
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
             ->join('products', 'products.id', '=', 'order_product.product_id')
-            ->where('orders.status', 1)
+            ->where('orders.status', 0)
             ->groupBy('order_product.product_id', 'products.name')
             ->orderBy('revenue_total', 'desc')
             ->take(5)

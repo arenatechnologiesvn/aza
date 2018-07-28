@@ -16,11 +16,12 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
             $table->string('product_code', 255);
-            $table->string('name', 255)->nullable();
+            $table->string('name', 255);
             $table->string('description', 500)->nullable();
             $table->integer('price')->nullable();
             $table->integer('discount_price')->nullable();
-            $table->string('unit', 255)->nullable();
+            $table->string('unit', 255);
+            $table->decimal('quantitative', 8, 2);
             $table->integer('provider_id')->nullable();
             $table->integer('category_id')->nullable();
             $table->string('note', 500)->nullable();
@@ -31,6 +32,7 @@ class CreateProductsTable extends Migration
             $table->integer('deleted_at')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->unique(['product_code']);
+            $table->name(['name']);
         });
     }
 
