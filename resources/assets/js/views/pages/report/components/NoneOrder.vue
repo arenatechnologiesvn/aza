@@ -24,20 +24,27 @@
           div.pagination__wrapper
             el-pagination(:current-page.sync="currentPage"
               :page-sizes="[10, 20, 30, 50]"
-              :page-size="10"
+              :page-size="pageSize"
               layout="total, sizes, prev, pager, next"
-              :total="tableData.length")
+              :total="totalDataNum"
+              @size-change="sizeChange")
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
+
+const DEDAULT_PAGE_SIZE = 10;
 
 export default {
   name: 'none-order',
   computed: {
     ...mapGetters({
       noneOrderCustomers: 'report/noneOrderCustomers'
-    })
+    }),
+
+    tableData() {
+      return this.extractData(this.noneOrderCustomers);
+    }
   },
   created() {
     this.fetchNoneOrderCustomers().catch(() => {
@@ -46,40 +53,54 @@ export default {
   },
   data() {
     return {
-      tableData: [],
       currentPage: 1,
+      totalDataNum: 0,
+      pageSize: DEDAULT_PAGE_SIZE,
       searchWord: ''
     }
   },
   methods: {
-    filterData() {
-      this.tableData = JSON.parse(JSON.stringify(this.noneOrderCustomers));
+    filterData(data) {
       const filterWord = this.searchWord && this.searchWord.toLowerCase();
 
       if (filterWord !== '') {
         filterWord.trim().split(/\s/).forEach(word => {
-          this.tableData = this.tableData.filter(item => {
+          data = data.filter(item => {
             return item.customer_name.toLowerCase().indexOf(word) > -1 ||
               item.employee_name.toLowerCase().indexOf(word) > -1;
           });
         });
       }
+
+      return data;
+    },
+
+    extractData(data) {
+      // Search data
+      data = this.filterData(data);
+
+      // Set total size before cutting for paging
+      this.totalDataNum = data.length;
+
+      // Paging and Adding Adsets
+      const results = [];
+      const offset = (this.currentPage - 1) * this.pageSize;
+      data.forEach((item, index, array) => {
+        if (index < offset) return;
+        if (index >= offset + this.pageSize) return;
+        results.push(item);
+      });
+
+      return results;
+    },
+
+    sizeChange(newPageSize) {
+      this.pageSize = newPageSize;
     },
 
     ...mapActions({
       fetchNoneOrderCustomers: 'report/fetchNoneOrderCustomers'
     })
-  },
-  watch: {
-    searchWord() {
-      this.filterData();
-    },
-
-    noneOrderCustomers() {
-      if (this.noneOrderCustomers) {
-        this.tableData = JSON.parse(JSON.stringify(this.noneOrderCustomers));
-      }
-    }
   }
 }
 </script>

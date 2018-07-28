@@ -10,23 +10,13 @@
 
     div.clearfix(style="margin: 15px 0;")
     el-row
-      el-col(:span="24")
-        el-card
-          div.clearfix(slot="header")
-            span
-              svg-icon(icon-class="fa-solid user-graduate")
-              span(style="margin-left: 10px;") NHÂN VIÊN XUẤT SẮC
-          div
+      el-col(:xs="24" :sm="24" :lg="24")
+        excellent-employees
 
     div.clearfix(style="margin: 15px 0;")
     el-row
-      el-col(:span="24")
-        el-card
-          div.clearfix(slot="header")
-            span
-              svg-icon(icon-class="fa-solid shipping-fast")
-              span(style="margin-left: 10px;") SẢN PHẨM BÁN CHẠY
-          div
+      el-col(:xs="24" :sm="24" :lg="24")
+        sold-well-products
 
 </template>
 
@@ -34,12 +24,16 @@
 import { mapGetters, mapActions } from 'vuex';
 import MonthRevenueReports from '~/views/pages/report/MonthRevenueReports';
 import YearRevenueReports from '~/views/pages/report/YearRevenueReports';
+import ExcellentEmployees from '~/views/pages/report/ExcellentEmployees';
+import SoldWellProducts from '~/views/pages/report/SoldWellProducts';
 
 export default {
   name: 'dashboard',
   components: {
     MonthRevenueReports,
-    YearRevenueReports
+    YearRevenueReports,
+    ExcellentEmployees,
+    SoldWellProducts
   }
 }
 </script>

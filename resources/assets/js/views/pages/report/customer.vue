@@ -31,7 +31,7 @@
             el-table(:data="tableData" border size="small" style="width: 100%")
               el-table-column(prop="num" label="STT" align="center" width="60")
                 template(slot-scope="scope")
-                  span {{ scope.$index + 1 }}
+                  span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
               el-table-column(prop="product_name" label="TÊN SẢN PHẨM" sortable min-width="200")
               el-table-column(prop="quantity_total" label="SỐ LƯỢNG" sortable min-width="120")
               el-table-column(prop="unit" label="ĐỊNH LƯỢNG" sortable min-width="120")
@@ -46,13 +46,16 @@
           div.pagination__wrapper
             el-pagination(:current-page.sync="currentPage"
               :page-sizes="[10, 20, 30, 50]"
-              :page-size="10"
+              :page-size="pageSize"
               layout="total, sizes, prev, pager, next"
-              :total="tableData.length")
+              :total="totalDataNum"
+              @size-change="sizeChange")
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
+
+const DEDAULT_PAGE_SIZE = 10;
 
 export default {
   name: 'customer-report',
@@ -60,7 +63,11 @@ export default {
     ...mapGetters({
       customers: 'customers/list',
       customerRevenue: 'report/customerRevenue'
-    })
+    }),
+
+    tableData() {
+      return this.filteredData(this.customerRevenue);
+    }
   },
   created() {
     this.fetchCustomers().catch(() => {
@@ -69,8 +76,9 @@ export default {
   },
   data() {
     return {
-      tableData: [],
       currentPage: 1,
+      totalDataNum: 0,
+      pageSize: DEDAULT_PAGE_SIZE,
       selectedCustomer: '',
       selectedDate: []
     }
@@ -92,18 +100,30 @@ export default {
       return this.selectedCustomer && this.selectedDate.length;
     },
 
+    filteredData(data) {
+      // Set total size before cutting for paging
+      this.totalDataNum = data.length;
+
+      // Paging and Adding Adsets
+      const results = [];
+      const offset = (this.currentPage - 1) * this.pageSize;
+      data.forEach((item, index, array) => {
+        if (index < offset) return;
+        if (index >= offset + this.pageSize) return;
+        results.push(item);
+      });
+
+      return results;
+    },
+
+    sizeChange(newPageSize) {
+      this.pageSize = newPageSize;
+    },
+
     ...mapActions({
       fetchCustomers: 'customers/fetchList',
       fetchCustomerRevenue: 'report/fetchCustomerRevenue'
     })
-  },
-
-  watch: {
-    customerRevenue() {
-      if (this.customerRevenue) {
-        this.tableData = JSON.parse(JSON.stringify(this.customerRevenue));
-      }
-    }
   }
 }
 </script>

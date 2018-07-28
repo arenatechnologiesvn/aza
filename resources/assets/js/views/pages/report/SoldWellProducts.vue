@@ -2,8 +2,8 @@
   el-card
     div.clearfix(slot="header")
       span
-        svg-icon(icon-class="fa-solid user-graduate")
-        span(style="margin-left: 10px;") NHÂN VIÊN XUẤT SẮC
+        svg-icon(icon-class="fa-solid shipping-fast")
+        span(style="margin-left: 10px;") SẢN PHẨM BÁN CHẠY
     .table__wrapper
       div.index__container
         div.table
@@ -11,8 +11,11 @@
             el-table-column(prop="num" label="STT" align="center" width="60")
               template(slot-scope="scope")
                 span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
-            el-table-column(prop="name" label="NHÂN VIÊN" sortable min-width="200")
-            el-table-column(prop="revenue_total" label="DOANH SỐ (VND)" sortable min-width="120")
+            el-table-column(prop="product_name" label="SẢN PHẨM" sortable min-width="200")
+            el-table-column(prop="quantity_total" label="SỐ LƯỢNG" sortable min-width="120")
+              template(slot-scope="scope")
+                span {{ Number(scope.row.quantity_total).toLocaleString('de-DE') }}
+            el-table-column(prop="revenue_total" label="DOANH THU (VND)" sortable min-width="120")
               template(slot-scope="scope")
                 span {{ Number(scope.row.revenue_total).toLocaleString('de-DE') }}
         div.pagination__wrapper
@@ -30,18 +33,18 @@ import { mapGetters, mapActions } from 'vuex';
 const DEDAULT_PAGE_SIZE = 5;
 
 export default {
-  name: 'excellent-employees',
+  name: 'sold-well-products',
   computed: {
     ...mapGetters({
-      excellentEmployees: 'report/excellentEmployees'
+      soldWellProducts: 'report/soldWellProducts'
     }),
 
     tableData() {
-      return this.filteredData(this.excellentEmployees);
+      return this.filteredData(this.soldWellProducts);
     }
   },
   created() {
-    this.getExcellentEmployees();
+    this.getSoldWellProducts();
   },
   data() {
     return {
@@ -51,8 +54,8 @@ export default {
     }
   },
   methods: {
-    getExcellentEmployees() {
-      this.fetchExcellentEmployees().catch(() => {
+    getSoldWellProducts() {
+      this.fetchSoldWellProducts().catch(() => {
         // Do nothing
       });
     },
@@ -78,7 +81,7 @@ export default {
     },
 
     ...mapActions({
-      fetchExcellentEmployees: 'report/fetchExcellentEmployees'
+      fetchSoldWellProducts: 'report/fetchSoldWellProducts'
     })
   }
 }

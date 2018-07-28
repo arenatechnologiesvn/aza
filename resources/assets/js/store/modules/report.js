@@ -174,7 +174,7 @@ const report = {
       });
     },
 
-    fetchSoldWellProductss ({ commit }) {
+    fetchSoldWellProducts ({ commit }) {
       return new Promise((resolve, reject) => {
         getSoldWellProducts().then(response => {
           const data = response.data;
