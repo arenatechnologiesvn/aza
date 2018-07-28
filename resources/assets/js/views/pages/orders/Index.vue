@@ -23,7 +23,8 @@
           el-radio-button(label="30days") 30 Ngày qua
         el-select(size="small" style="margin-left: 10px;" v-model="status" placeholder="Trạng thái đơn hàng")
           el-option(:value="1" label="Đang xử lý")
-          el-option(:value="0" label="Đang hoàn thành")
+          el-option(:value="0" label="Đã hoàn thành")
+          el-option(:value="2" label="Đã hủy")
         el-date-picker(type="date" v-model="delivery_date" style="margin-left: 10px;" size="small" placeholder="Ngày đặt hàng")
     div.account-order__content(style="padding: 10px;")
       el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
@@ -98,7 +99,7 @@
             title: p.name,
             price: p.pivot.real_price,
             total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
-          }))
+          })).filter(item => item.code.indexOf(this.key) > -1)
         }))
       }
     },

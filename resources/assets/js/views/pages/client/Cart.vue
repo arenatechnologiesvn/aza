@@ -14,11 +14,11 @@
                     h4 {{scope.row.title}}
                     el-button.button(type="danger" size="mini" @click="remove(scope.row.id)")
                       svg-icon(icon-class="fa-solid trash")
-              el-table-column(prop="price" label="GIÁ" :formatter="row =>formatNumber(row.price) + ' (VNĐ)'")
+              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="row =>formatNumber(row.price)")
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
                   el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;" @change="changeQuantity(scope.row)")
-              el-table-column(prop="total" label="Tổng cộng" :formatter="row =>formatNumber(row.price * row.quantity) + ' (VNĐ)'")
+              el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div.total
             p
               strong Tạm tính:

@@ -22,7 +22,7 @@ class Permission extends BaseModel
     protected $table = 'permissions';
 
     public function roles() {
-        $this->belongsToMany(Role::class, 'role_permissions');
+        return $this->belongsToMany(Role::class, 'role_permissions');
     }
     public function children(){
         return $this->hasMany( 'App\Permission', 'parent_id', 'id' );
