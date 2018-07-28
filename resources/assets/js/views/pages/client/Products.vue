@@ -26,6 +26,7 @@
   import Products from './components/products'
   export default {
     name: 'HomeProduct',
+
     components: {
       BreadCrumb,
       Products
