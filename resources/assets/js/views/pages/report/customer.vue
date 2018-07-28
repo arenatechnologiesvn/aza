@@ -34,13 +34,13 @@
                   span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
               el-table-column(prop="product_name" label="TÊN SẢN PHẨM" sortable min-width="200")
               el-table-column(prop="quantity_total" label="SỐ LƯỢNG" sortable min-width="120")
-              el-table-column(prop="unit" label="ĐỊNH LƯỢNG" sortable min-width="120")
+              el-table-column(prop="product_quantitative" label="ĐỊNH LƯỢNG" sortable min-width="120")
                 template(slot-scope="scope")
-                  span {{ scope.row.unit || '-' }}
-              el-table-column(prop="mass" label="KHỐI LƯỢNG" sortable min-width="120")
+                  span {{ scope.row.product_quantitative || '-' }}
+              el-table-column(prop="mass_total" label="KHỐI LƯỢNG" sortable min-width="120")
                 template(slot-scope="scope")
-                  span {{ scope.row.mass || '-' }}
-              el-table-column(prop="revenue_total" label="DOANH SỐ  (VND)" sortable min-width="120")
+                  span {{ scope.row.mass_total || '-' }}
+              el-table-column(prop="revenue_total" label="DOANH SỐ  (VND)" sortable min-width="200")
                 template(slot-scope="scope")
                   span {{ Number(scope.row.revenue_total).toLocaleString('de-DE') }}
           div.pagination__wrapper

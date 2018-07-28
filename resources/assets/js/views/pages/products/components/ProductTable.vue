@@ -41,6 +41,7 @@
               template(slot-scope="scope")
                 span {{ Number(scope.row.price).toLocaleString('de-DE') }}
             el-table-column(prop="unit" label="ĐƠN VỊ" sortable min-width="100")
+            el-table-column(prop="quantitative" label="ĐỊNH LƯỢNG" sortable min-width="150")
             el-table-column(prop="category_name" label="DANH MỤC" sortable min-width="150")
               template(slot-scope="scope")
                 span {{ scope.row.category ? scope.row.category.name : '-' }}
@@ -56,9 +57,10 @@
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 50]"
-            :page-size="10"
+            :page-size="pageSize"
             layout="total, sizes, prev, pager, next"
-            :total="tableData.length")
+            :total="totalDataNum"
+            @size-change="sizeChange")
 
     edit-panel
     media-manager-modal(type="product")
@@ -69,6 +71,8 @@ import { mapGetters, mapActions, mapState } from 'vuex';
 import EditPanel from './EditPanel';
 import MediaManagerModal from '~/components/MediaManager/modal';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
+
+const DEDAULT_PAGE_SIZE = 10;
 
 export default {
   name: 'product-table',
@@ -81,15 +85,20 @@ export default {
       products: 'products/list',
       categories: 'categories/list',
       providers: 'providers/list'
-    })
+    }),
+
+    tableData() {
+      return this.extractData(this.products);
+    }
   },
   created() {
     this.fetchData();
   },
   data() {
     return {
-      tableData: [],
       currentPage: 1,
+      totalDataNum: 0,
+      pageSize: DEDAULT_PAGE_SIZE,
       multipleSelection: [],
       searchWord: '',
       selectedCategory: '',
@@ -120,29 +129,53 @@ export default {
       });
     },
 
-    filterData() {
-      this.tableData = JSON.parse(JSON.stringify(this.products));
+    filterData(data) {
       const filterWord = this.searchWord && this.searchWord.toLowerCase();
 
       if (filterWord !== '') {
         filterWord.trim().split(/\s/).forEach(word => {
-          this.tableData = this.tableData.filter(item => {
+          data = data.filter(item => {
             return item.name.toLowerCase().indexOf(word) > -1;
           });
         });
       }
 
       if (this.selectedCategory) {
-        this.tableData = this.tableData.filter(item => {
+        data = data.filter(item => {
           return item.category_id === this.selectedCategory;
         });
       }
 
       if (this.selectedProvider) {
-        this.tableData = this.tableData.filter(item => {
+        data = data.filter(item => {
           return item.provider_id === this.selectedProvider;
         });
       }
+
+      return data;
+    },
+
+    extractData(data) {
+      // Search data
+      data = this.filterData(data);
+
+      // Set total size before cutting for paging
+      this.totalDataNum = data.length;
+
+      // Paging and Adding Adsets
+      const results = [];
+      const offset = (this.currentPage - 1) * this.pageSize;
+      data.forEach((item, index, array) => {
+        if (index < offset) return;
+        if (index >= offset + this.pageSize) return;
+        results.push(item);
+      });
+
+      return results;
+    },
+
+    sizeChange(newPageSize) {
+      this.pageSize = newPageSize;
     },
 
     handleSelectionChange(val) {
@@ -168,15 +201,6 @@ export default {
     featuredImageUrl(row) {
       if (!row.featured_image) return dummyImage;
       return row.featured_image.url;
-    }
-  },
-  watch: {
-    searchWord() {
-      this.filterData();
-    },
-
-    products() {
-      this.tableData = JSON.parse(JSON.stringify(this.products));
     }
   }
 }

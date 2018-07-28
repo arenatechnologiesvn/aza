@@ -10,6 +10,7 @@ const form = {
       price: '',
       discount_price: '',
       unit: '',
+      quantitative: '',
       preview_images: [],
       featured_image: null,
       category_id: '',

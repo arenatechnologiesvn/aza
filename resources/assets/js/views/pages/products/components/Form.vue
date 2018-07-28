@@ -13,10 +13,13 @@
         el-col(:span="12")
           el-form-item(prop="product_code" label="Mã sản phẩm:")
             el-input(v-model="product.product_code" placeholder="Mã sản phẩm")
-        el-col(:span="12")
+        el-col(:span="6")
           el-form-item(prop="unit" label="Đơn vị:")
             el-select(v-model="product.unit" clearable placeholder="Đơn vị" style="width: 100%")
               el-option(v-for="(item, index) in productUnits" :key="index" :label="item" :value="item")
+        el-col(:span="6")
+          el-form-item(prop="quantitative" label="Định lượng:")
+            el-input(v-model="product.quantitative" placeholder="Ví dụ: 0.2, 0.5,..")
         el-col(:span="12")
           el-form-item(prop="price" label="Giá sản phẩm:")
             el-input(v-model.number="product.price" placeholder="Ví dụ: 24000")
@@ -59,7 +62,7 @@
 import { mapGetters, mapActions, mapState } from 'vuex';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
 
-const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon'];
+const PRODUCT_UNITS = ['Kg', 'Hộp', 'Thùng', 'Chai', 'Lon', 'Bịch'];
 
 export default {
   name: 'ProductForm',
@@ -123,6 +126,9 @@ export default {
         ],
         unit: [
           { required: true, message: 'Đơn vị không được trống', trigger: 'change' }
+        ],
+        quantitative: [
+          { required: true, message: 'Định lượng không được trống', trigger: 'blur' }
         ],
         price: [
           { validator: validatePrice, trigger: 'blur' }
