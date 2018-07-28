@@ -117,7 +117,7 @@
           id: this.$route.params.id,
           data: this.employee
         }).then(res => {
-          this.$router.push({name: 'employees', replace: true})
+          this.$router.push({name: 'employee_index', replace: true})
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot update employee');
@@ -127,7 +127,7 @@
         this.employeeCreate({
           data: this.employee
         }).then(res => {
-          this.$router.push({name: 'employees', replace: true})
+          this.$router.push({name: 'employee_index', replace: true})
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot create employee');

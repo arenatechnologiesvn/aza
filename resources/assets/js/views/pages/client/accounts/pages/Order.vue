@@ -33,7 +33,7 @@
         el-table-column(prop="code" label="MÃ ĐƠN HÀNG")
         el-table-column(label="TRẠNG THÁI")
           template(slot-scope="scope")
-            el-tag(:type="scope.row.status === 0 ? 'success': 'danger'") {{scope.row.status === 1 ? 'Đang xử lý': 'Đã hoàn thành'}}
+            el-tag(:type="scope.row.status === 0 ? 'success': scope.row.status === 0 ? 'info' : 'danger'") {{scope.row.status === 0 ? 'Đã hoàn thành': scope.row.status === 1 ? 'Đang xử lý' : 'Đã hủy'}}
         el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" )
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )

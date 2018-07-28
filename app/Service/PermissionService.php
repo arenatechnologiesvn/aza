@@ -43,12 +43,16 @@ class PermissionService extends BaseService
             ->where('parent_id', null)
             ->get();
     }
-//    public function toDto($selectable = null){
-//        return is_callable($selectable) ? $selectable() : $this->selectable();
-//    }
-//    protected function selectable(){
-//        return $this->model->select($this->selectable)->with(['customer'=> function($query) {
+    public function toDto($selectable = null){
+        return is_callable($selectable) ? $selectable() : $this->selectable();
+    }
+    protected function selectable(){
+        return $this->model->select($this->selectable);
+//            ->with(['roles']);
+//        return Permission::with('roles');
+//            ->with(['roles'=> function($query) {
 //            $query->select(['id']);
-//        }]);
-//    }
+//            }]
+//            );
+    }
 }

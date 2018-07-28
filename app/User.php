@@ -19,6 +19,8 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
     use Mediable;
 
+//    virtual property
+    protected $appends = ['full_name'];
     /**
      * The attributes that are mass assignable.
      *
@@ -37,7 +39,6 @@ class User extends Authenticatable implements JWTSubject
         'avatar'
     ];
 
-
     public static function boot()
     {
         User::observe(new ByUserObserver());
@@ -50,7 +51,14 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
+        'created_at',
+        'created_by',
+        'updated_at',
+        'updated_by',
+        'deleted_at',
+        'deleted_by'
     ];
 
     /**
@@ -77,6 +85,9 @@ class User extends Authenticatable implements JWTSubject
         return 'https://www.gravatar.com/avatar/' . md5(strtolower($this->email)) . '.jpg?s=200&d=mm';
     }
 
+    public function getFullNameAttribute () {
+        return $this->first_name . ' ' . $this->last_name;
+    }
     /**
      * Get the oauth providers.
      *

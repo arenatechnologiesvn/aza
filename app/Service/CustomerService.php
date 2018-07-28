@@ -46,6 +46,6 @@ class CustomerService extends BaseService
                 'customer_id',
                 'quantity'
             ]);
-        }, 'user']);
+        },'user','shops','employee']);
     }
 }
