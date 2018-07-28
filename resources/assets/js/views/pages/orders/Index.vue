@@ -1,93 +1,242 @@
 <template lang="pug">
-  el-card
-    div.clearfix(slot="header")
-      span
-        svg-icon(icon-class="fa-solid list")
-        span(style="margin-left: 10px;") DANH SÁCH ĐƠN HÀNG
-    div.search__wrapper(style="margin: 10px 0 20px")
-    div.control__wrapper
-      aza-control
-    div.index__wrapper
-      aza-table(ref="table" :orders="current" :total="total")
+  div.account-order
+    h4.account-order__title
+      svg-icon(icon-class="fa-solid address-card")
+      template DANH SÁCH ĐƠN HÀNG
+    div.h-line
+    div.main-control
+      div(style="margin-bottom: 10px;")
+        el-input(placeholder="Tìm kiếm đơn hàng" v-model="key" size="small")
+          i(slot="prefix" class="el-input__icon el-icon-search")
+      div
+        el-dropdown(split-button size="small") Đã chọn {{selected}} đơn hàng
+          el-dropdown-menu(slot="dropdown")
+            el-dropdown-item
+              svg-icon(icon-class="fa-solid check-circle")
+              span Duyệt đơn hàng
+            el-dropdown-item
+              svg-icon(icon-class="fa-solid ban")
+              span Hủy đơn hàng
+        el-radio-group(size="small" v-model="delivery" style="margin-left: 10px;")
+          el-radio-button(label="today") Hôm nay
+          el-radio-button(label="7days") 7 Ngày qua
+          el-radio-button(label="30days") 30 Ngày qua
+        el-select(size="small" style="margin-left: 10px;" v-model="status" placeholder="Trạng thái đơn hàng")
+          el-option(:value="1" label="Đang xử lý")
+          el-option(:value="0" label="Đang hoàn thành")
+        el-date-picker(type="date" v-model="delivery_date" style="margin-left: 10px;" size="small" placeholder="Ngày đặt hàng")
+    div.account-order__content(style="padding: 10px;")
+      el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
+        el-table-column(type="selection" width="40")
+        el-table-column(type="expand")
+          template(slot-scope="props")
+            el-table.product(:data="props.row.products" border="border" size="mini")
+              el-table-column
+                template(slot-scope="product")
+                  img.product-img(:src="product.row.img")
+              el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
+              el-table-column(prop="quantity" label="SL" width="40")
+              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="unit" label="Đơn vị tính" width="100")
+        el-table-column(prop="code" label="MÃ ĐƠN HÀNG")
+        el-table-column(label="TRẠNG THÁI")
+          template(slot-scope="scope")
+            el-tag(:type="scope.row.status === 0 ? 'success': scope.row.status === 1 ?  'info' : 'danger'") {{scope.row.status === 0 ? 'Đã hoàn thành' : scope.row.status === 1 ? 'Đang xử lý' : 'Đã bị hủy' }}
+        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" )
+        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
+        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
+        el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
+          template(slot-scope="scope")
+            el-tooltip(effect="dark" content="Duyệt đơn hàng" placement="top")
+              el-button(size="mini" @click="changeStatus(scope.row.id, 0)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
+                svg-icon(icon-class="fa-solid check-circle")
+            el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
+              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
+                svg-icon(icon-class="fa-solid ban")
+      div.pagination__wrapper(style="padding: 10px 0;")
+        el-pagination(@size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-sizes="[10, 20, 40]"
+            :page-size="pageSize"
+        layout="total, sizes, prev, pager, next"
+          :total="orders.length")
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapState } from 'vuex'
-  import AzaTable from './components/Table'
-  import AzaControl from './components/Control'
-  import AzaSearch from './components/FormSearch'
-  import BaseMixin from '../mixin'
+  import avatar from '~/assets/products/p1.jpg'
+  import { mapGetters, mapActions} from 'vuex'
+  import {formatNumber} from '~/utils/util'
+  import ElSelectDropdown from "element-ui/packages/select/src/select-dropdown";
 
   export default {
-    name: 'EmployeeIndex',
-    mixins: [BaseMixin],
-    components: {
-      AzaTable,
-      AzaControl,
-      AzaSearch
-    },
+    components: {ElSelectDropdown},
+    name: 'AccountOrder',
     computed: {
       ...mapGetters('orders', {
-        orders: 'list',
-        isLoading: 'isLoading'
+        order: 'list',
+        loading: 'isLoading'
       }),
-      current () {
-        return this.orders
-          .filter(item => {
-              for(let index in this.search) {
-                if (index === 'key') {
-                  return item.title.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
-                    item.oder_code.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
-                } else if(typeof this.search[index] === 'string') {
-                  return item[index].toLowerCase().indexOf(this.search[index].toLowerCase()) > -1
-                } else {
-                  return item[index] === this.search[index];
-                }
-              }
-            }
-          );
-      },
-      total () {
-        this.current.length
-      },
-      ...mapState([
-        'route'
-      ])
+      orders () {
+        return this.order.map(item => ({
+          id: item.id,
+          discount: item.discount,
+          code: '#' + item.order_code,
+          date: item.apply_at,
+          total: item.total_money,
+          status: item.status,
+          title: item.title,
+          delivery: item.delivery,
+          delivery_type: item.delivery_type,
+          products: item.products.map(p => ({
+            id: p.id,
+            img: avatar,
+            quantity: p.pivot.quantity,
+            unit: p.unit,
+            title: p.name,
+            price: p.pivot.real_price,
+            total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
+          }))
+        }))
+      }
     },
     watch: {
       $route : 'fetchData'
     },
     methods: {
       ...mapActions('orders', {
-        fetchOrders: 'fetchList'
+        fetchOrder: 'fetchList',
+        updateOrder: 'update'
       }),
-      changeStatusHandle (id, data) {
-        this.updateRole({
-          id: id,
-          data: data
-        })
+      canExecute(message) {
+        return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Hủy',
+          type: 'success'
+        }).then(() => {
+          resolve(true);
+        }));
       },
-      fetchData() {
-        return this.fetchOrders()
+      fetchData () {
+        this.fetchOrder()
       },
-      handUpdateClick (id) {
-        this.$router.push({
-          name: 'employee_update',
-          params: {
-            id
-          }
-        })
+      changeStatus(id, status) {
+        const data = {
+          status
+        }
+        if (status === 0) {
+          this.canExecute('Bạn muốn duyệt đơn hàng này')
+            .then(() => {
+              this.updateOrder({
+                id,
+                data
+              }).then(() => {
+                this.$notify(
+                  {
+                    title: 'Thông báo',
+                    message: 'Đã Xác nhận thành công đơn hàng',
+                    type: 'success'
+                  })
+              })
+            })
+        } else {
+          this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\w+/,
+            inputErrorMessage: 'Bạn phải nhập lý do'
+          }).then(value => {
+            this.updateOrder({
+              id,
+              data: {
+                status: status,
+                approve_note: value.value
+              }
+            }).then(() => {
+              this.$message({
+                type: 'success',
+                message: 'Đơn hàng đã được hủy thành công'
+              });
+            }).catch(() => {
+              this.$message({
+                type: 'warning',
+                message: 'Lỗi khi hủy đơn hàng'
+              });
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: 'Đơn hàng đã không được hủy'
+            });
+          });
+        }
       },
-      onSelected (selection) {
-        this.selection = selection
+      formatNumber(num) {
+        return formatNumber(num)
       },
-      onChangeRole () {
-        this.current.filter(item => item.role_id === this.search.role_id)
+      formatDate(num) {
+        let date = new Date(1000*num)
+        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
+        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
+        const year = date.getFullYear()
+        return day + '-' + month + '-' +year
+      },
+      handleSizeChange (size) {
+        this.pageSize = size
+      },
+      handleCurrentChange (current) {
+        this.currentPage = current
+      }
+    },
+    data () {
+      return {
+        currentPage: 1,
+        pageSize: 10,
+        delivery: 'today',
+        status: null,
+        delivery_date: null,
+        key: '',
+        selected: 0
       }
     },
     created () {
-      this.loading()
       this.fetchData()
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  .main-control {
+    padding: 10px;
+    text-align: left;
+  }
+  .account-order {
+    background-color: white;
+    .h-line {
+      display: block;
+      margin: 5px 0;
+      height: 1px;
+      background-color: #eee;
+    }
+    .product {
+      text-align: left;
+      word-break: keep-all;
+    }
+    .product-img {
+      height: 70px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: unset;
+    }
+    .account-order__title {
+      margin: 0;
+      text-align: left;
+      padding: 10px 15px;
+      svg {
+        margin-right: 10px;
+      }
+    }
+  }
+</style>

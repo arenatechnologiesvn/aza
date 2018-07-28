@@ -29,19 +29,19 @@
               span
                 svg-icon(icon-class="fa-solid info-circle")
               template Thông tin đặt hàng
-            el-form
-              el-form-item(label="Nội dung đơn hàng")
-                el-input(v-model="form.title" size="small" placeholder="Nhập nôi dung đơn hàng")
-              el-form-item(label="Mô tả chi tiết")
+            el-form(ref="form" :model="form" status-icon :rules="rules")
+              el-form-item(label="Nội dung đơn hàng" prop="title")
+                el-input(v-model="form.title" size="small" placeholder="Nhập nôi dung đơn hàng"  auto-complete="off")
+              el-form-item(label="Mô tả chi tiết" prop="description")
                 el-input(v-model="form.description" type="textarea" rows="5" size="small" placeholder="Nhập mô tả chi tiết đơn hàng")
-              el-form-item(label="Địa chỉ nhận hàng")
+              el-form-item(label="Địa chỉ nhận hàng" prop="delivery_address")
                 el-input(v-model="form.delivery_address" type="textarea" rows="3" size="small" placeholder="Địa chỉ giao hàng")
               el-row(:gutter="5" type="flex")
                 el-col(:span="14")
-                  el-form-item(label="Ngày giao hàng")
+                  el-form-item(label="Ngày giao hàng" prop="delivery")
                     el-date-picker(v-model="form.delivery" type="date" size="small" placeholder="Ngày đặt hàng")
                 el-col(:span="10")
-                  el-form-item(label="Giờ giao hàng")
+                  el-form-item(label="Giờ giao hàng" prop="delivery_type")
                     el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" size="small")
                       el-option(label="9h - 11h" :value="'9h-11h'")
                       el-option(label="11h - 13h" :value="'11h-13h'")
@@ -50,15 +50,15 @@
                       el-option(label="17h - 19h" :value="'17h-19h'")
             div.cart__detail
               el-button(type="success" @click="checkout") ĐẶT HÀNG
-              el-button(type="danger") HỦY BỎ
+              el-button(type="danger" @click="resetForm('form')") HỦY BỎ
 </template>
 
 <script>
   import BreadCrumb from './components/BreadCrumb'
   import product from '~/assets/products/p1.jpg'
-  import { mapGetters, mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   import _ from 'lodash'
-  import { formatNumber } from '~/utils/util'
+  import {formatNumber} from '~/utils/util'
   import ElRow from "element-ui/packages/row/src/row";
 
   export default {
@@ -67,18 +67,25 @@
       ElRow,
       BreadCrumb
     },
-    data () {
+    data() {
       return {
         form: {
           delivery_type: '',
           delivery: '',
           title: '',
           address: ''
+        },
+        rules: {
+          title: [{ required: true, message: 'Nội dung đơn hàng là bắt buộc', trigger: 'blur' }],
+          description: [{required: true, message: 'Mô tả chi tiết là bắt buộc'}],
+          delivery_address: [{required: true, message: 'Địa chỉ nhận hàng là bắt buộc'}],
+          delivery: [{required: true, message: 'Ngày giao hàng là bắt buộc'}],
+          delivery_type: [{required: true, message: 'Giờ giao hàng là bắt buộc'}]
         }
       }
     },
     watch: {
-      user_info : (value) => {
+      user_info: (value) => {
         console.log(value)
         this.form.delivery_address = value
       }
@@ -90,16 +97,16 @@
       ...mapGetters([
         'user_info'
       ]),
-      products () {
+      products() {
         return this.data()
       },
-      total () {
+      total() {
         return (this.products && this.products.length > 1) ?
-          this.products.reduce((a,b)=> (a + (b.price * b.quantity)), 0):
+          this.products.reduce((a, b) => (a + (b.price * b.quantity)), 0) :
           this.products.length === 1 ? this.products[0].quantity * this.products[0].price :
             0
       },
-      formCart () {
+      formCart() {
         const user = this.user_info
         return {
           delivery_address: this.form.delivery_address,
@@ -110,10 +117,11 @@
           title: this.form.title,
           total_money: this.total,
           product: this.products.map(item => ({
-            product_id: item.id, 
-            quantity: item.quantity, 
+            product_id: item.id,
+            quantity: item.quantity,
             tmp_price: item.tmp_price,
-			      real_price: item.real_price}))
+            real_price: item.real_price
+          }))
         }
       }
     },
@@ -138,28 +146,37 @@
           resolve(true);
         }));
       },
-      checkout () {
-        this.canExecute('Bạn muốn gửi đơn hàng nay?')
-          .then(() => this.createOrder({
-            data: this.formCart
-          }).then(() => {
-            this.fetchCart()
-          })).then(() => this.$notify(
-            {
-              title: 'Thông báo',
-              message: 'Đã thêm thành công sản phẩm vào danh sách yêu thích',
-              type: 'success'
-            })).then(() => this.$router.push({'name': 'home_account_order'}))
+      checkout() {
+        this.$refs['form'].validate(valid => {
+          if (valid) {
+            this.canExecute('Bạn muốn gửi đơn hàng nay?')
+              .then(() => this.createOrder({
+                data: this.formCart
+              }).then(() => {
+                this.fetchCart()
+              })).then(() => this.$notify(
+              {
+                title: 'Thông báo',
+                message: 'Đã thêm thành công sản phẩm vào danh sách yêu thích',
+                type: 'success'
+              })).then(() => this.$router.push({'name': 'home_account_order'}))
+          } else {
+            return false
+          }
+        })
       },
-      remove (id) {
+      resetForm (name) {
+        this.$refs[name].resetFields();
+      },
+      remove(id) {
         this.removeItem({id})
           .then(res => console.log(res))
           .catch(err => console.log(err))
       },
-      formatNumber (num) {
+      formatNumber(num) {
         return formatNumber(num)
       },
-      changeQuantity (value) {
+      changeQuantity(value) {
         this.updateItem({
           id: value.id,
           data: {
@@ -200,22 +217,27 @@
       }
     }
   }
+
   .cart {
     padding: 10px 5px;
     margin-top: 2px;
   }
+
   .cart__detail {
     h4 {
       margin: 5px 3px 20px 3px;
     }
     padding-bottom: 20px;
   }
+
   .line {
     border: .5px solid #efefef;
   }
+
   .cart__contain {
     margin-bottom: 20px;
   }
+
   .title__info {
     margin: 5px 0 10px;
     position: relative;
@@ -225,6 +247,7 @@
       margin-right: 10px;
     }
   }
+
   .total {
     margin: 10px 0;
     text-align: right;

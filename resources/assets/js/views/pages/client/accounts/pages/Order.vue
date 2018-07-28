@@ -9,14 +9,14 @@
         el-input(placeholder="Tìm kiếm đơn hàng" size="small")
           i(slot="prefix" class="el-input__icon el-icon-search")
       div
-        el-button-group
-          el-button(type="primary" size="small") Hôm nay
-          el-button(type="default" size="small") 7 ngày qua
-          el-button(type="default" size="small") 30 ngày tháng
-        el-select(size="small" style="margin-left: 10px;" placeholder="Trạng thái đơn hàng")
+        el-radio-group(size="small" v-model="delivery")
+          el-radio-button(label="today") Hôm nay
+          el-radio-button(label="7days") 7 Ngày qua
+          el-radio-button(label="30days") 30 Ngày qua
+        el-select(size="small" style="margin-left: 10px;" v-model="status" placeholder="Trạng thái đơn hàng")
           el-option(:value="1" label="Đang xử lý")
           el-option(:value="0" label="Đang hoàn thành")
-        el-date-picker(type="date" style="margin-left: 10px;" size="small" placeholder="Ngày đặt hàng")
+        el-date-picker(type="date" v-model="delivery_date" style="margin-left: 10px;" size="small" placeholder="Ngày đặt hàng")
     div.account-order__content(style="padding: 10px;")
       el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
         el-table-column(type="expand")
@@ -64,6 +64,8 @@
       }),
       orders () {
         return this.order.map(item => ({
+          id: item.id,
+          discount: item.discount,
           code: '#' + item.order_code,
           date: item.apply_at,
           total: item.total_money,
@@ -97,8 +99,8 @@
         return formatNumber(num)
       },
       formatDate(num) {
-        let date = new Date(num)
-        const day = date.getDay() < 10 ? '0'+  date.getDay() : date.getDay()
+        let date = new Date(1000*num)
+        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
         const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
         const year = date.getFullYear()
         return day + '-' + month + '-' +year
@@ -113,7 +115,10 @@
     data () {
       return {
         currentPage: 1,
-        pageSize: 10
+        pageSize: 10,
+        delivery: 'today',
+        status: null,
+        delivery_date: null
       }
     },
     created () {
