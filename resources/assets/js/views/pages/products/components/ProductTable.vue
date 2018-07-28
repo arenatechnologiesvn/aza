@@ -115,9 +115,9 @@ export default {
     }),
 
     fetchData() {
-      this.fetchProducts().then(() => {
-        this.tableData = JSON.parse(JSON.stringify(this.products));
-      });
+      this.fetchProducts().catch(() => {
+        // Do nothing
+      });;
     },
 
     openEditPanel(productId) {

@@ -11,7 +11,7 @@
           .image-container
             img.image-preview(:src="providerForm.logo" width="100%")
           div(style="margin-top: 10px")
-            el-button(type="success" size="small" @click="openMediaModal") Thay đổi
+            el-button(type="success" size="small" @click="openMediaModal('single')") Thay đổi
         el-col(:span="18")
           el-form(ref="providerForm" :rules="rules" :model="providerForm" size="small")
             el-col(:span="24")
