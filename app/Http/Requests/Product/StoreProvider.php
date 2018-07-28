@@ -25,17 +25,17 @@ class StoreProvider extends BaseFormRequest
     {
         return [
             'code' => 'required|max:50',
-            'name' => 'required|string|max:255',
-            'logo' => 'required|string|max:255',
-            'description' => 'nullable|string|max:500',
+            'name' => 'required|string|max:100',
+            'logo'=> 'nullable|numeric|exists:media,id',
+            'description' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:25',
-            'home_phone' => 'nullable|string|max:25',
+            'phone' => 'nullable|string|max:15',
+            'home_phone' => 'nullable|string|max:15',
+            'zone' => 'nullable|string|max:255',
             'province_code' => 'nullable|numeric|min:0',
             'district_code' => 'nullable|numeric|min:0',
             'ward_code' => 'nullable|numeric|min:0',
-            'ward_code' => 'nullable|string|max:255',
-            'contract_at' => 'nullable|numeric|min:0'
+            'contract_at' => 'nullable|date_format:d-m-Y'
         ];
     }
 }

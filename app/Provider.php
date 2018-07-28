@@ -2,21 +2,24 @@
 
 namespace App;
 
+use Plank\Mediable\Mediable;
+
 class Provider extends BaseModel
 {
+    use Mediable;
+
     protected $table = 'providers';
 
     protected $fillable = [
         'code',
         'name',
-        'logo',
         'description',
         'address',
+        'zone',
         'phone',
         'home_phone',
         'province_code',
         'district_code',
-        'zone',
         'ward_code',
         'contract_at'
     ];
@@ -31,4 +34,13 @@ class Provider extends BaseModel
     ];
 
     protected $primaryKey = 'id';
+
+    public function logo() {
+        return $this->morphToMany('Plank\Mediable\Media', 'mediable','mediables', 'mediable_id')
+        ->withPivot('mediable_type', 'tag')
+        ->where([
+            ['mediable_type', '=', 'App\Provider'],
+            ['tag', '=', 'provider']
+        ]);
+    }
 }
