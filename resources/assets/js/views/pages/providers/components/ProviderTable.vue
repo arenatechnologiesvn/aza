@@ -1,20 +1,18 @@
 <template lang="pug">
   div
-    div.form-search__wrapper
-      el-form.search
-        el-row(:gutter="5")
-          el-col(:span="12")
-            el-form-item(label="Tìm kiếm:")
-              el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
-          el-col(:span="4")
-            el-form-item(label="Tỉnh/TP:")
-              province-select(v-model="selectedProvince")
-          el-col(:span="4")
-            el-form-item(label="Huyện/Quận:")
-              district-select(v-model="selectedDistrict" :parent-code="selectedProvince")
-          el-col(:span="4")
-            el-form-item(label="Xã/Phường:")
-              ward-select(v-model="selectedWard" :parent-code="selectedDistrict")
+    el-row.search-wrapper(:gutter="5")
+      el-col(:span="12")
+        span.search-wrapper__title Tìm kiếm:
+        el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
+      el-col(:span="4")
+        span.search-wrapper__title Tỉnh/TP:
+        province-select(v-model="selectedProvince")
+      el-col(:span="4")
+        span.search-wrapper__title Huyện/Quận:
+        district-select(v-model="selectedDistrict" :parent-code="selectedProvince")
+      el-col(:span="4")
+        span.search-wrapper__title Xã/Phường:
+        ward-select(v-model="selectedWard" :parent-code="selectedDistrict")
     div.control__wrapper
       el-row
         el-col(:span="12")
@@ -46,9 +44,10 @@
         div.pagination__wrapper
           el-pagination(:current-page.sync="currentPage"
             :page-sizes="[10, 20, 30, 50]"
-            :page-size="10"
+            :page-size="pageSize"
             layout="total, sizes, prev, pager, next"
-            :total="tableData.length")
+            :total="totalDataNum"
+            @size-change="sizeChange")
 </template>
 
 <script>
@@ -57,12 +56,18 @@ import ProvinceSelect from '~/components/AdministrativeSelect/Province';
 import DistrictSelect from '~/components/AdministrativeSelect/District';
 import WardSelect from '~/components/AdministrativeSelect/Ward';
 
+const DEDAULT_PAGE_SIZE = 10;
+
 export default {
   name: 'provider-table',
   computed: {
     ...mapGetters({
       providers: 'providers/list'
-    })
+    }),
+
+    tableData() {
+      return this.extractData(this.providers);
+    }
   },
   components: {
     ProvinceSelect,
@@ -74,8 +79,9 @@ export default {
   },
   data() {
     return {
-      tableData: [],
       currentPage: 1,
+      totalDataNum: 0,
+      pageSize: DEDAULT_PAGE_SIZE,
       multipleSelection: [],
       searchWord: '',
       selectedProvince: '',
@@ -90,22 +96,46 @@ export default {
     }),
 
     fetchData() {
-      this.fetchProviders().then(() => {
-        this.tableData = JSON.parse(JSON.stringify(this.providers));
+      this.fetchProviders().catch(() => {
+        // Do nothing
       });
     },
 
-    filterData() {
-      this.tableData = JSON.parse(JSON.stringify(this.providers));
+    filterData(data) {
       const filterWord = this.searchWord && this.searchWord.toLowerCase();
 
       if (filterWord !== '') {
         filterWord.trim().split(/\s/).forEach(word => {
-          this.tableData = this.tableData.filter(item => {
+          data = data.filter(item => {
             return item.name.toLowerCase().indexOf(word) > -1;
           });
         });
       }
+
+      return data;
+    },
+
+    extractData(data) {
+      // Search data
+      data = this.filterData(data);
+
+      // Set total size before cutting for paging
+      this.totalDataNum = data.length;
+
+      // Paging and Adding Adsets
+      const results = [];
+      const offset = (this.currentPage - 1) * this.pageSize;
+      data.forEach((item, index, array) => {
+        if (index < offset) return;
+        if (index >= offset + this.pageSize) return;
+        results.push(item);
+      });
+
+      return results;
+    },
+
+    sizeChange(newPageSize) {
+      this.pageSize = newPageSize;
     },
 
     handleSelectionChange(val) {
@@ -131,11 +161,6 @@ export default {
         });
       });
     }
-  },
-  watch: {
-    searchWord() {
-      this.filterData();
-    }
   }
 }
 </script>
@@ -143,5 +168,13 @@ export default {
 <style lang="scss" scoped>
 .control__wrapper {
   margin: 10px 0;
+}
+
+.search-wrapper {
+  margin: 10px 0 20px;
+
+  &__title {
+    font-size: 12px;
+  }
 }
 </style>
