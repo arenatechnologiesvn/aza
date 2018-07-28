@@ -54,6 +54,15 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     // Products
     Route::resource('products', 'Product\ProductController');
     Route::get('products/category/{id}','Product\ProductController@getByCategory');
+
+    // Report
+    Route::get('report/customer/revenue','ReportController@getCustomerRevenue');
+    Route::get('report/employee/revenue','ReportController@getEmployeeRevenue');
+    Route::get('report/customer/none_order','ReportController@getNoneOrderCustomers');
+    Route::get('report/customer/access_satistical','ReportController@accessStatistical');
+    Route::get('report/revenue','ReportController@getRevenues');
+    Route::get('report/employees/excellent','ReportController@excellentEmployees');
+    Route::get('report/product/sold_well','ReportController@soldWellProducts');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {

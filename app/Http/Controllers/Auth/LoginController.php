@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Customer;
+use App\UserAccessHistories;
 use App\Helper\RoleConstant;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
@@ -97,12 +98,26 @@ class LoginController extends Controller
         return $this->api_success_response();
     }
 
-    private function infoUser(){
+    private function infoUser()
+    {
         $user = Auth::user();
-       if($user->role_id  == RoleConstant::Customer){
-           $customer = Customer::where('user_id', $user->id)->firstOrFail();
-           $user['customer'] = $customer;
-       }
-       return $user;
+        if($user->role_id == RoleConstant::Customer) {
+            $this->createAccessLog($user->id);
+            $customer = Customer::where('user_id', $user->id)->firstOrFail();
+            $user['customer'] = $customer;
+        }
+        return $user;
+    }
+
+    private function createAccessLog($user_id)
+    {
+        try {
+            \DB::beginTransaction();
+            UserAccessHistories::create([ 'user_id' => $user_id ]);
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
     }
 }

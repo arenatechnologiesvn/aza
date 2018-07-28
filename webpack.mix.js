@@ -31,7 +31,8 @@ if (mix.inProduction()) {
     'vuex-router-sync',
     'element-ui',
     'normalize.css',
-    'nprogress'
+    'nprogress',
+    'moment'
   ]);
 }
 

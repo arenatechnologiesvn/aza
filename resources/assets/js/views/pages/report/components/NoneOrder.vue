@@ -13,43 +13,93 @@
         div.index__container
           div.table
             el-table(:data="tableData" border size="small" style="width: 100%")
-              el-table-column(prop="icon" label="STT" align="center" width="60")
-              el-table-column(prop="name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
-              el-table-column(prop="name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="200")
-              el-table-column(prop="description" label="ĐẶT HÀNG LẦN CUỐI" sortable min-width="200")
+              el-table-column(prop="num" label="STT" align="center" width="60")
                 template(slot-scope="scope")
-                  span {{ scope.row.description || '-' }}
+                  span {{ scope.$index + 1 }}
+              el-table-column(prop="customer_name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
+              el-table-column(prop="employee_name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="200")
+              el-table-column(prop="last_order" label="ĐẶT HÀNG LẦN CUỐI" sortable min-width="200")
+                template(slot-scope="scope")
+                  span {{ scope.row.last_order || 'Chưa đặt hàng lần nào' }}
           div.pagination__wrapper
             el-pagination(:current-page.sync="currentPage"
               :page-sizes="[10, 20, 30, 50]"
-              :page-size="10"
+              :page-size="pageSize"
               layout="total, sizes, prev, pager, next"
-              :total="tableData.length")
+              :total="totalDataNum"
+              @size-change="sizeChange")
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
+
+const DEDAULT_PAGE_SIZE = 10;
 
 export default {
   name: 'none-order',
   computed: {
     ...mapGetters({
+      noneOrderCustomers: 'report/noneOrderCustomers'
+    }),
 
-    })
+    tableData() {
+      return this.extractData(this.noneOrderCustomers);
+    }
   },
   created() {
-    // Do nothing
+    this.fetchNoneOrderCustomers().catch(() => {
+      //  Do nothing
+    })
   },
   data() {
     return {
-      tableData: [],
       currentPage: 1,
+      totalDataNum: 0,
+      pageSize: DEDAULT_PAGE_SIZE,
       searchWord: ''
     }
   },
   methods: {
-    ...mapActions({
+    filterData(data) {
+      const filterWord = this.searchWord && this.searchWord.toLowerCase();
 
+      if (filterWord !== '') {
+        filterWord.trim().split(/\s/).forEach(word => {
+          data = data.filter(item => {
+            return item.customer_name.toLowerCase().indexOf(word) > -1 ||
+              item.employee_name.toLowerCase().indexOf(word) > -1;
+          });
+        });
+      }
+
+      return data;
+    },
+
+    extractData(data) {
+      // Search data
+      data = this.filterData(data);
+
+      // Set total size before cutting for paging
+      this.totalDataNum = data.length;
+
+      // Paging and Adding Adsets
+      const results = [];
+      const offset = (this.currentPage - 1) * this.pageSize;
+      data.forEach((item, index, array) => {
+        if (index < offset) return;
+        if (index >= offset + this.pageSize) return;
+        results.push(item);
+      });
+
+      return results;
+    },
+
+    sizeChange(newPageSize) {
+      this.pageSize = newPageSize;
+    },
+
+    ...mapActions({
+      fetchNoneOrderCustomers: 'report/fetchNoneOrderCustomers'
     })
   }
 }
