@@ -19,7 +19,7 @@
                   td(style="width: 10%")
                     el-tag(type="danger" size="mini") {{item.quantity}}
                   td(style="width: 10%")
-                    span.remove-item__cart(@click="RemoveFromCart(item)")
+                    span.remove-item__cart(@click="removeFromCart(item.id)")
                       svg-icon(icon-class="fa-solid times")
               tfoot
                 tr(style="border-top: 1px solid red;")
@@ -28,8 +28,9 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   import _ from 'lodash'
+
   export default {
     name: 'FormSearch',
     computed: {
@@ -37,12 +38,12 @@
         data: 'list',
         cartData: 'cartProducts'
       }),
-      total () {
+      total() {
         return this.data.length === 0 ? 0 :
           this.data.length === 1 ? this.data[0].quantity :
-          _.map(this.data, 'quantity').reduce((a, b) => a + b)
+            _.map(this.data, 'quantity').reduce((a, b) => a + b)
       },
-      products () {
+      products() {
         return this.cartData()
       }
     },
@@ -51,14 +52,35 @@
         remove: 'destroy',
         fetchCart: 'fetchList'
       }),
-      fetchData () {
+      ...mapActions('products', {
+        fetchProduct: 'fetchList'
+      }),
+      fetchData() {
         this.fetchCart()
       },
-      RemoveFromCart (item) {
-        this.remove(item)
+      removeFromCart(id) {
+        this.canExecute('Bạn muốn xóa sản phẩm khỏi giỏ hàng')
+          .then(() => this.remove({id}).then(() => {
+            this.fetchProduct()
+            this.fetchCart()
+          }).then(() => this.$notify(
+            {
+              title: 'Thông báo',
+              message: 'Đã xóa thành công sản phẩm khỏi giỏ hàng',
+              type: 'success'
+            })))
+      },
+      canExecute(message) {
+        return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Hủy',
+          type: 'success'
+        }).then(() => {
+          resolve(true);
+        }));
       }
     },
-    created () {
+    created() {
       this.fetchData()
     }
   }

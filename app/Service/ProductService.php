@@ -38,25 +38,35 @@ class ProductService extends BaseService
         /*
           Select by orm
         */
-         return $this->model->with($this->relative())->get();
-        /* 
+        if (Auth::user()->role_id == RoleConstant::Customer) {
+            return $this->model->with($this->relative())->get();
+        } else {
+            /*
           Maping
         */
-//        $products = $this->model->get()->map(function ($item) {
-//            return $this->transformData($item);
-//        });
-//
-//        return $products;
+            $products = $this->model->get()->map(function ($item) {
+                return $this->transformData($item);
+            });
+
+            return $products;
+        }
+
+
     }
 
     public function getProductById($id)
     {
-        // if (!$product = $this->model::find($id)) {
-        //     throw new \Exception('Product is not exist');
-        // }
+        if (Auth::user()->role_id == RoleConstant::Customer) {
+            return $this->model->with($this->relative())->find($id);
+        } else {
+             if (!$product = $this->model::find($id)) {
+                 throw new \Exception('Product is not exist');
+             }
 
-        // return $this->transformData($product);
-        return $this->model->with($this->relative())->find($id);
+             return $this->transformData($product);
+        }
+
+
     }
 
     public function getProductByCategory($categoryId)

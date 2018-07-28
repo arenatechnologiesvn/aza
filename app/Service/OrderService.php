@@ -65,7 +65,7 @@ class OrderService extends BaseService
     // }
 
     public function afterSave($order, $data, $update = false) {
-        if($data['product'] != false) {
+        if(!empty($data['product'])) {
             if ($update) {
                 usort($data['product'], function($a, $b) {
                     return $b['product_id'] > $a['product_id'];

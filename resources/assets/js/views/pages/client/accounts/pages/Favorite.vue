@@ -14,16 +14,19 @@
               el-col(:span="18")
                 h4 {{scope.row.title}}
                 div
-                  span(v-for="item in 5" :key="item" :style="{color: item <= scope.row.rating ? 'red': 'black'}")
+                  span(v-for="item in 5" :key="item" :style="{color: item <= 5 ? '#F7CA51': 'black'}")
                     svg-icon(icon-class="fa-solid star")
                 div
                   span(@click="removeFromFavorite(scope.row.id)" style="cursor: pointer;")
                     svg-icon(icon-class="fa-solid trash")
-        el-table-column(width="250")
+        el-table-column(width="200" style="text-align: left;")
           template(slot-scope="scope")
-            div(style="text-align: left;")
-              div.price {{formatNumber(scope.row.price)}} (VNĐ)
-              div.discount {{formatNumber(scope.row.discount)}} (VNĐ)
+            div(style="text-align: left;" v-if="scope.row.discount")
+              div.price ₫{{formatNumber(scope.row.discount)}}
+              div.discount ₫{{formatNumber(scope.row.price)}}
+                span(style="margin-left: 10px; text-decoration: unset; color: black;")  {{ ((1 - (scope.row.discount / scope.row.price)) * 100).toFixed(2)}} %
+            div(v-else)
+              div.price ₫{{formatNumber(scope.row.price)}}
         el-table-column(prop="address" label="Date" width="100")
           template(slot-scope="scope")
             el-button(size="mini" type="warning" @click="addToCart(scope.row)")
@@ -31,10 +34,8 @@
 </template>
 
 <script>
-  import avatar from '~/assets/products/linh-nguyen.jpg'
-  import { mapGetters, mapActions } from 'vuex'
-  import { formatNumber } from '~/utils/util'
-
+  import {mapGetters, mapActions} from 'vuex'
+  import {formatNumber} from '~/utils/util'
   export default {
     name: 'AccountAlert',
     computed: {
@@ -48,22 +49,91 @@
     },
     methods: {
       ...mapActions('favorite', {
-        fetchFavorite: 'fetchList'
+        fetchFavorite: 'fetchList',
+        deleteFavorite: 'destroy'
       }),
-      addToCart (item) {
-        this.$store.dispatch('cart/addProductToCart', item)
+      ...mapActions('cart', {
+        fetchCart: 'fetchList',
+        add2Cart: 'create',
+        updateCart: 'update'
+      }),
+      ...mapActions('product', {
+        fetchProduct: 'fetchList'
+      }),
+      addToCart(product) {
+        console.log(product)
+        if (product.added) {
+          this.canExecute('Bạn muốn thêm sản phẩm này vào giỏ hàng?')
+            .then(() => {
+              const data = {
+                product_id: product.id,
+                quantity: this.$store.state.cart.entities[product.id].quantity + 1,
+                customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+              }
+              this.updateCart({
+                id: product.id,
+                data: data
+              })
+            }).then(() => this.$notify(
+            {
+              title: 'Thông báo',
+              message: 'Đã thêm thành công sản phẩm vào giỏ hàng',
+              type: 'success'
+            }))
+        } else {
+          const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+          this.canExecute('Bạn muốn thêm sản phẩm này vào giỏ hàng?')
+            .then(() => {
+              this.add2Cart({
+                data: {
+                  product_id: product.id,
+                  quantity: 1,
+                  customer_id
+                }
+              }).then(() => {
+                this.fetchCart()
+                this.fetchProduct()
+              }).then(() => this.$notify(
+                {
+                  title: 'Thông báo',
+                  message: 'Đã thêm thành công sản phẩm vào giỏ hàng',
+                  type: 'success'
+                }))
+                .catch(err => console.log(err))
+            })
+        }
       },
-      removeFromFavorite (id) {
-        this.$store.dispatch('favorite/removeFromFavorite', id)
+      removeFromFavorite(id) {
+        this.canExecute('Bạn muốn xóa sản phẩm khỏi danh sách yêu thích?')
+          .then(() => {
+            this.deleteFavorite({id})
+          }).then(() => {
+          this.$notify(
+            {
+              title: 'Thông báo',
+              message: 'Đã xóa thành công sản phẩm khỏi danh sách',
+              type: 'success'
+            })
+        })
+
       },
-      fetchData () {
+      fetchData() {
         this.fetchFavorite();
       },
-      formatNumber (num) {
+      formatNumber(num) {
         return formatNumber(num)
+      },
+      canExecute(message) {
+        return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Hủy',
+          type: 'success'
+        }).then(() => {
+          resolve(true);
+        }));
       }
     },
-    created () {
+    created() {
       this.fetchData()
     }
   }
