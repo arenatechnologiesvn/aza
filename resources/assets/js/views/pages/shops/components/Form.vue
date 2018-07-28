@@ -1,10 +1,9 @@
 <template lang="pug">
   el-row
     el-col(:span="5" style="padding-right: 10px;")
-      media-manager-modal(type="shop" v-model="selectedImage" ref="mediaShopModal")
-      img(:src="selectedImage" style="width: 100%" height="230")
+      img(:src="selectedImageUrl()" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
-        el-button(type="success" @click="$refs.mediaShopModal.dialogVisible = true;") Thay đổi
+        el-button(type="success" @click="openMediaModal('single')" size="small") Thay đổi
     el-col(:span="19")
       el-form(ref="form" v-model="shop")
         el-col(:span="12")
@@ -30,12 +29,13 @@
             el-input(v-model="shop.description" rows="5" type="textarea")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
-            el-button(type="primary" @click="handleSubmit")
+            el-button(type="primary" @click="handleSubmit" size="small")
               svg-icon(icon-class="fa-solid save")
               span(style="margin-left: 10px") Lưu
-            el-button(type="danger" @click="back")
+            el-button(type="danger" @click="back" size="small")
               svg-icon(icon-class="fa-solid ban")
               span(style="margin-left: 10px") Hủy bỏ
+    media-manager-modal(type="shop")
 </template>
 
 <script>
@@ -50,11 +50,6 @@
       AdministrativeSelect,
       MediaManagerModal
     },
-    data () {
-      return {
-        selectedImage: dummyImage
-      }
-    },
     props: {
       shop: {
         type: Object,
@@ -62,7 +57,7 @@
           return {
             name: '',
             phone: '',
-            preview_image: '',
+            featured_image: '',
             home_phone: '',
             selectedProvince: {},
             address: '',
@@ -80,6 +75,9 @@
       ...mapGetters('customers', {
         customers: 'list'
       }),
+      ...mapGetters('media', {
+        selectedImage: 'selectedSingleMedia',
+      }),
       customerList () {
         return this.customers.map(item => {
           return {
@@ -96,6 +94,9 @@
       ...mapActions('shops', {
         createShop: 'create',
         updateShop: 'update'
+      }),
+      ...mapActions('common', {
+        openMediaModal: 'openMediaManagerModal'
       }),
       back () {
         this.$router.go(-1)
@@ -123,6 +124,16 @@
       },
       handleSubmit () {
         this.isUpdate ? this.update() : this.create()
+      },
+      selectedImageUrl() {
+        return this.shop.featured_image ? this.shop.featured_image.url : dummyImage;
+      }
+    },
+    watch: {
+      selectedImage() {
+        if (this.selectedImage) {
+          this.shop.featured_image = this.selectedImage;
+        }
       }
     },
     created () {

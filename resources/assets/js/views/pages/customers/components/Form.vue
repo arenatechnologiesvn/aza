@@ -1,10 +1,9 @@
 <template lang="pug">
   el-row
     el-col(:span="5" style="padding-right: 10px;")
-      media-manager-modal(type="profile" v-model="selectedImage" ref="mediaCustomerModal")
-      img(:src="selectedImage" style="width: 100%" height="230")
+      img(:src="selectedAvatarUrl()" style="width: 100%" height="230")
       div(style="text-align: center; margin-top: 10px;")
-        el-button(type="success" @click="$refs.mediaCustomerModal.dialogVisible = true;") Thay đổi
+        el-button(type="success" @click="openMediaModal('single')" size="small") Thay đổi
     el-col(:span="19")
       el-form(ref="form" v-model="customer")
         el-col(:span="24")
@@ -53,6 +52,7 @@
             el-button(type="danger" @click="back")
               svg-icon(icon-class="fa-solid ban")
               span(style="margin-left: 10px") Hủy bỏ
+      media-manager-modal(type="user")
 </template>
 
 <script>
@@ -66,11 +66,6 @@
     components: {
       AdministrativeSelect,
       MediaManagerModal
-    },
-    data () {
-      return {
-        selectedImage: dummyImage
-      }
     },
     props: {
       customer: {
@@ -87,7 +82,8 @@
             selectedProvince: {},
             customer_type: null,
             address: '',
-            employee_id: null
+            employee_id: null,
+            avatar: null
           }
         }
       },
@@ -99,6 +95,9 @@
     computed: {
       ...mapGetters('employees', {
         employees: 'list'
+      }),
+      ...mapGetters('media', {
+        selectedAvatar: 'selectedSingleMedia',
       }),
       employeesList () {
         return this.employees.filter(item => item.role_id === 3).map(item => {
@@ -116,6 +115,9 @@
       ...mapActions('customers', {
         createCustomer: 'create',
         updateCustomer: 'update'
+      }),
+      ...mapActions('common', {
+        openMediaModal: 'openMediaManagerModal'
       }),
       back () {
         this.$router.go(-1)
@@ -143,6 +145,16 @@
       },
       handleSubmit () {
         this.isUpdate ? this.update() : this.create()
+      },
+      selectedAvatarUrl() {
+        return this.customer.avatar ? this.customer.avatar.url : dummyImage;
+      }
+    },
+    watch: {
+      selectedAvatar() {
+        if (this.selectedAvatar) {
+          this.customer.avatar = this.selectedAvatar;
+        }
       }
     },
     created () {
