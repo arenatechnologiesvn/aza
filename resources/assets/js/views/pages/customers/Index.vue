@@ -63,12 +63,28 @@
         })
       },
       current () {
-        return this.customers
+        console.log(this.customers)
+        return this.customers && this.customers
+          // .map(item => ({
+          //   id: item.id,
+          //   code: item.code,
+          //   email: item.user.email,
+          //   name: item.user.name,
+          //   customer_type: item.customer_type,
+          //   role_id: item.user.role.id,
+          //   is_active: item.user.is_active > 0,
+          //   avatar: item.user.avatar,
+          //   phone: item.user.phone,
+          //   full_name: item.user.full_name,
+          //   employee_id: item.employee && item.employee.id,
+          //   employee_name: item.employee && item.employee.user.full_name,
+          //   shop_count: item.shops.length
+          // }))
           .filter(item => {
               for(let index in this.search) {
                 if (index === 'key') {
-                  return item.full_name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
-                    item.name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
+                  return item.user.full_name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
+                    item.user.name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
                 } else if(typeof this.search[index] === 'string') {
                   return item[index].toLowerCase().indexOf(this.search[index].toLowerCase()) > -1
                 } else {
@@ -76,7 +92,7 @@
                 }
               }
             }
-          );
+          ) || [];
       },
       total () {
         this.current.length
