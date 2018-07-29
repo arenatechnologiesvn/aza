@@ -8,7 +8,7 @@
             img(:src="scope.row.preview_image" width="40" height="40")
         el-table-column(prop="name" label="TÊN CỬA HÀNG" min-width="200" sortable)
         el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable width="180")
-        el-table-column(prop="customer_name" label="CHỦ CỬA HÀNG" sortable width="180")
+        el-table-column(prop="customer.user.full_name" label="CHỦ CỬA HÀNG" sortable width="180")
         el-table-column(prop="address" label="ĐỊA CHỈ" sortable width="180")
         el-table-column(prop="id" label="TÁC VỤ" width="120" fixed="right")
           template(slot-scope="scope")

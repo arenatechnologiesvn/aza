@@ -17,7 +17,7 @@
           div(v-else)
             div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}}
           div(style="clear: both")
-            router-link(to="/home/products" style="font-size: 1.1em;color: #999;")
+            router-link(:to="{name: 'home_product', query: {category: product.category}}" style="font-size: 1.1em;color: #999;")
               strong(style="color: #666; margin-right: 10px;") Danh mục:
               template {{product.category}}
         div.line
@@ -216,19 +216,31 @@
     font-weight: bolder;
     text-align: left;
     padding-left: 5px;
-    z-index: 999999;
+    z-index: 2;
     &.no {
       top: calc(50% - 20px);
       text-align: center;
       color: red;
     }
   }
-
+  .product-item__image {
+    img {
+      height: 300px;
+      width: 100%;
+    }
+  }
   .description {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 100%;
   }
-
+  .product-item__control--right {
+    float: right;
+    span {
+      cursor: pointer;
+      display: inline-block;
+      padding: 5px;
+    }
+  }
 </style>

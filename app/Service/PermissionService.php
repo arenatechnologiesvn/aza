@@ -47,7 +47,8 @@ class PermissionService extends BaseService
         return is_callable($selectable) ? $selectable() : $this->selectable();
     }
     protected function selectable(){
-        return $this->model->with(['roles']);
+        return $this->model
+            ->with(['roles'=> function($q) { $q->select(['id']);}]);
 //            ->with(['roles'=> function($query) {
 //            $query->select(['id']);
 //            }]

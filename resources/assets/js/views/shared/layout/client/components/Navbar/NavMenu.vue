@@ -5,11 +5,7 @@
       el-menu-item(index="home_introduce" :route="{name: 'home_introduce'}") GIỚI THIỆU
       el-submenu(index="3")
         template(slot="title") SẢN PHẨM
-        el-menu-item(index="home_product" :route="{name: 'home_product', params: {category: 'Rau củ quả'}}") RAU CỦ QUẢ
-        el-menu-item(index="home_product" :route="{name: 'home_product', params: {category: 'Gia vị khô'}}") GIA VỊ KHÔ
-        el-menu-item(index="home_product" :route="{name: 'home_product'}") ĐỒ NHỰA
-        el-menu-item(index="home_product" :route="{name: 'home_product'}") DỊCH VỤ GIA TĂNG
-        el-menu-item(index="home_product" :route="{name: 'home_product'}") KHÁC
+        el-menu-item(index="home_product" v-for="item in categories" :key="item.id" :route="{name: 'home_product', query: {category: item.name}}") {{item.name}}
       el-menu-item(index="home_post" :route="{name: 'home_post'}") TIN TỨC
       el-menu-item(index="home_contact" :route="{name: 'home_contact'}") LIÊN HỆ
     el-menu.show-xs.menu-mobile(:default-active="$route.name" mode="vertical" :class="isShow? 'isShow' : ''"  background-color="#fff" text-color="#333" :router="true")
@@ -24,6 +20,7 @@
 </template>
 
 <script>
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     name: 'NavbarMenu',
     props: {
@@ -31,6 +28,26 @@
         type: Boolean,
         default: false
       }
+    },
+    computed: {
+      ...mapGetters('categories', {
+        getList: 'list'
+      }),
+      categories () {
+        console.log(this.getList)
+        return this.getList
+      }
+    },
+    methods: {
+      ...mapActions('categories', {
+        fetchCategories: 'fetchList'
+      }),
+      fetchData () {
+        this.fetchCategories()
+      }
+    },
+    created () {
+      this.fetchData()
     }
   }
 </script>

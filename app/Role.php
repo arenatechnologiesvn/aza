@@ -13,6 +13,7 @@ class Role extends BaseModel
         'note',
         'is_employee'
     ];
+    protected $hidden = ['pivot'];
     public function users()
     {
         return $this->hasMany(User::class);

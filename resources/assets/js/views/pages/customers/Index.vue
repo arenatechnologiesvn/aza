@@ -10,21 +10,23 @@
           el-row(style="margin: 0 -10px;")
             el-col(:span="12")
               el-form-item
-                el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%")
+                el-input(placeholder="Tìm kiếm" v-model="key" suffix-icon="el-icon-search" style="width: 100%")
             el-col(:span="4")
               el-form-item
-                el-select(placeholder="Nhân viên" v-model="search.employee_id" )
+                el-select(placeholder="Nhân viên" v-model="employee_id" clearable filterable )
                   el-option(v-for="item in employeeList" :key="item.id" :label="item.value" :value="item.id")
             el-col(:span="4")
               el-form-item
-                el-select(placeholder="Loại khách hàng" v-model="search.customer_type")
-                  el-option(label="VIP" value="1")
-                  el-option(label="THƯỜNG" value="2")
+                el-select(placeholder="Loại khách hàng" v-model="customer_type" clearable filterable)
+                  el-option(label="VIP" :value="1")
+                  el-option(label="THƯỜNG" :value="0")
+                  el-option(label="TẤT CẢ" :value="-1")
             el-col(:span="4")
               el-form-item
-                el-select(placeholder="Trạng thái" v-model="search.is_active")
-                  el-option(label="Đang hoạt động" :value="true")
-                  el-option(label="Đang bị khóa" :value="false")
+                el-select(placeholder="Trạng thái" v-model="is_active" clearable filterable)
+                  el-option(label="Đang hoạt động" :value="1")
+                  el-option(label="Đang bị khóa" :value="0")
+                  el-option(label="Tất cả" :value="-1")
     div.control__wrapper
       aza-control(@on-add="handAddClick")
     div.index__wrapper
@@ -46,6 +48,14 @@
       AzaControl,
       AzaSearch
     },
+    data () {
+      return {
+        key: '',
+        employee_id: null,
+        customer_type: null,
+        is_active: null
+      }
+    },
     computed: {
       ...mapGetters('customers', {
         customers: 'list',
@@ -55,15 +65,14 @@
         employees: 'list'
       }),
       employeeList () {
-        return this.employees.filter(item => item.role_id == 3).map(item => {
+        return this.employees.filter(item => item.user.role_id == 3).map(item => {
           return {
             id: item.id,
-            value: item.full_name
+            value: item.user.full_name
           }
         })
       },
       current () {
-        console.log(this.customers)
         return this.customers && this.customers
           // .map(item => ({
           //   id: item.id,
@@ -80,19 +89,18 @@
           //   employee_name: item.employee && item.employee.user.full_name,
           //   shop_count: item.shops.length
           // }))
-          .filter(item => {
-              for(let index in this.search) {
-                if (index === 'key') {
-                  return item.user.full_name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
-                    item.user.name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
-                } else if(typeof this.search[index] === 'string') {
-                  return item[index].toLowerCase().indexOf(this.search[index].toLowerCase()) > -1
-                } else {
-                  return item[index] === this.search[index];
-                }
-              }
-            }
-          ) || [];
+          .filter(item => item.code.indexOf(this.key) > -1
+            || item.user.full_name.indexOf(this.key) > -1
+          ).filter(item => {
+            if(this.employee_id === null || this.employee_id === '' || this.employee_id === -1) return true;
+            return this.employee_id === item.employee.id
+          }).filter(item => {
+            if(this.customer_type === null || this.customer_type === '' || this.customer_type === -1) return true;
+            return this.customer_type === item.customer_type
+          }).filter(item => {
+            if(this.is_active === null || this.is_active === '' || this.is_active === -1) return true;
+            return this.is_active === item.user.is_active
+          });
       },
       total () {
         this.current.length

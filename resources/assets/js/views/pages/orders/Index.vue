@@ -6,26 +6,47 @@
     div.h-line
     div.main-control
       div(style="margin-bottom: 10px;")
-        el-input(placeholder="Tìm kiếm đơn hàng" v-model="key" size="small")
-          i(slot="prefix" class="el-input__icon el-icon-search")
+        el-row(:gutter="20")
+          el-col(:span="16")
+            el-input(placeholder="Tìm kiếm đơn hàng" v-model="key" size="small")
+              i(slot="prefix" class="el-input__icon el-icon-search")
+          el-col(:span="8")
+            el-select(size="small" v-model="customer_id" style="width: 100%;" placeholder="Khách hàng" clearable filterable)
+              el-option(v-for="item in customerList" :key="item.id" :label="item.value" :value="item.id")
+              el-option(:value="-1" label="Tất cả")
       div
-        el-dropdown(split-button size="small") Đã chọn {{selected}} đơn hàng
-          el-dropdown-menu(slot="dropdown")
-            el-dropdown-item
-              svg-icon(icon-class="fa-solid check-circle")
-              span Duyệt đơn hàng
-            el-dropdown-item
-              svg-icon(icon-class="fa-solid ban")
-              span Hủy đơn hàng
-        el-radio-group(size="small" v-model="delivery" style="margin-left: 10px;")
-          el-radio-button(label="today") Hôm nay
-          el-radio-button(label="7days") 7 Ngày qua
-          el-radio-button(label="30days") 30 Ngày qua
-        el-select(size="small" style="margin-left: 10px;" v-model="status" placeholder="Trạng thái đơn hàng")
-          el-option(:value="1" label="Đang xử lý")
-          el-option(:value="0" label="Đã hoàn thành")
-          el-option(:value="2" label="Đã hủy")
-        el-date-picker(type="date" v-model="delivery_date" style="margin-left: 10px;" size="small" placeholder="Ngày đặt hàng")
+        el-row(:gutter="10")
+          el-col(:span="3")
+            el-dropdown(split-button size="small") Đã chọn {{selected}} đơn hàng
+              el-dropdown-menu(slot="dropdown")
+                el-dropdown-item
+                  svg-icon(icon-class="fa-solid check-circle")
+                  span Duyệt đơn hàng
+                el-dropdown-item
+                  svg-icon(icon-class="fa-solid ban")
+                  span Hủy đơn hàng
+          el-col(:span="5")
+            el-radio-group(size="small" v-model="delivery")
+              el-radio-button(label="today") Hôm nay
+              el-radio-button(label="7days") 7 Ngày qua
+              el-radio-button(label="30days") 30 Ngày qua
+          el-col(:span="4")
+            el-select(size="small" v-model="status" placeholder="Trạng thái đơn hàng" clearable)
+              el-option(:value="1" label="Đang xử lý")
+              el-option(:value="0" label="Đã hoàn thành")
+              el-option(:value="2" label="Đã hủy")
+              el-option(:value="-1" label="Tất cả")
+          el-col(:span="4")
+            el-date-picker(type="date" v-model="apply_at" size="small" placeholder="Ngày đặt hàng")
+          el-col(:span="4")
+            el-date-picker(type="date" v-model="delivery_date" size="small" placeholder="Ngày giao hàng")
+          el-col(:span="4")
+            el-select(v-model="delivery_type" style="width: 100%" clearable filterable placeholder="Giờ giao hàng" size="small")
+              el-option(label="9h - 11h" :value="'9h-11h'")
+              el-option(label="11h - 13h" :value="'11h-13h'")
+              el-option(label="13h - 15h" :value="'13h-15h'")
+              el-option(label="15h - 17h" :value="'15h-17h'")
+              el-option(label="17h - 19h" :value="'17h-19h'")
     div.account-order__content(style="padding: 10px;")
       el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
         el-table-column(type="selection" width="40")
@@ -40,7 +61,9 @@
               el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
               el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
               el-table-column(prop="unit" label="Đơn vị tính" width="100")
-        el-table-column(prop="code" label="MÃ ĐƠN HÀNG")
+        el-table-column(prop="code" label="MÃ ĐƠN HÀNG" sortable)
+        el-table-column(prop="customer.code" label="MÃ KH" sortable)
+        el-table-column(prop="customer.user.full_name" label="TÊN KH" sortable)
         el-table-column(label="TRẠNG THÁI")
           template(slot-scope="scope")
             el-tag(:type="scope.row.status === 0 ? 'success': scope.row.status === 1 ?  'info' : 'danger'") {{scope.row.status === 0 ? 'Đã hoàn thành' : scope.row.status === 1 ? 'Đang xử lý' : 'Đã bị hủy' }}
@@ -80,6 +103,17 @@
         order: 'list',
         loading: 'isLoading'
       }),
+      ...mapGetters('customers', {
+        customers: 'list'
+      }),
+      customerList () {
+        return this.customers.map(item => {
+          return {
+            id: item.id,
+            value: item.user.full_name
+          }
+        })
+      },
       orders () {
         return this.order.map(item => ({
           id: item.id,
@@ -91,6 +125,7 @@
           title: item.title,
           delivery: item.delivery,
           delivery_type: item.delivery_type,
+          customer: item.customer,
           products: item.products.map(p => ({
             id: p.id,
             img: avatar,
@@ -99,8 +134,28 @@
             title: p.name,
             price: p.pivot.real_price,
             total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
-          })).filter(item => item.code.indexOf(this.key) > -1)
-        }))
+          }))
+        })).filter(item => item.code.indexOf(this.key) > -1)
+          .filter(item => {
+            if(this.status === null || this.status === -1 || this.status === '') return true;
+            return this.status === item.status
+          })
+          .filter(item => {
+            if(this.delivery_date === null) return true;
+            return (+(new Date(item.delivery * 1000)) === +this.delivery_date)
+          })
+          .filter(item => {
+            if(this.apply_at === null) return true;
+            return (this.formatDateFromString(this.apply_at) === this.formatDateCompare(item.date))
+          })
+          .filter(item => {
+            if(this.delivery_type === null || this.delivery_type === '' ) return true;
+            return (this.delivery_type === item.delivery_type)
+          })
+          .filter(item => {
+            if(this.customer_id === null || this.customer_id === '' || this.customer_id === -1) return true;
+            return (this.customer_id === item.customer.id)
+          })
       }
     },
     watch: {
@@ -110,6 +165,9 @@
       ...mapActions('orders', {
         fetchOrder: 'fetchList',
         updateOrder: 'update'
+      }),
+      ...mapActions('customers', {
+        fetchCustomers: 'fetchList',
       }),
       canExecute(message) {
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
@@ -177,12 +235,25 @@
       formatNumber(num) {
         return formatNumber(num)
       },
+      formatDateFromString (date) {
+        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
+        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
+        const year = date.getFullYear()
+        return year + '-' + month + '-' + day
+      },
       formatDate(num) {
         let date = new Date(1000*num)
         const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
         const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
         const year = date.getFullYear()
         return day + '-' + month + '-' +year
+      },
+      formatDateCompare (num) {
+        let date = new Date(1000*num)
+        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
+        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
+        const year = date.getFullYear()
+        return year + '-' + month + '-' + day
       },
       handleSizeChange (size) {
         this.pageSize = size
@@ -199,11 +270,15 @@
         status: null,
         delivery_date: null,
         key: '',
-        selected: 0
+        selected: 0,
+        delivery_type: null,
+        apply_at: null,
+        customer_id: null
       }
     },
     created () {
       this.fetchData()
+      this.fetchCustomers()
     }
   }
 </script>

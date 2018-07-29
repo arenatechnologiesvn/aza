@@ -38,7 +38,7 @@ class ShopService extends BaseService
     }
     protected function selectable(){
         return $this->model->select($this->selectable)->with(['customer'=> function($query) {
-            $query->select(['id']);
+            $query->with(['user']);
         }]);
     }
 }
