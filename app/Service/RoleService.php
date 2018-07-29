@@ -32,7 +32,7 @@ class RoleService extends BaseService
     }
 
     public function afterSave($role, $data, $update = false) {
-        if(!empty($data['permissions'])) {
+        if(isset($data['permissions']) && !empty($data['permissions'])) {
             if ($update) {
                 usort($data['permissions'], function($a, $b) {
                     return $b > $a;

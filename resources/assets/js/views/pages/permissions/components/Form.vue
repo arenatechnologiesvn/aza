@@ -24,7 +24,7 @@
           el-input(v-model="permission.path" placeholder="Đường dẫn" clearable)
       el-col(:span="12")
         el-form-item(label="Permission Cha")
-          el-select(v-model="permission.parent_id" clearable placeholder="Permission Cha" style="width: 100%")
+          el-select(v-model="permission.parent_id" clearable filterable placeholder="Permission Cha" style="width: 100%")
             el-option(v-for="item in parentList" :key="item.id" :label="item.value" :value="item.id")
       el-col(:span="24")
         el-form-item

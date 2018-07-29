@@ -4,9 +4,9 @@
       div.avatar__img
         img(:src="avatar")
       div.avatar__info
-        h4.info__name LINH NGUYỄN
+        h4.info__name {{$store.getters.user_info.full_name}}
         div
-          strong.info__vip VIP
+          strong.info__vip {{$store.getters.user_info.customer.customer_type === 0 ? 'THƯỜNG': 'VIP'}}
         div
           span.info__score
             span.score 400

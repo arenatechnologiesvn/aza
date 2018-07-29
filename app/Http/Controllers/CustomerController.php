@@ -43,15 +43,13 @@ class CustomerController extends CrudController
     {
         //
         $data = $request->all();
-        unset($data['password']);
+        if(isset($data['password']))
+            unset($data['password']);
         if (isset($data['selectedProvince'])) {
             $data['province_code'] = $data['selectedProvince']['selectedProvince'];
             $data['district_code'] = $data['selectedProvince']['selectedDistrict'];
             $data['ward_code'] = $data['selectedProvince']['selectedWard'];
         }
-        $customer = $this->model->find($id);
-        $customer->update($data);
-        $this->returnData = $customer->user->update($data);
-        return $this->responseApi();
+        return $this->edit($data, $id);
     }
 }

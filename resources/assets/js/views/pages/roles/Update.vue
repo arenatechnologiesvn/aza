@@ -3,7 +3,7 @@
     div.clearfix(slot="header")
       span
         svg-icon(icon-class="fa-solid list")
-        span(style="margin-left: 10px; text-transform: uppercase;") CẬP NHẬT QUYỀN {{current.title}}
+        span(style="margin-left: 10px; text-transform: uppercase;") CẬP NHẬT QUYỀN {{current && current.title}}
       span(style="float: right")
         svg-icon(icon-class="fa-solid ")
     div.card-content
@@ -29,7 +29,9 @@
         'route', // vuex-router-sync
       ]),
       current () {
-        return this.roleById(this.$route.params.id);
+        let role = this.roleById(this.$route.params.id);
+        role.is_employee = role.is_employee > 0
+        return role
       }
     },
     methods: {

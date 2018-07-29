@@ -20,7 +20,7 @@
             el-input(v-model="customer.phone" clearable placeholder="Điện thoại")
         el-col(:span="12")
           el-form-item
-            el-input(v-model="customer.name" clearable placeholder="Tên đăng nhập")
+            el-input(v-model="customer.name" clearable placeholder="Tên đăng nhập" :disabled="isUpdate" )
         el-col(:span="12")
           el-form-item
             el-input(v-model="customer.password" clearable v-if="!isUpdate" type="password" placeholder="Mật khẩu")
@@ -40,7 +40,7 @@
               el-option(label="Vip" :value="1")
               el-option(label="Thường" :value="0")
         el-col(:span="24")
-          administrative-select(v-model="customer.selectedProvince")
+          <!--administrative-select(v-model="customer.selectedProvince")-->
         el-col(:span="24")
           el-form-item
             el-checkbox(v-model="customer.is_active" label="Kích hoạt")
@@ -100,10 +100,10 @@
         selectedAvatar: 'selectedSingleMedia',
       }),
       employeesList () {
-        return this.employees.filter(item => item.role_id === 3).map(item => {
+        return this.employees.filter(item => item.user.role_id === 3).map(item => {
           return {
             id: item.id,
-            name: item.full_name
+            name: item.user.full_name
           }
         })
       }

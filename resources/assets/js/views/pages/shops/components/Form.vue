@@ -82,7 +82,7 @@
         return this.customers.map(item => {
           return {
             id: item.id,
-            value: item.full_name
+            value: item.user.full_name
           }
         })
       }
@@ -106,7 +106,7 @@
           id: this.$route.params.id,
           data: this.shop
         }).then(res => {
-          this.$router.push({name: 'shops', replace: true})
+          this.$router.push({name: 'shop_index', replace: true})
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot update shop');
@@ -116,7 +116,7 @@
         this.createShop({
           data: this.shop
         }).then(res => {
-          this.$router.push({name: 'shops'})
+          this.$router.push({name: 'shop_index', replace: true})
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot create shop');

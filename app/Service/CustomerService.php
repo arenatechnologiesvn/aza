@@ -18,6 +18,7 @@ class CustomerService extends BaseService
         'code',
         'user_id',
         'status',
+        'address',
         'customer_type',
         'point',
         'employee_id',

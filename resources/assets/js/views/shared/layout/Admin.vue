@@ -3,7 +3,7 @@
     el-aside.sidebar__container(:class="collapsed ? 'collapsed':''")
       sidebar(:collapse="collapsed" :menuList="menuList" :active-name="$route.name" @on-select="turnToPage" :info="user_info")
         div.logo-con(slot="logo")
-          router-link(to="/home")
+          router-link(to="/")
             img(:src="logo" key="max-logo")
             span.logo__title(v-show="!collapsed") PROJECT
     el-container(style="overflow-x: hidden;")

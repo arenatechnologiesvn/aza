@@ -243,4 +243,10 @@
       padding: 5px;
     }
   }
+  .product-item__control {
+    padding: 5px !important;
+  }
+  .product-item__des {
+    padding: 5px !important;
+  }
 </style>

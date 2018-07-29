@@ -29,7 +29,14 @@
         'route', // vuex-router-sync
       ]),
       current () {
-        return this.ById(this.$route.params.id);
+        let permission = this.ById(this.$route.params.id);
+        if(permission) {
+          permission.is_menu = permission.is_menu > 0
+          permission.is_show = permission.is_show > 0
+          permission.authorize = permission.authorize > 0
+        }
+        return permission
+
       }
     },
     methods: {
