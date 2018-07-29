@@ -46,6 +46,8 @@ class CustomerService extends BaseService
                 'customer_id',
                 'quantity'
             ]);
-        },'user','shops','employee']);
+        },'user','shops','employee' => function($q) {
+            $q->with(['user']);
+        }]);
     }
 }

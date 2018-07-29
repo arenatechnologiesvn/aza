@@ -3,56 +3,32 @@
     div.clearfix(slot="header")
       span
         svg-icon(icon-class="fa-solid list")
-        span(style="margin-left: 10px;") DANH SÁCH NHÂN VIÊN
+        span(style="margin-left: 10px;") DANH SÁCH QUYỀN THEO ROLE
     div.search__wrapper(style="margin: 10px 0 20px")
       div.form-search__wrapper
         el-form.search(v-model="search" size="small")
           el-row(style="margin: 0 -10px;")
-            el-col(:span="16")
+            el-col(:span="24")
               el-form-item
-                el-input(placeholder="Tìm kiếm" v-model="key" suffix-icon="el-icon-search" style="width: 100%" clearable)
-            el-col(:span="4")
-              el-form-item
-                el-select(placeholder="Vai trò" v-model="role_id" @change="onChangeRole" clearable filterable)
-                  el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
-                  el-option(label="Tất cả" :value="-1")
-            el-col(:span="4")
-              el-form-item
-                el-select(placeholder="Trạng thái" v-model="status" clearable filterable)
-                  el-option(label="Đang hoạt động" :value="1")
-                  el-option(label="Đang bị khóa" :value="0")
-                  el-option(label="Tất cả" :value="-1")
-    div.control__wrapper
-      aza-control(@on-add="handAddClick")
+                el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%" clearable)
     div.index__wrapper
-      aza-table(ref="table" @on-delete="deleteHandle" :employees="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
+      aza-table(ref="table" @on-delete="deleteHandle" :permissions="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
 </template>
 
 <script>
   import { mapGetters, mapActions, mapState } from 'vuex'
-  import AzaTable from './components/Table'
-  import AzaControl from './components/Control'
-  import AzaSearch from './components/FormSearch'
+  import AzaTable from './components/RolePermission'
   import BaseMixin from '../mixin'
 
   export default {
-    name: 'EmployeeIndex',
+    name: 'PermissionRole',
     mixins: [BaseMixin],
     components: {
-      AzaTable,
-      AzaControl,
-      AzaSearch
-    },
-    data () {
-      return {
-        key: '',
-        role_id: null,
-        status: null
-      }
+      AzaTable
     },
     computed: {
-      ...mapGetters('employees', {
-        employees: 'list',
+      ...mapGetters('permissions', {
+        permissions: 'list',
         isLoading: 'isLoading'
       }),
       ...mapGetters('roles', {
@@ -67,18 +43,20 @@
         })
       },
       current () {
-        return this.employees
-          .filter(item => item.code.indexOf(this.key) > -1
-            || item.user.email.indexOf(this.key) > -1
-            || item.user.full_name.indexOf(this.key) > -1)
+        return this.permissions
           .filter(item => {
-            if(this.role_id === null || this.role_id === '' || this.role_id === -1) return true;
-            return (this.role_id === item.user.role_id);
-          })
-          .filter(item => {
-            if(this.status === null || this.status === '' || this.status === -1) return true;
-            return (this.status === item.status);
-          })
+              for(let index in this.search) {
+                if (index === 'key') {
+                  return item.title.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
+                    item.name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
+                } else if(typeof this.search[index] === 'string') {
+                  return item[index].toLowerCase().indexOf(this.search[index].toLowerCase()) > -1
+                } else {
+                  return item[index] === this.search[index];
+                }
+              }
+            }
+          );
       },
       total () {
         this.current.length
@@ -97,7 +75,7 @@
       }
     },
     methods: {
-      ...mapActions('employees', {
+      ...mapActions('permissions', {
         fetchEmployees: 'fetchList',
         fetchSearch: 'search',
         deleteSelection: 'deleteSelection',
@@ -121,7 +99,7 @@
       },
       handAddClick () {
         this.$router.push({
-          name: 'employee_create'
+          name: 'permission_create'
         })
       },
       deleteHandle (id) {
@@ -146,7 +124,7 @@
       },
       handUpdateClick (id) {
         this.$router.push({
-          name: 'employee_update',
+          name: 'permission_edit',
           params: {
             id
           }

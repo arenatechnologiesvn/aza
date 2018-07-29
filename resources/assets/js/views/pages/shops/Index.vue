@@ -8,14 +8,14 @@
       div.form-search__wrapper
         el-form.search
           el-row(style="margin: 0 -10px;")
-            el-col(:span="8")
+            el-col(:span="12")
               el-form-item
-                el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%")
+                el-input(placeholder="Tìm kiếm" v-model="key" clearable suffix-icon="el-icon-search" style="width: 100%")
             el-col(:span="12")
               <!--administrative-select(v-model="search.location")-->
             el-col(:span="4")
               el-form-item
-                el-select(placeholder="Khách hàng" v-model="search.customer_id")
+                el-select(placeholder="Khách hàng" v-model="customer_id" clearable filterable)
                   el-option(v-for="item in customerList" :key="item.id" :label="item.value" :value="item.id")
     div.control__wraper
      aza-control(@on-add="handAddClick")
@@ -39,6 +39,12 @@
       AzaSearch,
       AdministrativeSelect
     },
+    data () {
+      return {
+        key: '',
+        customer_id: null
+      }
+    },
     computed: {
       ...mapGetters('customers', {
         customers: 'list'
@@ -51,25 +57,17 @@
         return this.customers.map(item => {
           return {
             id: item.id,
-            value: item.full_name
+            value: item.user.full_name
           }
         })
       },
       current () {
         return this.shops
+          .filter(item => item.name.indexOf(this.key) > -1)
           .filter(item => {
-              for(let index in this.search) {
-                if (index === 'key') {
-                  return item.name.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1 ||
-                    item.description.toLowerCase().indexOf(this.search.key.toLowerCase()) > -1
-                } else if(typeof this.search[index] === 'string') {
-                  return item[index].toLowerCase().indexOf(this.search[index].toLowerCase()) > -1
-                } else {
-                  return item[index] === this.search[index];
-                }
-              }
-            }
-          );
+            if(this.customer_id === null || this.customer_id === '') return true;
+            return item.customer.id === this.customer_id;
+          })
       },
       total () {
         this.current.length

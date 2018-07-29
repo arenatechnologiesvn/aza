@@ -6,6 +6,7 @@
         el-table-column(prop="avatar" width="60")
           template(slot-scope="scope")
             img(:src="scope.row.avatar" width="40" height="40")
+        el-table-column(prop="code" label="MÃ KH" sortable min-width="100")
         el-table-column(prop="user.full_name" label="HỌ TÊN" sortable min-width="120")
         el-table-column(prop="employee.user.full_name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="180")
         el-table-column(prop="user.phone" label="ĐIỆN THOẠI" sortable width="120")

@@ -11,7 +11,7 @@
         <div class="bullshit__oops">OOPS!</div>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">Làm ơn kiểm tra URL bạn nhập là đúng. Làm ơn nhấn button phía dưới để quay Trang chủ.</div>
-        <a href="/" class="bullshit__return-home">Quay lại Trang chủ</a>
+        <router-link :to="url" class="el-button el-button--primary"> Quay lại trang chủ </router-link>
       </div>
     </div>
   </div>
@@ -31,6 +31,12 @@
     computed: {
       message() {
         return 'URL không chính xác ......'
+      },
+      url () {
+        if(this.$store.getters.user_info.role.id === 2) {
+          return '/home'
+        }
+        return '/'
       }
     }
   }

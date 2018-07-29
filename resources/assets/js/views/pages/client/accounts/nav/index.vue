@@ -21,11 +21,15 @@
 </template>
 
 <script>
-  import avatar from '~/assets/products/linh-nguyen.jpg'
   import './nav.scss'
   export default {
     components: {},
     name: 'NavAccount',
+    computed: {
+      avatar () {
+        return this.$store.getters.user_info.avatar
+      }
+    },
     props: {
       menus: {
         type: Array,
@@ -62,11 +66,6 @@
             icon: 'fa-solid sign-out-alt'
           }
         ]
-      }
-    },
-    data () {
-      return {
-        avatar
       }
     }
   }

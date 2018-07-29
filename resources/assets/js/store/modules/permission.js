@@ -69,23 +69,29 @@ const permission = {
   },
   actions: {
     GenerateRoutes ({ commit }, data) {
+      console.log(data)
       return new Promise(resolve => {
         request({
-          url: '/api/permissions/roles',
+          url: `/api/roles/${data.role.id}`,
           method: 'get'
         }).then(res => {
-          const data = processRouter(res.data);
-          const menu = getMenuByRouter(data);
           const asyncRouter = [];
-          asyncRouter.push({
-            path: '/',
-            component: Layout,
-            redirect: 'dashboard',
-            meta: { title: 'Dashboard', icon: 'fa-solid tachometer-alt' },
-            children: [...data]
-          });
-          asyncRouter.push(...asyncRouterMap);
-          commit('SET_ROUTERS', { asyncRouter, menu });
+          if (res.data.id === 2) {
+            asyncRouter.push(...asyncRouterMap);
+            commit('SET_ROUTERS', { asyncRouter });
+          } else {
+            const data = processRouter(res.data.permissions);
+            const menu = getMenuByRouter(data);
+            asyncRouter.push({
+              path: '/',
+              component: Layout,
+              redirect: 'dashboard',
+              meta: { title: 'Dashboard', icon: 'fa-solid tachometer-alt' },
+              children: [...data]
+            });
+            asyncRouter.push({ path: '*', redirect: '/404', hidden: true });
+            commit('SET_ROUTERS', { asyncRouter, menu });
+          }
           resolve();
         });
       });

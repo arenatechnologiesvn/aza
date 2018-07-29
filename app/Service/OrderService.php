@@ -87,7 +87,7 @@ class OrderService extends BaseService
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
-                }]);
+                }, 'featured']);
             }])->where('customer_id', '=', Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id);
         } else {
             return $this->model->select($this->selectable)->with(['products'=> function($query) {
@@ -101,7 +101,9 @@ class OrderService extends BaseService
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
                 }]);
-            },'customer']);
+            },'customer' => function ($q3) {
+                $q3->with(['user']);
+            }]);
         }
     }
 }
