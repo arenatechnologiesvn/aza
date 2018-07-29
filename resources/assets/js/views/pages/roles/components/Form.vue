@@ -48,8 +48,12 @@
       update () {
         this.updateRole({
           id: this.$route.params.id,
-          data: this.role
-        }).then(() => this.$router.push({name: 'roles', replace: true}))
+          data: {
+            title: this.role.title,
+            description: this.role.description,
+            is_employee: this.role.is_employee
+          }
+        }).then(() => this.$router.push({name: 'role_index', replace: true}))
           .catch(err => {
             console.log(err)
             this.$message.error('Error! Cannot update role')
@@ -59,7 +63,7 @@
         this.createRole({
           data: this.role
         }).then(() => {
-          this.$router.push({name: 'roles'})
+          this.$router.push({name: 'role_index', replace: true})
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot create role');

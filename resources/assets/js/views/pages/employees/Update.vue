@@ -29,7 +29,12 @@
         'route', // vuex-router-sync
       ]),
       current () {
-        return this.ById(this.$route.params.id);
+        let employee = this.ById(this.$route.params.id);
+        if(employee) {
+          employee.user.is_active = employee.user.is_active > 0
+          employee.start_datetime = new Date(employee.start_datetime)
+        }
+        return employee
       }
     },
     methods: {

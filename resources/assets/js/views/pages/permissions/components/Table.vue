@@ -5,7 +5,7 @@
         el-table-column(type="selection" width="40")
         el-table-column(prop="user.icon" width="60" style="text-align: center; margin: 0 auto;")
           template(slot-scope="scope")
-            svg-icon(:icon-class="scope.row.icon")
+            svg-icon(:icon-class="scope.row.icon || ''")
         el-table-column(prop="title" label="Tiêu đề" sortable min-width="200")
           template(slot-scope="scope")
             span {{'|==>'.repeat(scope.row.level - 1)}}

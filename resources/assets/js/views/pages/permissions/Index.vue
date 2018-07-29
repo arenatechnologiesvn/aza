@@ -3,25 +3,14 @@
     div.clearfix(slot="header")
       span
         svg-icon(icon-class="fa-solid list")
-        span(style="margin-left: 10px;") DANH SÁCH NHÂN VIÊN
+        span(style="margin-left: 10px;") DANH SÁCH CHỨC NĂNG HỆ THỐNG
     div.search__wrapper(style="margin: 10px 0 20px")
       div.form-search__wrapper
         el-form.search(v-model="search" size="small")
           el-row(style="margin: 0 -10px;")
-            el-col(:span="16")
+            el-col(:span="24")
               el-form-item
-                el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%" clearable)
-            el-col(:span="4")
-              el-form-item
-                el-select(placeholder="Vai trò" v-model="search.role_id" @change="onChangeRole" clearable)
-                  el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
-            el-col(:span="4")
-              el-form-item
-                el-select(placeholder="Trạng thái" v-model="search.status" clearable)
-                  el-option(label="Đang hoạt động" :value="true")
-                  el-option(label="Đang bị khóa" :value="false")
-    div.control__wrapper
-      aza-control(@on-add="handAddClick")
+                el-input(placeholder="Tìm kiếm" v-model="search.key" prefix-icon="el-icon-search" style="width: 100%" clearable)
     div.index__wrapper
       aza-table(ref="table" @on-delete="deleteHandle" :permissions="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
 </template>

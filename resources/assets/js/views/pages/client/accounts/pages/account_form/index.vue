@@ -1,16 +1,16 @@
 <template lang="pug">
-  div
-    el-form(ref="form" :model="customer" label-width="150px")
+  div {{customer}}
+    el-form(ref="form" :model="form" label-width="150px")
       el-form-item(label="HỌ TÊN")
-        el-input(v-model="customer.name" placeholder="HỌ TÊN")
+        el-input(v-model="form.name" placeholder="HỌ TÊN")
       el-form-item(label="SỐ ĐIỆN THOẠI")
-        el-input(v-model="customer.phone" placeholder="SỐ ĐIỆN THOẠI")
+        el-input(v-model="form.phone" placeholder="SỐ ĐIỆN THOẠI")
       el-form-item(label="GIỚI TÍNH")
-        el-radio-group(v-model="customer.sex" placeholer="GIỚI TÍNH")
-          el-radio(label="Nam" )
-          el-radio(label="Nữ")
+        el-radio-group(v-model="form.sex" placeholer="GIỚI TÍNH")
+          el-radio(:label="0") Nam
+          el-radio(:label="1") Nữ
       el-form-item(label="ĐỊA CHỈ NHẬN HÀNG")
-        el-input(type="textarea" v-model="customer.address" placeholder="ĐỊA CHỈ NHẬN HÀNG")
+        el-input(type="textarea" v-model="form.address" placeholder="ĐỊA CHỈ NHẬN HÀNG")
       el-form-item
         el-button(type="success" @click="updateData") CẬP NHẬT
 </template>
@@ -19,19 +19,28 @@
   import { mapGetters, mapActions } from 'vuex'
   export default {
     name: 'Account',
+    data () {
+      return {
+        form: {
+          id: 0,
+          name: '',
+          phone: '',
+          address: '',
+          sex: false
+        }
+      }
+    },
     computed: {
       ...mapGetters([
         'user_info'
       ]),
       customer () {
         const user = this.user_info
-        return {
-          id: user.customer ? user.customer.id : 0,
-          name: `${user.first_name} ${user.last_name}`,
-          phone: user.phone,
-          address: user.customer ? user.customer.address : '',
-          sex: false
-        }
+          this.form.id = user.customer ? user.customer.id : 0,
+          this.form.name = `${user.first_name} ${user.last_name}`,
+          this.form.phone = user.phone,
+          this.form.address = user.customer ? user.customer.address : '',
+          this.form.sex = user.customer.sex
       }
     },
     methods: {
@@ -41,8 +50,8 @@
       updateData () {
         console.log(this.customer);
         this.updateCustomer({
-          id: this.customer.id,
-          data: this.customer
+          id: this.form.id,
+          data: this.form
         }).then(res => {
           this.$notify({
             title: 'Thông báo cập nhật',

@@ -16,7 +16,7 @@
               el-option(:value="-1" label="Tất cả")
       div
         el-row(:gutter="10")
-          el-col(:span="3")
+          el-col(:span="4")
             el-dropdown(split-button size="small") Đã chọn {{selected}} đơn hàng
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item
@@ -25,22 +25,22 @@
                 el-dropdown-item
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
-          el-col(:span="5")
+          el-col(:span="6")
             el-radio-group(size="small" v-model="delivery")
               el-radio-button(label="today") Hôm nay
               el-radio-button(label="7days") 7 Ngày qua
               el-radio-button(label="30days") 30 Ngày qua
-          el-col(:span="4")
-            el-select(size="small" v-model="status" placeholder="Trạng thái đơn hàng" clearable)
+          el-col(:span="3")
+            el-select(size="small" v-model="status" placeholder="Trạng thái" clearable)
               el-option(:value="1" label="Đang xử lý")
               el-option(:value="0" label="Đã hoàn thành")
               el-option(:value="2" label="Đã hủy")
               el-option(:value="-1" label="Tất cả")
           el-col(:span="4")
-            el-date-picker(type="date" v-model="apply_at" size="small" placeholder="Ngày đặt hàng")
+            el-date-picker(type="date" style="width: 100%" v-model="apply_at" size="small" placeholder="Ngày đặt hàng")
           el-col(:span="4")
-            el-date-picker(type="date" v-model="delivery_date" size="small" placeholder="Ngày giao hàng")
-          el-col(:span="4")
+            el-date-picker(type="date" style="width: 100%" v-model="delivery_date" size="small" placeholder="Ngày giao hàng")
+          el-col(:span="3")
             el-select(v-model="delivery_type" style="width: 100%" clearable filterable placeholder="Giờ giao hàng" size="small")
               el-option(label="9h - 11h" :value="'9h-11h'")
               el-option(label="11h - 13h" :value="'11h-13h'")
