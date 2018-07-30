@@ -3,7 +3,7 @@
     el-row.search-wrapper(:gutter="5")
       el-col(:span="12")
         span.search-wrapper__title Tìm kiếm:
-        el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
+        el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search"  size="small" style="width: 100%")
       el-col(:span="4")
         span.search-wrapper__title Tỉnh/TP:
         province-select(v-model="selectedProvince")
@@ -128,15 +128,15 @@ export default {
 
       if (this.selectedWard) {
         data = data.filter(item => {
-          return item.ward_code === Number(this.selectedWard);
+          return item.ward_code === this.selectedWard;
         });
       } else if (this.selectedDistrict) {
         data = data.filter(item => {
-          return item.district_code === Number(this.selectedDistrict);
+          return item.district_code === this.selectedDistrict;
         });
       } else if (this.selectedProvince) {
         data = data.filter(item => {
-          return item.province_code === Number(this.selectedProvince);
+          return item.province_code === this.selectedProvince;
         });
       }
 
