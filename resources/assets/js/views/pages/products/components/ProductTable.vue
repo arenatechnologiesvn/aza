@@ -3,16 +3,16 @@
     el-row.search-wrapper(:gutter="5")
       el-col(:span="16")
         span.search-wrapper__title Tìm kiếm:
-        el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%")
+        el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="width: 100%" size="small")
       el-col(:span="4")
         span.search-wrapper__title Danh mục:
-        el-select(v-model="selectedCategory" @change="filterData" @clear="filterData" clearable placeholder="Danh mục" style="width: 100%")
+        el-select(v-model="selectedCategory" @change="filterData" @clear="filterData" clearable placeholder="Danh mục" size="small" style="width: 100%")
           el-option(v-for="item in categories" :key="item.id" :label="item.name" :value="item.id")
             svg-icon(:icon-class="item.icon")
             span(style="margin-left: 5px") {{ item.name }}
       el-col(:span="4")
         span.search-wrapper__title Nhà cung cấp:
-        el-select(v-model="selectedProvider" @change="filterData" @clear="filterData" clearable placeholder="Nhà cung cấp" style="width: 100%")
+        el-select(v-model="selectedProvider" @change="filterData" @clear="filterData" clearable placeholder="Nhà cung cấp" size="small" style="width: 100%")
           el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
     .control-wrapper
       el-row

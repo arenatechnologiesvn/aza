@@ -34,10 +34,10 @@
                 province-select(v-model="providerForm.province_code")
             el-col(:span="8")
               el-form-item(prop="district_code" label="Huyện/Quận:")
-                district-select(v-model="providerForm.district_code" :parent-code="providerForm.province_code || ''")
+                district-select(v-model="providerForm.district_code" :parent-code="providerForm.province_code")
             el-col(:span="8")
               el-form-item(prop="ward_code" label="Xã/Phường:")
-                ward-select(v-model="providerForm.ward_code" :parent-code="providerForm.district_code || ''")
+                ward-select(v-model="providerForm.ward_code" :parent-code="providerForm.district_code")
             el-col(:span="12")
               el-form-item(prop="contract_at" label="Ngày ký hợp đồng:")
                 el-date-picker(

@@ -1,5 +1,5 @@
 <template lang="pug">
-  el-select(v-model="selectedProvince" clearable style="width: 100%" filterable placeholder="Tỉnh/TP" @change="_sendSelectedObjectToParent")
+  el-select(v-model="selectedProvince" clearable style="width: 100%" filterable placeholder="Tỉnh/TP" @change="_sendSelectedObjectToParent" :size="size")
     el-option(
       v-for="item in provinces"
       :key="item.code"
@@ -8,6 +8,12 @@
 </template>
 
 <script>
+/*
+* Use: province-select(v-model="province_code")
+* Param:
+*  - v-model: String
+*/
+
 import { mapGetters } from 'vuex';
 
 export default {
@@ -17,7 +23,13 @@ export default {
     event: 'change'
   },
   props: {
-    province: String
+    province: String,
+    size: {
+      type: String,
+      default: () => {
+        return 'small';
+      }
+    }
   },
   computed: {
     ...mapGetters({
@@ -26,7 +38,7 @@ export default {
   },
   data() {
     return {
-      selectedProvince: this.province
+      selectedProvince: ''
     };
   },
   methods: {
