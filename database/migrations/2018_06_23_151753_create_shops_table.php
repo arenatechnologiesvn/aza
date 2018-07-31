@@ -17,13 +17,13 @@ class CreateShopsTable extends Migration
             $table->increments('id');
             $table->integer('customer_id')->nullable();
             $table->string('name', 255)->nullable();
-            $table->string('description', 500)->nullable();
             $table->string('address')->nullable();
             $table->string('phone', 15)->nullable();
-            $table->string('home_phone', 15)->nullable();
-            $table->integer('province_code')->nullable();
-            $table->integer('district_code')->nullable();
-            $table->integer('ward_code')->nullable();
+            $table->string('zone', 255)->nullable();
+            $table->string('province_code', 10)->nullable();
+            $table->string('district_code', 10)->nullable();
+            $table->string('ward_code', 10)->nullable();
+            $table->string('description', 500)->nullable();
             $table->integer('created_at')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_at')->nullable();

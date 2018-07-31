@@ -5,16 +5,19 @@
         el-table-column(type="selection" width="40")
         el-table-column(prop="user.avatar" width="60")
           template(slot-scope="scope")
-            img(:src="scope.row.user.avatar" width="40" height="40")
-        el-table-column(prop="code" label="MÃ NHÂN VIÊN" sortable min-width="100")
-        el-table-column(prop="user.full_name" label="HỌ TÊN" sortable min-width="200")
-        el-table-column(prop="user.phone" label="ĐIỆN THOẠI" sortable width="120")
-        el-table-column(prop="user.email" label="EMAIL" sortable width="180")
-        el-table-column(prop="customers.length" label="SỐ KHÁCH HÀNG" sortable width="140"  :formatter="(row, column) => `${row.customers.length} Khách hàng`")
-        el-table-column(prop="user.role.title" label="VAI TRÒ" sortable width="180")
-        el-table-column(prop="is_active" label="TRẠNG THÁI" sortable width="120")
+            img(:src="avatarUrl(scope.row.user)" :width="40" :height="40")
+        el-table-column(prop="is_active" label="TRẠNG THÁI" align="center" width="120")
           template(slot-scope="scope")
             el-switch(v-model="scope.row.status === 1" @change="onChangeStatus(scope.row.id, scope.row.status)")
+        el-table-column(prop="code" label="MÃ NHÂN VIÊN" sortable min-width="150")
+        el-table-column(prop="user.full_name" label="HỌ TÊN" sortable min-width="200")
+        el-table-column(prop="user.email" label="EMAIL" sortable width="180")
+        el-table-column(prop="user.phone" label="ĐIỆN THOẠI" sortable width="120")
+        el-table-column(prop="customers.length" label="SỐ KHÁCH HÀNG" sortable width="140"  :formatter="(row, column) => row.customers.length")
+        el-table-column(prop="user.role.title" label="VAI TRÒ" sortable width="180")
+        el-table-column(prop="user.address" label="ĐỊA CHỈ" sortable width="300")
+          template(slot-scope="scope")
+            span {{ scope.row.user.address || '-' }}
         el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
@@ -35,6 +38,7 @@
 </template>
 
 <script>
+  import dummyImage from '~/assets/login_images/dummy-avatar.png';
 
   export default {
     name: 'EmployeeTable',
@@ -71,6 +75,10 @@
         this.$emit('on-change-status', id, {
           status: !status
         })
+      },
+      avatarUrl(user) {
+        if (user.avatar && user.avatar.length) return user.avatar[0].url;
+        return dummyImage;
       }
     }
   }

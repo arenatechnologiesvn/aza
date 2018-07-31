@@ -2,18 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Employee;
-use App\Http\Requests\Employees\EmployeeCreateRequest;
-use App\Http\Responses\Employees\EmployeeCreateResponse;
-use App\Http\Responses\Employees\EmployeeDeleteByIdResponse;
-use App\Http\Responses\Employees\EmployeeGetByIdResponse;
-use App\Http\Responses\Employees\EmployeeIndexResponse;
-use App\Http\Responses\Employees\EmployeeUpdateResponse;
-use App\Http\Responses\FailedResponse;
-use App\Service\EmployeeService;
 use App\User;
-use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Http\Request;
+use App\Employee;
+use App\Http\Requests\Employees\StoreEmployeeCreate;
+use App\Http\Requests\Employees\StoreEmployeeUpdate;
+use App\Service\EmployeeService;
 
 class EmployeeController extends CrudController
 {
@@ -27,10 +20,10 @@ class EmployeeController extends CrudController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  StoreEmployeeCreate  $request
      * @return
      */
-    public function store(EmployeeCreateRequest $request)
+    public function store(StoreEmployeeCreate $request)
     {
         return $this->save($request->all());
     }
@@ -38,21 +31,12 @@ class EmployeeController extends CrudController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  StoreEmployeeUpdate  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreEmployeeUpdate $request, $id)
     {
-        //
-        $data = $request->all();
-        return $this->edit($data, $id);
+        return $this->edit($request->all(), $id);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
 }

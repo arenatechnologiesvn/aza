@@ -1,46 +1,70 @@
 <template lang="pug">
   el-row
-    el-col(:span="5" style="padding-right: 10px;")
-      img(:src="selectedAvatarUrl()" style="width: 100%" height="230")
-      div(style="text-align: center; margin-top: 10px;")
-        el-button(type="success" @click="openMediaModal('single')" size="small") Thay đổi
+    el-col.side-form(:span="5")
+      el-row.image-container
+        img.image-preview(:src="avatarUrl()" width="100%")
+      el-row(style="margin-top: 10px")
+        el-button(type="success" size="small" @click="openMediaModal('single')") Thay đổi
     el-col(:span="19")
-      el-form(ref="form" v-model="customer")
+      el-form(ref="form" v-model="customer" size="small")
         el-col(:span="24")
-          el-form-item
-            el-input(v-model="customer.code" :disabled="isUpdate" placeholder="Mã khách hàng")
+          el-form-item(label="MÃ KHÁCH HÀNG")
+            el-input(v-model="customer.code" placeholder="Mã khách hàng")
+        el-col(:span="24")
+          el-form-item(label="EMAIL")
+            el-input(v-model="customer.user.email" clearable type="email" placeholder="Ví dụ: abc@gmail.com, ..." :disabled="isUpdate")
+        el-col(:span="24")
+          el-form-item(label="TÊN ĐĂNG NHẬP")
+            el-input(v-model="customer.user.name" clearable placeholder="Tên đăng nhập" :disabled="isUpdate")
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="customer.first_name" clearable placeholder="Tên")
+          el-form-item(label="HỌ")
+            el-input(v-model="customer.user.last_name" clearable placeholder="Họ")
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="customer.last_name" clearable placeholder="Họ")
+          el-form-item(label="TÊN")
+            el-input(v-model="customer.user.first_name" clearable placeholder="Tên")
+        el-col(:span="24")
+          el-form-item(label="ĐIỆN THOẠI CHÍNH")
+            el-input(v-model="customer.user.phone" clearable placeholder="Ví dụ: 0123345373, ...")
+        el-col(:span="24")
+          el-form-item(label="ĐỊA CHỈ")
+            el-input(v-model="customer.user.address" clearable placeholder="Địa chỉ")
+        el-col(:span="8")
+          el-form-item(prop="province_code" label="Tỉnh/TP:")
+            province-select(v-model="customer.province_code")
+        el-col(:span="8")
+          el-form-item(prop="district_code" label="Huyện/Quận:")
+            district-select(v-model="customer.district_code" :parent-code="customer.province_code")
+        el-col(:span="8")
+          el-form-item(prop="ward_code" label="Xã/Phường:")
+            ward-select(v-model="customer.ward_code" :parent-code="customer.district_code")
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="customer.phone" clearable placeholder="Điện thoại")
-        el-col(:span="12")
-          el-form-item
-            el-input(v-model="customer.name" clearable placeholder="Tên đăng nhập" :disabled="isUpdate" )
-        el-col(:span="12")
-          el-form-item
-            el-input(v-model="customer.password" clearable v-if="!isUpdate" type="password" placeholder="Mật khẩu")
-        el-col(:span="12")
-          el-form-item
-            el-input(v-model="customer.email" clearable v-if="!isUpdate" type="email" placeholder="Email")
-        el-col(:span="12")
-          el-form-item
-            el-input(v-model="customer.address" clearable placeholder="Địa chỉ")
-        el-col(:span="6")
-          el-form-item
+          el-form-item(label="NHÂN VIÊN SALE")
             el-select(v-model="customer.employee_id" clearable placeholder="Nhân viên" style="width: 100%")
               el-option(v-for="item in employeesList" :key="item.id" :label="item.name" :value="item.id")
-        el-col(:span="6")
-          el-form-item
+        el-col(:span="12")
+          el-form-item(label="LOẠI KHÁCH HÀNG (VIP/THƯỜNG)")
             el-select(v-model="customer.customer_type" clearable placeholder="Loại khách hàng" style="width: 100%")
               el-option(label="Vip" :value="1")
               el-option(label="Thường" :value="0")
-        el-col(:span="24")
-          <!--administrative-select(v-model="customer.selectedProvince")-->
+        el-col(:span="24" v-if="isUpdate")
+          el-form-item(label="CỬA HÀNG")
+            div.table
+              el-table(:data="customer.shops.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
+                el-table-column(prop="num" label="STT" align="center" width="60")
+                  template(slot-scope="scope")
+                    span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
+                el-table-column(prop="name" label="TÊN" sortable min-width="200")
+                el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable min-width="140")
+                el-table-column(prop="address" label="ĐỊA CHỈ" sortable min-width="200")
+                el-table-column(prop="zone" label="KHU VỰC" sortable min-width="200")
+            div.pagination__wrapper
+              el-pagination(@size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page.sync="currentPage"
+                :page-sizes="[5, 10, 20, 30, 50]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next"
+                :total="customer.shops.length")
         el-col(:span="24")
           el-form-item
             el-checkbox(v-model="customer.is_active" label="Kích hoạt")
@@ -52,19 +76,23 @@
             el-button(type="danger" @click="back")
               svg-icon(icon-class="fa-solid ban")
               span(style="margin-left: 10px") Hủy bỏ
-      media-manager-modal(type="user")
+    media-manager-modal(type="user")
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex';
+  import ProvinceSelect from '~/components/AdministrativeSelect/Province';
+  import DistrictSelect from '~/components/AdministrativeSelect/District';
+  import WardSelect from '~/components/AdministrativeSelect/Ward';
   import MediaManagerModal from '~/components/MediaManager/modal';
-  import dummyImage from '~/assets/login_images/dummy-image.jpg';
-  import AdministrativeSelect from '~/components/AdministrativeSelect'
-  import { mapGetters, mapActions } from 'vuex'
+  import dummyImage from '~/assets/login_images/dummy-avatar.png';
 
   export default {
-    name: 'EmployeeForm',
+    name: 'CustomerForm',
     components: {
-      AdministrativeSelect,
+      ProvinceSelect,
+      DistrictSelect,
+      WardSelect,
       MediaManagerModal
     },
     props: {
@@ -73,17 +101,24 @@
         default: () => {
           return {
             code: '',
-            first_name: '',
-            last_name: '',
-            name: '',
-            phone: '',
-            password: '',
-            email: '',
-            selectedProvince: {},
-            customer_type: null,
-            address: '',
+            customer_type: 0,
             employee_id: null,
-            avatar: null
+            zone: '',
+            province_code: '',
+            district_code: '',
+            ward_code: '',
+            shops: [],
+            user: {
+              avatar: [],
+              email: '',
+              name: '',
+              first_name: '',
+              last_name: '',
+              phone: '',
+              address: '',
+              role_id: '',
+              is_active: ''
+            }
           }
         }
       },
@@ -106,6 +141,12 @@
             name: item.user.full_name
           }
         })
+      }
+    },
+    data() {
+      return {
+        currentPage: 1,
+        pageSize: 5
       }
     },
     methods: {
@@ -146,14 +187,20 @@
       handleSubmit () {
         this.isUpdate ? this.update() : this.create()
       },
-      selectedAvatarUrl() {
-        return this.customer.avatar ? this.customer.avatar.url : dummyImage;
-      }
+      avatarUrl() {
+        return this.customer.user.avatar && this.customer.user.avatar.length ? this.customer.user.avatar[0].url : dummyImage;
+      },
+      handleSizeChange (size) {
+        this.pageSize = size
+      },
+      handleCurrentChange (current) {
+        this.currentPage = current
+      },
     },
     watch: {
       selectedAvatar() {
         if (this.selectedAvatar) {
-          this.customer.avatar = this.selectedAvatar;
+          this.customer.user.avatar = [this.selectedAvatar];
         }
       }
     },
@@ -163,6 +210,25 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.side-form {
+  text-align: center;
+  padding-right: 10px;
 
+  .image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    margin-top: 10px;
+
+    .image-preview {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      border: 1px solid #dcdfe6;
+    }
+  }
+}
 </style>

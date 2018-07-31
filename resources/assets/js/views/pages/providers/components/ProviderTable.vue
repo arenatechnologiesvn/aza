@@ -16,7 +16,7 @@
     div.control__wrapper
       el-row
         el-col(:span="12")
-          el-dropdown(split-button type="primary" size="small")
+          el-dropdown(split-button :type="multipleSelection.length ? 'primary' : 'default'" size="small")
             span Đã chọn {{ multipleSelection.length }} nhà cung cấp
             el-dropdown-menu(slot="dropdown")
               el-dropdown-item Xóa

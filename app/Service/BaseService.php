@@ -55,7 +55,7 @@ abstract class BaseService
             return $this->getById($saved->id);
         } catch (\Exception $e) {
             DB::rollBack();
-            return $e;
+            throw $e;
         }
     }
 

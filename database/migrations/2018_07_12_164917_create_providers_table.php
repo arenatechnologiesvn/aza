@@ -22,9 +22,9 @@ class CreateProvidersTable extends Migration
             $table->string('phone', 15)->nullable();
             $table->string('home_phone', 15)->nullable();
             $table->string('zone', 255)->nullable();
-            $table->string('province_code', 25)->nullable();
-            $table->string('district_code', 25)->nullable();
-            $table->string('ward_code', 25)->nullable();
+            $table->string('province_code', 10)->nullable();
+            $table->string('district_code', 10)->nullable();
+            $table->string('ward_code', 10)->nullable();
             $table->string('contract_at', 10)->nullable();
             $table->integer('created_at')->nullable();
             $table->integer('created_by')->nullable();

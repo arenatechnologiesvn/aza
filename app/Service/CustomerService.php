@@ -17,15 +17,14 @@ class CustomerService extends BaseService
         'id',
         'code',
         'user_id',
-        'status',
-        'address',
         'customer_type',
+        'status',
         'point',
         'employee_id',
+        'zone',
         'province_code',
         'district_code',
-        'ward_code',
-        'sex'
+        'ward_code'
     ];
 
     public function __construct(Customer $customer)
@@ -46,20 +45,45 @@ class CustomerService extends BaseService
         $updated->user->update($data);
     }
 
-    protected function selectable(){
-        return $this->model->select($this->selectable)->with(['favorites'=> function($query) {
-            $query->select([
-                'product_id',
-                'customer_id'
-            ]);
-        }, 'carts' => function ($q2) {
-            $q2->select([
-                'product_id',
-                'customer_id',
-                'quantity'
-            ]);
-        },'user','shops','employee' => function($q) {
-            $q->with(['user']);
-        }]);
+    protected function selectable() {
+        return $this->model->select($this->selectable)->with([
+            'favorites'=> function($q1) {
+                $q1->select([
+                    'product_id',
+                    'customer_id'
+                ]);
+            },
+            'carts' => function ($q2) {
+                $q2->select([
+                    'product_id',
+                    'customer_id',
+                    'quantity'
+                ]);
+            },
+            'user' => function($q3) {
+                $q3->select([
+                    'id',
+                    'name',
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'phone',
+                    'address',
+                    'role_id',
+                    'is_active'
+                ])->with([
+                    'avatar' => function($q4) {
+                        $q4->select([
+                            'id',
+                            \DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                        ]);
+                    }
+                ]);
+            },
+            'shops',
+            'employee' => function($q) {
+                $q->with(['user']);
+            }]
+        );
     }
 }

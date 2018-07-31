@@ -74,21 +74,6 @@
       },
       current () {
         return this.customers && this.customers
-          // .map(item => ({
-          //   id: item.id,
-          //   code: item.code,
-          //   email: item.user.email,
-          //   name: item.user.name,
-          //   customer_type: item.customer_type,
-          //   role_id: item.user.role.id,
-          //   is_active: item.user.is_active > 0,
-          //   avatar: item.user.avatar,
-          //   phone: item.user.phone,
-          //   full_name: item.user.full_name,
-          //   employee_id: item.employee && item.employee.id,
-          //   employee_name: item.employee && item.employee.user.full_name,
-          //   shop_count: item.shops.length
-          // }))
           .filter(item => item.code.indexOf(this.key) > -1
             || item.user.full_name.indexOf(this.key) > -1
           ).filter(item => {

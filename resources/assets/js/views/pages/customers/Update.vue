@@ -3,7 +3,7 @@
     div.clearfix(slot="header")
       span
         svg-icon(icon-class="fa-solid list")
-        span(style="margin-left: 10px;") CẬP NHẬT KHÁCH HÀNG - {{current && current.code}}
+        span(style="margin-left: 10px;") HỒ SƠ KHÁCH HÀNG - {{current && current.code}}
       span(style="float: right")
         svg-icon(icon-class="fa-solid ")
     div.card-content
@@ -29,20 +29,7 @@
         'route', // vuex-router-sync
       ]),
       current () {
-        let customer  = this.ById(this.$route.params.id);
-        let tmpCustomer = {};
-        if(customer) {
-          tmpCustomer.code = customer.code
-          tmpCustomer.customer_type = customer.customer_type
-          tmpCustomer.address = customer.address
-          tmpCustomer.first_name = customer.user.first_name
-          tmpCustomer.last_name = customer.user.last_name,
-          tmpCustomer.phone = customer.user.phone
-          tmpCustomer.employee_id = customer.employee.id
-          tmpCustomer.is_active = customer.user.is_active > 0
-          tmpCustomer.name = customer.user.name
-        }
-        return tmpCustomer
+        return this.ById(this.$route.params.id);
       }
     },
     methods: {
