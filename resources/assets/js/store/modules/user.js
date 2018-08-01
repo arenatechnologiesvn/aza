@@ -34,7 +34,7 @@ const user = {
       return new Promise((resolve, reject) => {
         login(email, userInfo.password).then(response => {
           const data = response.data;
-          setToken(data.token);
+          setToken(data.token, userInfo.remember);
           commit('SET_TOKEN', data.token);
           resolve(response);
         }).catch(error => {
@@ -69,6 +69,7 @@ const user = {
           commit('SET_ROLES', {});
           removeToken();
           resolve();
+          location.reload();
         }).catch(error => {
           reject(error);
         });

@@ -102,8 +102,8 @@
       },
       total() {
         return (this.products && this.products.length > 1) ?
-          this.products.reduce((a, b) => (a + (b.price * b.quantity)), 0) :
-          this.products.length === 1 ? this.products[0].quantity * this.products[0].price :
+          this.products.reduce((a, b) => (parseFloat(a)  + parseFloat((parseFloat(b.price) * parseInt(b.quantity)))), 0) :
+          this.products.length === 1 ? parseInt(this.products[0].quantity) * parseFloat(this.products[0].price) :
             0
       },
       formCart() {

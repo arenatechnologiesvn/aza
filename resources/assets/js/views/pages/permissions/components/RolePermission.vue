@@ -18,7 +18,7 @@
             el-checkbox(v-model="sale[scope.row.id]" @change="change(3, 'sale')")
         el-table-column(label="NHÂN VIÊN OFFICE" width="150")
           template(slot-scope="scope")
-            el-checkbox(v-model="officer[scope.row.id]" @change="change(3, 'officer')")
+            el-checkbox(v-model="officer[scope.row.id]" @change="change(4, 'officer')")
         el-table-column(label="KHÁCH HÀNG" width="100")
           template(slot-scope="scope")
             el-checkbox(v-model="customer[scope.row.id]" @change="change(2, 'customer')")
@@ -64,6 +64,21 @@
             Vue.set(this.customer, item.id, true)
           } else {
             Vue.set(this.customer, item.id, false)
+          }
+          if(item.roles.filter(item => item.id === 5).length > 0) {
+            Vue.set(this.manager, item.id, true)
+          } else {
+            Vue.set(this.manager, item.id, false)
+          }
+          if(item.roles.filter(item => item.id === 3).length > 0) {
+            Vue.set(this.sale, item.id, true)
+          } else {
+            Vue.set(this.sale, item.id, false)
+          }
+          if(item.roles.filter(item => item.id === 4).length > 0) {
+            Vue.set(this.officer, item.id, true)
+          } else {
+            Vue.set(this.officer, item.id, false)
           }
         })
       }

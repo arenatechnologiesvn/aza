@@ -1,0 +1,27 @@
+.category {
+  .item {
+    padding: 10px 5px;
+    .el-card__body {
+      padding: 0;
+      .product-item__image {
+        margin-bottom: 5px;
+        img {
+          height: 270px;
+        }
+      }
+      .product-item__des {
+        padding: 5px 0;
+        .product-item__price {
+          padding: 5px 0;
+        }
+        .line {
+          margin: 10px 0;
+          border: 1px solid #eeeeee;
+        }
+        .score {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

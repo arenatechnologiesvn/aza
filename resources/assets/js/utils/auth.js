@@ -6,8 +6,8 @@ export function getToken () {
   return Cookies.get(TokenKey);
 }
 
-export function setToken (token) {
-  return Cookies.set(TokenKey, token);
+export function setToken (token, remember) {
+  return Cookies.set(TokenKey, token,  { expires:  remember ? 365 : null });
 }
 
 export function removeToken () {

@@ -3,7 +3,7 @@
   text-align: center;
 }
 .guest__layout {
-  height: 100%;
+  height: 100vh;
   background-size: cover;
   background: url('../assets/login_images/background.png') no-repeat center center;
 }
@@ -13,13 +13,18 @@
   margin: 0 auto;
   .logo {
     margin: 0 auto;
-    width: 200px;
+    width: 100px;
+    height: 100px;
     text-align: center;
+    img {
+      width: 100px;
+      height: 100px;
+    }
   }
   .login-content {
-    max-width: 500px;
+    max-width: 400px;
     margin: 20px auto;
-    padding: 35px;
+    padding: 25px;
     background: rgba(255,255,255,0.2);
     border-radius: 10px;
     .el-form-item {
@@ -58,10 +63,10 @@
         border-radius: 0;
         padding: 12px 5px 12px 15px;
         color: $aza_color;
-        height: 40px;
+        height: 30px;
         &:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0 0 inset !important;
-          -webkit-text-fill-color: #242256 !important;
+          --webkit-box-shadow: 0 0 0 0 inset !important;
+          --webkit-text-fill-color: #242256 !important;
           background-color: rgba(255, 255, 255, 0.6) !important;
         }
       }
@@ -70,10 +75,9 @@
 }
 footer {
   position: relative;
-  bottom: 0;
+  bottom: 20px;
   width: 100%;
   vertical-align: middle;
-  padding-top: 30px !important;
   span {
     display: block;
     width: 100%;
