@@ -13,7 +13,7 @@
             div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}}
             div(v-if="product.discount").product-item__price--discount
               span(style="text-decoration: line-through; margin-right: 10px;") ₫{{formatNumber(product.price)}}
-              span {{ ((1 - (product.discount / product.price)) * 100).toFixed(2)}} %
+              span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
           div(v-else)
             div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}}
           div(style="clear: both")
@@ -138,6 +138,7 @@
         }
       },
       addProductToFavorite(id) {
+        console.log(this.$store.state)
         if (this.$store.state.favorite.list.length > 4) {
           this.$notify(
             {

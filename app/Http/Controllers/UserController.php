@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -95,5 +96,21 @@ class UserController extends Controller
 
     public function detail(Request $request) {
         return $this->api_success_response(['data' => $this->user->detail($request->user())]);
+    }
+
+    public function changePassword(Request $request) {
+        try {
+            $current_password = Auth::User()->password;           
+            if(Hash::check($request['current'], $current_password))
+            {           
+              $user_id = Auth::User()->id;                       
+              $obj_user = User::find($user_id);
+              $obj_user->password = Hash::make($request['new_pass']);;
+              $obj_user->save(); 
+              return $this->api_success_response(['data' => $obj_user]);
+            }
+        } catch(Exception $e) {
+            return $this->api_error_response($e);
+        }
     }
 }

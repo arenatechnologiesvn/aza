@@ -28,12 +28,16 @@
       ...mapActions('products', {
         fetchProducts: 'fetchList'
       }),
+      ...mapActions('favorite', {
+        fetchFavorites: 'fetchList'
+      }),
       fetchData () {
         this.fetchProducts();
       }
     },
     created (){
       this.fetchData()
+      this.fetchFavorites()
     }
   }
 </script>

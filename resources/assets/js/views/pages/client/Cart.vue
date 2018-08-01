@@ -68,6 +68,15 @@
       BreadCrumb
     },
     data() {
+      const validateDelivery = (rule, value, callback) => {
+        const now = +(new Date())
+        if(+value < now) {
+          callback(new Error('Ngày giao hàng không hợp lệ'))
+        } else {
+          callback()
+        }
+      }
+
       return {
         form: {
           delivery_type: '',
@@ -79,7 +88,10 @@
           title: [{ required: true, message: 'Nội dung đơn hàng là bắt buộc', trigger: 'blur' }],
           description: [{required: true, message: 'Mô tả chi tiết là bắt buộc'}],
           delivery_address: [{required: true, message: 'Địa chỉ nhận hàng là bắt buộc'}],
-          delivery: [{required: true, message: 'Ngày giao hàng là bắt buộc'}],
+          delivery: [
+            {required: true, message: 'Ngày giao hàng là bắt buộc'},
+            {validator: validateDelivery, trigger: 'blur' }
+          ],
           delivery_type: [{required: true, message: 'Giờ giao hàng là bắt buộc'}]
         }
       }
@@ -102,8 +114,8 @@
       },
       total() {
         return (this.products && this.products.length > 1) ?
-          this.products.reduce((a, b) => (a + (b.price * b.quantity)), 0) :
-          this.products.length === 1 ? this.products[0].quantity * this.products[0].price :
+          this.products.reduce((a, b) => (parseFloat(a)  + parseFloat((parseFloat(b.price) * parseInt(b.quantity)))), 0) :
+          this.products.length === 1 ? parseInt(this.products[0].quantity) * parseFloat(this.products[0].price) :
             0
       },
       formCart() {

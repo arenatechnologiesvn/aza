@@ -1,12 +1,13 @@
 <template lang="pug">
-  div.list-item(style="padding: 20px 0;")
+  div.list-item.category(style="padding: 20px 0;")
     el-row(:gutter="20")
       el-col(:md="6" :sm="12" :xs="24" :lg="6" v-for="item in products" :key="item.id")
-        product-item(:product="item")
+        product-item.item(:product="item")
 </template>
 
 <script>
   import ProductItem from './Item'
+  import './category.scss'
   export default {
     name: 'CategoryProduct',
     components: {

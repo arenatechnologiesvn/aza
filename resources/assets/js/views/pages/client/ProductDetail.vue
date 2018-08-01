@@ -22,10 +22,18 @@
                     svg-icon(icon-class="fa-solid angle-left")
                   el-button(size="mini")
                     svg-icon(icon-class="fa-solid angle-right")
-            el-row(:span="24")
+            el-row
+              el-col(:span="24")
               p.description {{product.description}}
-              div.price {{formatNumber(product.price)}} (VNĐ)
-                span(style="margin-left: 20px; font-size=18px; color: #d6d6d6; text-decoration: line-through;") {{ formatNumber(product.discount)}} (VNĐ)
+              p
+                strong Đinh lượng: 
+                template {{product.unit}}
+              div(v-if="parseFloat(product.discount) > 0")
+                div.price {{formatNumber(product.discount)}} (VNĐ)
+                div(style="font-size=16px; color: #d6d6d6;margin: 5px 0; text-decoration: line-through;") {{ formatNumber(product.price)}} (VNĐ)
+                  span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
+              div(v-else)
+                div.price {{formatNumber(product.price)}} (VNĐ)
               div.submit
                 span
                   el-button(type="success" @click="addToCart(product)" :disabled="product.added")
@@ -44,13 +52,13 @@
       div.product-detail__relative
         h4 SẢN PHẨM LIÊN QUAN
         div
-          // products(:control="false" :items="1")
+          products(:products="products")
 </template>
 
 <script>
   import BreadCrumb from './components/BreadCrumb'
   import PreviewImage from './components/PreviewImage'
-  import Products from './components/products'
+  import Products from './components/products/Category'
   import Comment from './components/Comment'
   import { mapGetters, mapActions } from 'vuex'
   import { formatNumber } from '~/utils/util'
@@ -65,7 +73,8 @@
     },
     computed: {
       ...mapGetters('products', {
-        data: 'byId'
+        data: 'byId',
+        listProducts: 'list'
       }),
       product () {
         const item = this.data(this.$route.params.id)
@@ -75,12 +84,30 @@
           img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
           category: item.category ? item.category.name : 'Chưa xác định',
           price: item.price,
-          discount: item.discount_price || item.price,
+          discount: item.discount_price,
           inventory: 10,
+          unit: item.unit,
           added: item.customer_carts && item.customer_carts.length > 0,
           favorite: item.customer_favorites && item.customer_favorites.length > 0,
           description: item.description
         }: {}
+      },
+      products () {
+        return this.listProducts
+          .filter(item => (item.category.name === this.product.category && item.id !== this.product.id))
+          .map(item => ({
+            id: item.id,
+            title: item.name,
+            img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+            category: item.category ? item.category.name : 'Chưa xác định',
+            price: item.price,
+            discount: item.discount_price,
+            inventory: 10,
+            added: item.customer_carts && item.customer_carts.length > 0,
+            favorite: item.customer_favorites && item.customer_favorites.length > 0,
+            description: item.description,
+            quantity: (item.customer_carts && item.customer_carts.pivot && item.customer_carts.pivot.quantity) || 0
+          }))
       }
     },
     data () {

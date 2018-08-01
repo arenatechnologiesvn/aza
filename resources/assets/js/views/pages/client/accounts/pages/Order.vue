@@ -37,17 +37,21 @@
                   img.product-img(:src="product.row.img")
               el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
               el-table-column(prop="quantity" label="SL" width="40")
-              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-              el-table-column(prop="unit" label="Đơn vị tính" width="100")
+              el-table-column(prop="price" label="GIÁ(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="total" label="TỔNG(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
         el-table-column(prop="code" label="MÃ ĐƠN HÀNG")
         el-table-column(label="TRẠNG THÁI")
           template(slot-scope="scope")
-            el-tag(:type="scope.row.status === 0 ? 'success': scope.row.status === 0 ? 'info' : 'danger'") {{scope.row.status === 0 ? 'Đã hoàn thành': scope.row.status === 1 ? 'Đang xử lý' : 'Đã hủy'}}
-        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" )
+            el-tag(:type="scope.row.status === 0 ? 'success': scope.row.status === 1 ?  'info' : 'danger'") {{scope.row.status === 0 ? 'Đã hoàn thành' : scope.row.status === 1 ? 'Đang xử lý' : 'Đã bị hủy' }}
+        el-table-column(prop="total" label="TỔNG TIỀN(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
+        el-table-column(label="")
+          template(slot-scope="scope")
+             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
+              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
+                svg-icon(icon-class="fa-solid ban")
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -85,7 +89,7 @@
           delivery_type: item.delivery_type,
           products: item.products.map(p => ({
             id: p.id,
-            img: '/' + p.featured[0].disk + '/' + p.featured[0].directory + '/' + p.featured[0].filename + '.' + p.featured[0].extension,
+            img: '/' + p.featured[0].directory + '/' + p.featured[0].filename + '.' + p.featured[0].extension,
             quantity: p.pivot.quantity,
             unit: p.unit,
             title: p.name,
@@ -150,6 +154,57 @@
       },
       handleCurrentChange (current) {
         this.currentPage = current
+      },
+      changeStatus(id, status) {
+        const data = {
+          status
+        }
+        if (status === 0) {
+          this.canExecute('Bạn muốn duyệt đơn hàng này')
+            .then(() => {
+              this.updateOrder({
+                id,
+                data
+              }).then(() => {
+                this.$notify(
+                  {
+                    title: 'Thông báo',
+                    message: 'Đã Xác nhận thành công đơn hàng',
+                    type: 'success'
+                  })
+              })
+            })
+        } else {
+          this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\w+/,
+            inputErrorMessage: 'Bạn phải nhập lý do'
+          }).then(value => {
+            this.updateOrder({
+              id,
+              data: {
+                status: status,
+                approve_note: value.value
+              }
+            }).then(() => {
+              this.$message({
+                type: 'success',
+                message: 'Đơn hàng đã được hủy thành công'
+              });
+            }).catch(() => {
+              this.$message({
+                type: 'warning',
+                message: 'Lỗi khi hủy đơn hàng'
+              });
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: 'Đơn hàng đã không được hủy'
+            });
+          });
+        }
       }
     },
     data () {

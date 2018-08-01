@@ -41,7 +41,7 @@
       total() {
         return this.data.length === 0 ? 0 :
           this.data.length === 1 ? this.data[0].quantity :
-            _.map(this.data, 'quantity').reduce((a, b) => a + b)
+            _.map(this.data, 'quantity').reduce((a, b) => parseInt(a) + parseInt(b))
       },
       products() {
         return this.cartData()
