@@ -30,22 +30,33 @@
         }
       }
     },
+    watch: {
+      $route: 'fetchData'
+    },
     computed: {
       ...mapGetters([
         'user_info'
       ]),
+      ...mapGetters('customers', {
+        current: 'byId'
+      }),
       customer () {
         const user = this.user_info
-          this.form.id = user.customer ? user.customer.id : 0,
-          this.form.name = `${user.first_name} ${user.last_name}`,
-          this.form.phone = user.phone,
-          this.form.address = user.customer ? user.customer.address : '',
-          this.form.sex = user.customer.sex
+        const customer_id = user.customer.id
+        const customer = this.current(customer_id)
+        if(customer) {
+          this.form.id = customer_id,
+          this.form.name = customer.user.full_name,
+          this.form.phone = customer.user.phone,
+          this.form.address = customer.address,
+          this.form.sex = customer.sex
+        }
       }
     },
     methods: {
       ...mapActions('customers', {
-        updateCustomer: 'update'
+        updateCustomer: 'update',
+        fetchCustomer: 'fetchSingle'
       }),
       updateData () {
         console.log(this.customer);
@@ -53,6 +64,7 @@
           id: this.form.id,
           data: this.form
         }).then(res => {
+          console.log(res)
           this.$notify({
             title: 'Thông báo cập nhật',
             message: 'Cập nhật tài khoản thành công',
@@ -66,7 +78,15 @@
             type: 'warning'
           });
         })
+      },
+      fetchData () {
+        this.fetchCustomer({
+          id: this.user_info.customer.id
+        })
       }
+    },
+    created () {
+      this.fetchData()
     }
 
   }

@@ -24,7 +24,8 @@ class CustomerService extends BaseService
         'employee_id',
         'province_code',
         'district_code',
-        'ward_code'
+        'ward_code',
+        'sex'
     ];
 
     public function __construct(Customer $customer)

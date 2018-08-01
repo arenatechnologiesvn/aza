@@ -32,6 +32,8 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('roles', 'RoleController');
     Route::resource('employees', 'EmployeeController');
     Route::resource('favorites', 'FavoriteController');
+    Route::post('users/change-password', 'UserController@changePassword');
+    Route::post('carts/save-all', 'CartController@storeAll');
     Route::resource('carts', 'CartController');
     Route::resource('customers', 'CustomerController');
     Route::resource('shops', 'ShopController');

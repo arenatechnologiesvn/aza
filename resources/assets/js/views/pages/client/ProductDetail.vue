@@ -28,7 +28,6 @@
               p
                 strong Đinh lượng: 
                 template {{product.unit}}
-              p {{product}}
               div(v-if="parseFloat(product.discount) > 0")
                 div.price {{formatNumber(product.discount)}} (VNĐ)
                 div(style="font-size=16px; color: #d6d6d6;margin: 5px 0; text-decoration: line-through;") {{ formatNumber(product.price)}} (VNĐ)

@@ -31,11 +31,17 @@
           template(slot-scope="scope")
             el-button(size="mini" type="warning" @click="addToCart(scope.row)")
               svg-icon(icon-class="fa-solid cart-plus")
+    div(style="text-align: right; margin: 10px 0; padding: 10px;" v-show="!loading")
+      el-button(type="primary" @click="addAllFavorite")
+        svg-icon(icon-class="fa-solid cart-plus")
+        span(style="margin-left: 10px;") Thêm tất cả vào giò hàng
 </template>
 
 <script>
   import {mapGetters, mapActions} from 'vuex'
   import {formatNumber} from '~/utils/util'
+  import request from '~/utils/request'
+
   export default {
     name: 'AccountAlert',
     computed: {
@@ -57,7 +63,7 @@
         add2Cart: 'create',
         updateCart: 'update'
       }),
-      ...mapActions('product', {
+      ...mapActions('products', {
         fetchProduct: 'fetchList'
       }),
       addToCart(product) {
@@ -116,6 +122,38 @@
             })
         })
 
+      },
+      addAllFavorite () {
+        this.canExecute().then(res => {
+          const favorites = this.$store.state.favorite.list
+          const carts = this.$store.state.cart.list
+          const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+          let tmp = [];
+          for(let i = 0; i< favorites.length; i++) {
+            if(carts.indexOf(favorites[i]) < 0) tmp.push({customer_id, product_id: parseInt(favorites[i]) , quantity: 1})
+          }
+          request({
+            url: `/api/carts/save-all`,
+            method: 'post',
+            data: tmp
+          }).then(data => {
+            this.$message(
+            {
+              message: 'Đã thêm danh sách yêu thích vào giỏ hàng',
+              type: 'success'
+            })
+            this.fetchProduct()
+            this.fetchCart()
+          })
+          .catch(err => {
+            console.log(err)
+            this.$message(
+            {
+              message: 'Lỗi khi thêm vào giỏ hàng',
+              type: 'error'
+            })
+          })
+        })
       },
       fetchData() {
         this.fetchFavorite();

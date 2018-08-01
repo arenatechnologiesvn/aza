@@ -29,7 +29,7 @@ abstract class BaseService
         if (method_exists($this, 'toDto')) {
             return $this->toDto($selectable)->find($id);
         }
-        return $this->model->select($this->selectable)->findOrFail($id);
+        return $this->model->select($this->selectable)->FirstOrFail($id);
     }
 
     public function getAll($selectable = false)

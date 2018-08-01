@@ -43,6 +43,23 @@ class CartController extends Controller
         }
     }
 
+    public function storeAll (Request $request) {
+        try {
+            $data = $request->all();
+            foreach($data as $item) {
+                // if ($this->checkExistInCart($item['product_id'], $item['customer_id'])) {
+                //     $cart = new Cart;
+                //     $cart->create($item);
+                // }
+                $cart = new Cart;
+                $cart->create($item);
+            }
+            return $this->api_success_response( ['data' => $data]);
+        } catch (\Exception $e) {
+            return $this->api_error_response($e);
+        }
+    }
+
     public function update(Request $request, $id) {
         try {
             $this->model->where([
@@ -78,6 +95,9 @@ class CartController extends Controller
         }
     }
 
+    private function checkExistInCart($product_id, $customer_id) {
+        return count($this->model->where([['customer_id', '=', $customer_id], ['product_id', '=', $product_id]]).get()) > 0;
+    }
     private function getByProductId ($product_id) {
         return  $this->model->where([
             ['customer_id', '=', $this->getCustomerId()],
