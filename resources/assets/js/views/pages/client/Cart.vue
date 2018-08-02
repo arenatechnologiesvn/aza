@@ -70,7 +70,8 @@
     data() {
       const validateDelivery = (rule, value, callback) => {
         const now = +(new Date())
-        if(+value < now) {
+        value = +value + 86400000
+        if(value <= now) {
           callback(new Error('Ngày giao hàng không hợp lệ'))
         } else {
           callback()

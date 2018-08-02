@@ -1,11 +1,20 @@
 <template lang="pug">
   div.form-search(style="float: right")
     span.form-group
-      el-input(placeholder="Tìm kiếm danh mục, sản phẩm" prefix-icon="el-icon-search")
+      el-autocomplete.search(popper-class="my-autocomplete" v-model="search" :fetch-suggestions="querySearch" placeholder="Tìm kiếm danh mục, sản phẩm" @select="handleSelect")
+        i(class="el-icon-search" slot="suffix")
+        template(slot-scope="{ item }")
+          div(class="value")
+            el-col(:span="4")
+              img(:src="item.image" height="30" width="30")
+            el-col(:span="20")
+              span {{ item.name }}
+              span -
+              span.price ₫{{ formatNumber(item.price) }}
     span.shopcart(style="color: black;")
       el-dropdown.top__dropdown(v-if="total > 0")
         el-badge(:value="total" class="item")
-          router-link(to="/home/cart")
+          router-link(to="/cart")
             svg-icon(icon-class="fa-solid shopping-cart")
         el-dropdown-menu(slot="dropdown")
           div
@@ -24,19 +33,27 @@
               tfoot
                 tr(style="border-top: 1px solid red;")
                   td(colspan="4")
-                    router-link(to="/home/cart" class="el-button el-button--success") Thanh Toán
+                    router-link(to="/cart" class="el-button el-button--success") Thanh Toán
 </template>
 
 <script>
   import {mapGetters, mapActions} from 'vuex'
   import _ from 'lodash'
-
+  import {formatNumber} from '~/utils/util'
   export default {
     name: 'FormSearch',
+    data () {
+      return {
+        search: ''
+      }
+    },
     computed: {
       ...mapGetters('cart', {
         data: 'list',
         cartData: 'cartProducts'
+      }),
+      ...mapGetters('products', {
+        listProducts: 'list'
       }),
       total() {
         return this.data.length === 0 ? 0 :
@@ -45,6 +62,14 @@
       },
       products() {
         return this.cartData()
+      },
+      searchProducts () {
+        return this.listProducts.map(item => ({
+          id: item.id,
+          name: item.name,
+          image: `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}`,
+          price: item.price
+        }))
       }
     },
     methods: {
@@ -70,6 +95,20 @@
               type: 'success'
             })))
       },
+      querySearch(queryString, cb) {
+        var links = this.searchProducts;
+        var results = queryString ? links.filter(this.createFilter(queryString)) : links;
+        // call callback function to return suggestion objects
+        cb(results);
+      },
+      createFilter(queryString) {
+        return (link) => {
+          return (link.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+      },
+      handleSelect (item) {
+        this.$router.push({path: `/products/${item.id}`})
+      },
       canExecute(message) {
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
           confirmButtonText: 'Đồng ý',
@@ -78,6 +117,9 @@
         }).then(() => {
           resolve(true);
         }));
+      },
+      formatNumber(num) {
+        return formatNumber(num)
       }
     },
     created() {
@@ -94,11 +136,28 @@
     overflow-y: scroll;
     tr {
       border-bottom: 1px solid #d6d6d6;
-      vert-align: middle;
+      vertical-align: middle;
       padding: 5px;
     }
     .remove-item__cart {
       cursor: pointer;
     }
+  }
+  .value {
+    padding: 5px;
+    span {
+      line-height: 30px;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    .price {
+      color: darkred;
+      font-weight: bolder;
+    }
+  }
+</style>
+<style>
+  .el-autocomplete-suggestion.el-popper.my-autocomplete {
+    min-width: 300px !important;
   }
 </style>

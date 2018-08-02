@@ -29,15 +29,15 @@
                     svg-icon(icon-class="fa-solid tachometer-alt")
                     span Trang quản lý
                 el-dropdown-item
-                  router-link(to="/home/accounts")
+                  router-link(to="/accounts")
                     svg-icon(icon-class="fa-solid user")
                     span Thông tin tài khoản
                 el-dropdown-item
-                  router-link(to="/home/accounts/favorite")
+                  router-link(to="/accounts/favorite")
                     svg-icon(icon-class="fa-solid heart")
                     span Sản phẩm yêu thích
                 el-dropdown-item
-                  router-link(to="/home/accounts/order")
+                  router-link(to="/accounts/order")
                     svg-icon(icon-class="fa-solid cart-arrow-down")
                     span Lịch sử đơn hàng
                 el-dropdown-item(divided)

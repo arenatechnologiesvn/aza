@@ -300,7 +300,7 @@ export const asyncRouterMapChild = [
 ];
 export const asyncRouterMap = [
   {
-    path: '/home',
+    path: '/',
     component: ClientLayout,
     redirect: 'home',
     children: [
