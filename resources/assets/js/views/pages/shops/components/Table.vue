@@ -3,13 +3,13 @@
     div.table
       el-table(:data="shops.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
         el-table-column(type="selection" width="40")
-        el-table-column(prop="preview_image" width="60")
-          template(slot-scope="scope")
-            img(:src="scope.row.preview_image" width="40" height="40")
         el-table-column(prop="name" label="TÊN CỬA HÀNG" min-width="200" sortable)
         el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable width="180")
-        el-table-column(prop="customer.user.full_name" label="CHỦ CỬA HÀNG" sortable width="180")
-        el-table-column(prop="address" label="ĐỊA CHỈ" sortable width="180")
+        el-table-column(prop="customer.user.full_name" label="KHÁCH HÀNG" sortable width="180")
+        el-table-column(prop="address" label="ĐỊA CHỈ" sortable width="200")
+        el-table-column(prop="zone" label="VÙNG" sortable min-width="300")
+          template(slot-scope="scope")
+            span {{ scope.row.zone || '-' }}
         el-table-column(prop="id" label="TÁC VỤ" width="120" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
@@ -22,7 +22,7 @@
       el-pagination(@size-change="handleSizeChange"
         @current-change="handleCurrentChange"
           :current-page.sync="currentPage"
-          :page-sizes="[1, 5, 10, 20, 40]"
+          :page-sizes="[10, 20, 30, 50]"
           :page-size="pageSize"
       layout="total, sizes, prev, pager, next"
         :total="shops.length")

@@ -5,14 +5,14 @@
 </head>
  
 <body>
-    <h2>Xin chào {{$user['name']}}</h2>
+    <h2>AZA xin chào {{$user['name']}}</h2>
     <br/>
-        Bạn vừa được tạo tài khoản hệ thống AZA là: Email: {{$user['email']}} / Mật khẩu: {{$user['randomPassword']}}
+        Bạn vừa được tạo tài khoản trên hệ thống AZA với Email: {{$user['email']}} / Mật khẩu: {{$user['randomPassword']}}
     <br/>
-        Làm ơn click vào link bên dưới để xác thực tài khoản của bạn
+        Làm ơn đăng nhập hệ thống để thay đổi mật khẩu sớm nhất có thể
     <br/>
-    <br/>
-    <a href="{{ url('user/verify', $user->verifyUser->token) }}">Xác thực >></a>
+    <!-- <br/>
+    <a href="{{ url('user/verify', $user->verifyUser->token) }}">Xác thực >></a> -->
 </body>
  
 </html>

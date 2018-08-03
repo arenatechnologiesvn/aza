@@ -10,12 +10,11 @@ class Shop extends BaseModel
 
     protected $fillable = [
         'name',
-        'preview_image',
         'description',
         'address',
         'region',
         'phone',
-        'home_phone',
+        'zone',
         'province_code',
         'district_code',
         'ward_code',

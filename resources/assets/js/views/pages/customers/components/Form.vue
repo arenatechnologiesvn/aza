@@ -48,8 +48,15 @@
               el-option(label="Thường" :value="0")
         el-col(:span="24" v-if="isUpdate")
           el-form-item(label="CỬA HÀNG")
-            div.table
-              el-table(:data="customer.shops.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
+            .control__wrapper
+              el-row
+                el-col(:span="24" style="text-align: right")
+                  el-button(type="success" size="small" @click="redirectToAddingShop()")
+                    svg-icon(icon-class="fa-solid plus-circle")
+                    span.ml-5  Thêm cửa hàng
+                  el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="max-width: 200px; margin-left: 5px;" size="small")
+            .table
+              el-table(:data="showingShops.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
                 el-table-column(prop="num" label="STT" align="center" width="60")
                   template(slot-scope="scope")
                     span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
@@ -57,14 +64,14 @@
                 el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable min-width="140")
                 el-table-column(prop="address" label="ĐỊA CHỈ" sortable min-width="200")
                 el-table-column(prop="zone" label="KHU VỰC" sortable min-width="200")
-            div.pagination__wrapper
+            .pagination__wrapper
               el-pagination(@size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page.sync="currentPage"
                 :page-sizes="[5, 10, 20, 30, 50]"
                 :page-size="pageSize"
                 layout="total, sizes, prev, pager, next"
-                :total="customer.shops.length")
+                :total="showingShops.length")
         el-col(:span="24")
           el-form-item
             el-checkbox(v-model="customer.user.is_active" label="Kích hoạt")
@@ -72,10 +79,10 @@
           el-form-item(style="text-align: right;")
             el-button(type="info" @click="back")
               svg-icon(icon-class="fa-solid arrow-left")
-              span(style="margin-left: 10px") Quay lại
+              span(style="margin-left: 5px") Quay lại
             el-button(type="primary" @click="handleSubmit")
               svg-icon(icon-class="fa-solid save")
-              span(style="margin-left: 10px") Lưu
+              span(style="margin-left: 5px") Lưu
     media-manager-modal(type="user")
 </template>
 
@@ -145,12 +152,16 @@
             name: item.user.full_name
           }
         })
+      },
+      showingShops() {
+        return this.filteredShops(this.customer.shops)
       }
     },
     data() {
       return {
         currentPage: 1,
-        pageSize: 5
+        pageSize: 5,
+        searchWord: ''
       }
     },
     methods: {
@@ -243,12 +254,29 @@
       avatarUrl() {
         return this.customer.user.avatar && this.customer.user.avatar.length ? this.customer.user.avatar[0].url : dummyImage;
       },
+      filteredShops(data) {
+        const filterWord = this.searchWord && this.searchWord.toLowerCase();
+
+        if (filterWord !== '') {
+          filterWord.trim().split(/\s/).forEach(word => {
+            data = data.filter(item => {
+              return item.name.toLowerCase().indexOf(word) > -1;
+            });
+          });
+        }
+
+        return data;
+      },
       handleSizeChange (size) {
         this.pageSize = size
       },
       handleCurrentChange (current) {
         this.currentPage = current
       },
+      redirectToAddingShop() {
+        const routeData = this.$router.resolve({ name: 'shop_create', replace: true });
+        window.open(routeData.href, '_blank');
+      }
     },
     watch: {
       selectedAvatar() {

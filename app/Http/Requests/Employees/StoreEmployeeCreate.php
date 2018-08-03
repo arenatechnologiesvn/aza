@@ -24,10 +24,10 @@ class StoreEmployeeCreate extends BaseFormRequest
     public function rules()
     {
         return [
-            'code' => 'required|string|max:20|unique:employees',
+            'code' => 'required|string|max:20|unique:employees,code',
+            'avatar' => 'nullable|numeric|exists:media,id',
             'user.name' => 'required|string|max:255|unique:users,name',
             'user.email' => 'required|string|email|max:255|unique:users,email',
-            'user.avatar' => 'nullable|numeric|exists:media,id',
             'user.first_name' => 'nullable|string|max:50',
             'user.last_name' => 'nullable|string|max:50',
             'user.phone' => 'required|string|max:20',

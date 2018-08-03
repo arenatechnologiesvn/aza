@@ -13,6 +13,7 @@ use App\Employee;
 use App\User;
 use App\Service\MediaService;
 use App\Service\AuthService;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeService extends BaseService
 {
@@ -80,16 +81,39 @@ class EmployeeService extends BaseService
             DB::beginTransaction();
             if(isset($data['user'])) {
                 $employee->user->update($data['user']);
-
-                if ($data['user']['avatar']) {
-                    $user = User::find($employee->user_id);
-                    $this->mediaService->syncMedia($user, $data['user']['avatar'], 'user');
-                }
-
                 unset($data['user']);
             }
             DB::commit();
             return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function afterSave($updated, $data, $mode) {
+        try {
+            DB::beginTransaction();
+
+            if ($data['avatar']) {
+                $this->syncMedia($updated->user_id, $data['avatar'], 'user');
+            }
+
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    private function syncMedia($user_id, $avatar)
+    {
+        try {
+            DB::beginTransaction();
+            $user = User::find($user_id);
+            $this->mediaService->syncMedia($user, $avatar, 'user');
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

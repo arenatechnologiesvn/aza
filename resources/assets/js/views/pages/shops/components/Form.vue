@@ -1,32 +1,32 @@
 <template lang="pug">
   el-row
-    el-col(:span="5" style="padding-right: 10px;")
-      img(:src="selectedImageUrl()" style="width: 100%" height="230")
-      div(style="text-align: center; margin-top: 10px;")
-        el-button(type="success" @click="openMediaModal('single')" size="small") Thay đổi
-    el-col(:span="19")
-      el-form(ref="form" v-model="shop")
-        el-col(:span="12")
-          el-form-item
+    el-col(:span="12")
+      el-form(ref="shopForm" :model="shop" size="small")
+        el-col(:span="24")
+          el-form-item(prop="name" label="Tên cửa hàng:")
             el-input(v-model="shop.name" placeholder="Tên cửa hàng")
         el-col(:span="12")
-          el-form-item
+          el-form-item(prop="customer_id" label="Khách hàng:")
             el-select(v-model="shop.customer_id" clearable placeholder="Khách hàng" style="width: 100%")
-              el-option(v-for="item in customerList" :key="item.id" :label="item.value" :value="item.id")
+              el-option(v-for="item in customerList" :key="item.id" :label="item.name" :value="item.id")
         el-col(:span="12")
-          el-form-item
-            el-input(v-model="shop.phone" placeholder="Điện thoại")
-        el-col(:span="12")
-          el-form-item
-            el-input(v-model="shop.home_phone" placeholder="Điện thoại bàn")
+          el-form-item(prop="phone" label="Điện thoại:")
+            el-input(v-model="shop.phone" placeholder="Ví dụ: 09876085....")
         el-col(:span="24")
-          el-form-item
-            el-input(v-model="shop.address" placeholder="Địa chỉ")
+          el-form-item(prop="address" label="Địa chỉ:")
+            el-input(v-model="shop.address" placeholder="Ví du: 99 Lê Duẩn / Thôn 1 ...")
+        el-col(:span="8")
+          el-form-item(prop="province_code" label="Tỉnh/TP:")
+            province-select(v-model="shop.province_code")
+        el-col(:span="8")
+          el-form-item(prop="district_code" label="Huyện/Quận:")
+            district-select(v-model="shop.district_code" :parent-code="shop.province_code")
+        el-col(:span="8")
+          el-form-item(prop="ward_code" label="Xã/Phường:")
+            ward-select(v-model="shop.ward_code" :parent-code="shop.district_code")
         el-col(:span="24")
-          administrative-select(v-model="shop.selectedProvince" :selectedAdministrative="shop.selectedProvince")
-        el-col(:span="24")
-          el-form-item
-            el-input(v-model="shop.description" rows="5" type="textarea")
+          el-form-item(prop="description" label="Mô tả:")
+            el-input(type="textarea" rows="5" v-model="shop.description" placeholder="Mô tả cửa hàng")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
             el-button(type="primary" @click="handleSubmit" size="small")
@@ -35,20 +35,20 @@
             el-button(type="danger" @click="back" size="small")
               svg-icon(icon-class="fa-solid ban")
               span(style="margin-left: 10px") Hủy bỏ
-    media-manager-modal(type="shop")
 </template>
 
 <script>
-  import AdministrativeSelect from '~/components/AdministrativeSelect'
-  import MediaManagerModal from '~/components/MediaManager/modal';
-  import dummyImage from '~/assets/login_images/dummy-image.jpg';
   import { mapGetters, mapActions } from 'vuex'
+  import ProvinceSelect from '~/components/AdministrativeSelect/Province'
+  import DistrictSelect from '~/components/AdministrativeSelect/District'
+  import WardSelect from '~/components/AdministrativeSelect/Ward'
 
   export default {
-    name: 'EmployeeForm',
+    name: 'ShopForm',
     components: {
-      AdministrativeSelect,
-      MediaManagerModal
+      ProvinceSelect,
+      DistrictSelect,
+      WardSelect
     },
     props: {
       shop: {
@@ -56,12 +56,13 @@
         default: () => {
           return {
             name: '',
-            phone: '',
-            featured_image: '',
-            home_phone: '',
-            selectedProvince: {},
-            address: '',
             customer_id: null,
+            phone: '',
+            address: '',
+            zone: '',
+            province_code: '',
+            district_code: '',
+            ward_code: '',
             description: ''
           }
         }
@@ -75,14 +76,16 @@
       ...mapGetters('customers', {
         customers: 'list'
       }),
-      ...mapGetters('media', {
-        selectedImage: 'selectedSingleMedia',
+      ...mapGetters('administrative', {
+        getZoneByProvince: 'getZoneByProvince',
+        getZoneByDistrict: 'getZoneByDistrict',
+        getZoneByWard: 'getZoneByWard'
       }),
       customerList () {
         return this.customers.map(item => {
           return {
             id: item.id,
-            value: item.user.full_name
+            name: item.user.full_name
           }
         })
       }
@@ -95,16 +98,13 @@
         createShop: 'create',
         updateShop: 'update'
       }),
-      ...mapActions('common', {
-        openMediaModal: 'openMediaManagerModal'
-      }),
       back () {
         this.$router.go(-1)
       },
-      update () {
+      update (params) {
         this.updateShop({
           id: this.$route.params.id,
-          data: this.shop
+          data: params
         }).then(res => {
           this.$router.push({name: 'shop_index', replace: true})
         }).catch(err => {
@@ -112,9 +112,9 @@
           this.$message.error('Error! Cannot update shop');
         })
       },
-      create () {
+      create (params) {
         this.createShop({
-          data: this.shop
+          data: params
         }).then(res => {
           this.$router.push({name: 'shop_index', replace: true})
         }).catch(err => {
@@ -123,18 +123,25 @@
         })
       },
       handleSubmit () {
-        this.isUpdate ? this.update() : this.create()
+        const params = JSON.parse(JSON.stringify(this.shop));
+        params.zone = this.renderZone();
+        this.isUpdate ? this.update(params) : this.create(params)
       },
-      selectedImageUrl() {
-        return this.shop.featured_image ? this.shop.featured_image.url : dummyImage;
-      }
-    },
-    watch: {
-      selectedImage() {
-        if (this.selectedImage) {
-          this.shop.featured_image = this.selectedImage;
+      renderZone() {
+        if (this.shop.ward_code) {
+          return this.getZoneByWard(this.shop.ward_code);
         }
-      }
+
+        if (this.shop.district_code) {
+          return this.getZoneByDistrict(this.shop.district_code);
+        }
+
+        if (this.shop.province_code) {
+          return this.getZoneByProvince(this.shop.province_code);
+        }
+
+        return '';
+      },
     },
     created () {
       this.fetchCustomers();

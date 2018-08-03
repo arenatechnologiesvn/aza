@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Employees;
 
 use App\Http\Requests\BaseFormRequest;
+use App\Employee;
 
 class StoreEmployeeUpdate extends BaseFormRequest
 {
@@ -23,8 +24,10 @@ class StoreEmployeeUpdate extends BaseFormRequest
      */
     public function rules()
     {
+        $employee = Employee::find($this->employee);
         return [
-            'user.avatar' => 'nullable|numeric|exists:media,id',
+            'code' => 'required|string|max:20|unique:employees,code,' . $employee->id,
+            'avatar' => 'nullable|numeric|exists:media,id',
             'user.first_name' => 'nullable|string|max:50',
             'user.last_name' => 'nullable|string|max:50',
             'user.phone' => 'nullable|string|max:20',

@@ -80,8 +80,7 @@ abstract class CrudController extends Controller
      */
     public function destroy($id)
     {
-        return $this->api_success_response(['data' => $id]);
-        $deleted  = $this->service->destroy($id);
+        $deleted = $this->service->destroy($id);
         return $this->api_success_response(['data' => $deleted]);
     }
 }

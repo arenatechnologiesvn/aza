@@ -1,11 +1,12 @@
 import { login, logout, getInfo } from '~/api/login';
 import { getToken, setToken, removeToken } from '~/utils/auth';
+import dummyImage from '~/assets/login_images/dummy-avatar.png';
 
 const user = {
   state: {
     token: getToken(),
     name: '',
-    avatar: '',
+    avatar: dummyImage,
     roles: {},
     user_info: {}
   },
@@ -18,7 +19,7 @@ const user = {
       state.name = name;
     },
     SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar;
+      state.avatar = avatar && avatar.length ? avatar[0].url : dummyImage;
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles;
@@ -54,7 +55,7 @@ const user = {
             reject('getInfo: role must be a non-null array !');
           }
           commit('SET_NAME', data.name);
-          commit('SET_AVATAR', data.photo_url);
+          commit('SET_AVATAR', data.avatar);
           resolve(data);
         }).catch(error => {
           reject(error);

@@ -9,7 +9,7 @@
       el-form(ref="form" v-model="employee" size="small")
         el-col(:span="24")
           el-form-item(label="MÃ NHÂN VIÊN")
-            el-input(v-model="employee.code" :disabled="isUpdate" placeholder="Mã nhân viên" clearable)
+            el-input(v-model="employee.code" placeholder="Mã nhân viên" clearable)
         el-col(:span="24")
           el-form-item(label="EMAIL")
             el-input(v-model="employee.user.email" v-bind:disabled="isUpdate" type="email" placeholder="Email" clearable)
@@ -143,7 +143,6 @@
       prepareParams() {
         const params = {
           user: {
-            avatar: this.employee.user.avatar.length ? this.employee.user.avatar[0].id : null,
             first_name: this.employee.user.first_name,
             last_name: this.employee.user.last_name,
             phone: this.employee.user.phone,
@@ -151,11 +150,12 @@
             role_id: this.employee.user.role_id,
             is_active: this.employee.user.is_active,
           },
+          code: this.employee.code,
+          avatar: this.employee.user.avatar.length ? this.employee.user.avatar[0].id : null,
           contract_at: this.employee.contract_at
         }
 
         if (!this.isUpdate) {
-          params.code = this.employee.code;
           params.user.email = this.employee.user.email;
           params.user.name = this.employee.user.name;
         }
