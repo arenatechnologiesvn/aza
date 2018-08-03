@@ -7,7 +7,7 @@ import { getToken } from '~/utils/auth';
 
 NProgress.configure({ showSpinner: false });
 
-const whiteList = ['/login', '/forget'];
+const whiteList = ['/login', '/forget', '/reset'];
 
 router.beforeEach((to, from, next) => {
   // Start routing bar

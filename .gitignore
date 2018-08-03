@@ -18,3 +18,4 @@ yarn-error.log
 phpunit.dusk.xml
 composer.lock
 package-lock.json
+*.env
