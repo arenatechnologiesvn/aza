@@ -16,8 +16,8 @@ class ResetPassword extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('You are receiving this email because we received a password reset request for your account.')
-            ->action('Reset Password', url(config('app.url').'/password/reset/'.$this->token).'?email='.urlencode($notifiable->email))
+            ->line('Bạn nhận được email này vì bạn yêu cầu được đổi mật khẩu mới')
+            ->action('Reset Password', url(config('app.url').'/#/reset?token='.$this->token).'&email='.urlencode($notifiable->email))
             ->line('If you did not request a password reset, no further action is required.');
     }
 }

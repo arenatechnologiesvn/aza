@@ -36,34 +36,28 @@
         default: () => [
           {
             name: 'home_account_index',
-            path: '/home/accounts',
+            path: '/accounts',
             title: 'TÀI KHOẢN CỦA TÔI',
             icon: 'fa-solid user'
           },
           {
             name: 'home_account_alert',
-            path: '/home/accounts/alert',
+            path: '/accounts/alert',
             title: 'THÔNG BÁO CỦA TÔI',
             icon: 'fa-solid bell',
             count: 10
           },
           {
             name: 'home_account_order',
-            path: '/home/accounts/order',
+            path: '/accounts/order',
             title: 'QUẢN LÝ ĐƠN HÀNG',
             icon: 'fa-solid cart-arrow-down'
           },
           {
             name: 'home_account_favorite',
-            path: '/home/accounts/favorite',
+            path: '/accounts/favorite',
             title: 'SẢN PHẨM YÊU THÍCH',
             icon: 'fa-solid heart'
-          },
-          {
-            name: 'home_account_logout',
-            path: '/home/accounts',
-            title: 'ĐĂNG XUẤT',
-            icon: 'fa-solid sign-out-alt'
           }
         ]
       }

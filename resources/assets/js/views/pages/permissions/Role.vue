@@ -12,7 +12,7 @@
               el-form-item
                 el-input(placeholder="Tìm kiếm" v-model="search.key" suffix-icon="el-icon-search" style="width: 100%" clearable)
     div.index__wrapper
-      aza-table(ref="table" @on-delete="deleteHandle" :permissions="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
+      aza-table.role(ref="table" @on-delete="deleteHandle" :permissions="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
 </template>
 
 <script>
@@ -162,3 +162,9 @@
     }
   }
 </script>
+<style lang="scss">
+  .role .center td,
+  .role .center th {
+    text-align: center;
+  }
+</style>

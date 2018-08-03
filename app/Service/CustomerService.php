@@ -36,6 +36,16 @@ class CustomerService extends BaseService
     public function toDto($selectable = null){
         return is_callable($selectable) ? $selectable() : $this->selectable();
     }
+
+    public function afterSave($updated, $data, $mode) {
+        if(!empty($data['name'])){
+            $data['first_name'] = substr($data['name'], 0, strpos($data['name'], ' '));
+            $data['last_name'] = substr($data['name'], strpos($data['name'], ' ') + 1, strlen($data['name']));
+            unset($data['name']);
+        }
+        $updated->user->update($data);
+    }
+
     protected function selectable(){
         return $this->model->select($this->selectable)->with(['favorites'=> function($query) {
             $query->select([

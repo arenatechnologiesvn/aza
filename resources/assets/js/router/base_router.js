@@ -16,6 +16,11 @@ const ConstBaseRouterMap = [
         path: '/forget',
         component: () => import('~/views/pages/auth/Forget'),
         hidden: true
+      },
+      {
+        path: '/reset',
+        component: () => import('~/views/pages/auth/ResetPassword'),
+        hidden: true
       }
     ]
   },

@@ -7,7 +7,7 @@
         img(:src="product.img")
       div.product-item__des
         div.product-item__title
-          router-link(:to="`/home/products/${product.id}`") {{product.title}}
+          router-link(:to="`/products/${product.id}`") {{product.title}}
         div.product-item__description(style="color: black;height: 50px;")
           div.product-item__control--left(v-if="product.discount")
             div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}}
