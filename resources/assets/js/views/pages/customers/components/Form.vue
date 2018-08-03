@@ -67,15 +67,15 @@
                 :total="customer.shops.length")
         el-col(:span="24")
           el-form-item
-            el-checkbox(v-model="customer.is_active" label="Kích hoạt")
+            el-checkbox(v-model="customer.user.is_active" label="Kích hoạt")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
+            el-button(type="info" @click="back")
+              svg-icon(icon-class="fa-solid arrow-left")
+              span(style="margin-left: 10px") Quay lại
             el-button(type="primary" @click="handleSubmit")
               svg-icon(icon-class="fa-solid save")
               span(style="margin-left: 10px") Lưu
-            el-button(type="danger" @click="back")
-              svg-icon(icon-class="fa-solid ban")
-              span(style="margin-left: 10px") Hủy bỏ
     media-manager-modal(type="user")
 </template>
 
@@ -116,8 +116,7 @@
               last_name: '',
               phone: '',
               address: '',
-              role_id: '',
-              is_active: ''
+              is_active: false
             }
           }
         }
@@ -133,6 +132,11 @@
       }),
       ...mapGetters('media', {
         selectedAvatar: 'selectedSingleMedia',
+      }),
+      ...mapGetters('administrative', {
+        getZoneByProvince: 'getZoneByProvince',
+        getZoneByDistrict: 'getZoneByDistrict',
+        getZoneByWard: 'getZoneByWard'
       }),
       employeesList () {
         return this.employees.filter(item => item.user.role_id === 3).map(item => {
@@ -163,29 +167,78 @@
       back () {
         this.$router.go(-1)
       },
-      update () {
+      update (params) {
         this.updateCustomer({
           id: this.$route.params.id,
-          data: this.customer
+          data: params
         }).then(res => {
-          this.$router.push({name: 'customers', replace: true})
+          this.$router.push({ name: 'customer_index', replace: true })
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot update customer');
         })
       },
-      create () {
+      create (params) {
         this.createCustomer({
-          data: this.customer
+          data: params
         }).then(res => {
-          this.$router.push({name: 'customers'})
+          this.$router.push({ name: 'customer_index', replace: true })
         }).catch(err => {
           console.log(err)
           this.$message.error('Error! Cannot create customers');
         })
       },
       handleSubmit () {
-        this.isUpdate ? this.update() : this.create()
+        const params = this.prepareParams();
+        this.isUpdate ? this.update(params) : this.create(params)
+      },
+      prepareParams() {
+        const params = {
+          code: this.customer.code,
+          customer_type: this.customer.customer_type,
+          employee_id: this.customer.employee_id,
+          zone: this.renderZone(),
+          province_code: this.customer.province_code,
+          district_code: this.customer.district_code,
+          ward_code: this.customer.ward_code,
+          shops: this.getSelectedShopIds(),
+          avatar: this.customer.user.avatar.length ? this.customer.user.avatar[0].id : null,
+          user: {
+            first_name: this.customer.user.first_name,
+            last_name: this.customer.user.last_name,
+            phone: this.customer.user.phone,
+            address: this.customer.user.address,
+            is_active: this.customer.user.is_active,
+            role_id: 2
+          }
+        }
+
+        if (!this.isUpdate) {
+          params.user.email = this.customer.user.email;
+          params.user.name = this.customer.user.name;
+        }
+
+        return params;
+      },
+      renderZone() {
+        if (this.customer.ward_code) {
+          return this.getZoneByWard(this.customer.ward_code);
+        }
+
+        if (this.customer.district_code) {
+          return this.getZoneByDistrict(this.customer.district_code);
+        }
+
+        if (this.customer.province_code) {
+          return this.getZoneByProvince(this.customer.province_code);
+        }
+
+        return '';
+      },
+      getSelectedShopIds() {
+        return this.customer.shops.map(shop => {
+          return shop.id;
+        });
       },
       avatarUrl() {
         return this.customer.user.avatar && this.customer.user.avatar.length ? this.customer.user.avatar[0].url : dummyImage;

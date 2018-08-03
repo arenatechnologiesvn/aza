@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
-use App\Http\Requests\Customers\CustomerCreateRequest;
-use App\Http\Responses\Customers\CustomerCreateResponse;
-use App\Http\Responses\Customers\CustomerGetByIdResponse;
-use App\Http\Responses\Customers\CustomerIndexResponse;
-use App\Http\Responses\Customers\CustomerUpdateResponse;
+use App\Http\Requests\Customers\StoreCustomerCreate;
+use App\Http\Requests\Customers\StoreCustomerUpdate;
 use App\Service\CustomerService;
-use Illuminate\Http\Request;
 
 class CustomerController extends CrudController
 {
@@ -26,7 +22,7 @@ class CustomerController extends CrudController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CustomerCreateRequest $request)
+    public function store(StoreCustomerCreate $request)
     {
         //
         return $this->save($request->all());
@@ -39,17 +35,8 @@ class CustomerController extends CrudController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreCustomerUpdate $request, $id)
     {
-        //
-        $data = $request->all();
-        if(isset($data['password']))
-            unset($data['password']);
-        if (isset($data['selectedProvince'])) {
-            $data['province_code'] = $data['selectedProvince']['selectedProvince'];
-            $data['district_code'] = $data['selectedProvince']['selectedDistrict'];
-            $data['ward_code'] = $data['selectedProvince']['selectedWard'];
-        }
-        return $this->edit($data, $id);
+        return $this->edit($request->all(), $id);
     }
 }

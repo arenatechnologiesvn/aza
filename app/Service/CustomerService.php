@@ -9,7 +9,12 @@
 namespace App\Service;
 
 
+use App\User;
 use App\Customer;
+use App\Shop;
+use App\Service\MediaService;
+use App\Service\AuthService;
+use Illuminate\Support\Facades\DB;
 
 class CustomerService extends BaseService
 {
@@ -27,22 +32,66 @@ class CustomerService extends BaseService
         'ward_code'
     ];
 
-    public function __construct(Customer $customer)
+    public function __construct(Customer $model, AuthService $authService, MediaService $mediaService)
     {
-        $this->model = $customer;
+        $this->model = $model;
+        $this->authService = $authService;
+        $this->mediaService = $mediaService;
+        parent::__construct($model);
     }
 
     public function toDto($selectable = null){
         return is_callable($selectable) ? $selectable() : $this->selectable();
     }
 
-    public function afterSave($updated, $data, $mode) {
-        if(!empty($data['name'])){
-            $data['first_name'] = substr($data['name'], 0, strpos($data['name'], ' '));
-            $data['last_name'] = substr($data['name'], strpos($data['name'], ' ') + 1, strlen($data['name']));
-            unset($data['name']);
+    public function beforeCreate($customer)
+    {
+        $user = $this->authService->register($customer['user']);
+        $customer['user_id'] = $user->id;
+        return $customer;
+    }
+
+    public function beforeUpdate($customer, $data)
+    {
+        try {
+            DB::beginTransaction();
+            if(isset($data['user'])) {
+                $customer->user->update($data['user']);
+                unset($data['user']);
+            }
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-        $updated->user->update($data);
+    }
+
+    public function afterSave($updated, $data, $mode) {
+        try {
+            DB::beginTransaction();
+
+            if ($data['avatar']) {
+                $this->syncMedia($updated->user_id, $data['avatar'], 'user');
+            }
+
+            if (count($data['shops'])) {
+                $this->syncShop($updated->id, $data['shops']);
+            }
+
+            // if(!empty($data['name'])){
+            //     $data['first_name'] = substr($data['name'], 0, strpos($data['name'], ' '));
+            //     $data['last_name'] = substr($data['name'], strpos($data['name'], ' ') + 1, strlen($data['name']));
+            //     unset($data['name']);
+            // $updated->user->update($data);
+            // }
+
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     protected function selectable() {
@@ -85,5 +134,30 @@ class CustomerService extends BaseService
                 $q->with(['user']);
             }]
         );
+    }
+
+    private function syncMedia($user_id, $avatar)
+    {
+        try {
+            DB::beginTransaction();
+            $user = User::find($user_id);
+            $this->mediaService->syncMedia($user, $avatar, 'user');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    private function syncShop($customer_id, $shops)
+    {
+        try {
+            DB::beginTransaction();
+            Shop::whereIn('id', $shops)->update(array('customer_id' => $customer_id));
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

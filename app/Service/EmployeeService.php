@@ -76,16 +76,23 @@ class EmployeeService extends BaseService
 
     public function beforeUpdate($employee, $data)
     {
-        if(isset($data['user'])) {
-            $employee->user->update($data['user']);
+        try {
+            DB::beginTransaction();
+            if(isset($data['user'])) {
+                $employee->user->update($data['user']);
 
-            if ($data['user']['avatar']) {
-                $user = User::find($employee->user_id);
-                $this->mediaService->syncMedia($user, $data['user']['avatar'], 'user');
+                if ($data['user']['avatar']) {
+                    $user = User::find($employee->user_id);
+                    $this->mediaService->syncMedia($user, $data['user']['avatar'], 'user');
+                }
+
+                unset($data['user']);
             }
-
-            unset($data['user']);
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-        return $data;
     }
 }
