@@ -11,30 +11,39 @@ namespace App\Service;
 
 use App\Employee;
 use App\User;
+use App\Service\MediaService;
+use App\Service\AuthService;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeService extends BaseService
 {
+    private $user;
+
     protected $selectable = [
         'id',
         'code',
         'user_id',
         'status',
-        'start_datetime',
+        'contract_at',
         'employee_type',
         'rating',
     ];
-    private $user;
-    public function __construct(Employee $model, User $user)
+
+    public function __construct(Employee $model, AuthService $authService, MediaService $mediaService)
     {
         $this->model = $model;
-        $this->user = $user;
+        $this->authService = $authService;
+        $this->mediaService = $mediaService;
         parent::__construct($model);
     }
 
-    public function toDto($selectable = null){
+    public function toDto($selectable = null)
+    {
         return is_callable($selectable) ? $selectable() : $this->selectable();
     }
-    protected function selectable(){
+
+    protected function selectable()
+    {
         return $this->model->select($this->selectable)->with(['user'=> function($query) {
             $query->select([
                 'id',
@@ -43,34 +52,71 @@ class EmployeeService extends BaseService
                 'last_name',
                 'email',
                 'phone',
+                'address',
                 'role_id',
                 'is_active'
             ])->with(['role'=> function ($q2) {
                 $q2->select(['title', 'id']);
-            }]);
+            }])->with(['avatar' => function($query) {
+                $query->select([
+                    'id',
+                    \DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                ]);
+            }]);;
         }, 'customers' => function ($q) {
             $q->select(['id','employee_id']);
         }]);
     }
 
-    public function beforeCreate($employee) {
-        $user = User::create($employee['user']);
+    public function beforeCreate($employee)
+    {
+        $user = $this->authService->register($employee['user']);
         $employee['user_id'] = $user->id;
-        if (isset($employee['start_datetime'])) {
-            $employee['start_datetime'] = strtotime($employee['start_datetime']);
-        }
         return $employee;
     }
 
-    public function beforeUpdate($employee, $data){
-        if(isset($data['user'])) {
-            unset($data['user']['password']);
-            $employee->user->update($data['user']);
-            unset($data['user']);
+    public function beforeUpdate($employee, $data)
+    {
+        try {
+            DB::beginTransaction();
+            if(isset($data['user'])) {
+                $employee->user->update($data['user']);
+                unset($data['user']);
+            }
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-        if (isset($data['start_datetime'])) {
-            $data['start_datetime'] = strtotime($data['start_datetime']);
+    }
+
+    public function afterSave($updated, $data, $mode) {
+        try {
+            DB::beginTransaction();
+
+            if ($data['avatar']) {
+                $this->syncMedia($updated->user_id, $data['avatar'], 'user');
+            }
+
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-        return $data;
+    }
+
+    private function syncMedia($user_id, $avatar)
+    {
+        try {
+            DB::beginTransaction();
+            $user = User::find($user_id);
+            $this->mediaService->syncMedia($user, $avatar, 'user');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

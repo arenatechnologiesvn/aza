@@ -9,16 +9,16 @@
         el-form.search(v-model="search" size="small")
           el-row(style="margin: 0 -10px;")
             el-col(:span="16")
-              el-form-item
+              el-form-item(label="Tìm kiếm:")
                 el-input(placeholder="Tìm kiếm" v-model="key" suffix-icon="el-icon-search" style="width: 100%" clearable)
             el-col(:span="4")
-              el-form-item
-                el-select(placeholder="Vai trò" v-model="role_id" @change="onChangeRole" clearable filterable)
+              el-form-item(label="Vai trò:")
+                el-select(placeholder="Vai trò" v-model="role_id" @change="onChangeRole" clearable filterable style="width: 100%")
                   el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
                   el-option(label="Tất cả" :value="-1")
             el-col(:span="4")
-              el-form-item
-                el-select(placeholder="Trạng thái" v-model="status" clearable filterable)
+              el-form-item(label="Trạng thái:")
+                el-select(placeholder="Trạng thái" v-model="status" clearable filterable style="width: 100%")
                   el-option(label="Đang hoạt động" :value="1")
                   el-option(label="Đang bị khóa" :value="0")
                   el-option(label="Tất cả" :value="-1")

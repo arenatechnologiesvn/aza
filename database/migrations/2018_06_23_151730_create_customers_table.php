@@ -21,10 +21,13 @@ class CreateCustomersTable extends Migration
             $table->integer('point')->nullable();
             $table->integer('status')->nullable();
             $table->integer('employee_id')->nulable();
-            $table->integer('province_code')->nullable();
-            $table->integer('district_code')->nullable();
-            $table->integer('ward_code')->nullable();
+            $table->string('zone', 255)->nullable();
+            $table->string('province_code', 10)->nullable();
+            $table->string('district_code', 10)->nullable();
+            $table->string('ward_code', 10)->nullable();
             $table->string('address', 255)->nullable();
+            $table->string('favorites', 500)->nullable();
+            $table->string('carts', 500)->nullable();
             $table->integer('created_at')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_at')->nullable();

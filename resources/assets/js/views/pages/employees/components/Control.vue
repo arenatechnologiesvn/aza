@@ -15,9 +15,6 @@
               span Xóa
         h4.control__info(style="margin: 0;")
       el-col(:span="12" style="text-align: right;")
-        el-button(type="success" size="small")
-          svg-icon(icon-class="fa-solid file-excel")
-          span.ml-5 Xuất Excel
         el-button(type="primary" size="small" @click="handleAdd")
           svg-icon(icon-class="fa-solid plus-circle")
           span.ml-5 Thêm mới

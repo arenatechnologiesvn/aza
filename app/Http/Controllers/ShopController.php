@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Shops\ShopCreateRequest;
-use App\Http\Responses\FailedResponse;
-use App\Http\Responses\Shops\ShopCreateResponse;
-use App\Http\Responses\Shops\ShopGetIndexByIdResponse;
-use App\Http\Responses\Shops\ShopIndexResponse;
-use App\Http\Responses\Shops\ShopUpdateResponse;
+use App\Http\Requests\Shops\StoreShop;
 use App\Service\ShopService;
 use App\Shop;
-use Illuminate\Http\Request;
 
 class ShopController extends CrudController
 {
@@ -26,10 +20,11 @@ class ShopController extends CrudController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ShopCreateRequest $request)
+    public function store(StoreShop $request)
     {
         return $this->save($request->all());
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -37,7 +32,7 @@ class ShopController extends CrudController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreShop $request, $id)
     {
         return $this->edit($request->all(), $id);
     }

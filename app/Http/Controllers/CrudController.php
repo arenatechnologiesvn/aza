@@ -55,12 +55,8 @@ abstract class CrudController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function save($data){
-        try {
-            $entity = $this->service->create($data);
-            return $this->api_success_response(['data' => $entity]);
-        } catch (\Exception $e){
-            return $this->api_error_response(['message' => $e]);
-        }
+        $entity = $this->service->create($data);
+        return $this->api_success_response(['data' => $entity]);
     }
 
     /**
@@ -72,12 +68,8 @@ abstract class CrudController extends Controller
      */
     public function edit($data, $id)
     {
-        try{
-            $entity = $this->service->update($id, $data);
-            return $this->api_success_response(['data' => $entity]);
-        } catch (\Exception $e){
-            return $this->api_error_response(['message' => $e]);
-        }
+        $entity = $this->service->update($id, $data);
+        return $this->api_success_response(['data' => $entity]);
     }
 
     /**
@@ -88,12 +80,7 @@ abstract class CrudController extends Controller
      */
     public function destroy($id)
     {
-        try{
-            $deleted  = $this->service->destroy($id);
-            return $this->api_success_response(['data' => $deleted]);
-        } catch (\Exception $e){
-            return $this->api_error_response(['message' => 'Error message']);
-        }
+        $deleted = $this->service->destroy($id);
+        return $this->api_success_response(['data' => $deleted]);
     }
-
 }

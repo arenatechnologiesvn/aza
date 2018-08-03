@@ -16,11 +16,10 @@ class ShopService extends BaseService
     protected $selectable = [
         'id',
         'name',
-        'preview_image',
         'description',
         'address',
         'phone',
-        'home_phone',
+        'zone',
         'province_code',
         'district_code',
         'ward_code',

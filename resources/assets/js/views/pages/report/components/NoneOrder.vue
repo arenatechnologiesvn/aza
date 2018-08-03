@@ -15,7 +15,7 @@
             el-table(:data="tableData" border size="small" style="width: 100%")
               el-table-column(prop="num" label="STT" align="center" width="60")
                 template(slot-scope="scope")
-                  span {{ scope.$index + 1 }}
+                  span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
               el-table-column(prop="customer_name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
               el-table-column(prop="employee_name" label="NHÂN VIÊN PHỤ TRÁCH" sortable min-width="200")
               el-table-column(prop="last_order" label="ĐẶT HÀNG LẦN CUỐI" sortable min-width="200")

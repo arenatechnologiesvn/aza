@@ -9,20 +9,20 @@
         el-form.search(size="small")
           el-row(style="margin: 0 -10px;")
             el-col(:span="12")
-              el-form-item
+              el-form-item(label="Tìm kiếm:")
                 el-input(placeholder="Tìm kiếm" v-model="key" suffix-icon="el-icon-search" style="width: 100%")
             el-col(:span="4")
-              el-form-item
+              el-form-item(label="Nhân viên:")
                 el-select(placeholder="Nhân viên" v-model="employee_id" clearable filterable )
                   el-option(v-for="item in employeeList" :key="item.id" :label="item.value" :value="item.id")
             el-col(:span="4")
-              el-form-item
+              el-form-item(label="Loại KH:")
                 el-select(placeholder="Loại khách hàng" v-model="customer_type" clearable filterable)
                   el-option(label="VIP" :value="1")
-                  el-option(label="THƯỜNG" :value="0")
-                  el-option(label="TẤT CẢ" :value="-1")
+                  el-option(label="Thường" :value="0")
+                  el-option(label="Tất cả" :value="-1")
             el-col(:span="4")
-              el-form-item
+              el-form-item(label="Trạng thái:")
                 el-select(placeholder="Trạng thái" v-model="is_active" clearable filterable)
                   el-option(label="Đang hoạt động" :value="1")
                   el-option(label="Đang bị khóa" :value="0")
@@ -74,21 +74,6 @@
       },
       current () {
         return this.customers && this.customers
-          // .map(item => ({
-          //   id: item.id,
-          //   code: item.code,
-          //   email: item.user.email,
-          //   name: item.user.name,
-          //   customer_type: item.customer_type,
-          //   role_id: item.user.role.id,
-          //   is_active: item.user.is_active > 0,
-          //   avatar: item.user.avatar,
-          //   phone: item.user.phone,
-          //   full_name: item.user.full_name,
-          //   employee_id: item.employee && item.employee.id,
-          //   employee_name: item.employee && item.employee.user.full_name,
-          //   shop_count: item.shops.length
-          // }))
           .filter(item => item.code.indexOf(this.key) > -1
             || item.user.full_name.indexOf(this.key) > -1
           ).filter(item => {

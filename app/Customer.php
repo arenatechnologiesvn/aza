@@ -14,13 +14,13 @@ class Customer extends BaseModel
         'customer_type',
         'point',
         'employee_id',
+        'zone',
         'province_code',
         'district_code',
         'ward_code',
         'favorites',
         'carts',
-        'sex',
-        'address'
+        'sex'
     ];
     protected $hidden = [
         'created_at',

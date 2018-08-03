@@ -1,12 +1,12 @@
 <template lang="pug">
   el-menu.navbar(mode="horizontal")
     el-row.logo-container(type="flex" justify="center" align="middle" :class="!sidebar.opened ? 'collapse' : 'non-collapse'")
-      img.logo-image(:src="logo_img")
+      img.logo-image(:src="avatar")
       span.logo-title(v-if="sidebar.opened") PROJECT
     hamburger.hamburger-container(:toggleClick="toggleSideBar" :isActive="sidebar.opened")
     el-dropdown.avatar-container(trigger="click")
       el-row.avatar-wrapper(type="flex" class="row-bg" justify="space-between" align="middle")
-        img.user-avatar(:src="fake_avatar")
+        img.user-avatar(:src="avatar")
         span(style="margin-left: 10px") LINH NGUYỄN
         i.el-icon-caret-bottom
       el-dropdown-menu.user-dropdown(slot="dropdown")
@@ -19,18 +19,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import Hamburger from '~/components/Hamburger'
-import logo_img from '~/assets/login_images/logo-login-page.png'
-import fake_avatar from '~/assets/login_images/linh-nguyen.jpg'
 
 export default {
   components: {
     Hamburger
-  },
-  data() {
-    return {
-      logo_img,
-      fake_avatar
-    }
   },
   computed: {
     ...mapGetters([

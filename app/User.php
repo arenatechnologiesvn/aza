@@ -36,7 +36,7 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'two_factor',
         'is_active',
-        'avatar'
+        'address'
     ];
 
     public static function boot()
@@ -75,18 +75,8 @@ class User extends Authenticatable implements JWTSubject
         return 'U';
     }
 
-    /**
-     * Get the profile photo URL attribute.
-     *
-     * @return string
-     */
-    public function getPhotoUrlAttribute()
-    {
-        return 'https://www.gravatar.com/avatar/' . md5(strtolower($this->email)) . '.jpg?s=200&d=mm';
-    }
-
     public function getFullNameAttribute () {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->last_name . ' ' . $this->first_name;
     }
     /**
      * Get the oauth providers.
@@ -111,6 +101,16 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Employee::class);
     }
+
+    public function avatar() {
+        return $this->morphToMany('Plank\Mediable\Media', 'mediable','mediables', 'mediable_id')
+        ->withPivot('mediable_type', 'tag')
+        ->where([
+            ['mediable_type', '=', 'App\User'],
+            ['tag', '=', 'user']
+        ]);
+    }
+
     /**
      * Send the password reset notification.
      *
@@ -140,21 +140,11 @@ class User extends Authenticatable implements JWTSubject
 
     public function detail($user)
     {
-//        return self::with(['role.permissions' => function ($query) {
-//            $query->where('parent_id', '0');
-//        }, 'role.permissions.children' => function ($query) use ($user) {
-//            $query->whereIn('id',
-//                RolePermission::query()
-//                    ->where('role_id', $user->role_id)
-//                    ->get(['permission_id'])
-//                    ->toArray());
-//        }, 'role.permissions.children.children' => function ($query) use ($user) {
-//            $query->whereIn('id',
-//                RolePermission::query()
-//                    ->where('role_id', $user->role_id)
-//                    ->get(['permission_id'])
-//                    ->toArray());
-//        }])->find($user->id);
         return UserDto::toDto($user);
+    }
+
+    public function verifyUser()
+    {
+        return $this->hasOne('App\VerifyUser');
     }
 }
