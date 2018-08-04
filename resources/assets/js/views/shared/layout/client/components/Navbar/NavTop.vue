@@ -8,15 +8,15 @@
           span(class="hidden-sm-and-down") - Ưu đãi ngay trên tay
       div.top__right
         ul.unstyle
-          li
-            el-dropdown.top__dropdown(style="z-index=99999999;")
-              div.top__alert
-                el-badge(:value="10" class="item")
-                  svg-icon(icon-class="fa-solid bell")
-                span(class="hidden-sm-and-down") Thông báo
-              el-dropdown-menu(slot="dropdown")
-              //   el-dropdown-item Item 1
-              //   el-dropdown-item Item 2
+          // li
+          //   el-dropdown.top__dropdown(style="z-index=99999999;")
+          //     div.top__alert
+          //       el-badge(:value="10" class="item")
+          //         svg-icon(icon-class="fa-solid bell")
+          //       span(class="hidden-sm-and-down") Thông báo
+          //     el-dropdown-menu(slot="dropdown")
+          //       el-dropdown-item Item 1
+          //       el-dropdown-item Item 2
           li
             el-dropdown.top__dropdown
               div.avatar__container

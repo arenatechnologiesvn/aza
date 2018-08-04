@@ -1,7 +1,7 @@
 <template lang="pug">
   div.header-account
-    el-badge.header-account__alert(:value="10" class="item")
-      svg-icon(icon-class="fa-solid bell")
+    // el-badge.header-account__alert(:value="10" class="item")
+    //   svg-icon(icon-class="fa-solid bell")
     el-dropdown(trigger="click")
       div.header-account__control
         img.user__avatar(:src="avatarUrl()" style="border-radius: 50%;")
