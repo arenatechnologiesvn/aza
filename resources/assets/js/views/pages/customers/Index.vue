@@ -30,7 +30,7 @@
     div.control__wrapper
       aza-control(@on-add="handAddClick")
     div.index__wrapper
-      aza-table(:customers="current" :total="total" @on-update="handUpdateClick")
+      aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-delete="deleteHandle")
 </template>
 
 <script>
@@ -138,17 +138,19 @@
           type: 'warning',
           confirmButtonClass: 'el-button el-button--danger'
         }).then(() => {
-          this.destroy(id).then(() => {
+          this.destroy({ id }).then(() => {
             this.$message({
               type: 'success',
-              message: `Xóa thành công khách hàng - ${id}`
+              message: 'Xóa thành công'
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: `Xóa thất bại`
             })
           })
         }).catch(() => {
-          this.$message({
-            type: 'error',
-            message: 'Hủy xóa thành công'
-          });
+          // Do nothing
         });
       },
       handUpdateClick (id) {

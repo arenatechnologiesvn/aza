@@ -9,13 +9,14 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Plank\Mediable\Mediable;
 
 //use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable implements JWTSubject
 {
-    // use HasApiTokens, Notifiable;
+    use SoftDeletes;
     use Notifiable;
     use Mediable;
 
@@ -36,7 +37,6 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'two_factor',
         'is_active',
-        'avatar',
         'address'
     ];
 
@@ -61,15 +61,6 @@ class User extends Authenticatable implements JWTSubject
         'deleted_at',
         'deleted_by'
     ];
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-//    protected $appends = [
-//        'photo_url',
-//    ];
 
     public function getDateFormat()
     {
@@ -106,6 +97,10 @@ class User extends Authenticatable implements JWTSubject
     public function avatar() {
         return $this->morphToMany('Plank\Mediable\Media', 'mediable','mediables', 'mediable_id')
         ->withPivot('mediable_type', 'tag')
+        ->select([
+            'id',
+            \DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+        ])
         ->where([
             ['mediable_type', '=', 'App\User'],
             ['tag', '=', 'user']

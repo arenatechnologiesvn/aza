@@ -8,19 +8,19 @@
           span(class="hidden-sm-and-down") - Ưu đãi ngay trên tay
       div.top__right
         ul.unstyle
-          li
-            el-dropdown.top__dropdown(style="z-index=99999999;")
-              div.top__alert
-                el-badge(:value="10" class="item")
-                  svg-icon(icon-class="fa-solid bell")
-                span(class="hidden-sm-and-down") Thông báo
-              el-dropdown-menu(slot="dropdown")
-                el-dropdown-item Item 1
-                el-dropdown-item Item 2
+          // li
+          //   el-dropdown.top__dropdown(style="z-index=99999999;")
+          //     div.top__alert
+          //       el-badge(:value="10" class="item")
+          //         svg-icon(icon-class="fa-solid bell")
+          //       span(class="hidden-sm-and-down") Thông báo
+          //     el-dropdown-menu(slot="dropdown")
+          //       el-dropdown-item Item 1
+          //       el-dropdown-item Item 2
           li
             el-dropdown.top__dropdown
               div.avatar__container
-                img.avatar(:src="user_info.avatar")
+                img.avatar(:src="avatarUrl()")
                 span.hidden-sm-and-down {{user_info.last_name + ' ' + user_info.first_name}}
                 i.el-icon-caret-bottom(style="margin-left: 5px")
               el-dropdown-menu(slot="dropdown" trigger="click")
@@ -47,9 +47,10 @@
 </template>
 
 <script>
-  import avatar from '~/assets/login_images/linh-nguyen.jpg'
   import ElBadge from "element-ui/packages/badge/src/main";
   import { mapGetters } from 'vuex'
+  import dummyImage from '~/assets/login_images/dummy-avatar.png'
+
   export default {
     components: {ElBadge},
     name: 'NavbarTop',
@@ -58,17 +59,17 @@
         'user_info'
       ])
     },
-    data () {
-      return {
-        avatar
-      }
-    },
     methods: {
       logout () {
         this.$store.dispatch('LogOut').then(() => {
           this.$router.push({path: '/'})
           location.reload()
         })
+      },
+
+      avatarUrl() {
+        if (this.user_info.avatar && this.user_info.avatar.length) return this.user_info.avatar[0].url;
+        return dummyImage;
       }
     }
   }

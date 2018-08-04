@@ -134,14 +134,16 @@
           this.destroy(id).then(() => {
             this.$message({
               type: 'success',
-              message: `Delete completed ${id}`
+              message: 'Xóa thành công'
             })
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'error',
-            message: 'Delete canceled'
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: 'Xóa thất bại'
+            })
           });
+        }).catch(() => {
+          // Do nothing
         });
       },
       handUpdateClick (id) {

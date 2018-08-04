@@ -67,7 +67,6 @@
       },
       onDelete (id) {
         this.$emit('on-delete', id)
-        this.showDialog = false
       },
       onChangeStatus(id, isActive) {
         this.$emit('on-change-status', id, {
