@@ -371,7 +371,7 @@ export const asyncRouterMap = [
         path: 'accounts',
         name: 'home_account',
         component: AccountParent,
-        redirect: '/home/accounts',
+        redirect: '/accounts',
         meta: {
           title: 'TÀI KHOẢN'
         },

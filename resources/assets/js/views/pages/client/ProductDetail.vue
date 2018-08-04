@@ -8,7 +8,7 @@
             preview-image
           el-col(:span="16")
             el-row.product-detail__title(type="flex")
-              el-col(:span="20").left
+              el-col(:span="24").left
                 h4.title {{product.title}}
                 span.category
                   strong Danh mục:
@@ -16,12 +16,6 @@
                 span.rating
                   span.score(v-for="item in 5" @click="rate(item)" :key="item" :style="{color: item <= rating ? 'orange' : ''}")
                     svg-icon(icon-class="fa-solid star")
-              el-col(:span="4").right(style="text-align: right;")
-                span.controls
-                  el-button(size="mini")
-                    svg-icon(icon-class="fa-solid angle-left")
-                  el-button(size="mini")
-                    svg-icon(icon-class="fa-solid angle-right")
             el-row
               el-col(:span="24")
               p.description {{product.description}}

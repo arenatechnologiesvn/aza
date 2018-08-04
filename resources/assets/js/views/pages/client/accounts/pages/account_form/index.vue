@@ -2,7 +2,7 @@
   div {{customer}}
     el-form(ref="form" :model="form" label-width="150px")
       el-form-item(label="HỌ TÊN")
-        el-input(v-model="form.name" placeholder="HỌ TÊN")
+        el-input(v-model="form.client_name" placeholder="HỌ TÊN")
       el-form-item(label="SỐ ĐIỆN THOẠI")
         el-input(v-model="form.phone" placeholder="SỐ ĐIỆN THOẠI")
       el-form-item(label="GIỚI TÍNH")
@@ -23,7 +23,7 @@
       return {
         form: {
           id: 0,
-          name: '',
+          client_name: '',
           phone: '',
           address: '',
           sex: false
@@ -46,7 +46,7 @@
         const customer = this.current(customer_id)
         if(customer) {
           this.form.id = customer_id,
-          this.form.name = customer.user.full_name,
+          this.form.client_name = customer.user.full_name,
           this.form.phone = customer.user.phone,
           this.form.address = customer.address,
           this.form.sex = customer.sex

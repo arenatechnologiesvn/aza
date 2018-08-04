@@ -38,10 +38,10 @@ class CustomerService extends BaseService
     }
 
     public function afterSave($updated, $data, $mode) {
-        if(!empty($data['name'])){
-            $data['first_name'] = substr($data['name'], 0, strpos($data['name'], ' '));
-            $data['last_name'] = substr($data['name'], strpos($data['name'], ' ') + 1, strlen($data['name']));
-            unset($data['name']);
+        if(!empty($data['client_name'])){
+            $data['first_name'] = substr($data['client_name'], 0, strpos($data['client_name'], ' '));
+            $data['last_name'] = substr($data['client_name'], strpos($data['client_name'], ' ') + 1, strlen($data['client_name']));
+            unset($data['client_name']);
         }
         $updated->user->update($data);
     }

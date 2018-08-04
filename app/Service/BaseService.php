@@ -67,6 +67,7 @@ abstract class BaseService
             if (method_exists($this, 'beforeUpdate')) {
                 $data = $this->beforeUpdate($updated, $data);
             }
+            $updated->update($data);
             if(method_exists($this, 'afterSave')) {
                 $this->afterSave($updated, $data, true);
             }
