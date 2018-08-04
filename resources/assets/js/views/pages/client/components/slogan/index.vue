@@ -1,7 +1,7 @@
 <template lang="pug">
   div.slogan__container
     el-row(:gutter="50")
-      el-col.relative(:span="8" v-for="item in slogans" :key="item.title")
+      el-col.relative(:xs="24" :sm="8" :md="8" :lg="8" :xl="8" v-for="item in slogans" :key="item.title" style="padding-top: 10px; padding-bottom: 10px;")
         slogan-item(:title="item.title" :description="item.description")
 </template>
 

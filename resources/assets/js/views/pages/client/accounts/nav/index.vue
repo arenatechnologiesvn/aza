@@ -22,12 +22,13 @@
 
 <script>
   import './nav.scss'
+  import dummyImage from '~/assets/login_images/dummy-avatar.png'
   export default {
     components: {},
     name: 'NavAccount',
     computed: {
       avatar () {
-        return this.$store.getters.user_info.avatar
+        return this.$store.getters.user_info.avatar && this.$store.getters.user_info.avatar.length && this.$store.getters.user_info.avatar[0].url || dummyImage
       }
     },
     props: {

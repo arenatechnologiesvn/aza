@@ -4,9 +4,9 @@
       bread-crumb
       div.product-detail__content
         el-row(:gutter="20")
-          el-col(:span="8")
+          el-col(:xs="24" :sm="8" :md="8" :lg="8" :xl="8")
             preview-image(:images="product.preview_images")
-          el-col(:span="16")
+          el-col(:xs="24" :sm="16" :md="16" :lg="16" :xl="16")
             el-row.product-detail__title(type="flex")
               el-col(:span="24").left
                 h4.title {{product.title}}

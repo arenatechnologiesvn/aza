@@ -155,6 +155,14 @@
       font-weight: bolder;
     }
   }
+  @media screen and (max-width: 500px) {
+    .search {
+      max-width: 150px;
+      input {
+        max-width: 150px;
+      }
+    }
+  }
 </style>
 <style>
   .el-autocomplete-suggestion.el-popper.my-autocomplete {

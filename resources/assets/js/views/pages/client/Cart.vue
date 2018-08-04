@@ -35,7 +35,7 @@
               el-form-item(label="Mô tả chi tiết" prop="description")
                 el-input(v-model="form.description" type="textarea" rows="5" size="small" placeholder="Nhập mô tả chi tiết đơn hàng")
               el-form-item(label="Cửa hàng" prop="shop_id")
-                el-select(v-model="form.shop_id" clearable placeholder="Chọn cửa hàng" size="small" style="width: 100%;" @change="onShopChange")
+                el-select(v-model="form.shop_id" clearable filterable placeholder="Chọn cửa hàng" size="small" style="width: 100%;" @change="onShopChange")
                   el-option(:label="shop.name" :value="shop.id" v-for="shop in shops" :key="shop.id")
               el-form-item(label="Địa chỉ nhận hàng" prop="delivery_address")
                 el-input(v-model="form.delivery_address" type="textarea" rows="3" size="small" placeholder="Địa chỉ giao hàng")
