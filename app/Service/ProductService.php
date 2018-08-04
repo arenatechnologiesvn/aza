@@ -156,9 +156,7 @@ class ProductService extends BaseService
             'category_id' => $data['category_id'],
             'category' => $data->category,
             'provider_id' => $data['provider_id'],
-            'provider' => $data->provider,
-            // 'customerFavorites'=> $data->customerFavorites->where('user_id', '=', Auth::user()->id),
-            // 'preview' => $data->preview
+            'provider' => $data->provider
         ];
     }
 
