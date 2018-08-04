@@ -11,6 +11,8 @@
             el-col(:span="24")
               el-form-item
                 el-input(placeholder="Tìm kiếm" v-model="search.key" prefix-icon="el-icon-search" style="width: 100%" clearable)
+    div.control__wrapper
+      aza-control(@on-add="handAddClick")
     div.index__wrapper
       aza-table(ref="table" @on-delete="deleteHandle" :permissions="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
 </template>

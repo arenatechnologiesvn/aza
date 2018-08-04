@@ -49,7 +49,7 @@
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
         el-table-column(label="")
           template(slot-scope="scope")
-             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
+            el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
               el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
                 svg-icon(icon-class="fa-solid ban")
       div.pagination__wrapper(style="padding: 10px 0;")
@@ -64,7 +64,7 @@
 
 <script>
   import avatar from '~/assets/products/p1.jpg'
-  import { mapGetters, mapActions} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   import {formatNumber} from '~/utils/util'
   import ElSelectDropdown from "element-ui/packages/select/src/select-dropdown";
 
@@ -76,7 +76,7 @@
         order: 'list',
         loading: 'isLoading'
       }),
-      orders () {
+      orders() {
         return this.order.map(item => ({
           id: item.id,
           discount: item.discount,
@@ -98,83 +98,66 @@
           }))
         })).filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
-            if(this.status === null || this.status === -1 || this.status === '') return true;
+            if (this.status === null || this.status === -1 || this.status === '') return true;
             return this.status === item.status
           })
           .filter(item => {
-            if(this.delivery_date === null) return true;
+            if (this.delivery_date === null) return true;
             return (+(new Date(item.delivery * 1000)) === +this.delivery_date)
           })
           .filter(item => {
-            if(this.apply_at === null) return true;
+            if (this.apply_at === null) return true;
             return (this.formatDateFromString(this.apply_at) === this.formatDateCompare(item.date))
           })
           .filter(item => {
             console.log(this.delivery_type)
-            if(this.delivery_type === null || this.delivery_type === '' ) return true;
+            if (this.delivery_type === null || this.delivery_type === '') return true;
             return (this.delivery_type === item.delivery_type)
           })
       }
     },
     watch: {
-      $route : 'fetchData'
+      $route: 'fetchData'
     },
     methods: {
       ...mapActions('orders', {
-        fetchOrder: 'fetchList'
+        fetchOrder: 'fetchList',
+        updateOrder: 'update'
       }),
-      fetchData () {
+      fetchData() {
         this.fetchOrder()
       },
       formatNumber(num) {
         return formatNumber(num)
       },
-      formatDateFromString (date) {
-        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
+      formatDateFromString(date) {
+        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+        const month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
         const year = date.getFullYear()
         return year + '-' + month + '-' + day
       },
       formatDate(num) {
-        let date = new Date(1000*num)
-        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
+        let date = new Date(1000 * num)
+        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+        const month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
         const year = date.getFullYear()
-        return day + '-' + month + '-' +year
+        return day + '-' + month + '-' + year
       },
-      formatDateCompare (num) {
-        let date = new Date(1000*num)
-        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
+      formatDateCompare(num) {
+        let date = new Date(1000 * num)
+        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+        const month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
         const year = date.getFullYear()
         return year + '-' + month + '-' + day
       },
-      handleSizeChange (size) {
+      handleSizeChange(size) {
         this.pageSize = size
       },
-      handleCurrentChange (current) {
+      handleCurrentChange(current) {
         this.currentPage = current
       },
       changeStatus(id, status) {
-        const data = {
-          status
-        }
-        if (status === 0) {
-          this.canExecute('Bạn muốn duyệt đơn hàng này')
-            .then(() => {
-              this.updateOrder({
-                id,
-                data
-              }).then(() => {
-                this.$notify(
-                  {
-                    title: 'Thông báo',
-                    message: 'Đã Xác nhận thành công đơn hàng',
-                    type: 'success'
-                  })
-              })
-            })
-        } else {
+        if (status === 2) {
           this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
@@ -182,7 +165,7 @@
             inputErrorMessage: 'Bạn phải nhập lý do'
           }).then(value => {
             this.updateOrder({
-              id,
+              id: id,
               data: {
                 status: status,
                 approve_note: value.value
@@ -192,13 +175,14 @@
                 type: 'success',
                 message: 'Đơn hàng đã được hủy thành công'
               });
+              this.fetchOrder()
             }).catch(() => {
               this.$message({
                 type: 'warning',
                 message: 'Lỗi khi hủy đơn hàng'
               });
             })
-          }).catch(() => {
+          }).catch(err => {
             this.$message({
               type: 'info',
               message: 'Đơn hàng đã không được hủy'
@@ -207,7 +191,7 @@
         }
       }
     },
-    data () {
+    data() {
       return {
         currentPage: 1,
         pageSize: 10,
@@ -219,7 +203,7 @@
         delivery_type: null
       }
     },
-    created () {
+    created() {
       this.fetchData()
     }
   }
@@ -230,6 +214,7 @@
     padding: 10px;
     text-align: left;
   }
+
   .account-order {
     background-color: white;
     .h-line {

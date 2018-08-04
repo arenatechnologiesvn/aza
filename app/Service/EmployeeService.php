@@ -54,7 +54,8 @@ class EmployeeService extends BaseService
                 'phone',
                 'address',
                 'role_id',
-                'is_active'
+                'is_active',
+                'address'
             ])->with(['role'=> function ($q2) {
                 $q2->select(['title', 'id']);
             }])->with(['avatar' => function($query) {
@@ -62,7 +63,7 @@ class EmployeeService extends BaseService
                     'id',
                     \DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
                 ]);
-            }]);;
+            }, 'userDetail']);
         }, 'customers' => function ($q) {
             $q->select(['id','employee_id']);
         }]);
@@ -72,6 +73,12 @@ class EmployeeService extends BaseService
     {
         $user = $this->authService->register($employee['user']);
         $employee['user_id'] = $user->id;
+        if (isset($employee['contract_at'])) {
+            $employee['contract_at'] = strtotime($employee['contract_at']);
+        }
+        if (isset($employee['birthday'])) {
+            $employee['birthday'] = strtotime($employee['birthday']);
+        }
         return $employee;
     }
 
@@ -82,6 +89,12 @@ class EmployeeService extends BaseService
             if(isset($data['user'])) {
                 $employee->user->update($data['user']);
                 unset($data['user']);
+            }
+            if (isset($data['birthday'])) {
+                $data['birthday'] = strtotime($data['birthday']);
+            }
+            if (isset($data['contract_at'])) {
+                $data['contract_at'] = strtotime($data['contract_at']);
             }
             DB::commit();
             return $data;
@@ -98,7 +111,8 @@ class EmployeeService extends BaseService
             if ($data['avatar']) {
                 $this->syncMedia($updated->user_id, $data['avatar'], 'user');
             }
-
+            $updated->user->update($data);
+            $updated->user->userDetail->update($data);
             DB::commit();
             return $data;
         } catch (\Exception $e) {

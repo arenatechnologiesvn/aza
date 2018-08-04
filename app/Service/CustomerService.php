@@ -71,20 +71,19 @@ class CustomerService extends BaseService
         try {
             DB::beginTransaction();
 
-            if ($data['avatar']) {
+            if (isset($data['avatar'])) {
                 $this->syncMedia($updated->user_id, $data['avatar'], 'user');
             }
 
-            if (count($data['shops'])) {
+            if (isset($data['shops']) && count($data['shops'])) {
                 $this->syncShop($updated->id, $data['shops']);
             }
-
-            // if(!empty($data['name'])){
-            //     $data['first_name'] = substr($data['name'], 0, strpos($data['name'], ' '));
-            //     $data['last_name'] = substr($data['name'], strpos($data['name'], ' ') + 1, strlen($data['name']));
-            //     unset($data['name']);
-            // $updated->user->update($data);
-            // }
+            if(!empty($data['client_name'])){
+                $data['first_name'] = substr($data['client_name'], 0, strpos($data['client_name'], ' '));
+                $data['last_name'] = substr($data['client_name'], strpos($data['client_name'], ' ') + 1, strlen($data['client_name']));
+                unset($data['client_name']);
+                $updated->user->update($data);
+            }
 
             DB::commit();
             return $data;

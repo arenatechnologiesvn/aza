@@ -30,9 +30,9 @@
         let matched = this.$route.matched.filter(item => item.name);
         const first = matched[0];
         if (first && first.name === 'home') {
-          matched = [{ path: '/home', meta: { title: 'Trang chủ' }}];
+          matched = [{ path: '', meta: { title: 'Trang chủ' }}];
         }else {
-          matched.unshift({ path: 'home', meta: { title: 'Trang chủ' }})
+          matched.unshift({ path: '', meta: { title: 'Trang chủ' }})
         }
         this.levelList = matched;
         this.pageTitle = matched.slice().pop().meta.title.toUpperCase();
