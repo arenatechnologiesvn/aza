@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
@@ -78,9 +80,29 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $data  = $request->all();
+            if (isset($data['user_detail']['birthday'])) {
+                $data['user_detail']['birthday'] = strtotime($data['user_detail']['birthday']);
+            }
+            $updated = $this->user->find($id);
+            $updated->update($data);
+            if (isset($updated->userDetail)) {
+                $updated->userDetail->update($data['user_detail']);
+            } else {
+                $data['user_detail']['user_id'] = $id;
+                UserDetail::create($data['user_detail']);
+            }
+            DB::commit();
+            return $this->api_success_response(['data' => $updated]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->api_error_response($e);
+        }
+
     }
 
     /**
@@ -111,6 +133,17 @@ class UserController extends Controller
             }
         } catch(Exception $e) {
             return $this->api_error_response($e);
+        }
+    }
+
+    public function profile()
+    {
+        $user_id = Auth::user()->id;
+        try {
+            $profile = $this->user->with(['userDetail'])->find($user_id);
+            return $this->api_success_response(['data' => $profile]);
+        } catch (\Exception $e) {
+            return $this->api_error_response(['data' => $e]);
         }
     }
 }

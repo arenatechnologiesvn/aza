@@ -34,6 +34,9 @@
                 el-input(v-model="form.title" size="small" placeholder="Nhập nôi dung đơn hàng"  auto-complete="off")
               el-form-item(label="Mô tả chi tiết" prop="description")
                 el-input(v-model="form.description" type="textarea" rows="5" size="small" placeholder="Nhập mô tả chi tiết đơn hàng")
+              el-form-item(label="Cửa hàng" prop="shop_id")
+                el-select(v-model="form.shop_id" clearable placeholder="Chọn cửa hàng" size="small" style="width: 100%;" @change="onShopChange")
+                  el-option(:label="shop.name" :value="shop.id" v-for="shop in shops" :key="shop.id")
               el-form-item(label="Địa chỉ nhận hàng" prop="delivery_address")
                 el-input(v-model="form.delivery_address" type="textarea" rows="3" size="small" placeholder="Địa chỉ giao hàng")
               el-row(:gutter="5" type="flex")
@@ -83,11 +86,13 @@
           delivery_type: '',
           delivery: '',
           title: '',
-          address: ''
+          delivery_address: '',
+          shop_id: null
         },
         rules: {
           title: [{ required: true, message: 'Nội dung đơn hàng là bắt buộc', trigger: 'blur' }],
           description: [{required: true, message: 'Mô tả chi tiết là bắt buộc'}],
+          shop_id: [{required: true, message: 'Cửa hàng là bắt buộc'}],
           delivery_address: [{required: true, message: 'Địa chỉ nhận hàng là bắt buộc'}],
           delivery: [
             {required: true, message: 'Ngày giao hàng là bắt buộc'},
@@ -110,8 +115,15 @@
       ...mapGetters([
         'user_info'
       ]),
+      ...mapGetters('shops', {
+        listShop: 'list'
+      }),
       products() {
         return this.data()
+      },
+      shops () {
+        return this.listShop.filter(item=> item.customer_id === this.user_info.customer.id)
+          .map(item => ({id: item.id, name: item.name}))
       },
       total() {
         return (this.products && this.products.length > 1) ?
@@ -127,6 +139,7 @@
           customer_id: user.customer.id,
           delivery_type: this.form.delivery_type,
           discount: '',
+          shop_id: this.form.shop_id,
           title: this.form.title,
           total_money: this.total,
           product: this.products.map(item => ({
@@ -149,6 +162,9 @@
       }),
       ...mapActions('products', {
         fetchProduct: 'fetchList'
+      }),
+      ...mapActions('shops', {
+        fetchShops: 'fetchList'
       }),
       canExecute(message) {
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
@@ -173,6 +189,15 @@
                 message: 'Đã thêm thành công sản phẩm vào danh sách yêu thích',
                 type: 'success'
               })).then(() => this.$router.push({'name': 'home_account_order'}))
+              .catch(err => {
+                console.log(err)
+                this.$notify(
+                  {
+                    title: 'Cảnh báo báo',
+                    message: 'Đơn hàng đã không được lưu thành công',
+                    type: 'danger'
+                  })
+              })
           } else {
             return false
           }
@@ -198,7 +223,17 @@
             customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
           }
         })
+      },
+      onShopChange (value) {
+        this.listShop.map(item => {
+         if(item.customer_id === value) {
+           this.form.delivery_address = item.zone
+         }
+        } )
       }
+    },
+    mounted () {
+      this.fetchShops()
     }
   }
 </script>

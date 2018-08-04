@@ -5,7 +5,7 @@
       div.product-detail__content
         el-row(:gutter="20")
           el-col(:span="8")
-            preview-image
+            preview-image(:images="product.preview_images")
           el-col(:span="16")
             el-row.product-detail__title(type="flex")
               el-col(:span="24").left
@@ -28,6 +28,7 @@
                   span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
               div(v-else)
                 div.price {{formatNumber(product.price)}} (VNĐ)
+                  span(style="font-size: .9em;") / {{`${product.quantitative} ${product.unit}`}}
               div.submit
                 span
                   el-button(type="success" @click="addToCart(product)" :disabled="product.added")
@@ -77,10 +78,12 @@
           title: item.name,
           img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
           category: item.category ? item.category.name : 'Chưa xác định',
+          preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: `/${p.directory}/${p.filename}.${p.extension}`})): [],
           price: item.price,
           discount: item.discount_price,
           inventory: 10,
           unit: item.unit,
+          quantitative: item.quantitative,
           added: item.customer_carts && item.customer_carts.length > 0,
           favorite: item.customer_favorites && item.customer_favorites.length > 0,
           description: item.description
@@ -93,6 +96,7 @@
             id: item.id,
             title: item.name,
             img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+            preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: `/${p.directory}/${p.filename}.${p.extension}`})): [],
             category: item.category ? item.category.name : 'Chưa xác định',
             price: item.price,
             discount: item.discount_price,
@@ -115,11 +119,13 @@
     },
     methods: {
       ...mapActions('products', {
-        fetchData : 'fetchSingle'
+        fetchData : 'fetchSingle',
+        fetchProduct: 'fetchList'
       }),
       ...mapActions('cart', {
         add2Cart: 'create',
-        updateCart: 'update'
+        updateCart: 'update',
+        fetchCart: 'fetchList'
       }),
       rate (score) {
         this.rating = score
@@ -154,8 +160,19 @@
           }).then(res => {
             this.fetchCart()
             this.fetchProduct()
+            this.$notify(
+              {
+                title: 'Thông báo',
+                message: 'Đã thêm thành công vài giỏ hàng',
+                type: 'success'
+              })
           } )
-            .catch(err =>  console.log(err))
+            .catch(err =>   this.$notify(
+              {
+                title: 'Cảnh báo',
+                message: 'Không thể thêm sản phẩm vào giỏ hàng',
+                type: 'danger'
+              }))
         }
       }
     },

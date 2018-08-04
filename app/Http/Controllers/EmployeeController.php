@@ -50,18 +50,6 @@ class EmployeeController extends CrudController
         return $this->edit($request->all(), $id);
     }
 
-    public function profile()
-    {
-        $user_id = Auth::user()->id;
-        try {
-            $profile = $this->model->with(['user' => function ($q) {
-                $q->with('userDetail');
-            }])->where('user_id', '=', $user_id)->firstOrFail();
-            return $this->api_success_response(['data' => $profile]);
-        } catch (\Exception $e) {
-            return $this->api_error_response(['data' => $e]);
-        }
-    }
     /**
      * Remove the specified resource from storage.
      *

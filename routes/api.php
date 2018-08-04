@@ -30,7 +30,8 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('role', 'RoleController');
     Route::delete('roles/deletes', 'RoleController@deletes');
     Route::resource('roles', 'RoleController');
-    Route::get('profile', 'EmployeeController@profile');
+    Route::get('profile', 'UserController@profile');
+    Route::put('users/{id}', 'UserController@update');
     Route::resource('employees', 'EmployeeController');
     Route::resource('favorites', 'FavoriteController');
     Route::post('users/change-password', 'UserController@changePassword');

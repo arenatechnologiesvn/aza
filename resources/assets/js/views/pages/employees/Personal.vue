@@ -11,19 +11,17 @@
         span(slot="label")
           svg-icon(icon-class="fa-solid lock")
           span.pane--title Thay đổi mật khẩu
-        div Password
-      el-tab-pane
-        span(slot="label")
-          svg-icon(icon-class="fa-solid history")
-          span.pane--title Lịch sửa thao tác
-        div Lich Sử thao tác
+        div
+          password-form
 </template>
 
 <script>
   import ProfileInfo from './components/Profile/Info'
+  import PasswordForm from './components/Profile/Password'
   export default {
     components: {
-      ProfileInfo
+      ProfileInfo,
+      PasswordForm
     },
     name: 'Personal'
   }
