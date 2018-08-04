@@ -91,7 +91,7 @@ class MediaManagerController extends Controller
         //     })
         //     ->save(public_path($folder) . $thumbFileName);
 
-        if (\App::environment('staging')) {
+//        if (\App::environment('staging')) {
             $stagingFolder = base_path() . '/uploads/' .$request->input('type'). '/' . Carbon::now()->year . '/' . Carbon::now()->month . '/';
             if (!file_exists($stagingFolder)) {
                 mkdir($stagingFolder, 0755, true);
@@ -103,7 +103,7 @@ class MediaManagerController extends Controller
                     $constraint->upsize();
                 })
                 ->save($stagingFolder . $mainFileName);
-        }
+//        }
 
         return $this->api_success_response();
     }
