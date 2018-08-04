@@ -58,12 +58,7 @@ class EmployeeService extends BaseService
                 'address'
             ])->with(['role'=> function ($q2) {
                 $q2->select(['title', 'id']);
-            }])->with(['avatar' => function($query) {
-                $query->select([
-                    'id',
-                    \DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
-                ]);
-            }, 'userDetail']);
+            }])->with(['avatar', 'userDetail']);
         }, 'customers' => function ($q) {
             $q->select(['id','employee_id']);
         }]);
@@ -111,7 +106,7 @@ class EmployeeService extends BaseService
             if ($data['avatar']) {
                 $this->syncMedia($updated->user_id, $data['avatar'], 'user');
             }
-            $updated->user->update($data);
+
             $updated->user->userDetail->update($data);
             DB::commit();
             return $data;

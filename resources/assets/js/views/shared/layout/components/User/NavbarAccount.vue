@@ -4,7 +4,7 @@
       svg-icon(icon-class="fa-solid bell")
     el-dropdown(trigger="click")
       div.header-account__control
-        img.user__avatar(:src="info.avatar" style="border-radius: 50%;")
+        img.user__avatar(:src="avatarUrl()" style="border-radius: 50%;")
         span {{(info.full_name.length > 5 && info.full_name) || info.name}}
         i.el-icon-caret-bottom
       el-dropdown-menu.header-account__dropdown(slot="dropdown")
@@ -25,6 +25,8 @@
 
 <script>
   import './navbar_account.scss'
+  import dummyImage from '~/assets/login_images/dummy-avatar.png'
+
   export default {
     name: 'NavbarAccount',
     props: {
@@ -38,6 +40,11 @@
         this.$store.dispatch('LogOut').then(() => {
           this.$router.push({name: 'login'})
         })
+      },
+
+      avatarUrl() {
+        if (this.info.avatar && this.info.avatar.length) return this.info.avatar[0].url;
+        return dummyImage;
       }
     }
   }

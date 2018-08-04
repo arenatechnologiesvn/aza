@@ -27,9 +27,30 @@
       }),
       ...mapState([
         'route', // vuex-router-sync
-      ]),
-      current () {
-        return this.ById(this.$route.params.id);
+      ])
+    },
+    data() {
+      return {
+        current: {
+          code: '',
+          customer_type: 0,
+          employee_id: null,
+          zone: '',
+          province_code: '',
+          district_code: '',
+          ward_code: '',
+          shops: [],
+          user: {
+            avatar: [],
+            email: '',
+            name: '',
+            first_name: '',
+            last_name: '',
+            phone: '',
+            address: '',
+            is_active: false
+          }
+        }
       }
     },
     methods: {
@@ -39,6 +60,8 @@
       fetchData () {
         return this.fetchUpdate({
           id: this.$route.params.id
+        }).then(() => {
+          this.current = JSON.parse(JSON.stringify(this.ById(this.route.params.id)));
         }).catch(() => this.$router.push({name: 'page404'}))
       }
     },

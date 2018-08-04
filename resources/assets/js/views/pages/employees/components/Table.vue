@@ -69,7 +69,7 @@
         this.$emit('on-update', id)
       },
       onDelete (id) {
-        this.$emit('on-delete', id)
+        this.$emit('on-delete', { id })
       },
       onChangeStatus(id, status) {
         this.$emit('on-change-status', id, {

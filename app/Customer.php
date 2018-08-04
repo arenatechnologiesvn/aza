@@ -30,6 +30,16 @@ class Customer extends BaseModel
         'deleted_at',
         'deleted_by'
     ];
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($model)
+        {
+            $model->user()->delete();
+            $model->shops()->delete();
+        });
+    }
     public function employee() {
         return $this->belongsTo(Employee::class);
     }

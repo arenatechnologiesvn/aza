@@ -119,14 +119,7 @@ class CustomerService extends BaseService
                     'address',
                     'role_id',
                     'is_active'
-                ])->with([
-                    'avatar' => function($q4) {
-                        $q4->select([
-                            'id',
-                            \DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
-                        ]);
-                    }
-                ]);
+                ])->with(['avatar']);
             },
             'shops',
             'employee' => function($q) {
