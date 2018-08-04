@@ -39,7 +39,7 @@
                 el-dropdown-item
                   router-link(to="/accounts/order")
                     svg-icon(icon-class="fa-solid cart-arrow-down")
-                    span Lịch sử đơn hàng
+                    span Quản lý đơn hàng
                 el-dropdown-item(divided)
                   span(@click="logout" style="display:block;")
                     svg-icon(icon-class="fa-solid sign-out-alt")

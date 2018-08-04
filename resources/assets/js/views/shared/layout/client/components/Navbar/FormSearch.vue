@@ -103,7 +103,7 @@
       },
       createFilter(queryString) {
         return (link) => {
-          return (link.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+          return (link.name.toLowerCase().indexOf(queryString.toLowerCase()) > -1);
         };
       },
       handleSelect (item) {

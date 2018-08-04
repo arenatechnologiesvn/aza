@@ -14,6 +14,7 @@ use App\Service\EmployeeService;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends CrudController
 {
@@ -27,7 +28,7 @@ class EmployeeController extends CrudController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return
      */
     public function store(EmployeeCreateRequest $request)
@@ -38,8 +39,8 @@ class EmployeeController extends CrudController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -49,10 +50,22 @@ class EmployeeController extends CrudController
         return $this->edit($data, $id);
     }
 
+    public function profile()
+    {
+        $user_id = Auth::user()->id;
+        try {
+            $profile = $this->model->with(['user' => function ($q) {
+                $q->with('userDetail');
+            }])->where('user_id', '=', $user_id)->firstOrFail();
+            return $this->api_success_response(['data' => $profile]);
+        } catch (\Exception $e) {
+            return $this->api_error_response(['data' => $e]);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
 }

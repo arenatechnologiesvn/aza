@@ -36,7 +36,8 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'two_factor',
         'is_active',
-        'avatar'
+        'avatar',
+        'address'
     ];
 
     public static function boot()

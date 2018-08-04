@@ -10,7 +10,7 @@ class Employee extends BaseModel
         'code',
         'user_id',
         'status',
-        'start_datetime',
+        'contract_at',
         'employee_type',
         'rating'
     ];

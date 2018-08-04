@@ -9,7 +9,7 @@
         i.el-icon-caret-bottom
       el-dropdown-menu.header-account__dropdown(slot="dropdown")
         el-dropdown-item
-          router-link(class="inlineBlock" :to="`/profile/${info.id}`")
+          router-link(class="inlineBlock" to="/profile")
             svg-icon(icon-class="fa-solid user")
             span(style="margin-left: 5px") Thông tin cá nhân
         el-dropdown-item(divided)
