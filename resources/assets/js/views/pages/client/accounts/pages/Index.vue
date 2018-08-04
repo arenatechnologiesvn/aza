@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import Account from './account_form'
+  import Account from './account_form/index'
   import AccountPassword from './account_form/Password'
   export default {
     components: {

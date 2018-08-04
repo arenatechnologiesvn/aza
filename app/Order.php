@@ -20,11 +20,15 @@ class Order extends BaseModel
         'delivery',
         'delivery_type',
         'delivery_address',
-        'total_money'
+        'total_money',
+        'shop_id'
     ];
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+    public function shop() {
+        return $this->belongsTo(Shop::class);
     }
     public function products() {
         return $this->belongsToMany(Product::class,'order_product')

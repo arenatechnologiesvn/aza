@@ -48,6 +48,12 @@
             count: 10
           },
           {
+            name: 'home_account_shop',
+            path: '/accounts/shop',
+            title: 'CỬA HÀNG CỦA TÔI',
+            icon: 'fa-solid store-alt'
+          },
+          {
             name: 'home_account_order',
             path: '/accounts/order',
             title: 'QUẢN LÝ ĐƠN HÀNG',

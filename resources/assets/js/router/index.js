@@ -395,6 +395,15 @@ export const asyncRouterMap = [
             }
           },
           {
+            path: 'shop',
+            name: 'home_account_shop',
+            component: () => import('~/views/pages/client/accounts/pages/Shop'),
+            meta: {
+              title: 'CỬA HÀNG CỦA TÔI',
+              icon: 'fa-solid store-alt'
+            }
+          },
+          {
             path: 'order',
             name: 'home_account_order',
             component: () => import('~/views/pages/client/accounts/pages/Order'),
