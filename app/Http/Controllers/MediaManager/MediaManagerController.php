@@ -64,7 +64,7 @@ class MediaManagerController extends Controller
         $folder = 'uploads/' .$request->input('type'). '/' . Carbon::now()->year . '/' . Carbon::now()->month . '/';
         $uniqid = uniqid();
         $mainFileName = $uniqid . '.' . $file->getClientOriginalExtension();
-        $thumbFileName = $uniqid . '_thumb.' . $file->getClientOriginalExtension();
+        // $thumbFileName = $uniqid . '_thumb.' . $file->getClientOriginalExtension();
 
         // checking if the folder exist
         // if not, create the folder
@@ -84,12 +84,26 @@ class MediaManagerController extends Controller
             ->toDirectory($folder)
             ->upload();
 
-        $thumbImage = Image::make($request->file('file'))
-            ->resize(400, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })
-            ->save(public_path($folder) . $thumbFileName);
+        // $thumbImage = Image::make($request->file('file'))
+        //     ->resize(400, null, function ($constraint) {
+        //         $constraint->aspectRatio();
+        //         $constraint->upsize();
+        //     })
+        //     ->save(public_path($folder) . $thumbFileName);
+
+        if (\App::environment('staging')) {
+            $stagingFolder = base_path() . '/uploads/' .$request->input('type'). '/' . Carbon::now()->year . '/' . Carbon::now()->month . '/';
+            if (!file_exists($stagingFolder)) {
+                mkdir($stagingFolder, 0755, true);
+            }
+    
+            $mainImage = Image::make($request->file('file'))
+                ->resize(1080, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->save($stagingFolder . $mainFileName);
+        }
 
         return $this->api_success_response();
     }
