@@ -13,6 +13,8 @@ export default createCrudModule({
         title: p.name,
         price: p.price,
         discount: p.discount_price,
+        unit: p.unit,
+        quantitative: p.quantitative,
         img: img,
         added: p.customer_carts && p.customer_carts.length > 0,
         provider: p.provider && p.provider.name,

@@ -19,14 +19,14 @@
                 div
                   span(@click="removeFromFavorite(scope.row.id)" style="cursor: pointer;")
                     svg-icon(icon-class="fa-solid trash")
-        el-table-column(width="200" style="text-align: left;")
+        el-table-column(width="230" style="text-align: left;")
           template(slot-scope="scope")
             div(style="text-align: left;" v-if="scope.row.discount")
-              div.price ₫{{formatNumber(scope.row.discount)}}
+              div.price ₫{{formatNumber(scope.row.discount)}} / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               div.discount ₫{{formatNumber(scope.row.price)}}
                 span(style="margin-left: 10px; text-decoration: unset; color: black;")  {{ ((1 - (scope.row.discount / scope.row.price)) * 100).toFixed(2)}} %
             div(v-else)
-              div.price ₫{{formatNumber(scope.row.price)}}
+              div.price ₫{{formatNumber(scope.row.price)}} / {{`${scope.row.quantitative} ${scope.row.unit}`}}
         el-table-column(prop="address" label="Date" width="100")
           template(slot-scope="scope")
             el-button(size="mini" type="warning" @click="addToCart(scope.row)")

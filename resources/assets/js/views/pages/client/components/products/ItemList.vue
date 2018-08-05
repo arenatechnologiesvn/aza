@@ -1,46 +1,51 @@
 <template lang="pug">
   el-card.product-item(class="box-card")
-    div.card__contain
-      div.product-item__image
-        div(v-if="product.added").label ĐÃ THÊM VÀO GIỎ HÀNG
-        div(v-if="product.inventory <= 0").label.no HẾT HÀNG
-        img(:src="product.img")
-      div.product-item__des
-        div.product-item__title
-          router-link(:to="`/products/${product.id}`") {{product.title}}
-        div.product-item__description(style="color: black;height: 50px;")
-          div.product-item__control--left(v-if="product.discount")
-            div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}} / {{`${product.quantitative} ${product.unit}`}}
-            div(v-if="product.discount").product-item__price--discount
-              span(style="text-decoration: line-through; margin-right: 10px;") ₫{{formatNumber(product.price)}}
-              span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
-          div(v-else)
-            div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}} / {{`${product.quantitative} ${product.unit}`}}
-          div(style="clear: both")
-            router-link(:to="{name: 'home_product', query: {category: product.category}}" style="font-size: 1.1em;color: #999;")
-              strong(style="color: #666; margin-right: 10px;") Danh mục:
-              template {{product.category}}
-        div.line
-        div.product-item__control
-          div.control--left(style="float: left;")
-            span.score(v-for="item in 5" :key="item" :style="{color: item <= 5 ? '#F7CA51' : ''}")
-              svg-icon(icon-class="fa-solid star")
-          div.product-item__control--right
-            el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
-              span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
-                svg-icon( icon-class="fa-solid heart")
-            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
-              span.shop(@click="addToCart(product)")
-                svg-icon(icon-class="fa-solid cart-plus")
-            el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
-              span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
-                svg-icon(icon-class="fa-solid eraser")
+    el-row.list-category(:gutter="30")
+      el-col(span="6")
+        div.product-item__image
+          div(v-if="product.added").label ĐÃ THÊM VÀO GIỎ HÀNG
+          div(v-if="product.inventory <= 0").label.no HẾT HÀNG
+          img(:src="product.img")
+      el-col(span="18")
+        div.product-item__des
+          div.product-item__title
+            router-link(:to="`/products/${product.id}`") {{product.title}}
+          p {{product.description}}
+          div.product-item__description(style="color: black;height: 50px;")
+            div.product-item__control--left(v-if="product.discount")
+              div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}} / {{`${product.quantitative} ${product.unit}`}}
+              div(v-if="product.discount").product-item__price--discount
+                span(style="text-decoration: line-through; margin-right: 10px;") ₫{{formatNumber(product.price)}}
+                span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
+            div(v-else)
+              div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}} / {{`${product.quantitative} ${product.unit}`}}
+            div(style="clear: both")
+              router-link(:to="{name: 'home_product', query: {category: product.category}}" style="font-size: 1.1em;color: #999;")
+                strong(style="color: #666; margin-right: 10px;") Danh mục:
+                template {{product.category}}
+          div.line
+          div.product-item__control
+            div.control--left(style="float: left;")
+              span.score(v-for="item in 5" :key="item" :style="{color: item <= 5 ? '#F7CA51' : ''}")
+                svg-icon(icon-class="fa-solid star")
+            div.product-item__control--right
+              el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
+                span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
+                  svg-icon( icon-class="fa-solid heart")
+              el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
+                span.shop(@click="addToCart(product)")
+                  svg-icon(icon-class="fa-solid cart-plus")
+              el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
+                span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
+                  svg-icon(icon-class="fa-solid eraser")
 </template>
 
 <script>
   import {mapActions, mapGetters} from 'vuex'
   import {formatNumber} from '~/utils/util'
+  import ElRow from "element-ui/packages/row/src/row";
   export default {
+    components: {ElRow},
     name: 'ItemProduct',
     props: {
       product: {
@@ -224,9 +229,10 @@
       color: red;
     }
   }
-  .product-item__image {
+  .list-category .product-item__image {
+    position: relative;
     img {
-      height: 300px;
+      height: 150px;
       width: 100%;
     }
   }

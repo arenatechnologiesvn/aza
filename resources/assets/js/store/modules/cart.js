@@ -15,6 +15,8 @@ export default createCrudModule({
           img: img,
           provider: p.provider && p.provider.name,
           quantity: state.entities[id].quantity,
+          unit: p.unit,
+          quantitative: p.quantitative,
           real_price: p.price,
           tmp_price: p.price,
           product_id: id

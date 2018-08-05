@@ -50,7 +50,7 @@
         el-table-column(label="")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
-              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
+              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
                 svg-icon(icon-class="fa-solid ban")
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
@@ -96,7 +96,8 @@
             price: p.pivot.real_price,
             total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
           }))
-        })).filter(item => item.code.indexOf(this.key) > -1)
+        })).sort((a, b) => +b.delivery - +a.delivery)
+          .filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
             if (this.status === null || this.status === -1 || this.status === '') return true;
             return this.status.toString().trim() === item.status.toString().trim()

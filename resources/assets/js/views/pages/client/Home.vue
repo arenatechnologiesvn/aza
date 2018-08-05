@@ -45,6 +45,8 @@
           category: item.category ? item.category.name : 'Chưa xác định',
           price: item.price,
           discount: item.discount_price,
+          unit: item.unit,
+          quantitative: item.quantitative,
           inventory: 10,
           added: item.customer_carts && item.customer_carts.length > 0,
           favorite: item.customer_favorites && item.customer_favorites.length > 0,
