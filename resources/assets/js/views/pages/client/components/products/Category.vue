@@ -1,7 +1,7 @@
 <template lang="pug">
   div.list-item.category(style="padding: 20px 0;")
     el-row(:gutter="20")
-      el-col(:md="6" :sm="12" :xs="24" :lg="6" v-for="item in products" :key="item.id")
+      el-col(:md="6" :sm="12" :xs="24" :lg="6" v-for="item in products" :key="item.id" style="padding-top: 10px; padding-bottom: 10px")
         product-item.item(:product="item")
 </template>
 

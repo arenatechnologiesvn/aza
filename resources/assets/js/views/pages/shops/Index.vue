@@ -173,7 +173,7 @@
 
         if (this.selectedCustomer) {
           data = data.filter(item => {
-            return item.customer_id === this.selectedCustomer;
+            return item.customer_id.toString().trim() === this.selectedCustomer.toString().trim();
           });
         }
 

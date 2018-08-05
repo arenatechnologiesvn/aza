@@ -15,10 +15,10 @@
         el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
-              el-button(size="mini" @click="handleEdit(scope.row.id)" round)
+              el-button(size="mini" @click="handleEdit(scope.row.id)" :disabled="parseInt(scope.row.status) !== 0" round)
                 svg-icon(icon-class="fa-solid eye")
             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
-              el-button(size="mini" type="danger" @click="onDelete(scope.row.id)" round)
+              el-button(size="mini" type="danger" @click="onDelete(scope.row.id)" :disabled="parseInt(scope.row.status) !== 0" round)
                 svg-icon(icon-class="fa-solid ban")
     div.pagination__wrapper
       el-pagination(@size-change="handleSizeChange"

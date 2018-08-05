@@ -26,10 +26,10 @@
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
           el-col(:span="6")
-            el-radio-group(size="small" v-model="delivery")
-              el-radio-button(label="today") Hôm nay
-              el-radio-button(label="7days") 7 Ngày qua
-              el-radio-button(label="30days") 30 Ngày qua
+            el-radio-group(size="small" v-model="delivery_range")
+              el-radio-button(label="1") Hôm nay
+              el-radio-button(label="7") 7 Ngày qua
+              el-radio-button(label="30") 30 Ngày qua
           el-col(:span="3")
             el-select(size="small" v-model="status" placeholder="Trạng thái" clearable)
               el-option(:value="1" label="Đang xử lý")
@@ -66,7 +66,7 @@
         el-table-column(prop="customer.user.full_name" label="TÊN KH" sortable)
         el-table-column(label="TRẠNG THÁI")
           template(slot-scope="scope")
-            el-tag(:type="scope.row.status === 0 ? 'success': scope.row.status === 1 ?  'info' : 'danger'") {{scope.row.status === 0 ? 'Đã hoàn thành' : scope.row.status === 1 ? 'Đang xử lý' : 'Đã bị hủy' }}
+            el-tag(:type="parseInt(scope.row.status) === 0 ? 'success': parseInt(scope.row.status) === 1 ?  'info' : 'danger'") {{parseInt(scope.row.status) === 0 ? 'Đã hoàn thành' : parseInt(scope.row.status) === 1 ? 'Đang xử lý' : 'Đã bị hủy' }}
         el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" )
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
@@ -74,10 +74,10 @@
         el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Duyệt đơn hàng" placement="top")
-              el-button(size="mini" @click="changeStatus(scope.row.id, 0)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
+              el-button(size="mini" @click="changeStatus(scope.row.id, 0)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
                 svg-icon(icon-class="fa-solid check-circle")
             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
-              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
+              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
                 svg-icon(icon-class="fa-solid ban")
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
@@ -135,7 +135,8 @@
             price: p.pivot.real_price,
             total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
           }))
-        })).filter(item => item.code.indexOf(this.key) > -1)
+        })).sort((a, b) => +b.date - +a.date)
+          .filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
             if(this.status === null || this.status === -1 || this.status === '') return true;
             return parseInt(this.status) === parseInt(item.status)
@@ -150,11 +151,22 @@
           })
           .filter(item => {
             if(this.delivery_type === null || this.delivery_type === '' ) return true;
-            return (this.delivery_type === item.delivery_type)
+            return (this.delivery_type.toString().trim()=== item.delivery_type.toString().trim())
           })
           .filter(item => {
             if(this.customer_id === null || this.customer_id === '' || this.customer_id === -1) return true;
-            return (this.customer_id === item.customer.id)
+            return (this.customer_id.toString().trim() === item.customer.id.toString().trim())
+          })
+          .filter(item => {
+            if(this.delivery_range === null) return true;
+            else {
+              const nDate = new Date
+              const end = +(nDate)
+              const before = end - (parseInt(this.delivery_range) * 3600 * nDate.getHours() * 1000);
+              const d = +(new Date(item.date * 1000))
+              return d >= before && d <= end
+            }
+            // return (this.customer_id.toString().trim() === item.customer.id.toString().trim())
           })
       }
     },
@@ -273,7 +285,8 @@
         selected: 0,
         delivery_type: null,
         apply_at: null,
-        customer_id: null
+        customer_id: null,
+        delivery_range: null
       }
     },
     created () {

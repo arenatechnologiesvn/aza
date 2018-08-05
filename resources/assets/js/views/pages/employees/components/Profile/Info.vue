@@ -79,6 +79,7 @@
           this.form = data
           if(this.form.user_detail) {
             this.form.user_detail.birthday = new Date((+(this.form.user_detail.birthday))*1000)
+            this.form.user_detail.sex = parseInt(this.form.user_detail.sex)
           } else {
             this.form.user_detail = {
               birthday: new Date,

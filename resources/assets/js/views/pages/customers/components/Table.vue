@@ -12,7 +12,7 @@
         el-table-column(prop="user.phone" label="SỐ ĐIỆN THOẠI" sortable min-width="180")
         el-table-column(prop="customer_type" label="VIP" align="center" width="100")
           template(slot-scope="scope")
-            el-checkbox(:checked="!!scope.row.customer_type")
+            el-checkbox(:checked="scope.row.customer_type")
         el-table-column(prop="is_active" label="TRẠNG THÁI" align="center" width="120")
           template(slot-scope="scope")
             el-switch(v-model="scope.row.user.is_active" @change="onChangeStatus(scope.row.id, scope.row.user.is_active)")

@@ -65,7 +65,7 @@
         employees: 'list'
       }),
       employeeList () {
-        return this.employees.filter(item => item.user.role_id == 3).map(item => {
+        return this.employees.filter(item =>  parseInt(item.user.role_id) === 3).map(item => {
           return {
             id: item.id,
             value: item.user.full_name
@@ -73,18 +73,18 @@
         })
       },
       current () {
-        return this.customers && this.customers
+        return this.customers && this.customers.map(item => Object.assign(item,Object.assign(item.user, {is_active: item.user.is_active > 0}), {id: item.id, customer_type: item.customer_type > 0}))
           .filter(item => item.code.indexOf(this.key) > -1
             || item.user.full_name.indexOf(this.key) > -1
           ).filter(item => {
-            if(this.employee_id === null || this.employee_id === '' || this.employee_id === -1) return true;
-            return this.employee_id === item.employee.id
+            if(this.employee_id === null || this.employee_id.toString().trim() === '' || this.employee_id === -1) return true;
+            return this.employee_id.toString().trim() === item.employee.id.toString().trim()
           }).filter(item => {
-            if(this.customer_type === null || this.customer_type === '' || this.customer_type === -1) return true;
-            return this.customer_type === item.customer_type
+            if(this.customer_type === null || this.customer_type.toString().trim() === '' || this.customer_type === -1) return true;
+            return this.customer_type.toString().trim() === item.customer_type.toString().trim()
           }).filter(item => {
-            if(this.is_active === null || this.is_active === '' || this.is_active === -1) return true;
-            return this.is_active === item.user.is_active
+            if(this.is_active === null || this.is_active.toString().trim() === '' || this.is_active === -1) return true;
+            return this.is_active.toString().trim() === (+item.user.is_active).toString().trim()
           });
       },
       total () {

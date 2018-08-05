@@ -67,17 +67,17 @@
         })
       },
       current () {
-        return this.employees
+        return this.employees.map(item => Object.assign(item, {status: item.status > 0}))
           .filter(item => item.code.indexOf(this.key) > -1
             || item.user.email.indexOf(this.key) > -1
             || item.user.full_name.indexOf(this.key) > -1)
           .filter(item => {
-            if(this.role_id === null || this.role_id === '' || this.role_id === -1) return true;
-            return (this.role_id === item.user.role_id);
+            if(this.role_id === null || this.role_id.toString().trim() === '' || this.role_id === -1) return true;
+            return (this.role_id.toString().trim() === item.user.role_id.toString().trim());
           })
           .filter(item => {
-            if(this.status === null || this.status === '' || this.status === -1) return true;
-            return (this.status === item.status);
+            if(this.status === null || this.status.toString().trim() === '' || this.status === -1) return true;
+            return (this.status.toString().trim() === (+item.status).toString().trim());
           })
       },
       total () {

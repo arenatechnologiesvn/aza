@@ -41,13 +41,13 @@
             title: 'TÀI KHOẢN CỦA TÔI',
             icon: 'fa-solid user'
           },
-          {
-            name: 'home_account_alert',
-            path: '/accounts/alert',
-            title: 'THÔNG BÁO CỦA TÔI',
-            icon: 'fa-solid bell',
-            count: 10
-          },
+          // {
+          //   name: 'home_account_alert',
+          //   path: '/accounts/alert',
+          //   title: 'THÔNG BÁO CỦA TÔI',
+          //   icon: 'fa-solid bell',
+          //   count: 10
+          // },
           {
             name: 'home_account_shop',
             path: '/accounts/shop',

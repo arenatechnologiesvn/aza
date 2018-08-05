@@ -89,7 +89,7 @@ export default {
     const validatePrice = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('Giá sản phẩm không được trống'));
-      } else if (!Number.isInteger(value)) {
+      } else if (!Number.isInteger(parseInt(value))) {
         callback(new Error('Giá sản phẩm không đúng'));
       } else if (this.product.discount_price && value <= this.product.discount_price) {
         callback(new Error('Giá sản phẩm phải lớn hơn giá khuyến mãi'));
@@ -100,7 +100,7 @@ export default {
 
     const validateDiscountPrice = (rule, value, callback) => {
       if (value) {
-        if (!Number.isInteger(value)) {
+        if (!Number.isInteger(parseInt(value))) {
           callback(new Error('Giá sản phẩm không đúng'));
         } else if (value >= this.product.price) {
           callback(new Error('Giá khuyễn mãi phải nhỏ hơn giá sản phẩm'));
@@ -214,6 +214,8 @@ export default {
       if (this.panelOpen && this.productId) {
         this.resetForm();
         this.product = JSON.parse(JSON.stringify(this.currentProduct));
+        this.product.category_id = parseInt(this.product.category_id);
+        this.product.provider_id = parseInt(this.product.provider_id);
       }
     },
 

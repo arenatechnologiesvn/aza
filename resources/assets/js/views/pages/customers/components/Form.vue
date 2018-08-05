@@ -146,7 +146,7 @@
         getZoneByWard: 'getZoneByWard'
       }),
       employeesList () {
-        return this.employees.filter(item => item.user.role_id === 3).map(item => {
+        return this.employees.filter(item => parseInt(item.user.role_id) === 3).map(item => {
           return {
             id: item.id,
             name: item.user.full_name
@@ -209,9 +209,9 @@
           customer_type: this.customer.customer_type,
           employee_id: this.customer.employee_id,
           zone: this.renderZone(),
-          province_code: this.customer.province_code,
-          district_code: this.customer.district_code,
-          ward_code: this.customer.ward_code,
+          province_code: parseInt(this.customer.province_code),
+          district_code: parseInt(this.customer.district_code),
+          ward_code: parseInt(this.customer.ward_code),
           shops: this.getSelectedShopIds(),
           avatar: this.customer.user.avatar.length ? this.customer.user.avatar[0].id : null,
           user: {

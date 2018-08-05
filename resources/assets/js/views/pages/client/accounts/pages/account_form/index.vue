@@ -10,8 +10,8 @@
       el-date-picker(v-model="form.user_detail.birthday" type="date" placeholder="NGÀY SINH")
     el-form-item(label="GIỚI TÍNH" prop="sex")
       el-radio-group(v-model="form.user_detail.sex")
-        el-radio(:label="0") Nam
-        el-radio(:label="1") Nữ
+        el-radio(:label="'0'") Nam
+        el-radio(:label="'1'") Nữ
     el-form-item(label="ĐỊA CHỈ" prop="address")
       el-input(v-model="form.address" type="textarea" rows="3" placeholder="ĐỊA CHỈ")
     el-form-item
@@ -31,7 +31,7 @@
           phone: '',
           user_detail: {
             birthday: 0,
-            sex: null
+            sex: '0'
           },
           address: ''
         },
@@ -79,10 +79,11 @@
           this.form = data
           if(this.form.user_detail) {
             this.form.user_detail.birthday = new Date((+(this.form.user_detail.birthday))*1000)
+            this.form.user_detail.sex = this.form.user_detail.sex + '';
           } else {
             this.form.user_detail = {
               birthday: new Date,
-              sex: 0
+              sex: '0'
             }
           }
         })

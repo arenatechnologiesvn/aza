@@ -134,21 +134,21 @@ export default {
 
       if (filterWord !== '') {
         filterWord.trim().split(/\s/).forEach(word => {
-          data = data.filter(item => {
+          data = Array.isArray(data) && data.filter(item => {
             return item.name.toLowerCase().indexOf(word) > -1;
           });
         });
       }
 
       if (this.selectedCategory) {
-        data = data.filter(item => {
-          return item.category_id === this.selectedCategory;
+        data = Array.isArray(data) && data.filter(item => {
+          return item.category_id.toString().trim() === this.selectedCategory.toString().trim();
         });
       }
 
       if (this.selectedProvider) {
-        data = data.filter(item => {
-          return item.provider_id === this.selectedProvider;
+        data = Array.isArray(data) && data.filter(item => {
+          return item.provider_id.toString().trim() === this.selectedProvider.toString().trim();
         });
       }
 

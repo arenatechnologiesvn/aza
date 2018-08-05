@@ -42,7 +42,7 @@
       }),
       ...mapGetters(['user_info']),
       shops () {
-        return this.listShops.filter(item => parseInt(item.customer_id) === parseInt(this.user_info.customer.id))
+        return this.listShops.filter(item => item.customer_id.toString().trim() === this.user_info.customer.id.toString().trim())
       }
     },
     methods: {

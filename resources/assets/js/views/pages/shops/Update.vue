@@ -53,6 +53,7 @@
           id: this.$route.params.id
         }).then(() => {
           this.current = JSON.parse(JSON.stringify(this.ById(this.route.params.id)));
+          this.current.customer_id = parseInt(this.current.customer_id)
         }).catch(() => this.$router.push({name: 'page404'}))
       }
     },

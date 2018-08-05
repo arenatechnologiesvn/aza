@@ -122,7 +122,7 @@
         return this.data()
       },
       shops () {
-        return this.listShop.filter(item=> parseInt(item.customer_id) === parseInt(this.user_info.customer.id))
+        return this.listShop.filter(item=> item.customer_id.toString().trim() === this.user_info.customer.id.toString().trim())
           .map(item => ({id: item.id, name: item.name}))
       },
       total() {
@@ -226,7 +226,7 @@
       },
       onShopChange (value) {
         this.listShop.map(item => {
-         if(item.customer_id === value) {
+         if(item.customer_id == value) {
            this.form.delivery_address = item.zone
          }
         } )
