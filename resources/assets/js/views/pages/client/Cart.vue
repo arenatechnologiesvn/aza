@@ -122,7 +122,7 @@
         return this.data()
       },
       shops () {
-        return this.listShop.filter(item=> item.customer_id === this.user_info.customer.id)
+        return this.listShop.filter(item=> parseInt(item.customer_id) === parseInt(this.user_info.customer.id))
           .map(item => ({id: item.id, name: item.name}))
       },
       total() {

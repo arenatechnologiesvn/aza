@@ -138,7 +138,7 @@
         })).filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
             if(this.status === null || this.status === -1 || this.status === '') return true;
-            return this.status === item.status
+            return parseInt(this.status) === parseInt(item.status)
           })
           .filter(item => {
             if(this.delivery_date === null) return true;

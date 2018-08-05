@@ -99,7 +99,7 @@
         })).filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
             if (this.status === null || this.status === -1 || this.status === '') return true;
-            return this.status === item.status
+            return parseInt(this.status)  === parseInt(item.status)
           })
           .filter(item => {
             if (this.delivery_date === null) return true;
@@ -110,7 +110,6 @@
             return (this.formatDateFromString(this.apply_at) === this.formatDateCompare(item.date))
           })
           .filter(item => {
-            console.log(this.delivery_type)
             if (this.delivery_type === null || this.delivery_type === '') return true;
             return (this.delivery_type === item.delivery_type)
           })
