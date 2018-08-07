@@ -101,11 +101,13 @@
             price: item.price,
             discount: item.discount_price,
             inventory: 10,
+            unit: item.unit,
+            quantitative: item.quantitative,
             added: item.customer_carts && item.customer_carts.length > 0,
             favorite: item.customer_favorites && item.customer_favorites.length > 0,
             description: item.description,
             quantity: (item.customer_carts && item.customer_carts.pivot && item.customer_carts.pivot.quantity) || 0
-          }))
+          })).slice(0, 4)
       }
     },
     data () {

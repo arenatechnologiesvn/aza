@@ -1,5 +1,6 @@
 <template lang="pug">
   div.account-order
+    order-detail(ref="showDetail")
     h4.account-order__title
       svg-icon(icon-class="fa-solid cart-arrow-down")
       template LỊCH SỬ ĐƠN HÀNG
@@ -50,8 +51,11 @@
         el-table-column(label="")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
-              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="scope.row.status === 0 || scope.row.status === 2 " round)
+              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
                 svg-icon(icon-class="fa-solid ban")
+            el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
+              el-button(size="mini" type="primary" @click="onView(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid eye")
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -63,13 +67,14 @@
 </template>
 
 <script>
-  import avatar from '~/assets/products/p1.jpg'
   import {mapGetters, mapActions} from 'vuex'
   import {formatNumber} from '~/utils/util'
-  import ElSelectDropdown from "element-ui/packages/select/src/select-dropdown";
+  import OrderDetail from '../../components/OrderDetail'
 
   export default {
-    components: {ElSelectDropdown},
+    components: {
+      OrderDetail
+    },
     name: 'AccountOrder',
     computed: {
       ...mapGetters('orders', {
@@ -96,7 +101,8 @@
             price: p.pivot.real_price,
             total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
           }))
-        })).filter(item => item.code.indexOf(this.key) > -1)
+        })).sort((a, b) => +b.delivery - +a.delivery)
+          .filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
             if (this.status === null || this.status === -1 || this.status === '') return true;
             return this.status.toString().trim() === item.status.toString().trim()
@@ -128,6 +134,9 @@
       },
       formatNumber(num) {
         return formatNumber(num)
+      },
+      onView (id) {
+        this.$refs['showDetail'].detail(id)
       },
       formatDateFromString(date) {
         const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
@@ -199,7 +208,8 @@
         delivery_date: null,
         key: '',
         apply_at: null,
-        delivery_type: null
+        delivery_type: null,
+        showDetail: false
       }
     },
     created() {
