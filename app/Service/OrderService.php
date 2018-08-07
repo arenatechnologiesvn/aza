@@ -14,6 +14,8 @@ use App\Helper\RoleConstant;
 use App\Order;
 use Illuminate\Support\Facades\Auth;
 use App\Customer;
+use Illuminate\Support\Facades\DB;
+
 class OrderService extends BaseService
 {
     protected $selectable = [
@@ -29,7 +31,8 @@ class OrderService extends BaseService
         'delivery',
         'delivery_type',
         'delivery_address',
-        'total_money'
+        'total_money',
+        'shop_id'
     ];
     public function __construct(Order $model)
     {
@@ -100,10 +103,15 @@ class OrderService extends BaseService
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
+                }, 'featured' => function ($q3) {
+                    $q3->select([
+                        'id',
+                        DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                    ]);
                 }]);
             },'customer' => function ($q3) {
                 $q3->with(['user']);
-            }]);
+            }, 'shop']);
         }
     }
 }

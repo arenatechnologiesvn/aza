@@ -28,8 +28,8 @@
           el-col(:span="6")
             el-radio-group(size="small" v-model="delivery_range")
               el-radio-button(label="1") Hôm nay
-              el-radio-button(label="7") 7 Ngày qua
-              el-radio-button(label="30") 30 Ngày qua
+              el-radio-button(label="7") Tuần qua
+              el-radio-button(label="-1") Tất cả
           el-col(:span="3")
             el-select(size="small" v-model="status" placeholder="Trạng thái" clearable)
               el-option(:value="1" label="Đang xử lý")
@@ -128,7 +128,7 @@
           customer: item.customer,
           products: item.products.map(p => ({
             id: p.id,
-            img: avatar,
+            img: p.featured && p.featured[0].url,
             quantity: p.pivot.quantity,
             unit: p.unit,
             title: p.name,
@@ -158,7 +158,7 @@
             return (this.customer_id.toString().trim() === item.customer.id.toString().trim())
           })
           .filter(item => {
-            if(this.delivery_range === null) return true;
+            if(this.delivery_range === null || parseInt(this.delivery_range) === -1 ) return true;
             else {
               const nDate = new Date
               const end = +(nDate)
