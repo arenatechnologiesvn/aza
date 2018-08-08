@@ -138,32 +138,22 @@
         }
       },
       addProductToFavorite(id) {
-        console.log(this.$store.state)
-        if (this.$store.state.favorite.list.length > 4) {
-          this.$notify(
+        const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+        this.canExecute('Bạn muốn thêm vào sản phẩm yêu thích')
+          .then(() => this.addFavorite({
+            data: {
+              product_id: id,
+              customer_id
+            }
+          }).then(() => {
+            this.fetchProduct()
+            this.fetchFavorite()
+          }).then(() => this.$notify(
             {
-              title: 'Cảnh báo',
-              message: 'Số sản phẩm yêu thích vượt quá giới hạn',
-              type: 'warning'
-            })
-        } else {
-          const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
-          this.canExecute('Bạn muốn thêm vào sản phẩm yêu thích')
-            .then(() => this.addFavorite({
-              data: {
-                product_id: id,
-                customer_id
-              }
-            }).then(() => {
-              this.fetchProduct()
-              this.fetchFavorite()
-            }).then(() => this.$notify(
-              {
-                title: 'Thông báo',
-                message: 'Đã thêm thành công sản phẩm vào danh sách yêu thích',
-                type: 'success'
-              })))
-        }
+              title: 'Thông báo',
+              message: 'Đã thêm thành công sản phẩm vào danh sách yêu thích',
+              type: 'success'
+            })))
       },
       formatNumber(num) {
         return formatNumber(num)
