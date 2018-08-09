@@ -26,8 +26,10 @@ class VerifyJWTToken
      */
     public function handle($request, Closure $next)
     {
+        // $this->api_error_response('user_not_found', USER_NOT_FOUND);
         try {
-            if (! $user = JWTAuth::parseToken()->authenticate()) {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user || !$user->is_active) {
                 return $this->api_error_response('user_not_found', USER_NOT_FOUND);
             }
         } catch (JWTException $e) {

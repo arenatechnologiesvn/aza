@@ -33,7 +33,7 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use((response) => {
   const responseData = response.data;
   if (responseData.success) return responseData.data;
-  if ([TOKEN_INVALID_CODE, TOKEN_ABSENT_CODE, USER_NOT_FOUND].includes(responseData.error) ||
+  if ([TOKEN_INVALID_CODE, TOKEN_ABSENT_CODE].includes(responseData.error) ||
     (responseData.error === TOKEN_EXPIRED_CODE && store.getters.token)) {
     MessageBox.confirm(
       'Bạn đã bị đăng xuất, bạn có thể nhấn Hủy để ở lại trang này, hoặc đăng nhập lại',
@@ -47,6 +47,8 @@ service.interceptors.response.use((response) => {
       store.dispatch('FedLogOut').then(() => {
         location.reload(); // To re-instantiate the vue-router object Avoid bugs
       });
+    }).catch(() => {
+      // Do nothing
     });
   }
   return Promise.reject(responseData.message);

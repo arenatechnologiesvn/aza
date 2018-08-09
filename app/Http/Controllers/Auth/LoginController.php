@@ -43,7 +43,7 @@ class LoginController extends Controller
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
-        return $this->api_error_response('username or password incorrect', 401);
+        return $this->api_error_response('Email hoặc mật khẩu không đúng', 401);
     }
 
     /**
