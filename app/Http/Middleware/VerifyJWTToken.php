@@ -26,11 +26,10 @@ class VerifyJWTToken
      */
     public function handle($request, Closure $next)
     {
-        // $this->api_error_response('user_not_found', USER_NOT_FOUND);
         try {
             $user = JWTAuth::parseToken()->authenticate();
-            if (!$user || !$user->is_active) {
-                return $this->api_error_response('user_not_found', USER_NOT_FOUND);
+            if (!$user) {
+                return $this->api_error_response('Tài khoản không tồn tại', USER_NOT_FOUND);
             }
         } catch (JWTException $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException)
