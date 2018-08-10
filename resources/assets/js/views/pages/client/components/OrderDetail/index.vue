@@ -46,6 +46,17 @@
         el-table-column(prop="price" label="GIÁ(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="total" label="TỔNG(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
+    div.total
+      div.item
+        strong TỔNG TIỀN
+        span {{formatNumber(order.total_money)}} VNĐ
+      div.item
+        strong VAT
+        span {{formatNumber(order.total_money * 0.1)}} VNĐ
+      div.item
+        strong TỔNG
+        span {{formatNumber(order.total_money + (order.total_money * 0.1))}} VNĐ
+
     div.footer
       el-button-group
         el-button(type="primary")
@@ -153,6 +164,12 @@
       font-size: 1em;
       font-weight: bolder;
       opacity: .6;
+    }
+  }
+  .total {
+    text-align: right;
+    .item {
+      padding: 10px 0;
     }
   }
 </style>
