@@ -35,7 +35,12 @@ class LoginController extends Controller
             return $this->sendLockoutResponse($request);
         }
 
-        if ($this->attemptLogin($request)) {
+        if ($token = $this->attemptLogin($request)) {
+            if (!$this->isActive()) {
+                return $this->api_error_response('Tài khoản chưa được kích hoạt. Làm ơn liên hệ AZA để được kích hoạt', 401);
+            }
+
+            $this->setToken($token);
             return $this->sendLoginResponse($request);
         }
 
@@ -43,7 +48,7 @@ class LoginController extends Controller
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
-        return $this->api_error_response('username or password incorrect', 401);
+        return $this->api_error_response('Email hoặc mật khẩu không đúng', 401);
     }
 
     /**
@@ -54,13 +59,7 @@ class LoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
-        $token = $this->guard()->attempt($this->credentials($request));
-
-        if ($token) {
-            $this->guard()->setToken($token);
-            return true;
-        }
-        return false;
+        return $this->guard()->attempt($this->credentials($request));
     }
 
     /**
@@ -96,6 +95,22 @@ class LoginController extends Controller
     {
         $this->guard()->logout();
         return $this->api_success_response();
+    }
+
+    /**
+     * Set token after login successful.
+     *
+     * @param  String $token
+     */
+    private function setToken($token)
+    {
+        $this->guard()->setToken($token);
+    }
+
+    private function isActive()
+    {
+        $user = Auth::user();
+        return $user->is_active;
     }
 
     private function infoUser()
