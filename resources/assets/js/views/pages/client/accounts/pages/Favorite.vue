@@ -144,6 +144,7 @@
             })
             this.fetchProduct()
             this.fetchCart()
+            this.$router.push({path: '/cart'})
           })
           .catch(err => {
             console.log(err)

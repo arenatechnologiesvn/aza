@@ -65,6 +65,12 @@
             path: '/accounts/favorite',
             title: 'SẢN PHẨM YÊU THÍCH',
             icon: 'fa-solid heart'
+          },
+          {
+            name: 'home_account_statics',
+            path: '/accounts/statics',
+            title: 'THỐNG KÊ',
+            icon: 'fa-solid chart-bar'
           }
         ]
       }

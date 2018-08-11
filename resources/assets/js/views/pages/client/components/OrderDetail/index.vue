@@ -34,7 +34,7 @@
         span {{order.delivery_type}}
       div.status(:style="{color: 'white', backgroundColor: parseInt(order.status) === 0 ? 'green': parseInt(order.status) === 1 ? 'blue': 'red'}") {{parseInt(order.status) === 0 ? 'ĐÃ XỬ LÝ' : parseInt(order.status) === 1 ? 'ĐANG XƯ LÝ' : 'ĐÃ HỦY' }}
     div.content
-      h5.table-title
+      h5.table-title(style="text-align: left;")
         svg-icon(icon-class="fa-solid list")
         span(style="margin-left: 10px;") DANH SÁCH SẢN PHẨM
       el-table(:data="products" border="border" size="mini")
@@ -46,7 +46,7 @@
         el-table-column(prop="price" label="GIÁ(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="total" label="TỔNG(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
-    div.total
+    div.total(v-if="order")
       div.item
         strong TỔNG TIỀN
         span {{formatNumber(order.total_money)}} VNĐ
@@ -59,7 +59,7 @@
 
     div.footer
       el-button-group
-        el-button(type="primary")
+        el-button(type="primary" @click="print")
           svg-icon(icon-class="fa-solid print")
           span Xuất hóa đơn
 </template>
@@ -67,12 +67,22 @@
 <script>
   import { mapActions } from 'vuex'
   import {formatNumber} from '~/utils/util'
+  import { Printd } from 'printd'
+  const d = new Printd();
   export default {
     name: 'OrderDetail',
     data () {
       return {
         show: false,
-        order: null
+        order: null,
+        cssText: `
+          button: {
+            display: none;
+          }
+          .item {
+            padding: 10px;
+          }
+        `
       }
     },
     computed: {
@@ -108,6 +118,32 @@
         const month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
         const year = date.getFullYear()
         return day + '-' + month + '-' + year
+      },
+      print () {
+        d.print( this.$el , `
+          .body-item {
+            padding: 10px;
+          }
+          button {
+            display: none;
+          }
+          table, td, th {
+            border: 1px solid #eee;
+            padding: 5px;
+          }
+          .status, .el-dialog__header {
+            display: none;
+          }
+          .table-title, h5 {
+            font-size: 1.2em;
+            text-align: left;
+            font-weight: bolder;
+          }
+          .content {
+            text-align: left;
+            margin-top: 10px;
+          }
+        `)
       }
     }
   }
@@ -186,5 +222,18 @@
   }
   .el-dialog__body {
     padding: 15px;
+  }
+
+  @media print {
+    button {
+      display: none;
+    }
+    table, tr, th, td {
+      border: 1px solid #dddddd;
+
+    }
+    td {
+      padding: 5px;
+    }
   }
 </style>

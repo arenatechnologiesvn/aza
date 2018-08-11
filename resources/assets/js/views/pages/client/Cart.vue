@@ -33,9 +33,9 @@
                 svg-icon(icon-class="fa-solid info-circle")
               template Thông tin đặt hàng
             el-form(ref="form" :model="form" status-icon :rules="rules")
-              el-form-item(label="Nội dung đơn hàng" prop="title")
-                el-input(v-model="form.title" size="small" placeholder="Nhập nôi dung đơn hàng"  auto-complete="off")
-              el-form-item(label="Mô tả chi tiết" prop="description")
+              el-form-item(label="Ghi chú và nhận xét" prop="title")
+                el-input(v-model="form.title" size="small" placeholder="Ghi chú và nhận xét"  auto-complete="off")
+              el-form-item(label="Sản phẩm ngoài danh mục" prop="description")
                 el-input(v-model="form.description" type="textarea" rows="5" size="small" placeholder="Nhập mô tả chi tiết đơn hàng")
               el-form-item(label="Cửa hàng" prop="shop_id")
                 el-select(v-model="form.shop_id" clearable filterable placeholder="Chọn cửa hàng" size="small" style="width: 100%;" @change="onShopChange")
@@ -93,8 +93,8 @@
           shop_id: null
         },
         rules: {
-          title: [{ required: true, message: 'Nội dung đơn hàng là bắt buộc', trigger: 'blur' }],
-          description: [{required: true, message: 'Mô tả chi tiết là bắt buộc'}],
+          // title: [{ required: true, message: 'Nội dung đơn hàng là bắt buộc', trigger: 'blur' }],
+          // description: [{required: true, message: 'Mô tả chi tiết là bắt buộc'}],
           shop_id: [{required: true, message: 'Cửa hàng là bắt buộc'}],
           delivery_address: [{required: true, message: 'Địa chỉ nhận hàng là bắt buộc'}],
           delivery: [
