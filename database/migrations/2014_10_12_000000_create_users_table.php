@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('address', 255)->nullable();
             $table->boolean('two_factor')->nullable();
             $table->boolean('is_active')->default(false);
+            $table->boolean('is_verified')->default(false);
             $table->integer('role_id')->unsigned();
             $table->integer('created_at')->nullable();
             $table->integer('created_by')->nullable();

@@ -55,6 +55,7 @@ class EmployeeService extends BaseService
                 'address',
                 'role_id',
                 'is_active',
+                'is_verified',
                 'address'
             ])->with(['role'=> function ($q2) {
                 $q2->select(['title', 'id']);

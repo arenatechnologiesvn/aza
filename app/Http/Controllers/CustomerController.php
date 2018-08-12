@@ -24,7 +24,6 @@ class CustomerController extends CrudController
      */
     public function store(StoreCustomerCreate $request)
     {
-        //
         return $this->save($request->all());
     }
 

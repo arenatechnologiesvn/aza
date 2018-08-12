@@ -16,7 +16,7 @@
               el-option(label="THƯỜNG" value="2")
         el-col(:span="4")
           el-form-item
-            el-select(placeholder="Trạng thái" v-model="search.status")
+            el-select(placeholder="Trạng thái" v-model="search.is_active")
               el-option(label="Chưa kích hoạt" value="1")
               el-option(label="Đang hoạt động" value="2")
               el-option(label="Đang bị khóa" value="3")

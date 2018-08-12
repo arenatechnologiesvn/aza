@@ -30,7 +30,7 @@
     div.control__wrapper
       aza-control(@on-add="handAddClick")
     div.index__wrapper
-      aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-delete="deleteHandle")
+      aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle" @on-delete="deleteHandle")
 </template>
 
 <script>
@@ -108,17 +108,23 @@
         fetchCustomers: 'fetchList',
         fetchSearch: 'search',
         deleteSelection: 'deleteSelection',
-        updateRole: 'update',
         destroy: 'destroy'
       }),
       ...mapActions('employees', {
         fetchEmployees: 'fetchList'
       }),
-      changeStatusHandle (id, data) {
-        this.updateRole({
-          id: id,
-          data: data
-        })
+      ...mapActions({
+        updateUserActive: 'user/Update'
+      }),
+      changeActiveHandle (user_id, params) {
+        this.updateUserActive({
+          id: user_id,
+          params: { is_active: params.is_active }
+        }).then(() => {
+          this.$message({ type: 'success', message: 'Cập nhật thành công' });
+        }).catch(() => {
+          this.$message({ type: 'error', message: 'Cập nhật thất bại' });
+        });
       },
       fetchFind () {
         this.fetchSearch(this.search)

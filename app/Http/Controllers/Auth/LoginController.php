@@ -36,8 +36,14 @@ class LoginController extends Controller
         }
 
         if ($token = $this->attemptLogin($request)) {
-            if (!$this->isActive()) {
-                return $this->api_error_response('Tài khoản chưa được kích hoạt. Làm ơn liên hệ AZA để được kích hoạt', 401);
+            $user = Auth::user();
+
+            if (!$this->isActive($user)) {
+                return $this->api_error_response('Tài khoản của bạn chưa kích hoạt. Làm ơn liên hệ AZA để được kích hoạt', 401);
+            }
+
+            if (!$this->isLocked($user)) {
+                return $this->api_error_response('Tài khoản của bạn đã bị tạm khóa', 401);
             }
 
             $this->setToken($token);
@@ -107,10 +113,14 @@ class LoginController extends Controller
         $this->guard()->setToken($token);
     }
 
-    private function isActive()
+    private function isActive($user)
     {
-        $user = Auth::user();
-        return $user->is_active;
+        return $user->is_verified;
+    }
+
+    private function isLocked($user)
+    {
+        return !$user->is_active;
     }
 
     private function infoUser()

@@ -1,8 +1,11 @@
 import { login, logout, getInfo } from '~/api/login';
+import { update } from '~/api/user';
 import { getToken, setToken, removeToken } from '~/utils/auth';
 import dummyImage from '~/assets/login_images/dummy-avatar.png';
 
 const user = {
+  namespaced: true,
+
   state: {
     token: getToken(),
     name: '',
@@ -57,6 +60,16 @@ const user = {
           commit('SET_NAME', data.name);
           commit('SET_AVATAR', data.avatar);
           resolve(data);
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
+    Update ({ commit }, { id, params }) {
+      return new Promise((resolve, reject) => {
+        update(id, params).then(response => {
+          resolve(response);
         }).catch(error => {
           reject(error);
         });

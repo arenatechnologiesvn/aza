@@ -21,7 +21,7 @@ router.beforeEach((to, from, next) => {
       NProgress.done();
     } else {
       if (!store.getters.roles.title) {
-        store.dispatch('GetInfo').then(res => {
+        store.dispatch('user/GetInfo').then(res => {
           const role = res.role;
           // Generates an accessible routing table based on roles permission
           store.dispatch('GenerateRoutes', { role }).then(() => {
@@ -33,7 +33,7 @@ router.beforeEach((to, from, next) => {
             next({ ...to, replace: true });
           });
         }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
+          store.dispatch('user/FedLogOut').then(() => {
             Message.error(err || 'Verification failed, please login again');
             next({ path: '/' });
 

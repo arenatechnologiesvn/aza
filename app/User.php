@@ -22,6 +22,12 @@ class User extends Authenticatable implements JWTSubject
 
 //    virtual property
     protected $appends = ['full_name'];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_verified' => 'boolean'
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -37,6 +43,7 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'two_factor',
         'is_active',
+        'is_verified',
         'address'
     ];
 

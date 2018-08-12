@@ -1,6 +1,6 @@
-import request from '~/utils/request'
+import request from '~/utils/request';
 
-export function login(email, password) {
+export function login (email, password) {
   return request({
     url: '/api/login',
     method: 'post',
@@ -8,19 +8,19 @@ export function login(email, password) {
       email: email,
       password: password
     }
-  })
+  });
 }
 
-export function getInfo(token) {
+export function getInfo (token) {
   return request({
     url: 'api/user',
     method: 'get'
-  })
+  });
 }
 
-export function logout() {
+export function logout () {
   return request({
     url: 'api/logout',
     method: 'post'
-  })
+  });
 }

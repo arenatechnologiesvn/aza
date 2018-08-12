@@ -15,7 +15,7 @@
             el-checkbox(:checked="scope.row.customer_type")
         el-table-column(prop="is_active" label="TRẠNG THÁI" align="center" width="120")
           template(slot-scope="scope")
-            el-switch(v-model="scope.row.user.is_active" @change="onChangeStatus(scope.row.id, scope.row.user.is_active)")
+            el-switch(v-model="scope.row.user.is_active" @change="onChangeActive(scope.row.user_id, scope.row.user.is_active)")
         el-table-column(prop="id" label="TÁC VỤ" width="120" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Chi tiết" placement="top")
@@ -68,8 +68,8 @@
       onDelete (id) {
         this.$emit('on-delete', id)
       },
-      onChangeStatus(id, isActive) {
-        this.$emit('on-change-status', id, {
+      onChangeActive(id, isActive) {
+        this.$emit('on-change-active', id, {
           id: id,
           is_active: isActive
         })

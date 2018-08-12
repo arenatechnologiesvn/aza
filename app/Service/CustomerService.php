@@ -118,7 +118,8 @@ class CustomerService extends BaseService
                     'phone',
                     'address',
                     'role_id',
-                    'is_active'
+                    'is_active',
+                    'is_verified'
                 ])->with(['avatar']);
             },
             'shops',
