@@ -1,5 +1,6 @@
 <template lang="pug">
   div.index__container
+    order-detail(ref="showDetail")
     div.table
       el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
         el-table-column(type="selection" width="40")
@@ -20,6 +21,9 @@
             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
               el-button(size="mini" type="danger" @click="onDelete(scope.row.id)" :disabled="parseInt(scope.row.status) !== 0" round)
                 svg-icon(icon-class="fa-solid ban")
+            el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
+              el-button(size="mini" type="primary" @click="onView(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid eye")
     div.pagination__wrapper
       el-pagination(@size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -32,9 +36,12 @@
 </template>
 
 <script>
-
+  import OrderDetail from '../../../pages/client/components/OrderDetail/index'
   export default {
     name: 'OrderTable',
+    components: {
+      OrderDetail
+    },
     data () {
       return {
         currentPage: 1,
@@ -68,7 +75,10 @@
         this.$emit('on-change-status', id, {
           status: !status
         })
-      }
+      },
+      onView (id) {
+        this.$refs['showDetail'].detail(id)
+      },
     }
   }
 </script>

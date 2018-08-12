@@ -48,6 +48,7 @@
               el-option(label="15h - 17h" :value="'15h-17h'")
               el-option(label="17h - 19h" :value="'17h-19h'")
     div.account-order__content(style="padding: 10px;")
+      order-detail(ref="showDetail")
       el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
         el-table-column(type="selection" width="40")
         el-table-column(type="expand")
@@ -71,7 +72,7 @@
         el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" )
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
-        el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
+        el-table-column(prop="id" label="TÁC VỤ" width="200" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Duyệt đơn hàng" placement="top")
               el-button(size="mini" @click="changeStatus(scope.row.id, 0)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
@@ -79,6 +80,9 @@
             el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
               el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
                 svg-icon(icon-class="fa-solid ban")
+            el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
+              el-button(size="mini" type="primary" @click="onView(scope.row.id)" round)
+                svg-icon(icon-class="fa-solid eye")
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -93,10 +97,9 @@
   import avatar from '~/assets/products/p1.jpg'
   import { mapGetters, mapActions} from 'vuex'
   import {formatNumber} from '~/utils/util'
-  import ElSelectDropdown from "element-ui/packages/select/src/select-dropdown";
-
+  import OrderDetail from '../../pages/client/components/OrderDetail/index'
   export default {
-    components: {ElSelectDropdown},
+    components: {OrderDetail},
     name: 'AccountOrder',
     computed: {
       ...mapGetters('orders', {
@@ -181,6 +184,9 @@
       ...mapActions('customers', {
         fetchCustomers: 'fetchList',
       }),
+      onView (id) {
+        this.$refs['showDetail'].detail(id)
+      },
       canExecute(message) {
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
           confirmButtonText: 'Đồng ý',
