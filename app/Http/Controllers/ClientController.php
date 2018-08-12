@@ -27,6 +27,9 @@ class ClientController extends Controller
         return $this->api_success_response(['data' => $this->service->staticsByDay($date)]);
     }
 
+    public function productInRange($from, $to) {
+        return $this->api_success_response(['data' => $this->service->productsInRange($from, $to)]);
+    }
     public function staticsByMonth ($month) {
         return $this->api_success_response(['data' => $this->service->staticsByMonth($month)]);
     }

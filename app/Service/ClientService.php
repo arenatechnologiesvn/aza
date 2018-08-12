@@ -44,8 +44,8 @@ class ClientService
     public function staticsByDay ($date) {
         return DB::table('orders')
             ->select(
-                'products.name',
-                DB::raw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y-%m-%d") as dname'),
+                'products.name as dname',
+                DB::raw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y-%m-%d") as ddname'),
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total'),
                 DB::raw('SUM(order_product.quantity) as quantity')
             )
@@ -54,7 +54,7 @@ class ClientService
             ->where('orders.status', 0)
             ->where('orders.customer_id','=', $this->getCustomerId())
             ->whereRaw(DB::raw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y-%m-%d") = "' . $date . '"'))
-            ->groupBy('products.name', 'dname')
+            ->groupBy('dname', 'ddname')
             ->get();
     }
 
@@ -78,7 +78,7 @@ class ClientService
             $dates = DateTimeHelper::getListDateTime($start, $endDay, 'P1D', 'Y-m-d');
             $result = [];
             foreach ($dates as $date) {
-                $tmp = $this->getByDate($values, $date);
+                $tmp = $this->single($values, $date);
                 array_push($result, [
                     'dname' => $date,
                     'revenue_total' => $tmp->revenue_total,
@@ -112,7 +112,7 @@ class ClientService
                 if ($i < 10) {
                     $j = '0'.$i;
                 }
-                $tmp = $this->getByMonth($values, $year . '-' . $j);
+                $tmp = $this->single($values, $year . '-' . $j);
                 array_push($result, [
                     'dname' => $year . '-' . $j,
                     'revenue_total' => $tmp->revenue_total,
@@ -125,17 +125,31 @@ class ClientService
         }
     }
 
-    private function getByDate ($arr, $date) {
-        foreach ($arr as $item) {
-            if($item->dname == $date) return $item;
+    public function productsInRange($from, $to){
+        try {
+            return DB::table('orders')
+                ->select(
+                    'products.name as pname',
+                    'products.unit as unit',
+                    'products.price as price',
+                    'products.quantitative as quantitative',
+                    DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total'),
+                    DB::raw('SUM(order_product.quantity) as quantity')
+                )
+                ->join('order_product', 'order_product.order_id', '=', 'orders.id')
+                ->join('products', 'products.id', '=', 'order_product.product_id')
+                ->where('orders.status', 0)
+                ->where('orders.customer_id','=', $this->getCustomerId())
+                ->whereRaw(DB::raw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y-%m-%d") >= "' . $from . '"
+                    AND DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y-%m-%d") <= "' . $to . '"
+                '))
+                ->groupBy('pname', 'unit', 'price', 'quantitative')
+                ->get();
+        } catch (\Exception $e) {
+            return $e;
         }
-        return (object) [
-            'revenue_total' => 0,
-            'quantity' => 0
-        ];
     }
-
-    private function getByMonth ($arr, $date) {
+    private function single ($arr, $date) {
         foreach ($arr as $item) {
             if($item->dname == $date) return $item;
         }

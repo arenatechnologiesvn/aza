@@ -35,6 +35,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::get('clients/day/{date}', 'ClientController@staticsByDay');
     Route::get('clients/month/{month}', 'ClientController@staticsByMonth');
     Route::get('clients/year/{year}', 'ClientController@staticsByYear');
+    Route::get('clients/range/{from}/{to}', 'ClientController@productInRange');
     Route::put('users/{id}', 'UserController@update');
     Route::resource('employees', 'EmployeeController');
     Route::resource('favorites', 'FavoriteController');

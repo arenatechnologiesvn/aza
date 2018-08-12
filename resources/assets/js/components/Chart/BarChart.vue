@@ -54,6 +54,11 @@ export default {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption(this.options);
+      this.chart.on('click', params => {
+        if(params.name.match(/\d{4}-\d{2}-\d{2}/)) {
+          this.$emit('detail', params.name)
+        }
+      })
     },
 
     refresh(options) {

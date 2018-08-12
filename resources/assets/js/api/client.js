@@ -7,6 +7,13 @@ export function today () {
   });
 }
 
+export function byRange (from, to) {
+  return request({
+    url: `/api/clients/range/${from}/${to}`,
+    method: 'get'
+  });
+}
+
 export function byDay (date) {
   return request({
     url: `/api/clients/day/${date}`,
