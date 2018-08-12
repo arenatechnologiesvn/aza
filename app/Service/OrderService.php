@@ -91,6 +91,8 @@ class OrderService extends BaseService
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
                 }, 'featured']);
+            },'shop', 'customer' => function($q) {
+                $q->with(['user']);
             }])->where('customer_id', '=', Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id);
         } else {
             return $this->model->select($this->selectable)->with(['products'=> function($query) {

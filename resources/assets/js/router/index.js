@@ -420,6 +420,15 @@ export const asyncRouterMap = [
               title: 'SẢN PHẨM YÊU THÍCH',
               icon: 'fa-solid heart'
             }
+          },
+          {
+            path: 'statics',
+            name: 'home_account_statics',
+            component: () => import('~/views/pages/client/accounts/pages/Statics'),
+            meta: {
+              title: 'THỐNG KÊ',
+              icon: 'fa-solid chart-bar'
+            }
           }
         ]
       }
