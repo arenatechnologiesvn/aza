@@ -6,9 +6,9 @@
         el-table-column(prop="user.avatar" width="60")
           template(slot-scope="scope")
             img(:src="avatarUrl(scope.row.user)" :width="40" :height="40")
-        el-table-column(prop="is_active" label="TRẠNG THÁI" align="center" width="120")
+        el-table-column(label="TRẠNG THÁI" align="center" width="150")
           template(slot-scope="scope")
-            el-switch(v-model="scope.row.status" @change="onChangeStatus(scope.row.id, scope.row.status)")
+            el-tag(:type="accountStatusType(scope.row.user)") {{ accountStatusName(scope.row.user) }}
         el-table-column(prop="code" label="MÃ NHÂN VIÊN" sortable min-width="150")
         el-table-column(prop="user.full_name" label="HỌ TÊN" sortable min-width="200")
         el-table-column(prop="user.email" label="EMAIL" sortable width="180")
@@ -18,6 +18,16 @@
         el-table-column(prop="user.address" label="ĐỊA CHỈ" sortable width="300")
           template(slot-scope="scope")
             span {{ scope.row.user.address || '-' }}
+        el-table-column(prop="is_active" label="KHÓA/HOẠT ĐỘNG" align="center" width="150")
+          template(slot-scope="scope")
+            el-switch(
+              v-if="scope.row.user.is_verified"
+              v-model="scope.row.user.is_active"
+              @change="onChangeActive(scope.row.user_id, scope.row.user.is_active)"
+              active-color="#13ce66"
+              inactive-color="#909399"
+            )
+            span(v-if="!scope.row.user.is_verified") {{ '-' }}
         el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
@@ -71,14 +81,25 @@
       onDelete (id) {
         this.$emit('on-delete', { id })
       },
-      onChangeStatus(id, status) {
-        this.$emit('on-change-status', id, {
-          status: !status
+      onChangeActive(id, isActive) {
+        this.$emit('on-change-active', id, {
+          id: id,
+          is_active: isActive
         })
       },
       avatarUrl(user) {
         if (user.avatar && user.avatar.length) return user.avatar[0].url;
         return dummyImage;
+      },
+      accountStatusType(user) {
+        if (!user.is_verified) return 'warning';
+        if (!user.is_active) return 'info';
+        return 'success';
+      },
+      accountStatusName(user) {
+        if (!user.is_verified) return 'Chưa kích hoạt';
+        if (!user.is_active) return 'Đang tạm khóa';
+        return 'Đang hoạt động';
       }
     }
   }

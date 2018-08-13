@@ -69,9 +69,9 @@ class EmployeeService extends BaseService
     {
         $user = $this->authService->register($employee['user']);
         $employee['user_id'] = $user->id;
-        if (isset($employee['contract_at'])) {
-            $employee['contract_at'] = strtotime($employee['contract_at']);
-        }
+        // if (isset($employee['contract_at'])) {
+        //     $employee['contract_at'] = strtotime($employee['contract_at']);
+        // }
         if (isset($employee['birthday'])) {
             $employee['birthday'] = strtotime($employee['birthday']);
         }
@@ -89,9 +89,9 @@ class EmployeeService extends BaseService
             if (isset($data['birthday'])) {
                 $data['birthday'] = strtotime($data['birthday']);
             }
-            if (isset($data['contract_at'])) {
-                $data['contract_at'] = strtotime($data['contract_at']);
-            }
+            // if (isset($data['contract_at'])) {
+            //     $data['contract_at'] = strtotime($data['contract_at']);
+            // }
             DB::commit();
             return $data;
         } catch (\Exception $e) {
@@ -108,7 +108,10 @@ class EmployeeService extends BaseService
                 $this->syncMedia($updated->user_id, $data['avatar'], 'user');
             }
 
-            $updated->user->userDetail->update($data);
+            if ($updated->user->userDetail) {
+                $updated->user->userDetail->update($data);
+            }
+
             DB::commit();
             return $data;
         } catch (\Exception $e) {

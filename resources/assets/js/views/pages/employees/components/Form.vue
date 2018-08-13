@@ -28,24 +28,29 @@
         el-col(:span="24")
           el-form-item(label="SỐ ĐIỆN THOẠI")
             el-input(v-model="employee.user.phone" placeholder="Điện thoại" clearable)
-        el-col(:span="12")
+        el-col(:span="8")
           el-form-item(label="VAI TRÒ")
             el-select(v-model="employee.user.role_id" clearable placeholder="Vai trò" style="width: 100%")
               el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
-        el-col(:span="12")
+        el-col(:span="8")
           el-form-item(label="NGÀY KÝ HỢP ĐỒNG")
             el-date-picker(v-model="employee.contract_at" format="dd-MM-yyyy" value-format="dd-MM-yyyy" type="date" placeholder="Ngày ký hợp đồng" style="width: 100%" clearable)
-        el-col(:span="24")
-          el-form-item
-            el-checkbox(label="Kích hoạt" v-model="employee.user.is_active")
+        el-col(:span="8")
+          el-form-item(label="KÍCH HOẠT TÀI KHOẢN")
+            el-switch(
+              v-model="employee.user.is_verified"
+              active-color="#13ce66"
+              inactive-color="#E6A23C"
+              style="width: 100%"
+            )
         el-col(:span="24")
           el-form-item(style="text-align: right;")
+            el-button(type="info" @click="back")
+              svg-icon(icon-class="fa-solid arrow-left")
+              span(style="margin-left: 5px") Quay lại
             el-button(type="primary" @click="handleSubmit")
               svg-icon(icon-class="fa-solid save")
-              span(style="margin-left: 10px") Lưu
-            el-button(type="danger" @click="back")
-              svg-icon(icon-class="fa-solid ban")
-              span(style="margin-left: 10px") Hủy bỏ
+              span(style="margin-left: 5px") Lưu
     media-manager-modal(type="user")
 </template>
 
@@ -74,7 +79,7 @@
               phone: '',
               address: '',
               role_id: '',
-              is_active: ''
+              is_verified: false
             },
             contract_at: ''
           }
@@ -122,8 +127,7 @@
         }).then(res => {
           this.$router.push({name: 'employee_index', replace: true})
         }).catch(err => {
-          console.log(err)
-          this.$message.error('Error! Cannot update employee');
+          this.$message.error('Cập nhật thất bại');
         })
       },
       create (params) {
@@ -132,8 +136,7 @@
         }).then(res => {
           this.$router.push({name: 'employee_index', replace: true})
         }).catch(err => {
-          console.log(err)
-          this.$message.error('Error! Cannot create employee');
+          this.$message.error('Tạo mới khách hàng thất bại');
         })
       },
       handleSubmit () {
@@ -148,7 +151,7 @@
             phone: this.employee.user.phone,
             address: this.employee.user.address,
             role_id: this.employee.user.role_id,
-            is_active: this.employee.user.is_active,
+            is_verified: this.employee.user.is_verified,
           },
           code: this.employee.code,
           avatar: this.employee.user.avatar.length ? this.employee.user.avatar[0].id : null,
@@ -158,6 +161,8 @@
         if (!this.isUpdate) {
           params.user.email = this.employee.user.email;
           params.user.name = this.employee.user.name;
+        } else {
+          params.user.is_active = this.employee.user.is_verified;
         }
 
         return params;
