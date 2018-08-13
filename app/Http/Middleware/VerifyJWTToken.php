@@ -11,7 +11,7 @@ use App\Traits\RestApiResponse;
 define("TOKEN_ABSENT_CODE", 4000);
 define("TOKEN_EXPIRED_CODE", 4001);
 define("TOKEN_INVALID_CODE", 4003);
-define("USER_NOT_FOUND", 4004);
+define("USER_ERROR_CODE", 4004);
 
 class VerifyJWTToken
 {
@@ -27,9 +27,16 @@ class VerifyJWTToken
     public function handle($request, Closure $next)
     {
         try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return $this->api_error_response('Tài khoản không tồn tại', USER_NOT_FOUND);
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return $this->api_error_response('Tài khoản không tồn tại', USER_ERROR_CODE);
+            }
+
+            if (!$user->is_verified) {
+                return $this->api_error_response('Tài khoản chưa được kích hoạt', USER_ERROR_CODE);
+            }
+
+            if (!$user->is_active) {
+                return $this->api_error_response('Tài khoản đã bị tạm khóa', USER_ERROR_CODE);
             }
         } catch (JWTException $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException)

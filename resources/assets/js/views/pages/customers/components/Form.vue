@@ -29,23 +29,31 @@
           el-form-item(label="ĐỊA CHỈ")
             el-input(v-model="customer.user.address" clearable placeholder="Địa chỉ")
         el-col(:span="8")
-          el-form-item(prop="province_code" label="Tỉnh/TP:")
+          el-form-item(prop="province_code" label="TỈNH/TP:")
             province-select(v-model="customer.province_code")
         el-col(:span="8")
-          el-form-item(prop="district_code" label="Huyện/Quận:")
+          el-form-item(prop="district_code" label="HUYỆN/QUẬN:")
             district-select(v-model="customer.district_code" :parent-code="customer.province_code")
         el-col(:span="8")
-          el-form-item(prop="ward_code" label="Xã/Phường:")
+          el-form-item(prop="ward_code" label="XÃ/PHƯỜNG:")
             ward-select(v-model="customer.ward_code" :parent-code="customer.district_code")
-        el-col(:span="12")
+        el-col(:span="8")
           el-form-item(label="NHÂN VIÊN SALE")
             el-select(v-model="customer.employee_id" clearable placeholder="Nhân viên" style="width: 100%")
               el-option(v-for="item in employeesList" :key="item.id" :label="item.name" :value="item.id")
-        el-col(:span="12")
+        el-col(:span="8")
           el-form-item(label="LOẠI KHÁCH HÀNG (VIP/THƯỜNG)")
             el-select(v-model="customer.customer_type" clearable placeholder="Loại khách hàng" style="width: 100%")
               el-option(label="Vip" :value="1")
               el-option(label="Thường" :value="0")
+        el-col(:span="8")
+          el-form-item(label="KÍCH HOẠT TÀI KHOẢN")
+            el-switch(
+              v-model="customer.user.is_verified"
+              active-color="#13ce66"
+              inactive-color="#E6A23C"
+              style="width: 100%"
+            )
         el-col(:span="24" v-if="isUpdate")
           el-form-item(label="CỬA HÀNG")
             .control__wrapper
@@ -72,9 +80,6 @@
                 :page-size="pageSize"
                 layout="total, sizes, prev, pager, next"
                 :total="showingShops.length")
-        el-col(:span="24")
-          el-form-item
-            el-checkbox(v-model="customer.user.is_active" label="Kích hoạt")
         el-col(:span="24")
           el-form-item(style="text-align: right;")
             el-button(type="info" @click="back")
@@ -123,7 +128,7 @@
               last_name: '',
               phone: '',
               address: '',
-              is_active: false
+              is_verified: false
             }
           }
         }
@@ -185,8 +190,7 @@
         }).then(res => {
           this.$router.push({ name: 'customer_index', replace: true })
         }).catch(err => {
-          console.log(err)
-          this.$message.error('Error! Cannot update customer');
+          this.$message.error('Cập nhật thất bại');
         })
       },
       create (params) {
@@ -195,8 +199,7 @@
         }).then(res => {
           this.$router.push({ name: 'customer_index', replace: true })
         }).catch(err => {
-          console.log(err)
-          this.$message.error('Error! Cannot create customers');
+          this.$message.error('Tạo mới khách hàng thất bại');
         })
       },
       handleSubmit () {
@@ -219,7 +222,7 @@
             last_name: this.customer.user.last_name,
             phone: this.customer.user.phone,
             address: this.customer.user.address,
-            is_active: this.customer.user.is_active,
+            is_verified: this.customer.user.is_verified,
             role_id: 2
           }
         }
@@ -227,6 +230,8 @@
         if (!this.isUpdate) {
           params.user.email = this.customer.user.email;
           params.user.name = this.customer.user.name;
+        } else {
+          params.user.is_active = this.customer.user.is_verified;
         }
 
         return params;

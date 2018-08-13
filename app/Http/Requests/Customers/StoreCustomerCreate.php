@@ -39,7 +39,7 @@ class StoreCustomerCreate extends BaseFormRequest
             'user.last_name' => 'nullable|string|max:50',
             'user.phone' => 'nullable|string|max:20',
             'user.address' => 'nullable|string|max:255',
-            'user.is_active' => 'nullable|boolean',
+            'user.is_verified' => 'nullable|boolean',
             'user.role_id' => 'required|numeric|exists:roles,id'
         ];
     }

@@ -18,21 +18,20 @@
                   el-option(label="Tất cả" :value="-1")
             el-col(:span="4")
               el-form-item(label="Trạng thái:")
-                el-select(placeholder="Trạng thái" v-model="status" clearable filterable style="width: 100%")
-                  el-option(label="Đang hoạt động" :value="1")
-                  el-option(label="Đang bị khóa" :value="0")
-                  el-option(label="Tất cả" :value="-1")
+                el-select(placeholder="Trạng thái" v-model="status" clearable filterable)
+                  el-option(label="Đang hoạt động" :value="0")
+                  el-option(label="Đang tạm khóa" :value="1")
+                  el-option(label="Chưa kích hoạt" :value="2")
     div.control__wrapper
       aza-control(@on-add="handAddClick")
     div.index__wrapper
-      aza-table(ref="table" @on-delete="deleteHandle" :employees="current" :total="total" @on-update="handUpdateClick" @on-change-status="changeStatusHandle")
+      aza-table(ref="table" @on-delete="deleteHandle" :employees="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle")
 </template>
 
 <script>
   import { mapGetters, mapActions, mapState } from 'vuex'
   import AzaTable from './components/Table'
   import AzaControl from './components/Control'
-  import AzaSearch from './components/FormSearch'
   import BaseMixin from '../mixin'
 
   export default {
@@ -40,8 +39,7 @@
     mixins: [BaseMixin],
     components: {
       AzaTable,
-      AzaControl,
-      AzaSearch
+      AzaControl
     },
     data () {
       return {
@@ -67,17 +65,18 @@
         })
       },
       current () {
-        return this.employees.map(item => Object.assign(item, {status: item.status > 0}))
+        return this.employees.map(item => Object.assign(item, { is_verified: item.is_verified, is_active: item.is_active }))
           .filter(item => item.code.indexOf(this.key) > -1
             || item.user.email.indexOf(this.key) > -1
             || item.user.full_name.indexOf(this.key) > -1)
           .filter(item => {
             if(this.role_id === null || this.role_id.toString().trim() === '' || this.role_id === -1) return true;
             return (this.role_id.toString().trim() === item.user.role_id.toString().trim());
-          })
-          .filter(item => {
-            if(this.status === null || this.status.toString().trim() === '' || this.status === -1) return true;
-            return (this.status.toString().trim() === (+item.status).toString().trim());
+          }).filter(item => {
+            if (this.status === null || this.status.toString().trim() === '') return true;
+            if (this.status.toString().trim() === '0') return item.user.is_active
+            if (this.status.toString().trim() === '1') return item.user.is_verified && !item.user.is_active
+            return !item.user.is_verified
           })
       },
       total () {
@@ -101,17 +100,23 @@
         fetchEmployees: 'fetchList',
         fetchSearch: 'search',
         deleteSelection: 'deleteSelection',
-        updateRole: 'update',
         destroy: 'destroy'
       }),
       ...mapActions('roles', {
         fetchRoles: 'fetchList'
       }),
-      changeStatusHandle (id, data) {
-        this.updateRole({
-          id: id,
-          data: data
-        })
+      ...mapActions({
+        updateUserActive: 'user/Update'
+      }),
+      changeActiveHandle (user_id, params) {
+        this.updateUserActive({
+          id: user_id,
+          params: { is_active: params.is_active }
+        }).then(() => {
+          this.$message({ type: 'success', message: 'Cập nhật thành công' });
+        }).catch(() => {
+          this.$message({ type: 'error', message: 'Cập nhật thất bại' });
+        });
       },
       fetchFind () {
         this.fetchSearch(this.search)

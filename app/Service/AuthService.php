@@ -38,7 +38,8 @@ class AuthService
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
                 'address' => $data['address'],
-                'is_active' => $data['is_active']
+                'is_verified' => $data['is_verified'],
+                'is_active' => $data['is_verified']
             ]);
 
             $verifyUser = VerifyUser::create([

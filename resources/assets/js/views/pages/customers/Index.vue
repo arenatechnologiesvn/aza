@@ -10,7 +10,7 @@
           el-row(style="margin: 0 -10px;")
             el-col(:span="12")
               el-form-item(label="Tìm kiếm:")
-                el-input(placeholder="Tìm kiếm" v-model="key" suffix-icon="el-icon-search" style="width: 100%")
+                el-input(placeholder="Tìm kiếm" v-model="key" clearable suffix-icon="el-icon-search" style="width: 100%")
             el-col(:span="4")
               el-form-item(label="Nhân viên:")
                 el-select(placeholder="Nhân viên" v-model="employee_id" clearable filterable )
@@ -20,24 +20,22 @@
                 el-select(placeholder="Loại khách hàng" v-model="customer_type" clearable filterable)
                   el-option(label="VIP" :value="1")
                   el-option(label="Thường" :value="0")
-                  el-option(label="Tất cả" :value="-1")
             el-col(:span="4")
               el-form-item(label="Trạng thái:")
-                el-select(placeholder="Trạng thái" v-model="is_active" clearable filterable)
-                  el-option(label="Đang hoạt động" :value="1")
-                  el-option(label="Đang bị khóa" :value="0")
-                  el-option(label="Tất cả" :value="-1")
+                el-select(placeholder="Trạng thái" v-model="status" clearable filterable)
+                  el-option(label="Đang hoạt động" :value="0")
+                  el-option(label="Đang tạm khóa" :value="1")
+                  el-option(label="Chưa kích hoạt" :value="2")
     div.control__wrapper
       aza-control(@on-add="handAddClick")
     div.index__wrapper
-      aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-delete="deleteHandle")
+      aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle" @on-delete="deleteHandle")
 </template>
 
 <script>
   import { mapGetters, mapActions, mapState } from 'vuex'
   import AzaTable from './components/Table'
   import AzaControl from './components/Control'
-  import AzaSearch from './components/FormSearch'
   import BaseMixin from '../mixin'
 
   export default {
@@ -45,15 +43,14 @@
     mixins: [BaseMixin],
     components: {
       AzaTable,
-      AzaControl,
-      AzaSearch
+      AzaControl
     },
     data () {
       return {
         key: '',
         employee_id: null,
         customer_type: null,
-        is_active: null
+        status: null
       }
     },
     computed: {
@@ -73,19 +70,26 @@
         })
       },
       current () {
-        return this.customers && this.customers.map(item => Object.assign(item,Object.assign(item.user, {is_active: item.user.is_active > 0}), {id: item.id, customer_type: item.customer_type > 0}))
-          .filter(item => item.code.indexOf(this.key) > -1
-            || item.user.full_name.indexOf(this.key) > -1
-          ).filter(item => {
-            if(this.employee_id === null || this.employee_id.toString().trim() === '' || this.employee_id === -1) return true;
-            return this.employee_id.toString().trim() === item.employee.id.toString().trim()
-          }).filter(item => {
-            if(this.customer_type === null || this.customer_type.toString().trim() === '' || this.customer_type === -1) return true;
-            return this.customer_type.toString().trim() === item.customer_type.toString().trim()
-          }).filter(item => {
-            if(this.is_active === null || this.is_active.toString().trim() === '' || this.is_active === -1) return true;
-            return this.is_active.toString().trim() === (+item.user.is_active).toString().trim()
-          });
+        return this.customers && this.customers.map(item => Object.assign(
+          item,
+          Object.assign(item.user, {
+            is_active: item.user.is_active,
+            is_verified: item.user.is_verified
+          }),
+          { id: item.id, customer_type: item.customer_type })
+        ).filter(item => item.code.indexOf(this.key) > -1 || item.user.full_name.indexOf(this.key) > -1
+        ).filter(item => {
+          if(this.employee_id === null || this.employee_id.toString().trim() === '') return true;
+          return this.employee_id.toString().trim() === item.employee.id.toString().trim()
+        }).filter(item => {
+          if(this.customer_type === null || this.customer_type.toString().trim() === '') return true;
+          return this.customer_type.toString().trim() === item.customer_type.toString().trim()
+        }).filter(item => {
+          if (this.status === null || this.status.toString().trim() === '') return true;
+          if (this.status.toString().trim() === '0') return item.user.is_active
+          if (this.status.toString().trim() === '1') return item.user.is_verified && !item.user.is_active
+          return !item.user.is_verified
+        });
       },
       total () {
         this.current.length
@@ -108,17 +112,23 @@
         fetchCustomers: 'fetchList',
         fetchSearch: 'search',
         deleteSelection: 'deleteSelection',
-        updateRole: 'update',
         destroy: 'destroy'
       }),
       ...mapActions('employees', {
         fetchEmployees: 'fetchList'
       }),
-      changeStatusHandle (id, data) {
-        this.updateRole({
-          id: id,
-          data: data
-        })
+      ...mapActions({
+        updateUserActive: 'user/Update'
+      }),
+      changeActiveHandle (user_id, params) {
+        this.updateUserActive({
+          id: user_id,
+          params: { is_active: params.is_active }
+        }).then(() => {
+          this.$message({ type: 'success', message: 'Cập nhật thành công' });
+        }).catch(() => {
+          this.$message({ type: 'error', message: 'Cập nhật thất bại' });
+        });
       },
       fetchFind () {
         this.fetchSearch(this.search)

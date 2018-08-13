@@ -85,22 +85,30 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             $data  = $request->all();
-            if (isset($data['user_detail']['birthday'])) {
+
+            if (isset($data['user_detail']) && isset($data['user_detail']['birthday'])) {
                 $data['user_detail']['birthday'] = strtotime($data['user_detail']['birthday']);
             }
+
             $updated = $this->user->find($id);
             $updated->update($data);
-            if (isset($updated->userDetail)) {
-                $updated->userDetail->update($data['user_detail']);
-            } else {
-                $data['user_detail']['user_id'] = $id;
-                UserDetail::create($data['user_detail']);
+
+            if (isset($data['user_detail'])) {
+                if (isset($updated->userDetail)) {
+                    $updated->userDetail->update($data['user_detail']);
+                } else {
+                    if (!UserDetail::where('user_id', $id)) {
+                        $data['user_detail']['user_id'] = $id;
+                        UserDetail::create($data['user_detail']);
+                    }
+                }
             }
+
             DB::commit();
             return $this->api_success_response(['data' => $updated]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->api_error_response($e);
+            throw $e;
         }
 
     }

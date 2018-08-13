@@ -6,16 +6,26 @@
         el-table-column(prop="user.avatar" width="60")
           template(slot-scope="scope")
             img(:src="avatarUrl(scope.row.user)" width="40" height="40")
+        el-table-column(label="TRẠNG THÁI" align="center" width="150")
+          template(slot-scope="scope")
+            el-tag(:type="accountStatusType(scope.row.user)") {{ accountStatusName(scope.row.user) }}
         el-table-column(prop="code" label="MSKH" sortable min-width="100")
         el-table-column(prop="user.full_name" label="TÊN KH" sortable min-width="200")
         el-table-column(prop="employee.user.full_name" label="NHÂN VIÊN SALE" sortable min-width="200")
         el-table-column(prop="user.phone" label="SỐ ĐIỆN THOẠI" sortable min-width="180")
         el-table-column(prop="customer_type" label="VIP" align="center" width="100")
           template(slot-scope="scope")
-            el-checkbox(:checked="scope.row.customer_type")
-        el-table-column(prop="is_active" label="TRẠNG THÁI" align="center" width="120")
+            el-checkbox(:checked="!!scope.row.customer_type")
+        el-table-column(prop="is_active" label="KHÓA/HOẠT ĐỘNG" align="center" width="150")
           template(slot-scope="scope")
-            el-switch(v-model="scope.row.user.is_active" @change="onChangeStatus(scope.row.id, scope.row.user.is_active)")
+            el-switch(
+              v-if="scope.row.user.is_verified"
+              v-model="scope.row.user.is_active"
+              @change="onChangeActive(scope.row.user_id, scope.row.user.is_active)"
+              active-color="#13ce66"
+              inactive-color="#909399"
+            )
+            span(v-if="!scope.row.user.is_verified") {{ '-' }}
         el-table-column(prop="id" label="TÁC VỤ" width="120" fixed="right")
           template(slot-scope="scope")
             el-tooltip(effect="dark" content="Chi tiết" placement="top")
@@ -68,8 +78,8 @@
       onDelete (id) {
         this.$emit('on-delete', id)
       },
-      onChangeStatus(id, isActive) {
-        this.$emit('on-change-status', id, {
+      onChangeActive(id, isActive) {
+        this.$emit('on-change-active', id, {
           id: id,
           is_active: isActive
         })
@@ -77,6 +87,16 @@
       avatarUrl(user) {
         if (user.avatar && user.avatar.length) return user.avatar[0].url;
         return dummyImage;
+      },
+      accountStatusType(user) {
+        if (!user.is_verified) return 'warning';
+        if (!user.is_active) return 'info';
+        return 'success';
+      },
+      accountStatusName(user) {
+        if (!user.is_verified) return 'Chưa kích hoạt';
+        if (!user.is_active) return 'Đang tạm khóa';
+        return 'Đang hoạt động';
       }
     }
   }
