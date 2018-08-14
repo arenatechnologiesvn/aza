@@ -54,7 +54,7 @@
         this.$store.dispatch('ToggleSideBar')
       },
       logout() {
-        this.$store.dispatch('LogOut').then(() => {
+        this.$store.dispatch('user/LogOut').then(() => {
           this.$router.push({path: '/login'})
         })
       }
