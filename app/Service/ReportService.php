@@ -72,7 +72,7 @@ class ReportService
 
     public function getCustomerRevenue($params)
     {
-        return DB::table('orders')
+        $query = DB::table('orders')
             ->select(
                 'order_product.product_id',
                 'products.name as product_name',
@@ -82,9 +82,13 @@ class ReportService
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
-            ->join('products', 'products.id', '=', 'order_product.product_id')
-            ->where('customer_id', $params['customer_id'])
-            ->where('orders.status', 0)
+            ->join('products', 'products.id', '=', 'order_product.product_id');
+
+        if (isset($params['customer_id'])) {
+            $query = $query->where('customer_id', $params['customer_id']);
+        }
+
+        return $query->where('orders.status', 0)
             ->whereBetween('orders.apply_at', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')

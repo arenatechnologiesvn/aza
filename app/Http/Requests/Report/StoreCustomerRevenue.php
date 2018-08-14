@@ -24,7 +24,7 @@ class StoreCustomerRevenue extends BaseFormRequest
     public function rules()
     {
         return [
-            'customer_id' => 'required|numeric|exists:customers,id',
+            'customer_id' => 'numeric|exists:customers,id',
             'start_date' => 'required|date_format:d-m-Y',
             'end_date' => 'required|date_format:d-m-Y|after_or_equal:start_date'
         ];
