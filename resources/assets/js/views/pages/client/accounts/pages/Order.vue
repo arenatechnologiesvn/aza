@@ -13,7 +13,8 @@
         el-row(:gutter="10")
           el-col(:span="6")
             el-select(size="small" v-model="status" clearable filterable placeholder="Trạng thái đơn hàng")
-              el-option(:value="1" label="Đang xử lý")
+              el-option(:value="1" label="Đang chờ xử lý")
+              el-option(:value="3" label="Đang xử lý")
               el-option(:value="0" label="Đã hoàn thành")
               el-option(:value="2" label="Đã hủy")
               el-option(:value="-1" label="Tất cả")
@@ -48,14 +49,23 @@
         el-table-column(prop="total" label="TỔNG TIỀN(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
-        el-table-column(label="")
+        el-table-column(label="THAO TÁC" min-width="60")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
-              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
-                svg-icon(icon-class="fa-solid ban")
-            el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
-              el-button(size="mini" type="primary" @click="onView(scope.row.id)" round)
-                svg-icon(icon-class="fa-solid eye")
+            el-dropdown(split-button type="default" size="mini")
+              svg-icon(icon-class="fa-solid list")
+              el-dropdown-menu(slot="dropdown")
+                el-dropdown-item(@click="onView(scope.row.id)")
+                  span(@click="onView(scope.row.id)")
+                    svg-icon(icon-class="fa-solid eye")
+                    span Xem chi tiết
+                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
+                  span(@click="changeStatus(scope.row.id, 2)")
+                    svg-icon(icon-class="fa-solid ban")
+                    span Hủy đơn hàng
+                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
+                  span(@click="onView(scope.row.id)")
+                    svg-icon(icon-class="fa-solid user-edit")
+                    span Cập nhật đơn hàng
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -101,7 +111,7 @@
             price: p.pivot.real_price,
             total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
           }))
-        })).sort((a, b) => +b.delivery - +a.delivery)
+        })).sort((a, b) => +b.date - +a.date)
           .filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
             if (this.status === null || this.status === -1 || this.status === '') return true;

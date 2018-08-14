@@ -17,7 +17,7 @@
           router-link(to="/cart")
             svg-icon(icon-class="fa-solid shopping-cart")
         el-dropdown-menu(slot="dropdown")
-          div
+          div(style="height: 300px; overflow-y: scroll;")
             table.cart-dropdown
               tbody
                 tr(v-for="item in products" :key="item.id")
@@ -30,10 +30,10 @@
                   td(style="width: 10%")
                     span.remove-item__cart(@click="removeFromCart(item.id)")
                       svg-icon(icon-class="fa-solid times")
-              tfoot
-                tr(style="border-top: 1px solid red;")
-                  td(colspan="4")
-                    router-link(to="/cart" class="el-button el-button--success") Thanh Toán
+          div
+            tr(style="border-top: 1px solid red;")
+              td(colspan="4")
+                router-link(to="/cart" class="el-button el-button--success") Thanh Toán
 </template>
 
 <script>
