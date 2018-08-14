@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 
 use App\ProductOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderUpdateController extends Controller
 {
@@ -34,6 +35,7 @@ class OrderUpdateController extends Controller
         try {
             $cart = new ProductOrder;
             $cart->create($request->all());
+            $this->updateTotal($request->get('order_id'));
             return $this->api_success_response( ['data' => $this->getByProductId($request->get('product_id'), $request->get('order_id'))]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
@@ -49,6 +51,7 @@ class OrderUpdateController extends Controller
                     ['order_id', '=', $id],
                     ['product_id', '=', $product_id]
                 ])->update(['quantity' => $request->get('quantity')]);
+                $this->updateTotal($id);
                 return $this->api_success_response(['data' => $this->getByProductId($product_id, $id)]);
             } elseif ($action == 'delete') {
                 return $this->destroy($id, $product_id);
@@ -64,6 +67,7 @@ class OrderUpdateController extends Controller
                 ['order_id', '=', $order_id],
                 ['product_id', '=', $product_id]
             ])->delete();
+            $this->updateTotal($order_id);
             return $this->api_success_response(['data' => $cart]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
@@ -76,5 +80,15 @@ class OrderUpdateController extends Controller
             ['order_id', '=', $order_id],
             ['product_id', '=', $product_id]
         ])->firstOrFail();
+    }
+
+    private function updateTotal ($order_id) {
+        $total = DB::table('order_product')
+            ->select([
+                DB::raw('SUM(quantity * real_price) as total')
+            ])->where('order_id', '=', $order_id)->get()->first()->total;
+        DB::table('orders')
+            ->where('id', $order_id)
+            ->update(['total_money'=> $total ]);
     }
 }

@@ -6,7 +6,9 @@
       h5.table-title(style="text-align: left;")
         svg-icon(icon-class="fa-solid list")
         span(style="margin-left: 10px;") DANH SÁCH SẢN PHẨM
-      el-table(:data="products" border="border" size="mini")
+      div.form-search
+        el-input(v-model="search" placeholder="Tìm kiếm sản phẩm..." prefix-icon="el-icon-search" clearable)
+      el-table(:data="products.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border="border" size="mini")
         el-table-column(width="70")
           template(slot-scope="product")
             img.product-img(:src="product.row.img")
@@ -18,6 +20,14 @@
             el-tooltip(class="item" effect="dark" content="Thêm vào đơn hàng" placement="top")
               el-button(size="mini" type="default" @click="addToOrder(scope.row)")
                 svg-icon(icon-class="fa-solid calendar-plus")
+      div.pagination__wrapper(style="padding: 10px 0;")
+        el-pagination(@size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-sizes="[5, 10, 20, 40]"
+            :page-size="pageSize"
+        layout="total, sizes, prev, pager, next"
+          :total="products.length")
 </template>
 
 <script>
@@ -28,8 +38,10 @@
     name: 'DilaogList',
     data () {
       return {
+        search: '',
         show: false,
-        order: null
+        currentPage: 1,
+        pageSize: 10,
       }
     },
     props: {
@@ -43,8 +55,6 @@
         listProducts: 'list'
       }),
       products () {
-        console.log(this.black)
-
         return this.listProducts
           .filter(item => this.black.indexOf(item.id.toString()) < 0)
           .map(p => ({
@@ -54,6 +64,7 @@
             title: p.name,
             price: p.price
         }))
+          .filter(item => item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1)
       }
     },
     methods: {
@@ -72,6 +83,12 @@
       },
       addToOrder (product) {
         this.$emit('addOrder', product)
+      },
+      handleSizeChange (size) {
+        this.pageSize = size
+      },
+      handleCurrentChange (current) {
+        this.currentPage = current
       }
     }
   }
