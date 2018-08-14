@@ -45,7 +45,7 @@
         el-table-column(prop="code" label="MÃ ĐƠN HÀNG")
         el-table-column(label="TRẠNG THÁI")
           template(slot-scope="scope")
-            el-tag(:type="parseInt(scope.row.status) === 0 ? 'success': parseInt(scope.row.status) === 1 ?  'info' : 'danger'") {{parseInt(scope.row.status) === 0 ? 'Đã hoàn thành' : parseInt(scope.row.status) === 1 ? 'Đang xử lý' : 'Đã bị hủy' }}
+            el-tag(:type="parseInt(scope.row.status) === 0 ? 'success': parseInt(scope.row.status) === 1 ?  'info' : parseInt(scope.row.status) === 2 ? 'danger' : 'primary'") {{parseInt(scope.row.status) === 0 ? 'Đã hoàn thành' : parseInt(scope.row.status) === 1 ? 'Đang chờ xử lý' : parseInt(scope.row.status) === 2 ? 'Đã bị hủy' : 'Đang xử lý' }}
         el-table-column(prop="total" label="TỔNG TIỀN(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
@@ -63,7 +63,7 @@
                     svg-icon(icon-class="fa-solid ban")
                     span Hủy đơn hàng
                 el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
-                  span(@click="onView(scope.row.id)")
+                  span(@click="onEdit(scope.row.id)")
                     svg-icon(icon-class="fa-solid user-edit")
                     span Cập nhật đơn hàng
       div.pagination__wrapper(style="padding: 10px 0;")
@@ -139,6 +139,9 @@
         fetchOrder: 'fetchList',
         updateOrder: 'update'
       }),
+      onEdit (id) {
+        this.$router.push({path: `/update_order/${id}`})
+      },
       fetchData() {
         this.fetchOrder()
       },

@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 
 
 use App\ProductOrder;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class OrderUpdateController extends Controller
 {

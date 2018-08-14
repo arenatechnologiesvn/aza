@@ -368,6 +368,15 @@ export const asyncRouterMap = [
         }
       },
       {
+        path: 'update_order/:id',
+        name: 'update_order',
+        component: () => import('~/views/pages/client/OrderUpdate'),
+        meta: {
+          title: 'CẬP NHẬT ĐƠN HÀNG',
+          icon: 'fa-solid list'
+        }
+      },
+      {
         path: 'accounts',
         name: 'home_account',
         component: AccountParent,
