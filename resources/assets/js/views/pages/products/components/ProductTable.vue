@@ -22,7 +22,7 @@
             el-dropdown-menu(slot="dropdown")
               el-dropdown-item Xóa
         el-col(:span="12" style="text-align: right")
-          el-button(type="success" size="small")
+          el-button(type="success" size="small" @click="exportExcelFile" :disabled="!this.tableData.length")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
           el-button(type="primary" size="small" @click="redirectToAddingPage")
@@ -36,6 +36,7 @@
             el-table-column(prop="featured_image" align="center" width="60")
               template(slot-scope="scope")
                 img(:src="featuredImageUrl(scope.row)" :width="40" :height="40")
+            el-table-column(prop="product_code" label="MÃ SẢN PHẨM" sortable min-width="100")
             el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable min-width="200")
             el-table-column(prop="price" label="GIÁ (VND)" align="right" sortable min-width="150")
               template(slot-scope="scope")
@@ -71,6 +72,7 @@ import { mapGetters, mapActions, mapState } from 'vuex';
 import EditPanel from './EditPanel';
 import MediaManagerModal from '~/components/MediaManager/modal';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
+import excelExport from '~/utils/excel/export2Excel.js';
 
 const DEDAULT_PAGE_SIZE = 10;
 
@@ -201,6 +203,26 @@ export default {
     featuredImageUrl(row) {
       if (!row.featured_image) return dummyImage;
       return row.featured_image.url;
+    },
+
+    exportExcelFile() {
+      const exportData = this.products.map((item, index) => {
+        return {
+          "STT": index + 1,
+          "MÃ SẢN PHẨM": item.product_code,
+          "TÊN SẢN PHẨM": item.name,
+          "GIÁ (VND)": Number(item.price).toLocaleString('de-DE'),
+          "ĐƠN VỊ": item.unit,
+          "ĐỊNH LƯỢNG": item.quantitative,
+          "DANH MỤC": item.category && item.category.name ? item.category.name : '-',
+          "NHÀ CUNG CẤP": item.provider && item.provider.name ? item.provider.name : '-'
+        };
+      });
+      excelExport(exportData).then(() => {
+        // Do nothing
+      }).catch(() => {
+        // Do nothing
+      });
     }
   }
 }
