@@ -27,16 +27,14 @@ class OrderController extends CrudController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-   public function store(Request $request)
-   {
-       //
-       try {
-        return $this->save($request->all());
-       } catch(\Exception $e){
-           return $e;
-       }
-       
-   }
+    public function store(Request $request)
+    {
+        try {
+            return $this->save($request->all());
+        } catch(\Exception $e){
+            return $e;
+        }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -45,12 +43,22 @@ class OrderController extends CrudController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-   public function update(Request $request, $id)
-   {
-       try {
-        return $this->edit($request->all(), $id);
-       } catch(\Exception $e){
-           return $e;
-       }
-   }
+    public function update(Request $request, $id)
+    {
+        try {
+            return $this->edit($request->all(), $id);
+        } catch(\Exception $e){
+            return $e;
+        }
+    }
+
+    public function bulkUpdate(Request $request)
+    {
+        try {
+            $params = $request->all();
+            return $this->service->bulkUpdate($params['ids'], $params['data']);
+        } catch(\Exception $e){
+            return $e;
+        }
+    }
 }

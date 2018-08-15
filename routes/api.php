@@ -45,7 +45,10 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('order_updates', 'OrderUpdateController');
     Route::resource('customers', 'CustomerController');
     Route::resource('shops', 'ShopController');
+
+    // Order
     Route::resource('orders', 'OrderController');
+    Route::put('order/bulk_update', 'OrderController@bulkUpdate');
 
     Route::get('permissions/roles','PermissionController@getByRole');
     Route::resource('permissions', 'PermissionController');

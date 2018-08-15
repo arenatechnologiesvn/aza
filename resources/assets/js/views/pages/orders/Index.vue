@@ -17,12 +17,16 @@
       div
         el-row(:gutter="10")
           el-col(:span="4")
-            el-dropdown(split-button size="small") Đã chọn {{selected}} đơn hàng
+            el-dropdown(split-button type="primary" @command="handleBulkSelection" size="small")
+              span Tác vụ
               el-dropdown-menu(slot="dropdown")
-                el-dropdown-item
+                el-dropdown-item(v-if="status === 1" command="CONFIRM")
                   svg-icon(icon-class="fa-solid check-circle")
-                  span Duyệt đơn hàng
-                el-dropdown-item
+                  span Xác nhận đơn hàng
+                el-dropdown-item(v-if="status === 3" command="COMPLETE")
+                  svg-icon(icon-class="fa-solid check-circle")
+                  span Hoàn thành đơn hàng
+                el-dropdown-item(v-if="status === 1 || status === 3" command="CANCEL")
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
           el-col(:span="6")
@@ -50,7 +54,7 @@
               el-option(label="17h - 19h" :value="'17h-19h'")
     div.account-order__content(style="padding: 10px;")
       order-detail(ref="showDetail")
-      el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
+      el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" @selection-change="handleSelectionChange" style="width: 100%" border size="small" v-loading="loading")
         el-table-column(type="selection" width="40")
         el-table-column(type="expand")
           template(slot-scope="props")
@@ -100,7 +104,11 @@
   import { currencyFormat } from '~/utils/util'
   import OrderDetail from '../../pages/client/components/OrderDetail/index'
 
-  const ORDER_STATUS = [
+  const COMPLETE_STATUS = 0;
+  const CONFIRM_STATUS = 1;
+  const CANCEL_STATUS = 2;
+  const PROCESSING_STATUS = 3;
+  const LABEL_ORDER_STATUS = [
     { status: 'Đã hoàn thành', type: 'success' },
     { status: 'Chờ xác nhận', type: 'warning' },
     { status: 'Đã hủy', type: 'danger' },
@@ -188,7 +196,8 @@
     methods: {
       ...mapActions('orders', {
         fetchOrder: 'fetchList',
-        updateOrder: 'update'
+        updateOrder: 'update',
+        bulkUpdate: 'bulkUpdate'
       }),
       ...mapActions('customers', {
         fetchCustomers: 'fetchList',
@@ -214,77 +223,60 @@
         const data = {
           targetStatus
         }
-        if (currentStatus === 1 && targetStatus === 3) {
-          this.canExecute('Bạn muốn xác nhận đơn hàng này')
-            .then(() => {
-              this.updateOrder({
-                id,
-                data
-              }).then(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Xác nhận đơn hàng thành công',
-                  type: 'success'
-                })
-              }).catch(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Xác nhận đơn hàng không thành công',
-                  type: 'error'
-                })
+        if (currentStatus === CONFIRM_STATUS && targetStatus === PROCESSING_STATUS) {
+          this.canExecute('Bạn muốn xác nhận đơn hàng này').then(() => {
+            this.updateOrder({ id, data }).then(() => {
+              this.$notify({
+                title: 'Thông báo',
+                message: 'Xác nhận đơn hàng thành công',
+                type: 'success'
+              })
+            }).catch(() => {
+              this.$notify({
+                title: 'Thông báo',
+                message: 'Xác nhận đơn hàng không thành công',
+                type: 'error'
               })
             })
-        } else if (currentStatus === 3 && targetStatus === 0) {
-          this.canExecute('Bạn muốn hoàn thành đơn hàng này')
-            .then(() => {
-              this.updateOrder({
-                id,
-                data
-              }).then(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Đã hoàn thành đơn hàng',
-                  type: 'success'
-                })
-              }).catch(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Hoàn thành đơn hàng không thành công',
-                  type: 'error'
-                })
+          })
+        } else if (currentStatus === PROCESSING_STATUS && targetStatus === COMPLETE_STATUS) {
+          this.canExecute('Bạn muốn hoàn thành đơn hàng này').then(() => {
+            this.updateOrder({ id, data }).then(() => {
+              this.$notify({
+                title: 'Thông báo',
+                message: 'Đã hoàn thành đơn hàng',
+                type: 'success'
+              })
+            }).catch(() => {
+              this.$notify({
+                title: 'Thông báo',
+                message: 'Hoàn thành đơn hàng không thành công',
+                type: 'error'
               })
             })
-        } else if (currentStatus === 1 && targetStatus === 2) {
+          })
+        } else if ([CONFIRM_STATUS, PROCESSING_STATUS].includes(currentStatus) && targetStatus === CANCEL_STATUS) {
           this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
             inputPattern: /\w+/,
             inputErrorMessage: 'Bạn phải nhập lý do'
-          }).then(value => {
-            this.updateOrder({
-              id,
-              data: {
-                status: targetStatus,
-                approve_note: value.value
-              }
-            }).then(() => {
-              this.$message({
-                type: 'success',
-                message: 'Đơn hàng đã được hủy thành công'
-              });
-            }).catch(() => {
-              this.$message({
-                type: 'warning',
-                message: 'Lỗi khi hủy đơn hàng'
-              });
-            })
+          }).then(reasonInput => {
+            this.cancelOrder(id, reasonInput.value);
           }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: 'Đơn hàng đã không được hủy'
-            });
+            // Do nothing
           });
         }
+      },
+      cancelOrder(orderId, cancelReason) {
+        this.updateOrder({
+          orderId,
+          data: { status: CANCEL_STATUS, approve_note: cancelReason }
+        }).then(() => {
+          this.$message({ type: 'success', message: 'Đơn hàng đã được hủy thành công' });
+        }).catch(() => {
+          this.$message({ type: 'warning', message: 'Hủy đơn hàng thất bại' });
+        })
       },
       currencyFormat(value) {
         return currencyFormat(value)
@@ -314,6 +306,31 @@
       },
       handleCurrentChange (current) {
         this.currentPage = current
+      },
+      handleSelectionChange(selection) {
+        this.orderSelectedIds = selection.map((item) => {
+          return item.id;
+        });
+      },
+      handleBulkSelection(actionType) {
+        if (!this.orderSelectedIds.length) return;
+        if (actionType === 'CONFIRM') {
+          this.canExecute('Bạn muốn xác nhận những đơn hàng này').then(() => {
+            this.bulkUpdate({ ids: this.orderSelectedIds, data: { status: PROCESSING_STATUS } }).then(() => {
+              this.$notify({
+                title: 'Thông báo',
+                message: 'Xác nhận đơn hàng thành công',
+                type: 'success'
+              })
+            }).catch(() => {
+              this.$notify({
+                title: 'Thông báo',
+                message: 'Xác nhận đơn hàng không thành công',
+                type: 'error'
+              })
+            })
+          })
+        }
       }
     },
     data () {
@@ -324,12 +341,12 @@
         status: 1,
         delivery_date: null,
         key: '',
-        selected: 0,
         delivery_type: null,
         apply_at: null,
         customer_id: null,
         delivery_range: null,
-        showingOrderStatus: ORDER_STATUS
+        showingOrderStatus: LABEL_ORDER_STATUS,
+        orderSelectedIds: []
       }
     },
     created () {
