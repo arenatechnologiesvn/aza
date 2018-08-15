@@ -32,7 +32,8 @@
               el-radio-button(label="-1") Tất cả
           el-col(:span="3")
             el-select(size="small" v-model="status" placeholder="Trạng thái" clearable)
-              el-option(:value="1" label="Đang xử lý")
+              el-option(:value="1" label="Chờ xác nhận")
+              el-option(:value="3" label="Đang xử lý")
               el-option(:value="0" label="Đã hoàn thành")
               el-option(:value="2" label="Đã hủy")
               el-option(:value="-1" label="Tất cả")
@@ -59,26 +60,26 @@
                   img.product-img(:src="product.row.img")
               el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
               el-table-column(prop="quantity" label="SL" width="40")
-              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
+              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
               el-table-column(prop="unit" label="Đơn vị tính" width="100")
-        el-table-column(prop="code" label="MÃ ĐƠN HÀNG" sortable)
-        el-table-column(prop="customer.code" label="MÃ KH" sortable)
-        el-table-column(prop="customer.user.full_name" label="TÊN KH" sortable)
-        el-table-column(label="TRẠNG THÁI")
+        el-table-column(prop="code" label="MÃ ĐƠN HÀNG" sortable min-width="150")
+        el-table-column(prop="customer.code" label="MÃ KH" sortable min-width="100")
+        el-table-column(prop="customer.user.full_name" label="TÊN KH" sortable min-width="200")
+        el-table-column(label="TRẠNG THÁI" min-width="150" align="center")
           template(slot-scope="scope")
-            el-tag(:type="parseInt(scope.row.status) === 0 ? 'success': parseInt(scope.row.status) === 1 ?  'info' : 'danger'") {{parseInt(scope.row.status) === 0 ? 'Đã hoàn thành' : parseInt(scope.row.status) === 1 ? 'Đang xử lý' : 'Đã bị hủy' }}
-        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" )
-        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
-        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
+            el-tag(:type="showingOrderStatus[scope.row.status].type") {{ showingOrderStatus[scope.row.status].status }}
+        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)" min-width="150" align="right")
+        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
+        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
+        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG" min-width="150" align="center")
         el-table-column(prop="id" label="TÁC VỤ" width="200" fixed="right")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" content="Duyệt đơn hàng" placement="top")
-              el-button(size="mini" @click="changeStatus(scope.row.id, 0)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
+            el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" :content="parseInt(scope.row.status) === 1 ? 'Xác nhận đơn hàng' : 'Hoàn thành đơn hàng'" placement="top")
+              el-button(size="mini" @click="changeStatus(scope.row.id, scope.row.status, 3)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2" round)
                 svg-icon(icon-class="fa-solid check-circle")
-            el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
-              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
+            el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" content="Hủy đơn hàng" placement="top")
+              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, scope.row.status, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
                 svg-icon(icon-class="fa-solid ban")
             el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
               el-button(size="mini" type="primary" @click="onView(scope.row.id)" round)
@@ -96,8 +97,16 @@
 <script>
   import avatar from '~/assets/products/p1.jpg'
   import { mapGetters, mapActions} from 'vuex'
-  import {formatNumber} from '~/utils/util'
+  import { currencyFormat } from '~/utils/util'
   import OrderDetail from '../../pages/client/components/OrderDetail/index'
+
+  const ORDER_STATUS = [
+    { status: 'Đã hoàn thành', type: 'success' },
+    { status: 'Chờ xác nhận', type: 'warning' },
+    { status: 'Đã hủy', type: 'danger' },
+    { status: 'Đang xử lý', type: 'info' }
+  ]
+
   export default {
     components: {OrderDetail},
     name: 'AccountOrder',
@@ -194,31 +203,58 @@
           type: 'success'
         }).then(() => {
           resolve(true);
+        }).catch(() => {
+          // Do nothing
         }));
       },
       fetchData () {
         this.fetchOrder()
       },
-      changeStatus(id, status) {
+      changeStatus(id, currentStatus, targetStatus) {
         const data = {
-          status
+          targetStatus
         }
-        if (status === 0) {
-          this.canExecute('Bạn muốn duyệt đơn hàng này')
+        if (currentStatus === 1 && targetStatus === 3) {
+          this.canExecute('Bạn muốn xác nhận đơn hàng này')
             .then(() => {
               this.updateOrder({
                 id,
                 data
               }).then(() => {
-                this.$notify(
-                  {
-                    title: 'Thông báo',
-                    message: 'Đã Xác nhận thành công đơn hàng',
-                    type: 'success'
-                  })
+                this.$notify({
+                  title: 'Thông báo',
+                  message: 'Xác nhận đơn hàng thành công',
+                  type: 'success'
+                })
+              }).catch(() => {
+                this.$notify({
+                  title: 'Thông báo',
+                  message: 'Xác nhận đơn hàng không thành công',
+                  type: 'error'
+                })
               })
             })
-        } else {
+        } else if (currentStatus === 3 && targetStatus === 0) {
+          this.canExecute('Bạn muốn hoàn thành đơn hàng này')
+            .then(() => {
+              this.updateOrder({
+                id,
+                data
+              }).then(() => {
+                this.$notify({
+                  title: 'Thông báo',
+                  message: 'Đã hoàn thành đơn hàng',
+                  type: 'success'
+                })
+              }).catch(() => {
+                this.$notify({
+                  title: 'Thông báo',
+                  message: 'Hoàn thành đơn hàng không thành công',
+                  type: 'error'
+                })
+              })
+            })
+        } else if (currentStatus === 1 && targetStatus === 2) {
           this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
@@ -228,7 +264,7 @@
             this.updateOrder({
               id,
               data: {
-                status: status,
+                status: targetStatus,
                 approve_note: value.value
               }
             }).then(() => {
@@ -250,8 +286,8 @@
           });
         }
       },
-      formatNumber(num) {
-        return formatNumber(num)
+      currencyFormat(value) {
+        return currencyFormat(value)
       },
       formatDateFromString (date) {
         const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
@@ -285,14 +321,15 @@
         currentPage: 1,
         pageSize: 10,
         delivery: 'today',
-        status: null,
+        status: 1,
         delivery_date: null,
         key: '',
         selected: 0,
         delivery_type: null,
         apply_at: null,
         customer_id: null,
-        delivery_range: null
+        delivery_range: null,
+        showingOrderStatus: ORDER_STATUS
       }
     },
     created () {

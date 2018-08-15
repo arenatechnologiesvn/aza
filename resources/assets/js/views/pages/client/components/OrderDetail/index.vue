@@ -32,7 +32,7 @@
       el-col.body-item(:span="12")
         strong GIỜ GIAO HÀNG:
         span {{order.delivery_type}}
-      div.status(:style="{color: 'white', backgroundColor: parseInt(order.status) === 0 ? 'green': parseInt(order.status) === 1 ? 'blue': 'red'}") {{parseInt(order.status) === 0 ? 'ĐÃ XỬ LÝ' : parseInt(order.status) === 1 ? 'ĐANG XƯ LÝ' : 'ĐÃ HỦY' }}
+      div.status(:style="{ color: 'white', backgroundColor: orderStatusConst[parseInt(order.status)].color }") {{ orderStatusConst[parseInt(order.status)].status }}
     div.content
       h5.table-title(style="text-align: left;")
         svg-icon(icon-class="fa-solid list")
@@ -43,19 +43,19 @@
             img.product-img(:src="product.row.img")
         el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
         el-table-column(prop="quantity" label="SL" width="40")
-        el-table-column(prop="price" label="GIÁ(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-        el-table-column(prop="total" label="TỔNG(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+        el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
+        el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
         el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
     div.total(v-if="order")
       div.item
-        strong TỔNG TIỀN
-        span {{formatNumber(order.total_money)}} VNĐ
+        strong TỔNG TIỀN:
+        span {{ currencyFormat(order.total_money) }} VNĐ
       div.item
-        strong VAT
-        span {{formatNumber(order.total_money * 0.1)}} VNĐ
+        strong VAT:
+        span {{ currencyFormat(order.total_money * 0.1) }} VNĐ
       div.item
-        strong TỔNG
-        span {{formatNumber(order.total_money + (order.total_money * 0.1))}} VNĐ
+        strong TỔNG:
+        span {{ currencyFormat(Number(order.total_money) + Number(order.total_money * 0.1)) }} VNĐ
 
     div.footer
       el-button-group
@@ -66,9 +66,18 @@
 
 <script>
   import { mapActions } from 'vuex'
-  import {formatNumber} from '~/utils/util'
+  import { currencyFormat } from '~/utils/util'
   import { Printd } from 'printd'
+  import dummyImage from '~/assets/login_images/dummy-image.jpg'
+
   const d = new Printd();
+  const ORDER_STATUS = [
+    { status: 'ĐÃ HOÀN THÀNH', color: 'green' },
+    { status: 'CHỜ XÁC NHẬN', color: '#E6A23C' },
+    { status: 'ĐÃ HỦY', color: 'red' },
+    { status: 'ĐANG XỬ LÝ', color: '#303133' }
+  ]
+
   export default {
     name: 'OrderDetail',
     data () {
@@ -82,14 +91,15 @@
           .item {
             padding: 10px;
           }
-        `
+        `,
+        orderStatusConst: ORDER_STATUS
       }
     },
     computed: {
       products () {
         return (this.order && this.order.products.map(p => ({
           id: p.id,
-          img: '/' + p.featured[0].directory + '/' + p.featured[0].filename + '.' + p.featured[0].extension,
+          img: p.featured && p.featured.length ? p.featured[0].url : dummyImage,
           quantity: p.pivot.quantity,
           unit: p.unit,
           title: p.name,
@@ -109,8 +119,8 @@
           this.order = res.data
         } )
       },
-      formatNumber(num) {
-        return formatNumber(num)
+      currencyFormat(value) {
+        return currencyFormat(value)
       },
       formatDate(num) {
         let date = new Date(1000 * num)

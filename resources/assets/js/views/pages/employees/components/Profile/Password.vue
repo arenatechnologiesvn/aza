@@ -68,7 +68,7 @@
                   message: 'Đổi mật khẩu thành công',
                   type: 'success'
                 })
-              this.$store.dispatch('LogOut').then(() => {
+              this.$store.dispatch('user/LogOut').then(() => {
                 this.$router.push({path: '/'})
                 location.reload()
               })

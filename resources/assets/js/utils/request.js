@@ -43,7 +43,7 @@ service.interceptors.response.use((response) => {
         type: 'warning'
       }
     ).then(() => {
-      store.dispatch('FedLogOut').then(() => {
+      store.dispatch('user/FedLogOut').then(() => {
         location.reload(); // To re-instantiate the vue-router object Avoid bugs
       });
     }).catch(() => {
