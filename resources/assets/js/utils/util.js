@@ -38,3 +38,8 @@ export const getMenuByRouter = (list) => {
 
   return res;
 };
+
+export const currencyFormat = (value) => {
+  if (!value) return 0;
+  return Number(value).toLocaleString('de-DE');
+};

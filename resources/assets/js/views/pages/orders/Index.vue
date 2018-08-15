@@ -60,8 +60,8 @@
                   img.product-img(:src="product.row.img")
               el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
               el-table-column(prop="quantity" label="SL" width="40")
-              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
+              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
               el-table-column(prop="unit" label="Đơn vị tính" width="100")
         el-table-column(prop="code" label="MÃ ĐƠN HÀNG" sortable min-width="150")
         el-table-column(prop="customer.code" label="MÃ KH" sortable min-width="100")
@@ -69,16 +69,16 @@
         el-table-column(label="TRẠNG THÁI" min-width="150" align="center")
           template(slot-scope="scope")
             el-tag(:type="showingOrderStatus[scope.row.status].type") {{ showingOrderStatus[scope.row.status].status }}
-        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)" min-width="150")
-        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150")
-        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150")
-        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG" min-width="150")
+        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)" min-width="150" align="right")
+        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
+        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
+        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG" min-width="150" align="center")
         el-table-column(prop="id" label="TÁC VỤ" width="200" fixed="right")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" :content="parseInt(scope.row.status) === 1 ? 'Xác nhận đơn hàng' : 'Hoàn thành đơn hàng'" placement="top")
+            el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" :content="parseInt(scope.row.status) === 1 ? 'Xác nhận đơn hàng' : 'Hoàn thành đơn hàng'" placement="top")
               el-button(size="mini" @click="changeStatus(scope.row.id, scope.row.status, 3)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2" round)
                 svg-icon(icon-class="fa-solid check-circle")
-            el-tooltip(effect="dark" content="Hủy đơn hàng" placement="top")
+            el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" content="Hủy đơn hàng" placement="top")
               el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, scope.row.status, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
                 svg-icon(icon-class="fa-solid ban")
             el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
@@ -97,7 +97,7 @@
 <script>
   import avatar from '~/assets/products/p1.jpg'
   import { mapGetters, mapActions} from 'vuex'
-  import {formatNumber} from '~/utils/util'
+  import { currencyFormat } from '~/utils/util'
   import OrderDetail from '../../pages/client/components/OrderDetail/index'
 
   const ORDER_STATUS = [
@@ -286,8 +286,8 @@
           });
         }
       },
-      formatNumber(num) {
-        return formatNumber(num)
+      currencyFormat(value) {
+        return currencyFormat(value)
       },
       formatDateFromString (date) {
         const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
