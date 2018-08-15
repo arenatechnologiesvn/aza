@@ -94,7 +94,7 @@
             .then(() => {
               const data = {
                 product_id: product.id,
-                quantity: this.$store.state.cart.entities[product.id].quantity + 1,
+                quantity: parseInt(this.$store.state.cart.entities[product.id].quantity) + 1,
                 customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
               }
               this.updateCart({

@@ -24,7 +24,7 @@ export default createCrudModule({
       });
     },
     getQuantityById: (state) => (id) => {
-      return state.entities[id.toString()].quantity
+      return state.entities[id.toString()].quantity;
     }
   }
 });

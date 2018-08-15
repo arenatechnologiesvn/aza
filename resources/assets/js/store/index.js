@@ -15,7 +15,7 @@ import common from './modules/common';
 import media from './modules/media';
 import administrative from './modules/administrative';
 import getters from './getters';
-import cproduct from './modules/cproducts';
+import update_orders from './modules/updateOrder';
 import favorite from './modules/favorite';
 import cart from './modules/cart';
 import orders from './modules/orders';
@@ -38,7 +38,7 @@ const store = new Vuex.Store({
     common,
     media,
     administrative,
-    cproduct,
+    update_orders,
     favorite,
     cart,
     orders,
