@@ -2,11 +2,6 @@ import createCrudModule from './crud';
 import { bulkUpdate } from '~/api/update_order';
 
 const addition = {
-  mutations: {
-    SET_FORM_PRODUCT: (state, product) => {
-      state.formProduct = product;
-    }
-  },
   actions: {
     bulkUpdate ({ commit }, { ids, data }) {
       return new Promise((resolve, reject) => {

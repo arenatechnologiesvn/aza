@@ -83,6 +83,23 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Bulk update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  array  $data
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkEdit($data)
+    {
+        try {
+            $resutls = $this->service->bulkUpdate($data['ids'], $data['data']);
+            return $this->api_success_response(['data' => $resutls]);
+        } catch(\Exception $e){
+            return $this->api_error_response($e);
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id

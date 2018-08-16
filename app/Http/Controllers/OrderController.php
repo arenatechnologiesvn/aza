@@ -52,11 +52,16 @@ class OrderController extends CrudController
         }
     }
 
+    /**
+     * Bulk update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function bulkUpdate(Request $request)
     {
         try {
-            $params = $request->all();
-            return $this->service->bulkUpdate($params['ids'], $params['data']);
+            return $this->bulkEdit($request->all());
         } catch(\Exception $e){
             return $e;
         }

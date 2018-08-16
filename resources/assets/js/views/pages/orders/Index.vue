@@ -317,6 +317,7 @@
         if (actionType === 'CONFIRM') {
           this.canExecute('Bạn muốn xác nhận những đơn hàng này').then(() => {
             this.bulkUpdate({ ids: this.orderSelectedIds, data: { status: PROCESSING_STATUS } }).then(() => {
+              this.fetchData();
               this.$notify({
                 title: 'Thông báo',
                 message: 'Xác nhận đơn hàng thành công',

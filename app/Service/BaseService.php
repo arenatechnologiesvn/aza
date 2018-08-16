@@ -79,6 +79,24 @@ abstract class BaseService
         }
     }
 
+    public function bulkUpdate(array $ids, array $data)
+    {
+        try {
+            DB::beginTransaction();
+            foreach ($ids as $id) {
+                if ($target = $this->model->find($id)) {
+                    $target->update($data);
+                }
+            }
+
+            DB::commit();
+            return $this->model->find($ids);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function destroy($id)
     {
         $data = $this->model->find($id);
