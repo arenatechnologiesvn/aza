@@ -17,12 +17,16 @@
       div
         el-row(:gutter="10")
           el-col(:span="4")
-            el-dropdown(split-button size="small") Đã chọn {{selected}} đơn hàng
+            el-dropdown(split-button type="primary" @command="handleBulkSelection" size="small")
+              span Tác vụ
               el-dropdown-menu(slot="dropdown")
-                el-dropdown-item
+                el-dropdown-item(v-if="status === 1" command="PROCESS")
                   svg-icon(icon-class="fa-solid check-circle")
-                  span Duyệt đơn hàng
-                el-dropdown-item
+                  span Xác nhận đơn hàng
+                el-dropdown-item(v-if="status === 3" command="COMPLETE")
+                  svg-icon(icon-class="fa-solid check-circle")
+                  span Hoàn thành đơn hàng
+                el-dropdown-item(v-if="status === 1 || status === 3" command="CANCEL" style="color: red")
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
           el-col(:span="6")
@@ -50,7 +54,7 @@
               el-option(label="17h - 19h" :value="'17h-19h'")
     div.account-order__content(style="padding: 10px;")
       order-detail(ref="showDetail")
-      el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
+      el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" @selection-change="handleSelectionChange" style="width: 100%" border size="small" v-loading="loading")
         el-table-column(type="selection" width="40")
         el-table-column(type="expand")
           template(slot-scope="props")
@@ -95,12 +99,15 @@
 </template>
 
 <script>
-  import avatar from '~/assets/products/p1.jpg'
   import { mapGetters, mapActions} from 'vuex'
   import { currencyFormat } from '~/utils/util'
   import OrderDetail from '../../pages/client/components/OrderDetail/index'
 
-  const ORDER_STATUS = [
+  const COMPLETE_STATUS = 0;
+  const CONFIRM_STATUS = 1;
+  const CANCEL_STATUS = 2;
+  const PROCESSING_STATUS = 3;
+  const LABEL_ORDER_STATUS = [
     { status: 'Đã hoàn thành', type: 'success' },
     { status: 'Chờ xác nhận', type: 'warning' },
     { status: 'Đã hủy', type: 'danger' },
@@ -188,7 +195,8 @@
     methods: {
       ...mapActions('orders', {
         fetchOrder: 'fetchList',
-        updateOrder: 'update'
+        updateOrder: 'update',
+        bulkUpdate: 'bulkUpdate'
       }),
       ...mapActions('customers', {
         fetchCustomers: 'fetchList',
@@ -211,80 +219,45 @@
         this.fetchOrder()
       },
       changeStatus(id, currentStatus, targetStatus) {
-        const data = {
-          targetStatus
+        if (currentStatus === CONFIRM_STATUS && targetStatus === PROCESSING_STATUS) {
+          this.canExecute('Bạn muốn xác nhận đơn hàng này').then(() => {
+            this.updateOrder({ id, data: { status: targetStatus } }).then(() => {
+              this.successNotify('Xác nhận đơn hàng thành công');
+            }).catch(() => {
+              this.failedNotify('Xác nhận đơn hàng thất bại');
+            })
+          })
+        } else if (currentStatus === PROCESSING_STATUS && targetStatus === COMPLETE_STATUS) {
+          this.canExecute('Bạn muốn hoàn thành đơn hàng này').then(() => {
+            this.updateOrder({ id, data: { status: targetStatus } }).then(() => {
+              this.successNotify('Duyệt hoàn thành đơn hàng thành công');
+            }).catch(() => {
+              this.failedNotify('Duyệt hoàn thành đơn hàng thất bại');
+            })
+          })
+        } else if ([CONFIRM_STATUS, PROCESSING_STATUS].includes(currentStatus) && targetStatus === CANCEL_STATUS) {
+          this.openCancelReasonModal().then(reason => {
+            this.updateOrder({ id, data: { status: targetStatus, approve_note: reason }}).then(() => {
+              this.successNotify('Hủy đơn hàng thành công');
+            }).catch(() => {
+              this.failedNotify('Hủy đơn hàng thất bại');
+            })
+          });
         }
-        if (currentStatus === 1 && targetStatus === 3) {
-          this.canExecute('Bạn muốn xác nhận đơn hàng này')
-            .then(() => {
-              this.updateOrder({
-                id,
-                data
-              }).then(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Xác nhận đơn hàng thành công',
-                  type: 'success'
-                })
-              }).catch(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Xác nhận đơn hàng không thành công',
-                  type: 'error'
-                })
-              })
-            })
-        } else if (currentStatus === 3 && targetStatus === 0) {
-          this.canExecute('Bạn muốn hoàn thành đơn hàng này')
-            .then(() => {
-              this.updateOrder({
-                id,
-                data
-              }).then(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Đã hoàn thành đơn hàng',
-                  type: 'success'
-                })
-              }).catch(() => {
-                this.$notify({
-                  title: 'Thông báo',
-                  message: 'Hoàn thành đơn hàng không thành công',
-                  type: 'error'
-                })
-              })
-            })
-        } else if (currentStatus === 1 && targetStatus === 2) {
+      },
+      openCancelReasonModal() {
+        return new Promise((resolve) => {
           this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
             inputPattern: /\w+/,
             inputErrorMessage: 'Bạn phải nhập lý do'
-          }).then(value => {
-            this.updateOrder({
-              id,
-              data: {
-                status: targetStatus,
-                approve_note: value.value
-              }
-            }).then(() => {
-              this.$message({
-                type: 'success',
-                message: 'Đơn hàng đã được hủy thành công'
-              });
-            }).catch(() => {
-              this.$message({
-                type: 'warning',
-                message: 'Lỗi khi hủy đơn hàng'
-              });
-            })
+          }).then(reasonInput => {
+            resolve(reasonInput.value);
           }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: 'Đơn hàng đã không được hủy'
-            });
+            // Do nothing
           });
-        }
+        });
       },
       currencyFormat(value) {
         return currencyFormat(value)
@@ -314,6 +287,55 @@
       },
       handleCurrentChange (current) {
         this.currentPage = current
+      },
+      handleSelectionChange(selection) {
+        this.orderSelectedIds = selection.map((item) => {
+          return item.id;
+        });
+      },
+      handleBulkSelection(command) {
+        if (command === 'PROCESS') {
+          this.canExecute('Bạn muốn xác nhận những đơn hàng này').then(() => {
+            this.bulkUpdate({ ids: this.orderSelectedIds, data: { status: PROCESSING_STATUS } }).then(() => {
+              this.fetchData();
+              this.successNotify('Xác nhận đơn hàng thành công');
+            }).catch(() => {
+              this.failedNotify('Xác nhận đơn hàng thất bại');
+            })
+          });
+        } else if (command === 'COMPLETE') {
+          this.canExecute('Bạn muốn hoàn thành những đơn hàng này').then(() => {
+            this.bulkUpdate({ ids: this.orderSelectedIds, data: { status: COMPLETE_STATUS } }).then(() => {
+              this.fetchData();
+              this.successNotify('Hoàn thành đơn hàng thành công');
+            }).catch(() => {
+              this.failedNotify('Hoàn thành đơn hàng thất bại');
+            })
+          });
+        } else if (command === 'CANCEL') {
+          this.openCancelReasonModal().then(reason => {
+            this.bulkUpdate({ ids: this.orderSelectedIds, data: { status: COMPLETE_STATUS, approve_note: reason } }).then(() => {
+              this.fetchData();
+              this.successNotify('Hủy đơn hàng thành công');
+            }).catch(() => {
+              this.failedNotify('Hủy đơn hàng thất bại');
+            })
+          });
+        }
+      },
+      successNotify(message) {
+        this.$notify({
+          title: 'Thông báo',
+          message: message,
+          type: 'success'
+        })
+      },
+      failedNotify(message) {
+        this.$notify({
+          title: 'Thông báo',
+          message: message,
+          type: 'error'
+        })
       }
     },
     data () {
@@ -324,12 +346,12 @@
         status: 1,
         delivery_date: null,
         key: '',
-        selected: 0,
         delivery_type: null,
         apply_at: null,
         customer_id: null,
         delivery_range: null,
-        showingOrderStatus: ORDER_STATUS
+        showingOrderStatus: LABEL_ORDER_STATUS,
+        orderSelectedIds: []
       }
     },
     created () {

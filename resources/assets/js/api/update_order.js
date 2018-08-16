@@ -14,10 +14,22 @@ export function addProductToOrder (item) {
     data: item
   });
 }
+
 export function updateProductToOrder (productId, item) {
   return request({
     url: `/api/order_updates/${productId}`,
     method: 'put',
     data: item
+  });
+}
+
+export function bulkUpdate (orderIds, data) {
+  return request({
+    url: '/api/order/bulk_update',
+    method: 'put',
+    data: {
+      ids: orderIds,
+      data: data
+    }
   });
 }
