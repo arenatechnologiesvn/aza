@@ -127,7 +127,13 @@
       },
       shops () {
         return this.listShop.filter(item=> item.customer_id.toString().trim() === this.user_info.customer.id.toString().trim())
-          .map(item => ({id: item.id, name: item.name}))
+          .map(item => {
+            if(!this.form.shop_id) {
+              this.form.shop_id = item.id
+              this.form.delivery_address = item.zone
+            }
+            return {id: item.id, name: item.name}
+          })
       },
       total() {
         return (this.products && this.products.length > 1) ?

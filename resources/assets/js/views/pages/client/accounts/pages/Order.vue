@@ -217,7 +217,7 @@
         currentPage: 1,
         pageSize: 10,
         delivery: 'today',
-        status: null,
+        status: 1,
         delivery_date: null,
         key: '',
         apply_at: null,
