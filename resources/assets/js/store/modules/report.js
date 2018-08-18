@@ -5,7 +5,8 @@ import {
   getAcsessStatistical,
   getRevenues,
   getExcellentEmployees,
-  getSoldWellProducts
+  getSoldWellProducts,
+  getSellingProducts
 } from '~/api/report';
 
 const report = {
@@ -19,7 +20,8 @@ const report = {
     monthRevenues: [],
     yearRevenues: [],
     excellentEmployees: [],
-    soldWellProducts: []
+    soldWellProducts: [],
+    sellingProducts: []
   },
 
   getters: {
@@ -53,6 +55,10 @@ const report = {
 
     soldWellProducts: (state) => {
       return state.soldWellProducts;
+    },
+
+    sellingProducts: (state) => {
+      return state.sellingProducts;
     }
   },
 
@@ -87,6 +93,10 @@ const report = {
 
     SET_SOLD_WELL_PRODUCTS: (state, products) => {
       state.soldWellProducts = products;
+    },
+
+    SET_SELLING_PRODUCTS: (state, products) => {
+      state.sellingProducts = products;
     }
   },
 
@@ -179,6 +189,19 @@ const report = {
         getSoldWellProducts().then(response => {
           const data = response.data;
           commit('SET_SOLD_WELL_PRODUCTS', data);
+
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
+    fetchSellingProducts ({ commit }, { startDate, endDate }) {
+      return new Promise((resolve, reject) => {
+        getSellingProducts(startDate, endDate).then(response => {
+          const data = response.data;
+          commit('SET_SELLING_PRODUCTS', data);
 
           resolve();
         }).catch(error => {

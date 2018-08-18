@@ -93,11 +93,11 @@ class ProductService extends BaseService
             \DB::beginTransaction();
 
             $product = $this->model::create($params);
-            if ($params['featured_image']) {
+            if (isset($params['featured_image'])) {
                 $this->mediaService->syncMedia($product, $params['featured_image'], 'featured');
             }
 
-            if ($params['preview_images']) {
+            if (isset($params['preview_images'])) {
                 $this->mediaService->syncMedia($product, $params['preview_images'], 'preview');
             }
 
@@ -119,10 +119,13 @@ class ProductService extends BaseService
             }
 
             $product->update($params);
-            if ($params['featured_image']) {
+            if (isset($params['featured_image'])) {
                 $this->mediaService->syncMedia($product, $params['featured_image'], 'featured');
             }
-            $this->mediaService->syncMedia($product, $params['preview_images'], 'preview');
+
+            if (isset($params['preview_images'])) {
+                $this->mediaService->syncMedia($product, $params['preview_images'], 'preview');
+            }
 
             \DB::commit();
             return $product;

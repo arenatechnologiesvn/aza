@@ -61,4 +61,10 @@ class ReportController extends Controller
         $products = $this->service->soldWellProducts();
         return $this->api_success_response(['data' => $products]);
     }
+
+    public function getSellingProducts(StoreCustomerRevenue $request)
+    {
+        $products = $this->service->getSellingProducts($request);
+        return $this->api_success_response(['data' => $products]);
+    }
 }
