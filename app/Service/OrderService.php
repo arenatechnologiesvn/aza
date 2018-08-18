@@ -87,6 +87,7 @@ class OrderService extends BaseService
                     'description',
                     'price',
                     'unit',
+                    'quantitative',
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
@@ -102,6 +103,7 @@ class OrderService extends BaseService
                     'description',
                     'price',
                     'unit',
+                    'quantitative',
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);

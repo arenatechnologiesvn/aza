@@ -4,10 +4,7 @@
     :visible.sync="show" style="text-align: left;")
     el-row.content-order(:gutter="20" v-if="order")
       el-col(:span="24")
-        h4.body-title {{order && order.title}}
-      el-col.body-item(:span="24")
-        strong MÃ ĐƠN HÀNG:
-        span {{order.order_code}}
+        h4.body-title ĐƠN HÀNG {{order.order_code}}
       el-col.body-item(:span="12")
         strong CHỦ CỬA HÀNG:
         span {{order.customer && order.customer.user.full_name}}
@@ -32,6 +29,12 @@
       el-col.body-item(:span="12")
         strong GIỜ GIAO HÀNG:
         span {{order.delivery_type}}
+      el-col.body-item(:span="24" v-show="order.description && order.description.length > 0")
+        strong SẢN PHẨM NGOÀI DANH MỤC:
+        span {{order.description}}
+      el-col.body-item(:span="24" v-show="order.status.toString() === '2'")
+        strong LÝ DO HỦY ĐƠN HÀNG:
+        span {{order.approve_note}}
       div.status(:style="{ color: 'white', backgroundColor: orderStatusConst[parseInt(order.status)].color }") {{ orderStatusConst[parseInt(order.status)].status }}
     div.content
       h5.table-title(style="text-align: left;")
@@ -46,19 +49,19 @@
         el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
         el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
         el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
-    div.total(v-if="order")
+    div.total(v-if="order" v-show="order && order.status.toString() !== '2' ")
       div.item
-        strong TỔNG TIỀN:
+        strong TỔNG ĐƠN HÀNG:
         span {{ currencyFormat(order.total_money) }} VNĐ
       div.item
         strong VAT:
         span {{ currencyFormat(order.total_money * 0.1) }} VNĐ
       div.item
-        strong TỔNG:
-        span {{ currencyFormat(Number(order.total_money) + Number(order.total_money * 0.1)) }} VNĐ
+        strong TỔNG TIỀN:
+        span {{ currencyFormat(+order.total_money + Number(+order.total_money * 0.1)) }} VNĐ
 
     div.footer
-      el-button-group
+      el-button-group(v-show="(order && order.status.toString() === '0') || (order && order.status.toString() === '3')")
         el-button(type="primary" @click="print")
           svg-icon(icon-class="fa-solid print")
           span Xuất hóa đơn
@@ -130,11 +133,33 @@
         return day + '-' + month + '-' + year
       },
       print () {
+        console.log(this.$el)
         d.print( this.$el , `
+          body, .el-dialog {
+            width: 100% !important;
+            font-size: 13px;
+          }
+           .el-dialog {
+             margin-top: 0 !important;
+           }
+          .el-dialog__header {
+            display: none;
+          }
+          .el-dialog__body {
+            margin: 0;
+            padding: 5px;
+            width: 100%;
+          }
+          .el-dialog__body h4 {
+            margin: 0;
+          }
           .body-item {
             padding: 10px;
           }
-          button {
+          .body-title {
+           text-align: center;
+          }
+          button, svg {
             display: none;
           }
           table, td, th {
@@ -145,12 +170,21 @@
             display: none;
           }
           .table-title, h5 {
-            font-size: 1.2em;
-            text-align: left;
+            font-size: 1.1em;
+            text-align: left !important;
+            display: block;
+            width: 100%;
+            float: left;
+            margin-left: 0 !important;
             font-weight: bolder;
           }
           .content {
             text-align: left;
+            margin-top: 10px;
+            margin-bottom: 0;
+          }
+          .total {
+            float: right;
             margin-top: 10px;
           }
         `)

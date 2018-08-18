@@ -90,7 +90,8 @@
           delivery: '',
           title: '',
           delivery_address: '',
-          shop_id: null
+          shop_id: null,
+          description: null
         },
         rules: {
           // title: [{ required: true, message: 'Nội dung đơn hàng là bắt buộc', trigger: 'blur' }],
@@ -142,6 +143,7 @@
           customer_id: user.customer.id,
           delivery_type: this.form.delivery_type,
           discount: '',
+          description: this.form.description,
           shop_id: this.form.shop_id,
           title: this.form.title,
           total_money: this.total,
@@ -189,7 +191,7 @@
               })).then(() => this.$notify(
               {
                 title: 'Thông báo',
-                message: 'Đã thêm thành công sản phẩm vào danh sách yêu thích',
+                message: 'Đã đặt hàng thành công',
                 type: 'success'
               })).then(() => this.$router.push({'name': 'home_account_order'}))
               .catch(err => {

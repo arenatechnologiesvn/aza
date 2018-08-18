@@ -37,9 +37,17 @@
                     svg-icon(icon-class="fa-solid heart")
                     span Sản phẩm yêu thích
                 el-dropdown-item
+                  router-link(to="/accounts/shop")
+                    svg-icon(icon-class="fa-solid store-alt")
+                    span Cửa hàng của tôi
+                el-dropdown-item
                   router-link(to="/accounts/order")
                     svg-icon(icon-class="fa-solid cart-arrow-down")
                     span Quản lý đơn hàng
+                el-dropdown-item
+                  router-link(to="/accounts/statics")
+                    svg-icon(icon-class="fa-solid chart-bar")
+                    span Thống kê
                 el-dropdown-item(divided)
                   span(@click="logout" style="display:block;")
                     svg-icon(icon-class="fa-solid sign-out-alt")

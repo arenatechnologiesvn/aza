@@ -6,7 +6,9 @@
       el-row(:gutter="10")
         el-col(:span="24")
           div.grid-content.bg-puple
-            el-table(border style="width: 100%" :data="products" size="mini")
+            div(style="background-color: white; border-bottom: 1px solid #d6d6d;padding: 15px;")
+              h4(style="margin: 0;") MÃ ĐƠN HÀNG {{order && order.order_code}}
+            el-table(border style="width: 100%" :data="products" size="mini" v-loading="products.length < 1")
               el-table-column(prop="name" label="Sản phẩm" min-width="200")
                 template(slot-scope="scope")
                   div.detail
@@ -56,6 +58,12 @@
       ...mapGetters('update_orders', {
         listProducts: 'products'
       }),
+      ...mapGetters('orders', {
+        byOrderId: 'byId'
+      }),
+      order () {
+        return this.byOrderId(this.$route.params.id)
+      },
       products () {
         return this.listProducts()
       },
@@ -76,6 +84,9 @@
         updateQuantity: 'update',
         deleteProduct: 'delete',
         addProduct: 'add'
+      }),
+      ...mapActions('orders', {
+        fetchOrder: 'fetchSingle'
       }),
       onShowProducts () {
         this.$refs['dialogProduct'].detail()
@@ -119,6 +130,7 @@
       fetchProductInOrder () {
         const id = this.$route.params.id
         this.fetchProductByOrderId(id)
+        this.fetchOrder({id})
       },
       onAddProduct (product) {
         this.addProduct({
