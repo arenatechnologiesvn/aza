@@ -4,8 +4,14 @@ namespace App\Service;
 
 use App\Helper\RoleConstant;
 use App\Product;
+use App\Order;
+use App\ProductOrder;
 use App\Service\MediaService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
+define("ORDER_CONFIRM_STATUS", 1);
+define("ORDER_PROCESSING_STATUS", 3);
 
 class ProductService extends BaseService
 {
@@ -108,6 +114,10 @@ class ProductService extends BaseService
         try {
             \DB::beginTransaction();
 
+            if (isset($params['price']) && $product['price'] != $params['price']) {
+                $this->updateOrderProductPrice($product['id'], $params['price']);
+            }
+
             $product->update($params);
             if ($params['featured_image']) {
                 $this->mediaService->syncMedia($product, $params['featured_image'], 'featured');
@@ -166,5 +176,51 @@ class ProductService extends BaseService
             array_push($relatives, 'customerFavorites', 'customerCarts');
         }
         return $relatives;
+    }
+
+    private function updateOrderProductPrice($product_id, $newPrice)
+    {
+        try {
+            \DB::beginTransaction();
+
+            $updatableOrders = Order::whereIn('status', [ORDER_CONFIRM_STATUS, ORDER_PROCESSING_STATUS])->get();
+            foreach ($updatableOrders as $order) {
+                if ($target = ProductOrder::where([
+                    ['order_id', '=', $order->id],
+                    ['product_id', '=', $product_id]
+                ])) {
+                    $target->update([
+                        'tmp_price' => $newPrice,
+                        'real_price' => $newPrice
+                    ]);
+                    $this->updateTotal($order->id);
+                }
+            }
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    private function updateTotal ($order_id)
+    {
+        try {
+            \DB::beginTransaction();
+
+            $total = DB::table('order_product')
+                ->select([
+                    DB::raw('SUM(quantity * real_price) as total')
+                ])->where('order_id', '=', $order_id)->get()->first()->total;
+            DB::table('orders')
+                ->where('id', $order_id)
+                ->update(['total_money'=> $total ]);
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
     }
 }

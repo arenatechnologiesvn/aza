@@ -31,7 +31,7 @@
     div.table__wrapper
       div.index__container
         div.table
-          el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange")
+          el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange" v-loading="loading")
             el-table-column(type="selection" header-align="center" align="center" width="40")
             el-table-column(prop="featured_image" align="center" width="60")
               template(slot-scope="scope")
@@ -86,7 +86,8 @@ export default {
     ...mapGetters({
       products: 'products/list',
       categories: 'categories/list',
-      providers: 'providers/list'
+      providers: 'providers/list',
+      loading: 'products/isLoading'
     }),
 
     tableData() {
