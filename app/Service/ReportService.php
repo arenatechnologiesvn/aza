@@ -8,6 +8,9 @@ use App\Product;
 use Illuminate\Support\Facades\DB;
 use App\Helper\DateTimeHelper;
 
+define("ORDER_COMPLETE_STATUS", 0);
+define("ORDER_PROCESSING_STATUS", 3);
+
 class ReportService
 {
     public function __construct(ProductOrder $productOrderModel, Order $orderModel, Product $productModel)
@@ -25,7 +28,7 @@ class ReportService
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
-            ->where('orders.status', 0)
+            ->where('orders.status', ORDER_COMPLETE_STATUS)
             ->whereRaw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%m-%Y")', $month)
             ->groupBy('day')
             ->get();
@@ -53,7 +56,7 @@ class ReportService
                 DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
-            ->where('orders.status', 0)
+            ->where('orders.status', ORDER_COMPLETE_STATUS)
             ->whereRaw('DATE_FORMAT(FROM_UNIXTIME(orders.apply_at), "%Y")', $year)
             ->groupBy('month')
             ->get();
@@ -88,7 +91,7 @@ class ReportService
             $query = $query->where('customer_id', $params['customer_id']);
         }
 
-        return $query->where('orders.status', 0)
+        return $query->where('orders.status', ORDER_COMPLETE_STATUS)
             ->whereBetween('orders.apply_at', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
@@ -109,7 +112,7 @@ class ReportService
             ->join('employees', 'employees.id', '=', 'customers.employee_id')
             ->join('users', 'users.id', '=', 'employees.user_id')
             ->where('customers.employee_id', $params['employee_id'])
-            ->where('orders.status', 0)
+            ->where('orders.status', ORDER_COMPLETE_STATUS)
             ->whereBetween('orders.apply_at', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
@@ -196,7 +199,7 @@ class ReportService
             ->join('customers', 'customers.id', '=', 'orders.customer_id')
             ->join('employees', 'employees.id', '=', 'customers.employee_id')
             ->join('users', 'users.id', '=', 'employees.user_id')
-            ->where('orders.status', 0)
+            ->where('orders.status', ORDER_COMPLETE_STATUS)
             ->groupBy('employees.id', 'users.first_name', 'users.last_name')
             ->orderBy('revenue_total', 'desc')
             ->take(5)
@@ -214,10 +217,32 @@ class ReportService
             )
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
             ->join('products', 'products.id', '=', 'order_product.product_id')
-            ->where('orders.status', 0)
+            ->where('orders.status', ORDER_COMPLETE_STATUS)
             ->groupBy('order_product.product_id', 'products.name')
             ->orderBy('revenue_total', 'desc')
             ->take(5)
+            ->get();
+    }
+
+    public function getSellingProducts($params)
+    {
+        return DB::table('orders')
+            ->select(
+                'order_product.product_id',
+                'products.name as product_name',
+                'products.quantitative as product_quantitative',
+                DB::raw('SUM(order_product.quantity * products.quantitative) as mass_total'),
+                DB::raw('SUM(order_product.quantity) as quantity_total'),
+                DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total')
+            )
+            ->join('order_product', 'order_product.order_id', '=', 'orders.id')
+            ->join('products', 'products.id', '=', 'order_product.product_id')
+            ->where('orders.status', ORDER_PROCESSING_STATUS)
+            ->whereBetween('orders.apply_at', [
+                strtotime($params['start_date'] . " 00:00:00"),
+                strtotime($params['end_date'] . ' 23:59:59')
+            ])
+            ->groupBy('order_product.product_id', 'product_name', 'product_quantitative')
             ->get();
     }
 

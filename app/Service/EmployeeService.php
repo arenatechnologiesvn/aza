@@ -104,7 +104,7 @@ class EmployeeService extends BaseService
         try {
             DB::beginTransaction();
 
-            if ($data['avatar']) {
+            if (isset($data['avatar'])) {
                 $this->syncMedia($updated->user_id, $data['avatar'], 'user');
             }
 

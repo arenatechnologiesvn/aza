@@ -76,6 +76,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::get('report/revenue','ReportController@getRevenues');
     Route::get('report/employees/excellent','ReportController@excellentEmployees');
     Route::get('report/product/sold_well','ReportController@soldWellProducts');
+    Route::get('report/product/selling','ReportController@getSellingProducts');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {

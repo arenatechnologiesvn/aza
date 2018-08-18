@@ -7,6 +7,7 @@ const ACCESS_STATISTICAL_URL = '/api/report/customer/access_satistical';
 const REVENUE_STATISTICAL_URL = '/api/report/revenue';
 const EXCELLENT_EMPLOYEES_URL = 'api/report/employees/excellent';
 const SOLD_WELL_PRODUCTS_URL = 'api/report/product/sold_well';
+const SELLING_PRODUCTS_URL = 'api/report/product/selling';
 
 export function getCustomerRevenue (customerId, startDate, endDate) {
   return request({
@@ -73,5 +74,16 @@ export function getSoldWellProducts () {
     url: SOLD_WELL_PRODUCTS_URL,
     method: 'get',
     params: {}
+  });
+}
+
+export function getSellingProducts (startDate, endDate) {
+  return request({
+    url: SELLING_PRODUCTS_URL,
+    method: 'get',
+    params: {
+      start_date: startDate,
+      end_date: endDate
+    }
   });
 }
