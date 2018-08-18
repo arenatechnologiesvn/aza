@@ -1,5 +1,5 @@
 <template lang="pug">
-  el-row
+  el-row(v-loading="loading")
     el-col.side-form(:span="6")
       .image-container
         img.image-featured(:src="featuredImageUrl()" width="100%")
@@ -73,7 +73,8 @@ export default {
       selectedSingleImage: 'media/selectedSingleMedia',
       selectedMultiImage: 'media/selectedMultiMedia',
       categories: 'categories/list',
-      providers: 'providers/list'
+      providers: 'providers/list',
+      loading: 'products/isLoading'
     }),
 
     ...mapState({
