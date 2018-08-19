@@ -6,7 +6,6 @@
       el-submenu(index="3")
         template(slot="title") SẢN PHẨM
         el-menu-item(index="home_product" v-for="item in categories" :key="item.id" :route="{name: 'home_product', query: {category: item.name}}") {{item.name}}
-      el-menu-item(index="home_post" :route="{name: 'home_post'}") TIN TỨC
       el-menu-item(index="home_contact" :route="{name: 'home_contact'}") LIÊN HỆ
     el-menu.show-xs.menu-mobile(:default-active="$route.name" mode="vertical" :class="isShow? 'isShow' : ''"  background-color="#fff" text-color="#333" :router="true")
       el-menu-item(index="home" :route="{name: 'home'}") TRANH CHỦ
@@ -15,7 +14,6 @@
         template(slot="title") SẢN PHẨM
         el-menu-item(index="home_product" v-for="item in categories" :key="item.id" :route="{name: 'home_product', query: {category: item.name}}") {{item.name}}
       <!--el-menu-item(index="product_detail" :route="{name: 'product_detail', params: {id: 2}}") TIN TỨC-->
-      el-menu-item(index="home_post" :route="{name: 'home_post'}") TIN TỨC
       el-menu-item(index="home_contact" :route="{name: 'home_contact'}") LIÊN HỆ
 </template>
 

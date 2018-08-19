@@ -38,7 +38,7 @@ const store = new Vuex.Store({
     common,
     media,
     administrative,
-    updateOrders,
+    update_orders: updateOrders,
     favorite,
     cart,
     orders,

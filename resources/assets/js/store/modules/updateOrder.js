@@ -68,7 +68,7 @@ const updateOrder = {
       return state.list.map((id) => {
         const index = rootState.products.list.find(p => p === state.entities[id].product_id.toString());
         const p = rootState.products.entities[index];
-        const img = p && p.featured && `/${p.featured[0].directory}/${p.featured[0].filename}.${p.featured[0].extension}`;
+        const img = p && p.featured && p.featured[0] && `/${p.featured[0].directory}/${p.featured[0].filename}.${p.featured[0].extension}`;
         return p && {
           id,
           title: p.name,

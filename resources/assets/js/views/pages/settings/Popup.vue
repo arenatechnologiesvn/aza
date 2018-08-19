@@ -25,10 +25,10 @@
         el-form(v-model="settings")
           el-form-item(label="Chọn Font chữ")
             el-select(v-model="settings.font" placeholder="Times New Roman")
-              el-option(v-for="font in fonts" :label="font" :value="font")
+              el-option(v-for="font in fonts" :label="font" :value="font" :key="font")
           el-form-item(label="Chọn Size chữ")
             el-select(v-model="settings.size" placeholder="13")
-              el-option(v-for="size in sizes" :label="size" :value="size")
+              el-option(v-for="size in sizes" :label="size" :value="size" :key="size")
           el-form-item
             el-button(type="primary") Lưu
 </template>
