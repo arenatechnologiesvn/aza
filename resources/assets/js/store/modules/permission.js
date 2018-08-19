@@ -81,7 +81,7 @@ const permission = {
             commit('SET_ROUTERS', { asyncRouter });
           } else {
             const data = processRouter(res.data.permissions);
-            const menu = getMenuByRouter(data);
+            const menu = getMenuByRouter(data.sort((a, b) => a.lft - b.lft));
             asyncRouter.push({
               path: '/',
               component: Layout,

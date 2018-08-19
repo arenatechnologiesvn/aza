@@ -32,6 +32,9 @@
       el-col.body-item(:span="24" v-show="order.description && order.description.length > 0")
         strong SẢN PHẨM NGOÀI DANH MỤC:
         span {{order.description}}
+      el-col.body-item(:span="24" v-show="order.title && order.title.length > 0")
+        strong GHI CHÚ VÀ NHẬN XÉT:
+        span {{order.title}}
       el-col.body-item(:span="24" v-show="order.status.toString() === '2'")
         strong LÝ DO HỦY ĐƠN HÀNG:
         span {{order.approve_note}}
@@ -51,15 +54,8 @@
         el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
     div.total(v-if="order" v-show="order && order.status.toString() !== '2' ")
       div.item
-        strong TỔNG ĐƠN HÀNG:
-        span {{ currencyFormat(order.total_money) }} VNĐ
-      div.item
-        strong VAT:
-        span {{ currencyFormat(order.total_money * 0.1) }} VNĐ
-      div.item
         strong TỔNG TIỀN:
-        span {{ currencyFormat(+order.total_money + Number(+order.total_money * 0.1)) }} VNĐ
-
+        span {{ currencyFormat(order.total_money) }} VNĐ
     div.footer
       el-button-group(v-show="(order && order.status.toString() === '0') || (order && order.status.toString() === '3')")
         el-button(type="primary" @click="print")

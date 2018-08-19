@@ -41,7 +41,7 @@
         const products = this.data.map(item => ({
           id: item.id,
           title: item.name,
-          img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+          img: item.featured && item.featured[0] && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
           category: item.category ? item.category.name : 'Chưa xác định',
           price: item.price,
           discount: item.discount_price,
