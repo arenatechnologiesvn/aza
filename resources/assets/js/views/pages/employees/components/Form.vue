@@ -136,7 +136,7 @@
         }).then(res => {
           this.$router.push({name: 'employee_index', replace: true})
         }).catch(err => {
-          this.$message.error('Tạo mới khách hàng thất bại');
+          this.$message.error('Tạo mới nhân viên thất bại');
         })
       },
       handleSubmit () {
