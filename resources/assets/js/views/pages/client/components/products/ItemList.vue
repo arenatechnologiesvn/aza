@@ -1,34 +1,33 @@
 <template lang="pug">
   el-card.product-item(class="box-card")
     el-row.list-category(:gutter="30")
-      el-col(span="6")
+      el-col(:span="6")
         div.product-item__image
           div(v-if="product.added").label ĐÃ THÊM VÀO GIỎ HÀNG
           div(v-if="product.inventory <= 0").label.no HẾT HÀNG
           img(:src="product.img")
-      el-col(span="18")
+      el-col(:span="18")
         div.product-item__des
           div.product-item__title
             router-link(:to="`/products/${product.id}`") {{product.title}}
-          p {{product.description}}
-          div.product-item__description(style="color: black;height: 50px;")
-            div.product-item__control--left(v-if="product.discount")
-              div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}} / {{`${product.quantitative} ${product.unit}`}}
-              div(v-if="product.discount").product-item__price--discount
+          div(style="clear: both")
+            router-link(:to="{name: 'home_product', query: {category: product.category}}" style="font-size: 1.1em;color: #999;")
+              strong(style="color: #666; margin-right: 10px;") Danh mục:
+              template {{product.category}}
+          div.description
+            p {{product.description}}
+          div.product-item__description(style="color: black;height: 30px;")
+            strong(style="margin-right: 20px;") GIÁ BÁN:
+            span.product-item__control--left(v-if="product.discount")
+              span.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}} / {{`${product.quantitative} ${product.unit}`}}
+              span(v-if="product.discount").product-item__price--discount
                 span(style="text-decoration: line-through; margin-right: 10px;") ₫{{formatNumber(product.price)}}
                 span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
-            div(v-else)
-              div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}} / {{`${product.quantitative} ${product.unit}`}}
-            div(style="clear: both")
-              router-link(:to="{name: 'home_product', query: {category: product.category}}" style="font-size: 1.1em;color: #999;")
-                strong(style="color: #666; margin-right: 10px;") Danh mục:
-                template {{product.category}}
+            span(v-else)
+              span.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}} / {{`${product.quantitative} ${product.unit}`}}
           div.line
           div.product-item__control
-            div.control--left(style="float: left;")
-              span.score(v-for="item in 5" :key="item" :style="{color: item <= 5 ? '#F7CA51' : ''}")
-                svg-icon(icon-class="fa-solid star")
-            div.product-item__control--right
+            div.product-item__control--left
               el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
                 span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
                   svg-icon( icon-class="fa-solid heart")
@@ -38,6 +37,10 @@
               el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
                 span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
                   svg-icon(icon-class="fa-solid eraser")
+            div.product-item__control--right
+              <!--span.score(v-for="item in 5" :key="item" :style="{color: item <= 5 ? '#F7CA51' : ''}")-->
+                <!--svg-icon(icon-class="fa-solid star")-->
+
 </template>
 
 <script>
@@ -206,7 +209,24 @@
     text-overflow: ellipsis;
     text-transform: uppercase;
   }
-
+  $font-d-size: 14px;
+  $line-d-height: 1.3;
+  .description {
+    display: block; /* Fallback for non-webkit */
+    display: -webkit-box;
+    height: $font-d-size*$line-d-height*$lines-to-show; /* Fallback for non-webkit */
+    margin: 0 auto;
+    white-space: unset !important;
+    font-size: $font-d-size;
+    line-height: $line-d-height;
+    -webkit-line-clamp: $lines-to-show;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    p {
+      margin: 5px 0;
+    }
+  }
   .label {
     position: absolute;
     width: 100%;
@@ -229,10 +249,10 @@
       color: red;
     }
   }
-  .list-category .product-item__image {
+  .product-item__image {
     position: relative;
     img {
-      height: 150px;
+      height: 150px !important;
       width: 100%;
     }
   }
@@ -242,8 +262,8 @@
     text-overflow: ellipsis;
     max-width: 100%;
   }
-  .product-item__control--right {
-    float: right;
+  .product-item__control--left {
+    float: left;
     span {
       cursor: pointer;
       display: inline-block;

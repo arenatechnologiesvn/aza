@@ -21,6 +21,7 @@ class PermissionService extends BaseService
         'url_action',
         'icon',
         'path',
+        'lft',
         'redirect',
         'parent_id',
         'is_menu',
@@ -41,6 +42,7 @@ class PermissionService extends BaseService
                 $query->select($this->selectable);
             }])
             ->where('parent_id', null)
+            ->orderBy('lft', 'asc')
             ->get();
     }
     public function toDto($selectable = null){

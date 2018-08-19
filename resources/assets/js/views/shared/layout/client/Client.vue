@@ -6,6 +6,7 @@
       app-main
     div.footer__container
       asa-footer
+    popup
 </template>
 
 <script>
@@ -14,12 +15,14 @@
   import AsaFooter from './components/Footer'
   import {mapActions} from 'vuex'
   import '~/style/client.scss'
+  import Popup from './components/Popup'
   export default {
     name: 'ClientLayout',
     components: {
       AppMain,
       Navbar,
-      AsaFooter
+      AsaFooter,
+      Popup
     },
     watch: {
       $route: 'fetchData'
