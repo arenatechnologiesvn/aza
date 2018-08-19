@@ -210,12 +210,12 @@
     text-transform: uppercase;
   }
   $font-d-size: 14px;
-  $line-d-height: 1.3;
+  $line-d-height: 1.1;
   .description {
     display: block; /* Fallback for non-webkit */
     display: -webkit-box;
-    height: $font-d-size*$line-d-height*$lines-to-show; /* Fallback for non-webkit */
-    margin: 0 auto;
+    height: $font-d-size*$line-d-height*$lines-to-show + 5px; /* Fallback for non-webkit */
+    margin: 5px auto;
     white-space: unset !important;
     font-size: $font-d-size;
     line-height: $line-d-height;
