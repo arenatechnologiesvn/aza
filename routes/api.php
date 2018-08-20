@@ -26,6 +26,8 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::patch('settings/profile', 'Settings\ProfileController@update');
     Route::patch('settings/password', 'Settings\PasswordController@update');
 
+    Route::post('setting/{key}', 'SettingController@createPopup');
+    Route::get('setting/{key}', 'SettingController@getPopup');
     // Role and permission
     Route::resource('role', 'RoleController');
     Route::delete('roles/deletes', 'RoleController@deletes');

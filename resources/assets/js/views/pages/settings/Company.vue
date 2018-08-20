@@ -24,11 +24,12 @@
             el-form-item(label="Link Youtube")
               el-input(v-model="company.youtube" placeholder="https://www.youtube.com/")
             el-form-item(style="text-align: right;")
-              el-button(type="primary") Lưu thông tin
+              el-button(type="primary" @click="onSave") Lưu thông tin
               el-button Reset
 </template>
 
 <script>
+  import { get, update } from '~/api/setting'
   export default {
     name: 'CompanySetting',
     data () {
@@ -43,6 +44,20 @@
           email: '',
         }
       }
+    },
+    methods: {
+      onSave () {
+        update('company', {
+          company: this.company
+        }).then(res => this.company = res.data.value)
+      }
+    },
+    created () {
+      get('company').then(res => {
+        if(res.data) {
+          this.company = res.data.value
+        }
+      })
     }
   }
 </script>

@@ -6,7 +6,7 @@
       app-main
     div.footer__container
       asa-footer
-    popup
+    popup(:popup="popup")
 </template>
 
 <script>
@@ -26,6 +26,19 @@
     },
     watch: {
       $route: 'fetchData'
+    },
+    data () {
+      return {
+        popup: {
+          show: false,
+          title: '',
+          content: '',
+          discount: '',
+          url: '',
+          font: 'Times New Roman',
+          size: 12
+        }
+      }
     },
     methods: {
       ...mapActions('products', {
