@@ -7,7 +7,7 @@
     div
       .control__wrapper
         el-row
-          el-col(:span="24" style="text-align: center")
+          el-col(:span="20")
             el-date-picker(
               v-model="selectedDate"
               type="daterange"
@@ -19,6 +19,10 @@
               style="margin-right: 5px; min-width: 500px"
               size="small"
             )
+          el-col(:span="4" style="text-align: right")
+            el-button(type="success" size="small" @click="exportExcelFile" :disabled="!this.sellingProducts.length")
+              svg-icon(icon-class="fa-solid file-excel")
+              span.ml-5  Xuất Excel
       div.table__wrapper
         div.index__container
           div.table
@@ -26,12 +30,13 @@
               el-table-column(prop="num" label="STT" align="center" width="60")
                 template(slot-scope="scope")
                   span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
+              el-table-column(prop="product_code" label="MÃ SẢN PHẨM" sortable min-width="150")
               el-table-column(prop="product_name" label="TÊN SẢN PHẨM" sortable min-width="200")
               el-table-column(prop="quantity_total" label="SỐ LƯỢNG" sortable min-width="120")
               el-table-column(prop="product_quantitative" label="ĐỊNH LƯỢNG" sortable min-width="120")
                 template(slot-scope="scope")
                   span {{ scope.row.product_quantitative || '-' }}
-              el-table-column(prop="mass_total" label="TỔNG KHỐI LƯỢNG" sortable min-width="120")
+              el-table-column(prop="mass_total" label="TỔNG KHỐI LƯỢNG" sortable min-width="180")
                 template(slot-scope="scope")
                   span {{ scope.row.mass_total || '-' }}
               el-table-column(prop="revenue_total" label="TỔNG TIỀN (VND)" sortable min-width="200")
@@ -48,6 +53,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import excelExport from '~/utils/excel/export2Excel.js';
 import moment from 'moment';
 
 const DEDAULT_PAGE_SIZE = 10;
@@ -111,6 +117,26 @@ export default {
 
     sizeChange(newPageSize) {
       this.pageSize = newPageSize;
+    },
+
+    exportExcelFile() {
+      const exportData = this.sellingProducts.map((item, index) => {
+        return {
+          "STT": index + 1,
+          "MÃ SẢN PHẨM": item.product_code,
+          "TÊN SẢN PHẨM": item.product_name,
+          "SỐ LƯỢNG": item.quantity_total,
+          "ĐỊNH LƯỢNG": item.product_quantitative || '-',
+          "TỔNG KHỐI LƯỢNG": item.mass_total || '-',
+          "TỔNG TIỀN (VND)": Number(item.revenue_total).toLocaleString('de-DE')
+        };
+      });
+
+      excelExport(`${this.selectedDate[0]}_DSSP_XUAT_BAN`, exportData).then(() => {
+        // Do nothing
+      }).catch(() => {
+        // Do nothing
+      });
     },
 
     ...mapActions({

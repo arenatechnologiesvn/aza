@@ -1,12 +1,11 @@
 import { json2excel } from 'js2excel';
-import moment from 'moment';
 
-export default function excelExport (exportData) {
+export default function excelExport (name, exportData) {
   return new Promise((resolve, reject) => {
     try {
       json2excel({
         data: exportData,
-        name: 'DSSP_' + moment().format('ssmmhh_DDMMYYYY')
+        name: name
       });
       resolve();
     } catch (error) {

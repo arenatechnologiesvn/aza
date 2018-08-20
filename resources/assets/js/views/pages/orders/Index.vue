@@ -36,9 +36,9 @@
                 el-dropdown-item(v-if="status === 1 || status === 3" command="CANCEL" style="color: red")
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
-            //- el-button(type="success" size="small" @click="")
-            //-   svg-icon(icon-class="fa-solid file-excel")
-            //-   span.ml-5  Xuất Excel
+            el-button(type="success" size="small" @click="exportExcelFile" :disabled="status === -1")
+              svg-icon(icon-class="fa-solid file-excel")
+              span.ml-5  Xuất Excel
           el-col(:span="6" style="text-align: right")
             el-radio-group(size="small" v-model="delivery_range")
               el-radio-button(label="1") Hôm nay
@@ -105,6 +105,8 @@
   import { mapGetters, mapActions} from 'vuex'
   import { currencyFormat } from '~/utils/util'
   import OrderDetail from '../../pages/client/components/OrderDetail/index'
+  import excelExport from '~/utils/excel/export2Excel.js'
+  import moment from 'moment'
 
   const COMPLETE_STATUS = 0;
   const CONFIRM_STATUS = 1;
@@ -339,6 +341,25 @@
           message: message,
           type: 'error'
         })
+      },
+      exportExcelFile() {
+        const exportData = this.orders.map((item, index) => {
+          return {
+            "STT": index + 1,
+            "MÃ ĐƠN HÀNG": item.code.indexOf('#') > -1 ? item.code.replace('#', '') : item.code,
+            "MÃ KH": item.customer.code,
+            "TÊN KH": item.customer.user.full_name,
+            "TỔNG TIỀN (VNĐ)": currencyFormat(item.total),
+            "NGÀY ĐẶT HÀNG": this.formatDate(item.date),
+            "NGÀY GIAO HÀNG": this.formatDate(item.delivery),
+            "GIỜ GIAO HÀNG": item.delivery_type
+          };
+        });
+        excelExport(`DSDH_${moment().format('DDMMYYYY_hhmmss')}`, exportData).then(() => {
+          // Do nothing
+        }).catch(() => {
+          // Do nothing
+        });
       }
     },
     data () {
