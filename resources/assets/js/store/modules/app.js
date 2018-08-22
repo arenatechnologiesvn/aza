@@ -1,6 +1,5 @@
 import Cookies from 'js-cookie'
-import { all } from '~/api/setting';
-import Vue from 'vue';
+
 export const getBreadCrumbList = (routeMetched) => {
   let res = routeMetched.map(item => {
     const obj = {
@@ -49,11 +48,6 @@ const app = {
     },
     TOGGLE_DEVICE: (state, device) => {
       state.device = device
-    },
-    SET_SETTING: (state, data) => {
-      Object.keys(data).forEach(key => {
-        Vue.set(state.settings, key, data[key]);
-      });
     }
   },
   actions: {
@@ -65,15 +59,6 @@ const app = {
     },
     ToggleDevice ({ commit }, device) {
       commit('TOGGLE_DEVICE', device)
-    },
-    Settings ({ commit }) {
-      return new Promise((resolve, reject) => {
-        all().then(res => {
-          console.log(res)
-          commit('SET_SETTING', res.data);
-          resolve(res.data);
-        }).catch(err => reject(err));
-      });
     }
   }
 }

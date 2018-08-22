@@ -64,7 +64,7 @@
         this.fetchProducts();
       },
       fetchSettings () {
-        this.$store.dispatch('Settings').then(data => {
+        this.$store.dispatch('user/Settings').then(data => {
           Object.assign(this.popup, data.popup)
           if(this.popup.show) {
             this.$refs['popup'].fShow()
