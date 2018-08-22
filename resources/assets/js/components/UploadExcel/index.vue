@@ -2,8 +2,8 @@
   <div>
     <input id="excel-upload-input" ref="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
     <div id="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
-      Kéo thả file Exel ở đây hoặc
-      <el-button :loading="loading" style="margin-left:16px;" size="mini" type="primary" @click="handleUpload">Mở thư mục</el-button>
+      Kéo thả file Excel ở đây hoặc
+      <el-button :loading="loading" style="margin-left:16px;" size="mini" type="success" @click="handleUpload">Mở thư mục</el-button>
     </div>
   </div>
 </template>

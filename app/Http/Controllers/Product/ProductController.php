@@ -8,6 +8,7 @@ use App\Http\Requests\Product\StoreProduct;
 use App\Service\ProductService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -53,6 +54,18 @@ class ProductController extends Controller
 
         $product = $this->service->storeProduct($request->all());
         return $this->api_success_response(['data' => $product]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkStore(Request $request)
+    {
+        $this->service->bulkStoreProduct($request->all());
+        return $this->api_success_response(['data' => true]);
     }
 
     /**

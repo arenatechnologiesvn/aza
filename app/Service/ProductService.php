@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\Helper\RoleConstant;
 use App\Product;
+use App\Category;
+use App\Provider;
 use App\Order;
 use App\ProductOrder;
 use App\Service\MediaService;
@@ -99,6 +101,48 @@ class ProductService extends BaseService
 
             if (isset($params['preview_images'])) {
                 $this->mediaService->syncMedia($product, $params['preview_images'], 'preview');
+            }
+
+            \DB::commit();
+            return $product;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function bulkStoreProduct($params)
+    {
+        try {
+            \DB::beginTransaction();
+
+            foreach ($params as $data) {
+                if (!$this->isValidBulkStore($data)) {
+                    throw new \Exception('Dữ liệu tải lên không hợp lệ. Làm ơn kiểm tra lại');
+                }
+
+                if ($product = $this->model->where('product_code', '=', $data['product_code'])->first()) {
+                    throw new \Exception('Sản phẩm #' . $product->product_code . ' đã tồn tại');
+                }
+
+                if ($data['category_code'] && !$category = Category::where('code', '=', $data['category_code'])->first()) {
+                    throw new \Exception('Danh mục #' . $data['category_code'] . ' không tồn tại');
+                }
+
+                if ($data['provider_code'] && !$provider = Provider::where('code', '=', $data['provider_code'])->first()) {
+                    throw new \Exception('Nhà cung cấp #' . $data['provider_code'] . ' không tồn tại');
+                }
+
+                $this->model::create([
+                    'product_code' => $data['product_code'],
+                    'name' => $data['name'],
+                    'price' => $data['price'],
+                    'unit' => $data['unit'],
+                    'quantitative' => $data['quantitative'],
+                    'category_id' => isset($category) ? $category['id'] : null,
+                    'provider_id' => isset($provider) ? $provider['id'] : null,
+                    'note' => $data['note']
+                ]);
             }
 
             \DB::commit();
@@ -225,5 +269,16 @@ class ProductService extends BaseService
             \DB::rollBack();
             throw $e;
         }
+    }
+
+    private function isValidBulkStore($data) {
+        return isset($data['product_code']) &&
+            isset($data['name']) &&
+            isset($data['price']) &&
+            isset($data['unit']) &&
+            isset($data['quantitative']) &&
+            (isset($data['category_code']) || array_key_exists('category_code', $data)) &&
+            (isset($data['provider_code']) || array_key_exists('provider_code', $data)) &&
+            (isset($data['note']) || array_key_exists('note', $data));
     }
 }

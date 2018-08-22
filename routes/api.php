@@ -66,6 +66,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
 
     // Products
     Route::resource('products', 'Product\ProductController');
+    Route::post('products/bulk_create','Product\ProductController@bulkStore');
     Route::get('products/category/{id}','Product\ProductController@getByCategory');
 
     // Report
