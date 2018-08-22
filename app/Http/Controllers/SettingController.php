@@ -20,7 +20,13 @@ class SettingController extends Controller
     {
         $this->service = $service;
     }
-
+    public function index () {
+        try {
+            return $this->api_success_response(['data' => $this->service->all()]) ;
+        } catch(\Exception $e){
+            return $this->api_error_response($e);
+        }
+    }
     public function getPopup($key) {
         try {
             return $this->api_success_response(['data' => $this->service->action('get', $key)]) ;

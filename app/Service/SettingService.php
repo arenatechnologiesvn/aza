@@ -19,7 +19,14 @@ class SettingService
     {
         $this->model = $model;
     }
-
+    public function all () {
+        $settings = $this->model->get();
+        $result = [];
+        foreach ($settings as $setting){
+            $result[$setting->key] = json_decode($setting->value);
+        }
+        return $result;
+    }
     public function action($action, $key, $data = null){
         $value = null;
         if (isset($data) && isset($data[$key])){

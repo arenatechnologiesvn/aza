@@ -23,11 +23,14 @@
     },
     props: {
       popup: {
-        show: false,
-        title: '',
-        content: '',
-        discount: '',
-        url: ''
+        type: Object,
+        default: () => ({
+          show: false,
+          title: '',
+          content: '',
+          discount: '',
+          url: ''
+        })
       }
     },
     methods: {
@@ -36,11 +39,6 @@
       },
       fShow () {
         this.pShow = true
-      }
-    },
-    mounted () {
-      if (this.show) {
-        setTimeout(() => this.pShow = true, 1000)
       }
     }
   }

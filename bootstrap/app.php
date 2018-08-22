@@ -26,6 +26,7 @@ $app = new Illuminate\Foundation\Application(
 |
 */
 
+
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     App\Http\Kernel::class
@@ -52,4 +53,6 @@ $app->singleton(
 |
 */
 
+//$app->configure('dompdf');
+//$app->register(\Barryvdh\DomPDF\ServiceProvider::class);
 return $app;

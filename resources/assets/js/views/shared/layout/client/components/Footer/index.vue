@@ -1,7 +1,8 @@
 <template lang="pug">
   div.footer
-    footer-info.container
-    div.line
+
+    footer-info.container()
+    div.line {{company()}}
     copyright.container
 </template>
 
@@ -9,11 +10,21 @@
   import Copyright from './Social'
   import FooterInfo from './FooterInfo'
   import './footer.scss'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'Footer',
     components: {
       Copyright,
       FooterInfo
+    },
+    computed: {
+      ...mapGetters(['settings'])
+    },
+    methods: {
+      company () {
+        console.log(this.settings)
+        return this.settings && this.settings.company
+      }
     }
   }
 </script>
