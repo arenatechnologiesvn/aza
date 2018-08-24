@@ -16,15 +16,18 @@
           el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
     .control-wrapper
       el-row
-        el-col(:span="12")
+        el-col(:span="8")
           el-dropdown(split-button type="primary" size="small")
             span Đã chọn {{ multipleSelection.length }} sản phẩm
             el-dropdown-menu(slot="dropdown")
               el-dropdown-item Xóa
-        el-col(:span="12" style="text-align: right")
+        el-col(:span="16" style="text-align: right")
           el-button(type="success" size="small" @click="exportExcelFile" :disabled="!this.tableData.length")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
+          el-button(type="success" size="small" @click="redirectToImportPage")
+            svg-icon(icon-class="fa-solid upload")
+            span.ml-5  Tải lên
           el-button(type="primary" size="small" @click="redirectToAddingPage")
             svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới
@@ -36,7 +39,7 @@
             el-table-column(prop="featured_image" align="center" width="60")
               template(slot-scope="scope")
                 img(:src="featuredImageUrl(scope.row)" :width="40" :height="40")
-            el-table-column(prop="product_code" label="MÃ SẢN PHẨM" sortable min-width="100")
+            el-table-column(prop="product_code" label="MÃ SẢN PHẨM" sortable min-width="180")
             el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable min-width="200")
             el-table-column(prop="price" label="GIÁ (VND)" align="right" sortable min-width="150")
               template(slot-scope="scope")
@@ -73,6 +76,7 @@ import EditPanel from './EditPanel';
 import MediaManagerModal from '~/components/MediaManager/modal';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
 import excelExport from '~/utils/excel/export2Excel.js';
+import moment from 'moment';
 
 const DEDAULT_PAGE_SIZE = 10;
 
@@ -189,6 +193,10 @@ export default {
       this.$router.push({path: '/products/create'});
     },
 
+    redirectToImportPage() {
+      this.$router.push({path: '/products/import'});
+    },
+
     deleteOneProduct(productId) {
       this.$confirm('Bạn có chắc chắn muốn xóa sản phẩm này?', 'Xác nhận', {
         confirmButtonText: 'OK',
@@ -219,7 +227,7 @@ export default {
           "NHÀ CUNG CẤP": item.provider && item.provider.name ? item.provider.name : '-'
         };
       });
-      excelExport(exportData).then(() => {
+      excelExport(`DSSP_${moment().format('DDMMYYYY_hhmmss')}`, exportData).then(() => {
         // Do nothing
       }).catch(() => {
         // Do nothing

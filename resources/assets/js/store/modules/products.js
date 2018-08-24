@@ -1,6 +1,11 @@
 import createCrudModule from 'vuex-crud';
 import defaultClient from '~/utils/request';
-import { Message } from 'element-ui';
+import { Notification } from 'element-ui';
+import { bulkCreate } from '~/api/product';
+
+const notifyWrap = (message, type) => {
+  Notification({ title: 'Thông báo', message, type });
+};
 
 const form = {
   state: {
@@ -31,6 +36,19 @@ const form = {
   actions: {
     setFormProduct ({ commit }, product) {
       commit('SET_FORM_PRODUCT', product);
+    },
+
+    bulkCreate ({ commit }, products) {
+      return new Promise((resolve, reject) => {
+        bulkCreate(products).then(response => {
+          notifyWrap('Tải lên sản phẩm thành công', 'success');
+          resolve(response);
+        }).catch(error => {
+          const message = error && error.message;
+          notifyWrap(message || 'Tải lên sản phẩm thất bại', 'error');
+          reject(error);
+        });
+      });
     }
   }
 };
@@ -41,24 +59,24 @@ export default createCrudModule({
   client: defaultClient,
   ...form,
   onFetchListError: () => {
-    Message.error('Không thể tải xuống danh sách sản phẩm');
+    notifyWrap('Không thể tải xuống danh sách sản phẩm', 'error');
   },
   onCreateSuccess: () => {
-    Message.success('Tạo sản phẩm thành công');
+    notifyWrap('Tạo sản phẩm thành công', 'success');
   },
   onCreateError: () => {
-    Message.error('Tạo sản phẩm thất bại');
+    notifyWrap('Tạo sản phẩm thất bại', 'error');
   },
   onUpdateSuccess: () => {
-    Message.success('Cập nhật sản phẩm thành công');
+    notifyWrap('Cập nhật sản phẩm thành công', 'success');
   },
   onUpdateError: () => {
-    Message.error('Cập nhật sản phẩm thất bại');
+    notifyWrap('Cập nhật sản phẩm thất bại', 'error');
   },
   onDestroySuccess: () => {
-    Message.success('Đã xóa sản phẩm');
+    notifyWrap('Đã xóa sản phẩm', 'success');
   },
   onDestroyError: () => {
-    Message.error('Xóa sản phẩm thất bại');
+    notifyWrap('Xóa sản phẩm thất bại', 'error');
   }
 });

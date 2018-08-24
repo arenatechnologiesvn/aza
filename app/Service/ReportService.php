@@ -229,6 +229,7 @@ class ReportService
         return DB::table('orders')
             ->select(
                 'order_product.product_id',
+                'products.product_code as product_code',
                 'products.name as product_name',
                 'products.quantitative as product_quantitative',
                 DB::raw('SUM(order_product.quantity * products.quantitative) as mass_total'),
@@ -242,7 +243,7 @@ class ReportService
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
             ])
-            ->groupBy('order_product.product_id', 'product_name', 'product_quantitative')
+            ->groupBy('order_product.product_id', 'product_code', 'product_name', 'product_quantitative')
             ->get();
     }
 
