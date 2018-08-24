@@ -50,6 +50,12 @@
         update('company', {
           company: this.company
         }).then(res => this.company = res.data.value)
+          .then(() => this.$notify(
+            {
+              title: 'Thông báo',
+              message: 'Đã cập nhật thành công thông tin',
+              type: 'success'
+            }))
       }
     },
     created () {

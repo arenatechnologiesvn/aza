@@ -69,6 +69,12 @@
     methods: {
       savePopup () {
         update('popup', {popup: this.popup}).then(res=> this.popup = res.data.value )
+          .then(() => this.$notify(
+            {
+              title: 'Thông báo',
+              message: 'Đã cập nhật thành công thông tin',
+              type: 'success'
+            }))
       },
       showPopup () {
         this.$refs['myPopup'].fShow()

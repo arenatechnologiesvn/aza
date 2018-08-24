@@ -128,7 +128,12 @@
         return day + '-' + month + '-' + year
       },
       print (id) {
-        this.printBill(id).then(res => console.log(res))
+        this.printBill(id).then(res => {
+          let myWindow = window.open('', 'my div', 'height=400,width=600');
+          myWindow.document.write(res.data);
+          myWindow.print();
+          myWindow.close();
+        })
         // request({
         //   url: `/api/print/${id}`,
         //   method: 'get'

@@ -29,7 +29,7 @@
             el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
               span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
                 svg-icon( icon-class="fa-solid heart")
-            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
+            el-tooltip(effect="dark" v-if="enableCart" content="Thêm vào giỏ hàng" placement="top")
               span.shop(@click="addToCart(product)")
                 svg-icon(icon-class="fa-solid cart-plus")
             el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
@@ -47,6 +47,22 @@
         type: Object,
         default: () => {
         }
+      }
+    },
+    computed: {
+      enableCart () {
+        const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+        if(apply) {
+          const start = apply.start
+          const end = apply.end
+
+          let now = new Date
+          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
+          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
+          const time = hour+ ':'+ minute
+          if (time > start && time < end) return true;
+        }
+        return false;
       }
     },
     methods: {

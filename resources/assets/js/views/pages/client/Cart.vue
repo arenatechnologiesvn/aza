@@ -241,9 +241,24 @@
            this.form.delivery_address = item.zone
          }
         } )
+      },
+      enableCart () {
+        const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+        if(apply) {
+          const start = apply.start
+          const end = apply.end
+
+          let now = new Date
+          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
+          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
+          const time = hour+ ':'+ minute
+          if (time > start && time < end) return true;
+        }
+        return false;
       }
     },
     mounted () {
+      if (!this.enableCart()) this.$router.push({path: '/'});
       this.fetchShops()
     }
   }

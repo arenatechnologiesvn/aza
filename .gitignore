@@ -19,3 +19,4 @@ phpunit.dusk.xml
 composer.lock
 package-lock.json
 /uploads
+.env

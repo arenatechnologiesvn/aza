@@ -2,7 +2,7 @@
   div.footer
 
     footer-info.container()
-    div.line {{company()}}
+    div.line
     copyright.container
 </template>
 

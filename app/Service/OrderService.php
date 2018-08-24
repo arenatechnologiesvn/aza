@@ -91,7 +91,12 @@ class OrderService extends BaseService
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
-                }, 'featured']);
+                },'featured' => function ($q3) {
+                    $q3->select([
+                        'id',
+                        DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                    ]);
+                }]);
             },'shop', 'customer' => function($q) {
                 $q->with(['user']);
             }])->where('customer_id', '=', Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id);
@@ -104,7 +109,7 @@ class OrderService extends BaseService
                     'price',
                     'unit',
                     'quantitative',
-                    'provider_id'
+                    'provider_id',
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
                 }, 'featured' => function ($q3) {

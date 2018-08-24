@@ -12,7 +12,8 @@ namespace App\Http\Controllers;
 use App\Service\OrderService;
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\App;
-
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\Printer;
 class PrintController extends Controller
 {
     private $pdf;
@@ -31,8 +32,17 @@ class PrintController extends Controller
 //        return $this->api_success_response(['data' => 'd' ]);
 //        return view("pdf.bill")->with("order", $this->service->getById($id));
 //        return App::view('pdf.bill', ['order' =>]);
-        $order = $this->pdf->loadView('pdf.bill', ['order' =>$this->service->getById($id)]);
-        return $order->stream();
+//        $order = $this->pdf->loadView('pdf.bill', ['order' =>$this->service->getById($id)]);
+//        return $order->stream();
+        try {
+            $connector = new FilePrintConnector("php://stdout");
+            $printer = new Printer($connector);
+            $printer -> text("Hello World!\n");
+            $printer -> cut();
+            $printer -> close();
+            return $this->api_success_response(['data' => view('pdf.bill', ['order' =>$this->service->getById($id)])->render()]) ;
+        } catch (\Exception $e) {
+        }
 //        return $order->download('bill.pdf');
     }
 }

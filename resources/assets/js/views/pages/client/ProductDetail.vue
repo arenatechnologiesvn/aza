@@ -5,7 +5,10 @@
       div.product-detail__content
         el-row(:gutter="20")
           el-col(:xs="24" :sm="8" :md="8" :lg="8" :xl="8")
-            preview-image(:images="product.preview_images")
+            div(v-if="product && product.preview_images && product.preview_images.length > 0")
+              preview-image(:images="product.preview_images")
+            div(v-else)
+              preview-image
           el-col(:xs="24" :sm="16" :md="16" :lg="16" :xl="16")
             el-row.product-detail__title(type="flex")
               el-col(:span="24").left
@@ -76,7 +79,7 @@
         return item ? {
           id: item.id,
           title: item.name,
-          img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+          img: item.featured  && item.featured[0] && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
           category: item.category ? item.category.name : 'Chưa xác định',
           preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: `/${p.directory}/${p.filename}.${p.extension}`})): [],
           price: item.price,
@@ -95,7 +98,7 @@
           .map(item => ({
             id: item.id,
             title: item.name,
-            img: item.featured && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+            img: item.featured && item.featured[0] && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
             preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: `/${p.directory}/${p.filename}.${p.extension}`})): [],
             category: item.category ? item.category.name : 'Chưa xác định',
             price: item.price,

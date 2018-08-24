@@ -1,6 +1,19 @@
 <template lang="pug">
   div.footer-info__container
     el-row(:gutter="20")
+      el-col(:md="6" :sm="12" :xs="12" :lg="6" :xl="6" v-if="company")
+        info-item(title="Liên hệ")
+          template(slot="footer-content")
+            ul.footer-info__content
+              li
+                strong ĐC:
+                span {{company.address}}
+              li
+                strong ĐT:
+                span {{company.phone}} - {{company.mobile}}
+              li
+                strong Email:
+                span {{company.email}}
       el-col(:md="6" :sm="12" :xs="12" :lg="6" :xl="6" v-for="item in infos" :key="item.title")
         info-item(:title="item.title")
           template(slot="footer-content")
@@ -18,23 +31,6 @@
       infos: {
         type: Array,
         default: () => [
-          {
-            title: 'LIÊN HỆ',
-            contents: [
-              {
-                label: 'ĐC:',
-                content: '686/22/11/ Nguyễn Đình Chiểu, Phường 11, QUận 3, TPHCM'
-              },
-              {
-                label: 'DT:',
-                content: '0987.346.126 - 0988.347.128'
-              },
-              {
-                label: 'Email:',
-                content: 'info@azavn.com'
-              }
-            ]
-          },
           {
             title: 'VỀ AZA',
             contents: [
@@ -91,6 +87,11 @@
             ]
           }
         ]
+      }
+    },
+    computed: {
+      company () {
+        return this.$store.getters.settings.company
       }
     },
     components: {
