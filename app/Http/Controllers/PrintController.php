@@ -14,11 +14,9 @@ use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
 class PrintController extends Controller
 {
-    private $pdf;
     private $service;
-    public function __construct(PDF $pdf, OrderService $service)
+    public function __construct(OrderService $service)
     {
-        $this->pdf = $pdf;
         $this->service = $service;
     }
 
