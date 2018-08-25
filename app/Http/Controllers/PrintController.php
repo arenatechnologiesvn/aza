@@ -10,8 +10,6 @@ namespace App\Http\Controllers;
 
 
 use App\Service\OrderService;
-use Barryvdh\DomPDF\PDF;
-use Illuminate\Support\Facades\App;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
 class PrintController extends Controller
