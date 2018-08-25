@@ -58,18 +58,16 @@
         span {{ currencyFormat(order.total_money) }} VNĐ
     div.footer
       el-button-group(v-show="(order && order.status.toString() === '0') || (order && order.status.toString() === '3')")
-        el-button(type="primary" @click="print")
+        el-button(type="primary" )
           svg-icon(icon-class="fa-solid print")
-          span Xuất hóa đơn
+          span(@click="print(order.id)") Xuất hóa đơn
 </template>
 
 <script>
   import { mapActions } from 'vuex'
   import { currencyFormat } from '~/utils/util'
-  import { Printd } from 'printd'
   import dummyImage from '~/assets/login_images/dummy-image.jpg'
 
-  const d = new Printd();
   const ORDER_STATUS = [
     { status: 'ĐÃ HOÀN THÀNH', color: 'green' },
     { status: 'CHỜ XÁC NHẬN', color: '#E6A23C' },
@@ -109,7 +107,8 @@
     },
     methods: {
       ...mapActions('orders', {
-        fetchOrder: 'fetchSingle'
+        fetchOrder: 'fetchSingle',
+        printBill: 'bill'
       }),
       detail (id) {
         this.fetchOrder({id}).then(res => {
@@ -128,62 +127,23 @@
         const year = date.getFullYear()
         return day + '-' + month + '-' + year
       },
-      print () {
-        console.log(this.$el)
-        d.print( this.$el , `
-          body, .el-dialog {
-            width: 100% !important;
-            font-size: 13px;
-          }
-           .el-dialog {
-             margin-top: 0 !important;
-           }
-          .el-dialog__header {
-            display: none;
-          }
-          .el-dialog__body {
-            margin: 0;
-            padding: 5px;
-            width: 100%;
-          }
-          .el-dialog__body h4 {
-            margin: 0;
-          }
-          .body-item {
-            padding: 10px;
-          }
-          .body-title {
-           text-align: center;
-          }
-          button, svg {
-            display: none;
-          }
-          table, td, th {
-            border: 1px solid #eee;
-            padding: 5px;
-          }
-          .status, .el-dialog__header {
-            display: none;
-          }
-          .table-title, h5 {
-            font-size: 1.1em;
-            text-align: left !important;
-            display: block;
-            width: 100%;
-            float: left;
-            margin-left: 0 !important;
-            font-weight: bolder;
-          }
-          .content {
-            text-align: left;
-            margin-top: 10px;
-            margin-bottom: 0;
-          }
-          .total {
-            float: right;
-            margin-top: 10px;
-          }
-        `)
+      print (id) {
+        this.printBill(id).then(res => {
+          let myWindow = window.open('', 'my div', 'height=400,width=600');
+          myWindow.document.write(res.data);
+          myWindow.print();
+          myWindow.close();
+        })
+        // request({
+        //   url: `/api/print/${id}`,
+        //   method: 'get'
+        // }).then(res => {
+        //   let mywindow = window.open('', 'my div', 'height=400,width=600');
+        //   console.log(res)
+        //   mywindow.document.write(res);
+        //   mywindow.print();
+        //   mywindow.close();
+        // })
       }
     }
   }

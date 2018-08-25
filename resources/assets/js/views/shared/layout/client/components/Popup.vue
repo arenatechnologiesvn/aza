@@ -1,16 +1,14 @@
 <template lang="pug">
-  el-dialog.popup-dialog(width="50%" center :visible.sync="show" lock-scroll :close-on-press-escape="false" :close-on-click-modal="false" )
+  el-dialog.popup-dialog(width="50%" center :visible.sync="pShow" lock-scroll :close-on-press-escape="false" :close-on-click-modal="false" )
     div.popup
       div.popup--left
         h4.popup--title
-          span CHƯƠNG TRÌNH
-          br
-          span KHUYỄN MÃI
+          span {{popup.title}}
         div
-          span.popup--discount -40
+          span.popup--discount -{{popup.discount}}
           span.popup--percent %
         div
-          span.popup--product CỦ CÀI TÍM
+          span.popup--product {{popup.content}}
       div.popup--right(style="min-height: 200px;")
         span.close(@click="onClose") X
 </template>
@@ -20,16 +18,28 @@
     name: 'Popup',
     data () {
       return {
-        show: false
+        pShow: false
+      }
+    },
+    props: {
+      popup: {
+        type: Object,
+        default: () => ({
+          show: false,
+          title: '',
+          content: '',
+          discount: '',
+          url: ''
+        })
       }
     },
     methods: {
       onClose (){
-        this.show = false
+        this.pShow = false
+      },
+      fShow () {
+        this.pShow = true
       }
-    },
-    created () {
-      setTimeout(() => this.show = true, 1000)
     }
   }
 </script>

@@ -34,9 +34,11 @@ class OrderService extends BaseService
         'total_money',
         'shop_id'
     ];
-    public function __construct(Order $model)
+    private $setting;
+    public function __construct(Order $model, SettingService $service)
     {
         $this->model = $model;
+        $this->setting = $service;
         parent::__construct($model);
     }
 
@@ -67,6 +69,35 @@ class OrderService extends BaseService
 
     // }
 
+    public function create(array $data)
+    {
+        try {
+            DB::beginTransaction();
+            if (method_exists($this, 'beforeCreate')) {
+                $data = $this->beforeCreate($data);
+            }
+            $n = $this->setting->action('get', 'apply');
+            $n = json_decode($n, true)['value'];
+            if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
+                $saved = $this->model->create($data);
+            }
+            if(method_exists($this, 'afterSave')) {
+                $this->afterSave($saved, $data, false);
+            }
+            DB::commit();
+            return $this->getById($saved->id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+    private function timeFormat() {
+        $now = now();
+        $h = $now->hour;
+        $minute = $now->minute;
+        return $h.":".$minute;
+    }
+
     public function afterSave($order, $data, $update = false) {
         if(!empty($data['product'])) {
             if ($update) {
@@ -91,7 +122,12 @@ class OrderService extends BaseService
                     'provider_id'
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
-                }, 'featured']);
+                },'featured' => function ($q3) {
+                    $q3->select([
+                        'id',
+                        DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                    ]);
+                }]);
             },'shop', 'customer' => function($q) {
                 $q->with(['user']);
             }])->where('customer_id', '=', Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id);
@@ -104,7 +140,7 @@ class OrderService extends BaseService
                     'price',
                     'unit',
                     'quantitative',
-                    'provider_id'
+                    'provider_id',
                 ])->with(['provider'=> function ($q2) {
                     $q2->select(['id', 'name']);
                 }, 'featured' => function ($q3) {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import store from '../store';
 import { getToken } from '~/utils/auth';
-import { MessageBox } from 'element-ui';
+// import { MessageBox } from 'element-ui';
 
 const TIME_1_SECOND = 1000;
 const API_SERVICE_TIMEOUT = 15 * TIME_1_SECOND;
@@ -20,7 +20,7 @@ const service = axios.create({
 service.interceptors.request.use((config) => {
   if (store.getters.token) {
     config.headers.common['Authorization'] = `Bearer ${getToken()}`;
-    config.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
+    // config.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
   }
   return config;
 }, (error) => {
@@ -34,21 +34,24 @@ service.interceptors.response.use((response) => {
   if (responseData.success) return responseData.data;
   if ([TOKEN_INVALID_CODE, TOKEN_ABSENT_CODE].includes(responseData.error) ||
     (responseData.error === TOKEN_EXPIRED_CODE && store.getters.token)) {
-    MessageBox.confirm(
-      'Bạn đã bị đăng xuất, bạn có thể nhấn Hủy để ở lại trang này, hoặc đăng nhập lại',
-      'Xác nhận đăng xuất',
-      {
-        confirmButtonText: 'Đăng nhập lại',
-        cancelButtonText: 'Hủy',
-        type: 'warning'
-      }
-    ).then(() => {
-      store.dispatch('user/FedLogOut').then(() => {
-        location.reload(); // To re-instantiate the vue-router object Avoid bugs
-      });
-    }).catch(() => {
-      // Do nothing
+    store.dispatch('user/FedLogOut').then(() => {
+      location.reload(); // To re-instantiate the vue-router object Avoid bugs
     });
+    // MessageBox.confirm(
+    //   'Bạn đã bị đăng xuất, bạn có thể nhấn Hủy để ở lại trang này, hoặc đăng nhập lại',
+    //   'Xác nhận đăng xuất',
+    //   {
+    //     confirmButtonText: 'Đăng nhập lại',
+    //     cancelButtonText: 'Hủy',
+    //     type: 'warning'
+    //   }
+    // ).then(() => {
+    //   store.dispatch('user/FedLogOut').then(() => {
+    //     location.reload(); // To re-instantiate the vue-router object Avoid bugs
+    //   });
+    // }).catch(() => {
+    //   // Do nothing
+    // });
   }
   return Promise.reject(responseData.message);
 }, (error) => {

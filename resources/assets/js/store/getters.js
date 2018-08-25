@@ -8,7 +8,8 @@ const getters = {
   isAdmin: state => state.user && state.user.roles && state.user.roles === 'Admin',
   user_info: state => state.user.user_info,
   permission_routers: state => state.permission.routers,
-  addRouters: state => state.permission.addRouters
+  addRouters: state => state.permission.addRouters,
+  settings: state => state.user.settings
 };
 
 export default getters;

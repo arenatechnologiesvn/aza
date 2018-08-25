@@ -2,6 +2,8 @@ import { login, logout, getInfo } from '~/api/login';
 import { update } from '~/api/user';
 import { getToken, setToken, removeToken } from '~/utils/auth';
 import dummyImage from '~/assets/login_images/dummy-avatar.png';
+import Vue from 'vue';
+import { all } from '~/api/setting';
 
 const user = {
   namespaced: true,
@@ -11,7 +13,8 @@ const user = {
     name: '',
     avatar: dummyImage,
     roles: {},
-    user_info: {}
+    user_info: {},
+    settings: {}
   },
 
   mutations: {
@@ -29,10 +32,24 @@ const user = {
     },
     SET_USER_INFO (state, info) {
       state.user_info = info;
+    },
+    SET_SETTING: (state, data) => {
+      Object.keys(data).forEach(key => {
+        Vue.set(state.settings, key, data[key]);
+      });
     }
   },
 
   actions: {
+    Settings ({ commit }) {
+      return new Promise((resolve, reject) => {
+        all().then(res => {
+          console.log(res)
+          commit('SET_SETTING', res.data);
+          resolve(res.data);
+        }).catch(err => reject(err));
+      });
+    },
     Login ({ commit }, userInfo) {
       const email = userInfo.email.trim();
       return new Promise((resolve, reject) => {
