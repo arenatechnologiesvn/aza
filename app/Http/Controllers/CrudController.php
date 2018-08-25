@@ -61,7 +61,6 @@ abstract class CrudController extends Controller
         } catch(\Exception $e) {
             return $this->api_error_response($e);
         }
-
     }
 
     /**

@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\Service\OrderService;
+use App\Service\SettingService;
 use Illuminate\Http\Request;
 
 class OrderController extends CrudController
@@ -35,6 +36,8 @@ class OrderController extends CrudController
             return $e;
         }
     }
+
+
 
     /**
      * Update the specified resource in storage.

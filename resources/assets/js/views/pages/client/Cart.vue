@@ -49,11 +49,7 @@
                 el-col(:span="10")
                   el-form-item(label="Giờ giao hàng" prop="delivery_type")
                     el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" size="small")
-                      el-option(label="9h - 11h" :value="'9h-11h'")
-                      el-option(label="11h - 13h" :value="'11h-13h'")
-                      el-option(label="13h - 15h" :value="'13h-15h'")
-                      el-option(label="15h - 17h" :value="'15h-17h'")
-                      el-option(label="17h - 19h" :value="'17h-19h'")
+                      el-option(:label="item" :value="item" v-for="item in times" :key="item")
             div.cart__detail
               el-button(type="success" @click="checkout") ĐẶT HÀNG
               el-button(type="danger" @click="resetForm('form')") HỦY BỎ
@@ -122,6 +118,9 @@
       ...mapGetters('shops', {
         listShop: 'list'
       }),
+      times () {
+        return this.$store.getters.settings && this.$store.getters.settings.timeFrame.map(item => item.start + ' - ' + item.end)
+      },
       products() {
         return this.data()
       },
