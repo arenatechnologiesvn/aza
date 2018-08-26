@@ -104,7 +104,7 @@
           delivery_type: item.delivery_type,
           products: item.products.map(p => ({
             id: p.id,
-            img: '/' + p.featured[0].directory + '/' + p.featured[0].filename + '.' + p.featured[0].extension,
+            img: p.featured && p.featured[0] && '/' + p.featured[0].directory + '/' + p.featured[0].filename + '.' + p.featured[0].extension,
             quantity: p.pivot.quantity,
             unit: p.unit,
             title: p.name,
