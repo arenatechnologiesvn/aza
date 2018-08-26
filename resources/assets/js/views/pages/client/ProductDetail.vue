@@ -34,7 +34,7 @@
                   span(style="font-size: .9em;") / {{`${product.quantitative} ${product.unit}`}}
               div.submit
                 span
-                  el-button(type="success" @click="addToCart(product)" :disabled="product.added")
+                  el-button(type="success" @click="addToCart(product)" :disabled="product.added || !(enableCartF())")
                     span(style="margin-right: 10px;")
                       svg-icon(icon-class="fa-solid cart-plus")
                     template Thêm vào giỏ hàng
@@ -132,6 +132,20 @@
         updateCart: 'update',
         fetchCart: 'fetchList'
       }),
+      enableCartF () {
+        const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+        if(apply) {
+          const start = apply.start
+          const end = apply.end
+
+          let now = new Date
+          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
+          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
+          const time = hour+ ':'+ minute
+          if (time > start && time < end) return true;
+        }
+        return false;
+      },
       rate (score) {
         this.rating = score
       },

@@ -17,7 +17,7 @@
         svg-icon(icon-class="fa-solid desktop")
         span Cài đặt khung giờ
       div
-        modal-time(ref="showTime" @add="onAdd" :time="timeModal")
+        modal-time(ref="showTime" @add="onAdd" @edit="onEdit")
         div(style="text-align: right;")
           el-table(:data="timeFrame"
           style="width: 100%"
@@ -66,7 +66,7 @@
       const validateTimeStart = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('Thời gian không được trống'));
-        } else if (this.apply.end && value > this.apply.end) {
+        } else if (this.apply.end && parseInt(value) > parseInt(this.apply.end)) {
           callback(new Error('Thời Gian bắt đầu không được lớn hơn thời gian kết thúc'));
         } else {
           callback();
@@ -75,7 +75,7 @@
       const validateTimeEnd = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('Thời gian không được trống'));
-        } else if (this.apply.start && value < this.apply.start) {
+        } else if (this.apply.start && parseInt(value) < parseInt(this.apply.start)) {
           callback(new Error('Thời Gian kết thúc không được nhỏ hơn thời gian bắt đầu'));
         } else {
           callback();
@@ -109,17 +109,33 @@
         this.timeFrame = [...this.timeFrame, data]
       },
       add () {
-        this.timeModal.start = ''
-        this.timeModal.end = ''
+        this.$refs['showTime'].formTime.start = ''
+        this.$refs['showTime'].formTime.end = ''
+        this.$refs['showTime'].isEdit = false
+        this.$refs['showTime'].buttonTitle = 'Thêm mới'
+        this.timeModal = null
         this.$refs['showTime'].mshow()
+      },
+      onEdit (data) {
+        if(this.timeModal != null) {
+          const findIndex = this.timeFrame.findIndex(item => item.start === this.timeModal.start && item.end === this.timeModal.end )
+          console.log(findIndex)
+          if(findIndex > -1) {
+            this.timeFrame[findIndex].start = data.start
+            this.timeFrame[findIndex].end = data.end
+          }
+        }
       },
       onDelete (data) {
         const findIndex = this.timeFrame.findIndex(item => item.start === data.start && item.end === data.end )
         this.timeFrame.splice(findIndex,1)
       },
       edit (data) {
-        this.timeModal.start = data.start
-        this.timeModal.end = data.end
+        this.$refs['showTime'].formTime.start = data.start
+        this.$refs['showTime'].formTime.end = data.end
+        this.$refs['showTime'].isEdit = true
+        this.$refs['showTime'].buttonTitle = 'Cập nhật'
+        this.timeModal = data
         this.$refs['showTime'].mshow()
       },
       save () {
