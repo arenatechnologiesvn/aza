@@ -13,10 +13,10 @@
             svg-icon(icon-class="fa-solid user")
             span(style="margin-left: 5px") Thông tin cá nhân
         el-dropdown-item(divided)
-        el-dropdown-item
-          router-link(class="inlineBlock" :to="`/setting/${info.id}`")
-            svg-icon(icon-class="fa-solid cog")
-            span(style="margin-left: 5px") Cài đặt
+        //- el-dropdown-item
+        //-   router-link(class="inlineBlock" :to="`/setting/${info.id}`")
+        //-     svg-icon(icon-class="fa-solid cog")
+        //-     span(style="margin-left: 5px") Cài đặt
         el-dropdown-item
           span(style="display:block;" @click="logout")
             svg-icon(icon-class="fa-solid lock")
