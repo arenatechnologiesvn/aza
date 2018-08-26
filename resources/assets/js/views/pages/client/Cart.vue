@@ -20,7 +20,7 @@
                   div / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
-                  el-input-number(v-model="scope.row.quantity" :step="1" :precision="1" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
+                  el-input-number(v-model="scope.row.quantity" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
               el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div.total
             p
@@ -154,7 +154,7 @@
           total_money: this.total,
           product: this.products.map(item => ({
             product_id: item.id,
-            quantity: item.quantity,
+            quantity: parseInt(item.quantity),
             tmp_price: item.tmp_price,
             real_price: item.real_price
           }))
