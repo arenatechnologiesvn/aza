@@ -15,9 +15,9 @@
               span Xóa
         h4.control__info(style="margin: 0;")
       el-col(:span="12" style="text-align: right;")
-        el-button(type="success" size="small" @click="redirectToImportPage")
-          svg-icon(icon-class="fa-solid upload")
-          span.ml-5  Tải lên
+        //- el-button(type="success" size="small" @click="redirectToImportPage")
+        //-   svg-icon(icon-class="fa-solid upload")
+        //-   span.ml-5  Tải lên
         el-button(type="primary" size="small" @click="handleAdd")
           svg-icon(icon-class="fa-solid plus-circle")
           span.ml-5 Thêm mới

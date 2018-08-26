@@ -64,6 +64,22 @@ abstract class CrudController extends Controller
     }
 
     /**
+     * Bulk create the specified resource in storage.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkCreate($data)
+    {
+        try {
+            $this->service->bulkCreate($data);
+            return $this->api_success_response(['data' => true]);
+        } catch(\Exception $e){
+            return $this->api_error_response($e);
+        }
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

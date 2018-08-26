@@ -12,6 +12,7 @@ namespace App\Service;
 use App\User;
 use App\Customer;
 use App\Shop;
+use App\Employee;
 use App\Service\MediaService;
 use App\Service\AuthService;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,14 @@ class CustomerService extends BaseService
     {
         $user = $this->authService->register($customer['user']);
         $customer['user_id'] = $user->id;
+
+        if (isset($customer['employee_code']) &&
+            $employee = Employee::where('code', '=', $customer['employee_code'])->first()) {
+            $customer['employee_id'] = $employee['id'];
+        } else {
+            throw new \Exception('Nhân viên #' . $customer['employee_code'] . ' không tồn tại');
+        }
+
         return $customer;
     }
 

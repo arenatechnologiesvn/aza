@@ -55,8 +55,9 @@ service.interceptors.response.use((response) => {
   }
   return Promise.reject(responseData.message);
 }, (error) => {
-  console.log('err' + error); // for debug
-  return Promise.reject(error);
+  console.log(error.response); // for debug
+  const errorData = error && error.response && error.response.data && error.response.data.errors;
+  return Promise.reject(errorData);
 });
 
 export default service;

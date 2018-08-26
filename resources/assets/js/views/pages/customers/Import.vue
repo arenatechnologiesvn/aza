@@ -1,12 +1,14 @@
 <template lang="pug">
   div.form__container
-    el-card
+    el-card(:v-loading="loading")
       div.clearfix(slot="header")
         span
           svg-icon(icon-class="fa-solid upload")
-          span(style="margin-left: 10px;") Tải lên nhân viên
+          span(style="margin-left: 10px;") Tải lên khách hàng
       .app-container
         upload-excel-component(:on-success="handleSuccess" :before-upload="beforeUpload")
+        div(v-if="errorMessages.length" style="margin-top: 20px")
+          el-alert(v-for="message, index of errorMessages" :key="index" :title="message" type="error")
         .table__wrapper
           .index__container
             .table
@@ -16,7 +18,7 @@
                   :label="tableHeaderLabels[item]" 
                   :key="item" 
                   :min-width="item === 'id' ? 80 : 200")
-                el-table-column(v-if="tableData.length" label="TÁC VỤ" style="text-align: center")
+                el-table-column(v-if="tableData.length" label="TÁC VỤ" fixed="right")
                   template(slot-scope="scope")
                     el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                       el-button(type="danger" icon="el-icon-delete" size="mini" round @click="remove(scope.row.code)")
@@ -45,7 +47,7 @@ import UploadExcelComponent from '~/components/UploadExcel/index.vue';
 const DEDAULT_PAGE_SIZE = 10
 
 export default {
-  name: 'UploadEmployees',
+  name: 'UploadCustomers',
   components: { UploadExcelComponent },
   computed: {
     tableData() {
@@ -59,11 +61,13 @@ export default {
       currentPage: 1,
       totalDataNum: 0,
       pageSize: DEDAULT_PAGE_SIZE,
+      errorMessages: [],
+      loading: false
     }
   },
   methods: {
     ...mapActions({
-      importEmployees: 'employees/bulkCreate'
+      importCustomers: 'customers/bulkCreate'
     }),
 
     beforeUpload(file) {
@@ -82,6 +86,7 @@ export default {
       this.uploadData = results
       this.tableHeader = header
       this.tableHeaderLabels = this.uploadData && this.uploadData[0]
+      this.errorMessages= [];
     },
 
     extractData(data) {
@@ -110,12 +115,15 @@ export default {
 
     save() {
       const params = this.prepareParams();
-
+      this.errorMessages = [];
       if (this.isValidData(params)) {
-        this.importEmployees(params).then(() => {
-          this.$router.push({ path: '/employees' });
-        }).catch(() => {
-          // Do nothing
+        this.loading = true;
+        this.importCustomers(params).then(() => {
+          this.loading = false;
+          this.$router.push({ path: '/customers' });
+        }).catch((errors) => {
+          this.getErrorMessages(errors);
+          this.loading = false;
         });
       } else {
         this.$notify({
@@ -127,48 +135,70 @@ export default {
     },
 
     prepareParams() {
-      const params = this.tableData.map((item) => {
+      return this.tableData.map((item) => {
+        const splittedName = this.splitFullName(item.full_name)
         return {
           code: item.code,
-          contract_at: item.contract_at,
+          customer_type: item.customer_type === 'Vip' ? 1 : 0,
+          employee_code: item.employee_code,
           user: {
             email: item.email,
             name: item.name,
-            first_name: item.first_name,
-            last_name: item.last_name,
+            first_name: splittedName.first_name,
+            last_name: splittedName.last_name,
             phone: item.phone,
             address: item.address,
-            role_id: item.role_id
+            is_verified: true,
+            role_id: 2
           }
         }
       });
     },
 
+    splitFullName(fullName) {
+      if (!fullName || !fullName.trim()) return { first_name: '', last_name: '' };
+      if (!fullName.toString().trim().indexOf(' ') === -1) {
+        return { first_name: fullName, last_name: '' };
+      }
+
+      const validName = fullName.toString().trim();
+      const firstName = validName.split(' ').slice(0, 1).join(' ');
+      const lastName = validName.split(' ').slice(1).join(' ');
+      return { first_name: firstName, last_name: lastName };
+    },
+
     isValidData(params) {
       const invalidData = params.find((item) => {
         return !item.code ||
-                !item.email ||
-                !item.name ||
-                !item.first_name ||
-                !item.last_name ||
-                !item.phone ||
-                !item.role_id;
+                !item.user.email ||
+                !item.user.name ||
+                !item.user.first_name ||
+                !item.user.last_name ||
+                !item.user.phone ||
+                !item.user.address;
       });
 
       return !invalidData;
     },
 
     cancel() {
-      this.$confirm('Bạn có muốn hủy tải lên những nhân viên này?', 'Xác nhận', {
+      this.$confirm('Bạn có muốn hủy tải lên những khách hàng này?', 'Xác nhận', {
         confirmButtonText: 'OK',
         cancelButtonText: 'Hủy',
         type: 'warning'
       }).then(() => {
-        this.$router.push({ path: '/employees' });
+        this.errorMessages = [];
+        this.$router.push({ path: '/customers' });
       }).catch(() => {
         // Do nothing
       });
     },
+
+    getErrorMessages(errors) {
+      this.errorMessages = errors.map((error) => {
+        return error.message;
+      })
+    }
   }
 }
 </script>
