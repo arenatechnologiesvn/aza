@@ -57,7 +57,6 @@
 
 <script>
   import BreadCrumb from './components/BreadCrumb'
-  import product from '~/assets/products/p1.jpg'
   import {mapGetters, mapActions} from 'vuex'
   import _ from 'lodash'
   import {formatNumber} from '~/utils/util'
@@ -119,7 +118,7 @@
         listShop: 'list'
       }),
       times () {
-        return this.$store.getters.settings && this.$store.getters.settings.timeFrame.map(item => item.start + ' - ' + item.end)
+        return this.$store.getters.settings && this.$store.getters.settings.timeFrame && this.$store.getters.settings.timeFrame.map(item => item.start + ' - ' + item.end)
       },
       products() {
         return this.data()
@@ -188,6 +187,17 @@
       checkout() {
         this.$refs['form'].validate(valid => {
           if (valid) {
+            const all = this.formCart.product && this.formCart.product.filter(item => item.quantity > 0).length
+            if(all < 1) {
+              this.$message(
+                {
+                  title: 'Thông báo',
+                  message: 'Vui lòng chọn sản phẩm để tiếp tục đặt hàng!',
+                  type: 'error'
+                })
+              return;
+            }
+            this.formCart.product = this.formCart.product.filter(item => item.quantity > 0)
             this.canExecute('Bạn muốn gửi đơn hàng nay?')
               .then(() => this.createOrder({
                 data: this.formCart
@@ -259,10 +269,10 @@
     mounted () {
       if (!this.enableCart()) {
         const apply = this.$store.getters.settings && this.$store.getters.settings.apply
-        this.$message({
+        apply && this.$message({
           type: 'warning',
           title: 'Thông báo',
-          message: `Chỉ được đặt hàng từ ${apply.start} - ${apply.end}`
+          message: `Đơn hàng lưu không thành công. Chỉ được đặt hàng từ ${apply.start} - ${apply.end}`
         })
       };
       this.fetchShops()

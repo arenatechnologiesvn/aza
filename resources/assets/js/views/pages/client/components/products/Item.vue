@@ -203,7 +203,7 @@
             this.$message({
               type: 'warning',
               title: 'Thông báo',
-              message: `Chỉ được đặt hàng từ ${apply.start} - ${apply.end}`
+              message: `Đơn hàng lưu không thành công. Chỉ được đặt hàng từ ${apply.start} - ${apply.end}`
             })
           }
         });
