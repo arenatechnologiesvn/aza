@@ -27,7 +27,7 @@
                   el-option(label="Đang tạm khóa" :value="1")
                   el-option(label="Chưa kích hoạt" :value="2")
     div.control__wrapper
-      aza-control(@on-add="handAddClick")
+      aza-control(@on-add="handAddClick" @on-import="handImportClick")
     div.index__wrapper
       aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle" @on-delete="deleteHandle")
 </template>
@@ -139,6 +139,11 @@
       handAddClick () {
         this.$router.push({
           name: 'customer_create'
+        })
+      },
+      handImportClick () {
+        this.$router.push({
+          name: 'customer_import'
         })
       },
       deleteHandle (id) {

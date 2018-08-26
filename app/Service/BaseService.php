@@ -59,6 +59,29 @@ abstract class BaseService
         }
     }
 
+    public function bulkCreate(array $bulkData)
+    {
+        try {
+            DB::beginTransaction();
+            foreach ($bulkData as $data) {
+                if (method_exists($this, 'beforeCreate')) {
+                    $data = $this->beforeCreate($data);
+                }
+
+                $saved = $this->model->create($data);
+
+                if(method_exists($this, 'afterSave')) {
+                    $this->afterSave($saved, $data, false);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function update($id, array $data)
     {
         try {
