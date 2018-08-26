@@ -1,14 +1,14 @@
 <template lang="pug">
   div
     el-menu(:default-active="$route.name" mode="horizontal"  background-color="#fff" text-color="#333" :router="true" class="hidden-md-and-down")
-      el-menu-item(index="home" :route="{name: 'home'}") TRANH CHỦ
+      el-menu-item(index="home" :route="{name: 'home'}") TRANG CHỦ
       el-menu-item(index="home_introduce" :route="{name: 'home_introduce'}") GIỚI THIỆU
       el-submenu(index="3")
         template(slot="title") SẢN PHẨM
         el-menu-item(index="home_product" v-for="item in categories" :key="item.id" :route="{name: 'home_product', query: {category: item.name}}") {{item.name}}
       el-menu-item(index="home_contact" :route="{name: 'home_contact'}") LIÊN HỆ
     el-menu.show-xs.menu-mobile(:default-active="$route.name" mode="vertical" :class="isShow? 'isShow' : ''"  background-color="#fff" text-color="#333" :router="true")
-      el-menu-item(index="home" :route="{name: 'home'}") TRANH CHỦ
+      el-menu-item(index="home" :route="{name: 'home'}") TRANG CHỦ
       el-menu-item(index="home_introduce" :route="{name: 'home_introduce'}") GIỚI THIỆU
       el-submenu(index="3")
         template(slot="title") SẢN PHẨM

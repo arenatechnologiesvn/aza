@@ -5,7 +5,7 @@
       el-row(:gutter="10")
         el-col(:xs="24" :sm="16" :md="16" :lg="16")
           div.grid-content.bg-puple
-            el-table(border style="width: 100%" :data="products" size="mini")
+            el-table(border style="width: 100%" :data="products" size="mini" v-loading="loading")
               el-table-column(prop="name" label="Sản phẩm" min-width="200")
                 template(slot-scope="scope")
                   div.detail
@@ -20,7 +20,7 @@
                   div / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
-                  el-input-number(v-model="scope.row.quantity" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
+                  el-input-number(v-model="scope.row.quantity" :step="1" :precision="1" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
               el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div.total
             p
@@ -115,7 +115,8 @@
         'user_info'
       ]),
       ...mapGetters('shops', {
-        listShop: 'list'
+        listShop: 'list',
+        loading: 'isLoading'
       }),
       times () {
         return this.$store.getters.settings && this.$store.getters.settings.timeFrame && this.$store.getters.settings.timeFrame.map(item => item.start + ' - ' + item.end)
