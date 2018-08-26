@@ -57,8 +57,7 @@
       }),
       total() {
         return this.data.length === 0 ? 0 :
-          this.data.length === 1 ? this.data[0].quantity :
-            _.map(this.data, 'quantity').reduce((a, b) => parseInt(a) + parseInt(b))
+          this.data.length
       },
       products() {
         return this.cartData()
@@ -67,7 +66,7 @@
         return this.listProducts.map(item => ({
           id: item.id,
           name: item.name,
-          image: `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}`,
+          image:item.featured && item.featured[0] && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}`,
           price: item.price
         }))
       }

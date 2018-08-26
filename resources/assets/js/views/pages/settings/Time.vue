@@ -31,7 +31,7 @@
                 el-button(type="warning" @click="edit(scope.row)" size="mini")
                   svg-icon(icon-class="fa-solid user-edit")
                   span Cập nhât
-                el-button(type="danger" @click="delete(scope.row)" size="mini")
+                el-button(type="danger" size="mini" @click="onDelete(scope.row)")
                   svg-icon(icon-class="fa-solid trash")
                   span Xóa bỏ
             div(slot="append" style="padding: 10px; text-align: left;")
@@ -58,7 +58,7 @@
         default: () => ({
           start: '00:00',
           step: '00:15',
-          end: '23:00'
+          end: '23:59'
         })
       }
     },
@@ -113,8 +113,9 @@
         this.timeModal.end = ''
         this.$refs['showTime'].mshow()
       },
-      delete (data) {
-        console.log(data)
+      onDelete (data) {
+        const findIndex = this.timeFrame.findIndex(item => item.start === data.start && item.end === data.end )
+        this.timeFrame.splice(findIndex,1)
       },
       edit (data) {
         this.timeModal.start = data.start

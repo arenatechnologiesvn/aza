@@ -12,16 +12,19 @@ namespace App\Http\Controllers;
 use App\Cart;
 use App\Customer;
 use App\Helper\RoleConstant;
+use App\Service\SettingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
     private $model;
+    private $setting;
 
-    public function __construct(Cart $model)
+    public function __construct(Cart $model, SettingService $setting)
     {
         $this->model = $model;
+        $this->setting = $setting;
     }
 
     public function index(){
@@ -35,26 +38,40 @@ class CartController extends Controller
 
     public function store (Request $request) {
         try {
-            $cart = new Cart;
-            $cart->create($request->all());
-            return $this->api_success_response( ['data' => $this->getByProductId($request->get('product_id'))]);
+            $n = $this->setting->action('get', 'apply');
+            $n = json_decode($n, true)['value'];
+            if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
+                $cart = new Cart;
+                $cart->create($request->all());
+                return $this->api_success_response( ['data' => $this->getByProductId($request->get('product_id'))]);
+            }else {
+                throw new \Exception();
+            }
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
     }
 
+    private function timeFormat() {
+        $now = now();
+        $h = $now->hour;
+        $minute = $now->minute;
+        return $h.":".$minute;
+    }
     public function storeAll (Request $request) {
         try {
-            $data = $request->all();
-            foreach($data as $item) {
-                // if ($this->checkExistInCart($item['product_id'], $item['customer_id'])) {
-                //     $cart = new Cart;
-                //     $cart->create($item);
-                // }
-                $cart = new Cart;
-                $cart->create($item);
+            $n = $this->setting->action('get', 'apply');
+            $n = json_decode($n, true)['value'];
+            if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
+                $data = $request->all();
+                foreach($data as $item) {
+                    $cart = new Cart;
+                    $cart->create($item);
+                }
+                return $this->api_success_response( ['data' => $data]);
+            }else {
+                throw new \Exception();
             }
-            return $this->api_success_response( ['data' => $data]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
@@ -62,11 +79,18 @@ class CartController extends Controller
 
     public function update(Request $request, $id) {
         try {
-            $this->model->where([
-                ['customer_id', '=', $this->getCustomerId()],
-                ['product_id', '=', $id]
-            ])->update(['quantity' => $request->get('quantity')]);
-            return $this->api_success_response(['data' => $this->getByProductId($id)]);
+            $n = $this->setting->action('get', 'apply');
+            $n = json_decode($n, true)['value'];
+            if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
+                $this->model->where([
+                    ['customer_id', '=', $this->getCustomerId()],
+                    ['product_id', '=', $id]
+                ])->update(['quantity' => $request->get('quantity')]);
+                return $this->api_success_response(['data' => $this->getByProductId($id)]);
+            }else {
+                throw new \Exception();
+            }
+
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
@@ -74,11 +98,18 @@ class CartController extends Controller
 
     public function destroy($id) {
         try {
-            $cart = $this->model->where([
-                ['customer_id', '=', $this->getCustomerId()],
-                ['product_id', '=', $id]
-            ])->delete();
-            return $this->api_success_response(['data' => $cart]);
+            $n = $this->setting->action('get', 'apply');
+            $n = json_decode($n, true)['value'];
+            if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
+                $cart = $this->model->where([
+                    ['customer_id', '=', $this->getCustomerId()],
+                    ['product_id', '=', $id]
+                ])->delete();
+                return $this->api_success_response(['data' => $cart]);
+            }else {
+                throw new \Exception();
+            }
+
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }

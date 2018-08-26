@@ -29,8 +29,8 @@
             el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
               span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
                 svg-icon( icon-class="fa-solid heart")
-            el-tooltip(effect="dark" v-if="enableCart" content="Thêm vào giỏ hàng" placement="top")
-              span.shop(@click="addToCart(product)")
+            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
+              span.shop(@click="addToCart(product)" :disabled="!enableCart")
                 svg-icon(icon-class="fa-solid cart-plus")
             el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
               span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
@@ -92,7 +92,7 @@
             }))
       },
       removeFromFavorite(id) {
-        this.canExecute('Bạn muốn xóa sản phẩm khỏi danh sách yêu thích?')
+        this.canExecuteF('Bạn muốn xóa sản phẩm khỏi danh sách yêu thích?')
           .then(() => this.deletFavorite({id})
             .then(() => {
               this.fetchProduct()
@@ -103,6 +103,20 @@
             message: 'Xóa thành công sản phầm khỏi danh sách yêu thích',
             type: 'success'
           }))
+      },
+      enableCartF () {
+        const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+        if(apply) {
+          const start = apply.start
+          const end = apply.end
+
+          let now = new Date
+          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
+          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
+          const time = hour+ ':'+ minute
+          if (time > start && time < end) return true;
+        }
+        return false;
       },
       addToCart(product) {
         if (product.added) {
@@ -130,7 +144,7 @@
               this.add2Cart({
                 data: {
                   product_id: product.id,
-                  quantity: 1,
+                  quantity: 0,
                   customer_id
                 }
               }).then(() => {
@@ -155,7 +169,7 @@
       },
       addProductToFavorite(id) {
         const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
-        this.canExecute('Bạn muốn thêm vào sản phẩm yêu thích')
+        this.canExecuteF('Bạn muốn thêm vào sản phẩm yêu thích')
           .then(() => this.addFavorite({
             data: {
               product_id: id,
@@ -175,13 +189,33 @@
         return formatNumber(num)
       },
       canExecute(message) {
+        return new Promise(resolve =>{
+          if(this.enableCartF()) {
+            this.$confirm(message, 'Xác nhận', {
+              confirmButtonText: 'Đồng ý',
+              cancelButtonText: 'Hủy',
+              type: 'success'
+            }).then(() => {
+              resolve(true);
+            }).catch(err => err)
+          } else {
+            const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+            this.$message({
+              type: 'warning',
+              title: 'Thông báo',
+              message: `Chỉ được đặt hàng từ ${apply.start} - ${apply.end}`
+            })
+          }
+        });
+      },
+      canExecuteF (message) {
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
           confirmButtonText: 'Đồng ý',
           cancelButtonText: 'Hủy',
           type: 'success'
         }).then(() => {
           resolve(true);
-        }));
+        }).catch(err => err))
       }
     }
   }

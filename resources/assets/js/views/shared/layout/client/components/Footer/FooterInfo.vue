@@ -10,7 +10,7 @@
                 span {{company.address}}
               li
                 strong ĐT:
-                span {{company.phone}} - {{company.mobile}}
+                span {{company.phone}}
               li
                 strong Email:
                 span {{company.email}}

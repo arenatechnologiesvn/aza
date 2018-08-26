@@ -130,7 +130,7 @@
           const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
           let tmp = [];
           for(let i = 0; i< favorites.length; i++) {
-            if(carts.indexOf(favorites[i]) < 0) tmp.push({customer_id, product_id: parseInt(favorites[i]) , quantity: 1})
+            if(carts.indexOf(favorites[i]) < 0) tmp.push({customer_id, product_id: parseInt(favorites[i]) , quantity: 0})
           }
           request({
             url: `/api/carts/save-all`,
@@ -162,14 +162,39 @@
       formatNumber(num) {
         return formatNumber(num)
       },
+      enableCart () {
+        const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+        if(apply) {
+          const start = apply.start
+          const end = apply.end
+
+          let now = new Date
+          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
+          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
+          const time = hour+ ':'+ minute
+          if (time > start && time < end) return true;
+        }
+        return false;
+      },
       canExecute(message) {
-        return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
-          confirmButtonText: 'Đồng ý',
-          cancelButtonText: 'Hủy',
-          type: 'success'
-        }).then(() => {
-          resolve(true);
-        }));
+        return new Promise(resolve => {
+          if(this.enableCart()) {
+            this.$confirm(message, 'Xác nhận', {
+              confirmButtonText: 'Đồng ý',
+              cancelButtonText: 'Hủy',
+              type: 'success'
+            }).then(() => {
+              resolve(true);
+            })
+          } else {
+            const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+            this.$message({
+              type: 'warning',
+              title: 'Thông báo',
+              message: `Chỉ được đặt hàng từ ${apply.start} - ${apply.end}`
+            })
+          }
+        });
       }
     },
     created() {

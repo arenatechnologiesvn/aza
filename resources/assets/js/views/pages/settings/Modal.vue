@@ -74,7 +74,7 @@
         }
       }
     },
-    beforeUpdate () {
+    mounted () {
       this.time && (this.formTime = this.time)
     },
     methods: {

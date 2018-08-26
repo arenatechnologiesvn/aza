@@ -12,7 +12,7 @@
                     div.img
                       img(:src="scope.row.img")
                     h4 {{scope.row.title}}
-                    el-button.button(type="danger" size="mini" @click="remove(scope.row.id)")
+                    el-button.button(type="danger" size="mini" @click="remove(scope.row.id)" :disabled="!enableCart()")
                       svg-icon(icon-class="fa-solid trash")
               el-table-column(prop="price" label="GIÁ (VNĐ)")
                 template(slot-scope="scope")
@@ -20,7 +20,7 @@
                   div / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
-                  el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;" @change="changeQuantity(scope.row)")
+                  el-input-number(v-model="scope.row.quantity" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
               el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div.total
             p
@@ -51,7 +51,7 @@
                     el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" size="small")
                       el-option(:label="item" :value="item" v-for="item in times" :key="item")
             div.cart__detail
-              el-button(type="success" @click="checkout") ĐẶT HÀNG
+              el-button(type="success" @click="checkout" :disabled="!enableCart()") ĐẶT HÀNG
               el-button(type="danger" @click="resetForm('form')") HỦY BỎ
 </template>
 
@@ -257,7 +257,14 @@
       }
     },
     mounted () {
-      if (!this.enableCart()) this.$router.push({path: '/'});
+      if (!this.enableCart()) {
+        const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+        this.$message({
+          type: 'warning',
+          title: 'Thông báo',
+          message: `Chỉ được đặt hàng từ ${apply.start} - ${apply.end}`
+        })
+      };
       this.fetchShops()
     }
   }

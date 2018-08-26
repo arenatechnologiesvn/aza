@@ -7,11 +7,11 @@
       div
         el-form(v-model="company")
           el-row(:gutter="10")
-            el-col(:span="6")
-              el-form-item
-                img(:src="company.logo" width="100" height="100")
-                el-input(type="hidden" v-model="company.logo")
-            el-col(:span="18")
+            <!--el-col(:span="6")-->
+              <!--el-form-item-->
+                <!--img(:src="company.logo" width="100" height="100")-->
+                <!--el-input(type="hidden" v-model="company.logo")-->
+            el-col(:span="24")
               el-form-item(label="Địa chỉ công ty")
                 el-input(v-model="company.address" placeholder="686/22/11/ Nguyễn Đình Chiểu, Phường 11, QUận 3, TPHCM")
               el-form-item(label="Điện thoại liên hệ")
