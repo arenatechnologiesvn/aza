@@ -80,6 +80,7 @@
   import {mapGetters, mapActions} from 'vuex'
   import {formatNumber} from '~/utils/util'
   import OrderDetail from '../../components/OrderDetail'
+  import dummyImage from '~/assets/login_images/dummy-image.jpg'
 
   export default {
     components: {
@@ -104,7 +105,7 @@
           delivery_type: item.delivery_type,
           products: item.products.map(p => ({
             id: p.id,
-            img: p.featured && p.featured[0] && '/' + p.featured[0].directory + '/' + p.featured[0].filename + '.' + p.featured[0].extension,
+            img: p.featured && p.featured.length ? p.featured[0].url : dummyImage,
             quantity: p.pivot.quantity,
             unit: p.unit,
             title: p.name,

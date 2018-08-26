@@ -106,6 +106,7 @@
   import { currencyFormat } from '~/utils/util'
   import OrderDetail from '../../pages/client/components/OrderDetail/index'
   import excelExport from '~/utils/excel/export2Excel.js'
+  import dummyImage from '~/assets/login_images/dummy-image.jpg'
   import moment from 'moment'
 
   const COMPLETE_STATUS = 0;
@@ -150,15 +151,17 @@
           delivery: item.delivery,
           delivery_type: item.delivery_type,
           customer: item.customer,
-          products: item.products.map(p => ({
-            id: p.id,
-            img: p.featured && p.featured[0].url,
-            quantity: p.pivot.quantity,
-            unit: p.unit,
-            title: p.name,
-            price: p.pivot.real_price,
-            total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
-          }))
+          products: item.products.map(p => {
+            return {
+              id: p.id,
+              img: p.featured && p.featured.length ? p.featured[0].url : dummyImage,
+              quantity: p.pivot.quantity,
+              unit: p.unit,
+              title: p.name,
+              price: p.pivot.real_price,
+              total: p.pivot.real_price ? p.pivot.real_price * p.pivot.quantity : 0
+            };
+          })
         })).sort((a, b) => +b.date - +a.date)
           .filter(item => item.code.indexOf(this.key) > -1)
           .filter(item => {
