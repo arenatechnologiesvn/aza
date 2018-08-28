@@ -80,9 +80,9 @@
         ).filter(item => item.code.indexOf(this.key) > -1 || item.user.full_name.indexOf(this.key) > -1
         ).filter(item => {
           if(this.employee_id === null || this.employee_id.toString().trim() === '') return true;
-          return this.employee_id.toString().trim() === item.employee.id.toString().trim()
+          return item.employee && this.employee_id.toString().trim() === item.employee.id.toString().trim()
         }).filter(item => {
-          if(this.customer_type === null || this.customer_type.toString().trim() === '') return true;
+          if (this.customer_type === null || this.customer_type.toString().trim() === '') return true;
           return this.customer_type.toString().trim() === item.customer_type.toString().trim()
         }).filter(item => {
           if (this.status === null || this.status.toString().trim() === '') return true;

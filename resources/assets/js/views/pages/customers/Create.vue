@@ -7,19 +7,15 @@
       span(style="float: right")
         svg-icon(icon-class="fa-solid arrow-alt-left")
     div.card-content
-      employee-form
+      customer-form
 </template>
 
 <script>
-  import EmployeeForm from './components/Form'
+  import CustomerForm from './components/Form'
   export default {
-    name: 'CreateEmployee',
+    name: 'CreateCustomer',
     components: {
-      EmployeeForm
+      CustomerForm
     }
   }
 </script>
-
-<style scoped>
-
-</style>
