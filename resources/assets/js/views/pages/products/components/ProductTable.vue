@@ -16,12 +16,12 @@
           el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
     .control-wrapper
       el-row
-        el-col(:span="8")
-          el-dropdown(split-button type="primary" size="small")
-            span Đã chọn {{ multipleSelection.length }} sản phẩm
-            el-dropdown-menu(slot="dropdown")
-              el-dropdown-item Xóa
-        el-col(:span="16" style="text-align: right")
+        //- el-col(:span="8")
+          //- el-dropdown(split-button type="primary" size="small")
+          //-   span Đã chọn {{ multipleSelection.length }} sản phẩm
+          //-   el-dropdown-menu(slot="dropdown")
+          //-     el-dropdown-item Xóa
+        el-col(:span="24" style="text-align: right")
           el-button(type="success" size="small" @click="exportExcelFile" :disabled="!this.tableData.length")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
@@ -149,13 +149,13 @@ export default {
 
       if (this.selectedCategory) {
         data = Array.isArray(data) && data.filter(item => {
-          return item.category_id.toString().trim() === this.selectedCategory.toString().trim();
+          return item.category_id && item.category_id.toString().trim() === this.selectedCategory.toString().trim();
         });
       }
 
       if (this.selectedProvider) {
         data = Array.isArray(data) && data.filter(item => {
-          return item.provider_id.toString().trim() === this.selectedProvider.toString().trim();
+          return item.provider_id && item.provider_id.toString().trim() === this.selectedProvider.toString().trim();
         });
       }
 

@@ -132,7 +132,7 @@ export default {
           { required: true, message: 'Định lượng không được trống', trigger: 'blur' }
         ],
         price: [
-          { validator: validatePrice, trigger: 'blur' }
+          { required: true, validator: validatePrice, trigger: 'blur' }
         ],
         discount_price: [
           { validator: validateDiscountPrice, trigger: 'blur' }

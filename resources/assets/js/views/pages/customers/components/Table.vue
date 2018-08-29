@@ -12,10 +12,14 @@
         el-table-column(prop="code" label="MSKH" sortable min-width="100")
         el-table-column(prop="user.full_name" label="TÊN KH" sortable min-width="200")
         el-table-column(prop="employee.user.full_name" label="NHÂN VIÊN SALE" sortable min-width="200")
-        el-table-column(prop="user.phone" label="SỐ ĐIỆN THOẠI" sortable min-width="180")
-        el-table-column(prop="customer_type" label="VIP" align="center" width="100")
           template(slot-scope="scope")
-            el-checkbox(:checked="!!scope.row.customer_type")
+            span {{ scope.row.employee && scope.row.employee.user.full_name ? scope.row.employee.user.full_name : '-' }}
+        el-table-column(prop="user.phone" label="SỐ ĐIỆN THOẠI" sortable min-width="180")
+        el-table-column(label="VIP" align="center" width="100")
+          template(slot-scope="scope")
+            svg-icon(
+              icon-class="fa-solid check-square"
+              :class="scope.row.customer_type ? 'vip-customer-icon' : 'normal-customer-icon'")
         el-table-column(prop="is_active" label="KHÓA/HOẠT ĐỘNG" align="center" width="150")
           template(slot-scope="scope")
             el-switch(
@@ -101,3 +105,15 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+.vip-customer-icon {
+  color: #67C23A;
+  font-size: 18px;
+}
+
+.normal-customer-icon {
+  color: #909399;
+  font-size: 18px;
+}
+</style>

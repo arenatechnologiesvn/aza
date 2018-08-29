@@ -6,27 +6,27 @@
       el-row(style="margin-top: 10px")
         el-button(type="success" size="small" @click="openMediaModal('single')") Thay đổi
     el-col(:span="19")
-      el-form(ref="form" v-model="customer" size="small")
+      el-form(ref="form" :rules="rules" :model="customer" size="small")
         el-col(:span="24")
-          el-form-item(label="MÃ KHÁCH HÀNG")
+          el-form-item(prop="code" label="MÃ KHÁCH HÀNG")
             el-input(v-model="customer.code" placeholder="Mã khách hàng")
         el-col(:span="24")
-          el-form-item(label="EMAIL")
+          el-form-item(prop="user.email" label="EMAIL")
             el-input(v-model="customer.user.email" clearable type="email" placeholder="Ví dụ: abc@gmail.com, ..." :disabled="isUpdate")
         el-col(:span="24")
-          el-form-item(label="TÊN ĐĂNG NHẬP")
+          el-form-item(prop="user.name" label="TÊN ĐĂNG NHẬP")
             el-input(v-model="customer.user.name" clearable placeholder="Tên đăng nhập" :disabled="isUpdate")
         el-col(:span="12")
-          el-form-item(label="HỌ")
+          el-form-item(prop="user.last_name" label="HỌ")
             el-input(v-model="customer.user.last_name" clearable placeholder="Họ")
         el-col(:span="12")
-          el-form-item(label="TÊN")
+          el-form-item(prop="user.first_name" label="TÊN")
             el-input(v-model="customer.user.first_name" clearable placeholder="Tên")
         el-col(:span="24")
-          el-form-item(label="ĐIỆN THOẠI CHÍNH")
+          el-form-item(prop="user.phone" label="ĐIỆN THOẠI CHÍNH")
             el-input(v-model="customer.user.phone" clearable placeholder="Ví dụ: 0123345373, ...")
         el-col(:span="24")
-          el-form-item(label="ĐỊA CHỈ")
+          el-form-item(prop="user.address" label="ĐỊA CHỈ")
             el-input(v-model="customer.user.address" clearable placeholder="Địa chỉ")
         el-col(:span="8")
           el-form-item(prop="province_code" label="TỈNH/TP:")
@@ -38,7 +38,7 @@
           el-form-item(prop="ward_code" label="XÃ/PHƯỜNG:")
             ward-select(v-model="customer.ward_code" :parent-code="customer.district_code")
         el-col(:span="8")
-          el-form-item(label="NHÂN VIÊN SALE")
+          el-form-item(prop="employee_id" label="NHÂN VIÊN SALE")
             el-select(v-model="customer.employee_id" clearable placeholder="Nhân viên" style="width: 100%")
               el-option(v-for="item in employeesList" :key="item.id" :label="item.name" :value="item.id")
         el-col(:span="8")
@@ -166,7 +166,37 @@
       return {
         currentPage: 1,
         pageSize: 5,
-        searchWord: ''
+        searchWord: '',
+        rules: {
+          'user.email': [
+            { required: true, message: 'Email không được trống', trigger: 'blur' },
+            { type: 'email', message: 'Email không đúng', trigger: ['blur', 'change'] },
+            { max: 255, message: 'Email phải nhỏ hơn 100 ký tự', trigger: 'blur' }
+          ],
+          'user.name': [
+            { required: true, message: 'Tên đăng nhập không được trống', trigger: 'blur' },
+            { max: 100, message: 'Tên đăng nhập phải nhỏ hơn 100 ký tự', trigger: 'blur' }
+          ],
+          code: [
+            { required: true, message: 'Mã khách hàng không được trống', trigger: 'blur' },
+            { max: 20, message: 'Mã khách hàng phải nhỏ hơn 20 ký tự', trigger: 'blur' }
+          ],
+          employee_id: [
+            { required: true, message: 'Nhân viên sale không được trống', trigger: 'change' }
+          ],
+          'user.first_name': [
+            { max: 50, message: 'Tên phải nhỏ hơn 50 ký tự', trigger: 'blur' }
+          ],
+          'user.last_name': [
+            { max: 50, message: 'Họ phải nhỏ hơn 50 ký tự', trigger: 'blur' }
+          ],
+          'user.phone': [
+            { max: 20, message: 'Điện thoại phải nhỏ hơn 20 ký tự', trigger: 'blur' }
+          ],
+          'user.address': [
+            { max: 255, message: 'Địa chỉ phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+          ],
+        }
       }
     },
     methods: {
@@ -203,8 +233,12 @@
         })
       },
       handleSubmit () {
-        const params = this.prepareParams();
-        this.isUpdate ? this.update(params) : this.create(params)
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            const params = this.prepareParams();
+            this.isUpdate ? this.update(params) : this.create(params)
+          }
+        })
       },
       prepareParams() {
         const params = {
@@ -317,4 +351,14 @@
     }
   }
 }
+</style>
+
+<style lang="scss">
+  .el-form-item {
+    margin: 10px;
+
+    &__error {
+      padding: 2px 5px 0;
+    }
+  }
 </style>

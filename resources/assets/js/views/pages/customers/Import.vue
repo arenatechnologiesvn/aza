@@ -158,12 +158,12 @@ export default {
     splitFullName(fullName) {
       if (!fullName || !fullName.trim()) return { first_name: '', last_name: '' };
       if (!fullName.toString().trim().indexOf(' ') === -1) {
-        return { first_name: fullName, last_name: '' };
+        return { first_name: '', last_name: fullName };
       }
 
       const validName = fullName.toString().trim();
-      const firstName = validName.split(' ').slice(0, 1).join(' ');
-      const lastName = validName.split(' ').slice(1).join(' ');
+      const firstName = validName.split(' ').slice(1).join(' ');
+      const lastName = validName.split(' ').slice(0, 1).join(' ');
       return { first_name: firstName, last_name: lastName };
     },
 
