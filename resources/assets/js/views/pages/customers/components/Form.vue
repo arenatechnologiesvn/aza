@@ -185,10 +185,10 @@
             { required: true, message: 'Nhân viên sale không được trống', trigger: 'change' }
           ],
           'user.first_name': [
-            { max: 50, message: 'Họ phải nhỏ hơn 50 ký tự', trigger: 'blur' }
+            { max: 50, message: 'Tên phải nhỏ hơn 50 ký tự', trigger: 'blur' }
           ],
           'user.last_name': [
-            { max: 50, message: 'Tên phải nhỏ hơn 50 ký tự', trigger: 'blur' }
+            { max: 50, message: 'Họ phải nhỏ hơn 50 ký tự', trigger: 'blur' }
           ],
           'user.phone': [
             { max: 20, message: 'Điện thoại phải nhỏ hơn 20 ký tự', trigger: 'blur' }

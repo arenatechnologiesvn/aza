@@ -1,7 +1,7 @@
 <template lang="pug">
   el-row
     el-col(:span="12")
-      el-form(ref="shopForm" :model="shop" size="small")
+      el-form(ref="shopForm" :rules="rules" :model="shop" size="small")
         el-col(:span="24")
           el-form-item(prop="name" label="Tên cửa hàng:")
             el-input(v-model="shop.name" placeholder="Tên cửa hàng")
@@ -72,6 +72,39 @@
         default: false
       }
     },
+    data() {
+      return {
+        rules: {
+          name: [
+            { required: true, message: 'Tên cửa hàng không được trống', trigger: 'blur' },
+            { max: 100, message: 'Tên cửa hàng phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+          ],
+          customer_id: [
+            { required: true, message: 'Khách hàng không được trống', trigger: 'change' }
+          ],
+          province_code: [
+            { required: true, message: 'Tỉnh/TP không được trống', trigger: 'change' }
+          ],
+          district_code: [
+            { required: true, message: 'Huyện/Quận không được trống', trigger: 'change' }
+          ],
+          ward_code: [
+            { required: true, message: 'Xã/Phường không được trống', trigger: 'change' }
+          ],
+          phone: [
+            { required: true, message: 'Điện thoại không được trống', trigger: 'blur' },
+            { max: 20, message: 'Điện thoại phải nhỏ hơn 15 ký tự', trigger: 'blur' }
+          ],
+          address: [
+            { required: true, message: 'Địa chỉ không được trống', trigger: 'blur' },
+            { max: 255, message: 'Địa chỉ phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+          ],
+          description: [
+            { max: 500, message: 'Địa chỉ phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+          ],
+        }
+      }
+    },
     computed: {
       ...mapGetters('customers', {
         customers: 'list'
@@ -108,8 +141,7 @@
         }).then(res => {
           this.$router.push({name: 'shop_index', replace: true})
         }).catch(err => {
-          console.log(err)
-          this.$message.error('Error! Cannot update shop');
+          this.$message.error('Cập nhật cửa hàng thất bại');
         })
       },
       create (params) {
@@ -118,14 +150,17 @@
         }).then(res => {
           this.$router.push({name: 'shop_index', replace: true})
         }).catch(err => {
-          console.log(err)
-          this.$message.error('Error! Cannot create shop');
+          this.$message.error('Tạo mới cửa hàng thất bại');
         })
       },
       handleSubmit () {
-        const params = JSON.parse(JSON.stringify(this.shop));
-        params.zone = this.renderZone();
-        this.isUpdate ? this.update(params) : this.create(params)
+        this.$refs.shopForm.validate((valid) => {
+          if (valid) {
+            const params = JSON.parse(JSON.stringify(this.shop));
+            params.zone = this.renderZone();
+            this.isUpdate ? this.update(params) : this.create(params);
+          }
+        });
       },
       renderZone() {
         if (this.shop.ward_code) {
@@ -149,6 +184,12 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss">
+  .el-form-item {
+    margin: 10px;
 
+    &__error {
+      padding: 2px 5px 0;
+    }
+  }
 </style>

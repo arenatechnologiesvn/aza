@@ -15,12 +15,12 @@
         ward-select(v-model="selectedWard" :parent-code="selectedDistrict")
     div.control__wrapper
       el-row
-        el-col(:span="12")
-          el-dropdown(split-button :type="multipleSelection.length ? 'primary' : 'default'" size="small")
-            span Đã chọn {{ multipleSelection.length }} nhà cung cấp
-            el-dropdown-menu(slot="dropdown")
-              el-dropdown-item Xóa
-        el-col(:span="12" style="text-align: right;")
+        //- el-col(:span="12")
+        //-   el-dropdown(split-button :type="multipleSelection.length ? 'primary' : 'default'" size="small")
+        //-     span Đã chọn {{ multipleSelection.length }} nhà cung cấp
+        //-     el-dropdown-menu(slot="dropdown")
+        //-       el-dropdown-item Xóa
+        el-col(:span="24" style="text-align: right;")
           el-button(type="primary" size="small" @click="redirectToAddingPage")
             svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới

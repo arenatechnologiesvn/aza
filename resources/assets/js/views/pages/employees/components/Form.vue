@@ -6,30 +6,30 @@
       el-row(style="margin-top: 10px")
         el-button(type="success" size="small" @click="openMediaModal('single')") Thay đổi
     el-col(:span="19")
-      el-form(ref="form" v-model="employee" size="small")
+      el-form(ref="form" :rules="rules" :model="employee" size="small")
         el-col(:span="24")
-          el-form-item(label="MÃ NHÂN VIÊN")
+          el-form-item(prop="code" label="MÃ NHÂN VIÊN")
             el-input(v-model="employee.code" placeholder="Mã nhân viên" clearable)
         el-col(:span="24")
-          el-form-item(label="EMAIL")
+          el-form-item(prop="user.email" label="EMAIL")
             el-input(v-model="employee.user.email" v-bind:disabled="isUpdate" type="email" placeholder="Email" clearable)
         el-col(:span="24")
-          el-form-item(label="TÊN ĐĂNG NHẬP")
+          el-form-item(prop="user.name" label="TÊN ĐĂNG NHẬP")
             el-input(v-model="employee.user.name" v-bind:disabled="isUpdate" placeholder="Tên đăng nhập" clearable)
         el-col(:span="12")
-          el-form-item(label="HỌ")
+          el-form-item(prop="user.last_name" label="HỌ")
             el-input(v-model="employee.user.last_name" placeholder="Họ" clearable)
         el-col(:span="12")
-          el-form-item(label="TÊN")
+          el-form-item(prop="user.first_name" label="TÊN")
             el-input(v-model="employee.user.first_name" placeholder="Tên" clearable)
         el-col(:span="24")
-          el-form-item(label="ĐỊA CHỈ")
+          el-form-item(prop="user.address" label="ĐỊA CHỈ")
             el-input(v-model="employee.user.address" placeholder="Địa chỉ" clearable)
         el-col(:span="24")
-          el-form-item(label="SỐ ĐIỆN THOẠI")
+          el-form-item(prop="user.phone" label="SỐ ĐIỆN THOẠI")
             el-input(v-model="employee.user.phone" placeholder="Điện thoại" clearable)
         el-col(:span="8")
-          el-form-item(label="VAI TRÒ")
+          el-form-item(prop="user.role_id" label="VAI TRÒ")
             el-select(v-model="employee.user.role_id" clearable placeholder="Vai trò" style="width: 100%")
               el-option(v-for="item in roleList" :key="item.id" :label="item.value" :value="item.id")
         el-col(:span="8")
@@ -106,6 +106,40 @@
         })
       }
     },
+    data() {
+      return {
+        rules: {
+          'user.email': [
+            { required: true, message: 'Email không được trống', trigger: 'blur' },
+            { type: 'email', message: 'Email không đúng', trigger: ['blur', 'change'] },
+            { max: 255, message: 'Email phải nhỏ hơn 100 ký tự', trigger: 'blur' }
+          ],
+          'user.name': [
+            { required: true, message: 'Tên đăng nhập không được trống', trigger: 'blur' },
+            { max: 100, message: 'Tên đăng nhập phải nhỏ hơn 100 ký tự', trigger: 'blur' }
+          ],
+          code: [
+            { required: true, message: 'Mã nhân viên không được trống', trigger: 'blur' },
+            { max: 20, message: 'Mã nhân viên phải nhỏ hơn 20 ký tự', trigger: 'blur' }
+          ],
+          'user.first_name': [
+            { max: 50, message: 'Tên phải nhỏ hơn 50 ký tự', trigger: 'blur' }
+          ],
+          'user.last_name': [
+            { max: 50, message: 'Họ phải nhỏ hơn 50 ký tự', trigger: 'blur' }
+          ],
+          'user.phone': [
+            { max: 20, message: 'Điện thoại phải nhỏ hơn 20 ký tự', trigger: 'blur' }
+          ],
+          'user.address': [
+            { max: 255, message: 'Địa chỉ phải nhỏ hơn 255 ký tự', trigger: 'blur' }
+          ],
+          'user.role_id': [
+            { required: true, message: 'Vai trò không được trống', trigger: 'change' }
+          ],
+        }
+      }
+    },
     methods: {
       back () {
         this.$router.push({ path: '/employees' });
@@ -140,8 +174,12 @@
         })
       },
       handleSubmit () {
-        const params = this.prepareParams();
-        this.isUpdate ? this.update(params) : this.create(params);
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            const params = this.prepareParams();
+            this.isUpdate ? this.update(params) : this.create(params);
+          }
+        });
       },
       prepareParams() {
         const params = {
@@ -205,4 +243,14 @@
     }
   }
 }
+</style>
+
+<style lang="scss">
+  .el-form-item {
+    margin: 10px;
+
+    &__error {
+      padding: 2px 5px 0;
+    }
+  }
 </style>

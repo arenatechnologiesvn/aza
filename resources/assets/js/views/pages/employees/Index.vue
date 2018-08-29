@@ -7,7 +7,7 @@
     div.search__wrapper(style="margin: 10px 0 20px")
       div.form-search__wrapper
         el-form.search(v-model="search" size="small")
-          el-row(style="margin: 0 -10px;")
+          el-row(:gutter="5" style="margin: 0 -10px;")
             el-col(:span="16")
               el-form-item(label="Tìm kiếm:")
                 el-input(placeholder="Tìm kiếm" v-model="key" suffix-icon="el-icon-search" style="width: 100%" clearable)

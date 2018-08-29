@@ -2,12 +2,12 @@
   div
     .control__wrapper
       el-row
-        el-col(:span="8")
-          el-dropdown(split-button type="primary" size="small")
-            span Đã chọn {{ multipleSelection.length }} danh mục
-            el-dropdown-menu(slot="dropdown")
-              el-dropdown-item Xóa
-        el-col(:span="16" style="text-align: right")
+        //- el-col(:span="8")
+        //-   el-dropdown(split-button type="primary" size="small")
+        //-     span Đã chọn {{ multipleSelection.length }} danh mục
+        //-     el-dropdown-menu(slot="dropdown")
+        //-       el-dropdown-item Xóa
+        el-col(:span="24" style="text-align: right")
           el-button(type="primary" size="small" @click="redirectToAddingPage")
             svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới
