@@ -217,19 +217,21 @@
         this.updateCustomer({
           id: this.$route.params.id,
           data: params
-        }).then(res => {
+        }).then(() => {
+          this.$notify({ title: 'Thông báo', message: 'Cập nhật thành công', type: 'success' });
           this.$router.push({ name: 'customer_index', replace: true })
-        }).catch(err => {
-          this.$message.error('Cập nhật thất bại');
+        }).catch(() => {
+          this.$notify({ title: 'Thông báo', message: 'Cập nhật thất bại', type: 'error' });
         })
       },
       create (params) {
         this.createCustomer({
           data: params
-        }).then(res => {
+        }).then(() => {
+          this.$notify({ title: 'Thông báo', message: 'Tạo mới thành công', type: 'success' });
           this.$router.push({ name: 'customer_index', replace: true })
-        }).catch(err => {
-          this.$message.error('Tạo mới khách hàng thất bại');
+        }).catch(() => {
+          this.$notify({ title: 'Thông báo', message: 'Tạo mới thất bại', type: 'error' });
         })
       },
       handleSubmit () {

@@ -158,19 +158,21 @@
         this.employeeUpdate({
           id: this.$route.params.id,
           data: params
-        }).then(res => {
+        }).then(() => {
+          this.$notify({ title: 'Thông báo', message: 'Cập nhật thành công', type: 'success' });
           this.$router.push({name: 'employee_index', replace: true})
-        }).catch(err => {
-          this.$message.error('Cập nhật thất bại');
+        }).catch(() => {
+          this.$notify({ title: 'Thông báo', message: 'Cập nhật thất bại', type: 'error' });
         })
       },
       create (params) {
         this.employeeCreate({
           data: params
-        }).then(res => {
+        }).then(() => {
+          this.$notify({ title: 'Thông báo', message: 'Tạo mới thành công', type: 'success' });
           this.$router.push({name: 'employee_index', replace: true})
-        }).catch(err => {
-          this.$message.error('Tạo mới nhân viên thất bại');
+        }).catch(() => {
+          this.$notify({ title: 'Thông báo', message: 'Tạo mới thất bại', type: 'error' });
         })
       },
       handleSubmit () {

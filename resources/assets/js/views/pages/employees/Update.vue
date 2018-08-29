@@ -31,8 +31,8 @@
       current () {
         let employee = this.ById(this.$route.params.id);
         if (employee) {
-          employee.user.is_active = employee.user.is_active > 0
-          employee.user.role_id = parseInt(employee.user.role_id)
+          employee.user.is_active = employee.user.is_active > 0;
+          employee.user.role_id = employee.user.role_id ? parseInt(employee.user.role_id) : '';
         }
 
         return employee
