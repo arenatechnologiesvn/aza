@@ -9,7 +9,10 @@
 namespace App\Service;
 
 
+use App\Customer;
+use App\Helper\RoleConstant;
 use App\Shop;
+use Illuminate\Support\Facades\Auth;
 
 class ShopService extends BaseService
 {
@@ -26,6 +29,23 @@ class ShopService extends BaseService
         'customer_id'
     ];
 
+    public function getAll($selectable = false)
+    {
+        if (Auth::user()->role_id == 2) {
+            return $this->model->select($this->selectable)->where('customer_id', $this->getCustomerId())->get();
+        }
+        return $this->model->select($this->selectable)->get();
+    }
+    private function getCustomerId (){
+        try {
+            if (Auth::user()->role_id == RoleConstant::Customer){
+                return Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
     public function __construct(Shop $model)
     {
         $this->model = $model;

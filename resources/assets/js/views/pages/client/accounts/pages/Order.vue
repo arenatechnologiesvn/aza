@@ -24,11 +24,7 @@
             el-date-picker(type="date" v-model="delivery_date" style="width: 100%" size="small" placeholder="Ngày giao hàng")
           el-col(:span="6")
             el-select(v-model="delivery_type" clearable filterable placeholder="Chọn khung giờ" size="small")
-              el-option(label="9h - 11h" :value="'9h-11h'")
-              el-option(label="11h - 13h" :value="'11h-13h'")
-              el-option(label="13h - 15h" :value="'13h-15h'")
-              el-option(label="15h - 17h" :value="'15h-17h'")
-              el-option(label="17h - 19h" :value="'17h-19h'")
+              el-option(:label="item" :value="item" v-for="item in times" :key="item")
     div.account-order__content(style="padding: 10px;")
       el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" style="width: 100%" border size="small" v-loading="loading")
         el-table-column(type="expand")
@@ -92,6 +88,9 @@
         order: 'list',
         loading: 'isLoading'
       }),
+      times () {
+        return this.$store.getters.settings && this.$store.getters.settings.timeFrame && this.$store.getters.settings.timeFrame.map(item => item.start + ' - ' + item.end)
+      },
       orders() {
         return this.order.map(item => ({
           id: item.id,
