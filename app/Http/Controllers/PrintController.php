@@ -10,14 +10,18 @@ namespace App\Http\Controllers;
 
 
 use App\Service\OrderService;
+use App\Service\SettingService;
+use App\Setting;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
 class PrintController extends Controller
 {
     private $service;
-    public function __construct(OrderService $service)
+    private $settings;
+    public function __construct(OrderService $service, SettingService $setting)
     {
         $this->service = $service;
+        $this->settings = $setting;
     }
 
     public function index(){
@@ -36,7 +40,7 @@ class PrintController extends Controller
             $printer -> text("Hello World!\n");
             $printer -> cut();
             $printer -> close();
-            return $this->api_success_response(['data' => view('pdf.bill', ['order' =>$this->service->getById($id)])->render()]) ;
+            return $this->api_success_response(['data' => view('pdf.bill', ['order' =>$this->service->getById($id), 'settings' => $this->settings->all()])->render(), 'settings' => $this->settings->all()]) ;
         } catch (\Exception $e) {
         }
 //        return $order->download('bill.pdf');

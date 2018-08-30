@@ -70,7 +70,7 @@ class CartController extends Controller
         return $h.":".$minute;
     }
     private function checkTime ($n) {
-        return intval($this->timeFormat()) > intval($n['start'] )&& intval($this->timeFormat()) < intval($n['end']);
+        return intval($this->timeFormat()) >= intval($n['start'] )&& intval($this->timeFormat()) <= intval($n['end']);
     }
     public function storeAll (Request $request) {
         try {
@@ -79,17 +79,12 @@ class CartController extends Controller
             if ($this->checkTime($n)) {
                 $data = $request->all();
                 foreach($data as $item) {
-                    if ($cart = $this->checkExistInCart($item['product_id'], $item['customer_id'])){
-                        $quantity = $cart->quantity + 1;
-                        $this->model->where([
-                            ['customer_id', '=', $item['customer_id']],
-                            ['product_id', '=', $item['product_id']]
-                        ])->update(['quantity' => $quantity]);
-                    } else {
+                    if ( $this->checkExistInCart($item['product_id'], $item['customer_id']) == null){
                         $cart = new Cart;
                         $cart->create($item);
                     }
                 }
+
                 return $this->api_success_response( ['data' => $data]);
             }else {
                 throw new \Exception();
@@ -149,7 +144,12 @@ class CartController extends Controller
     }
 
     private function checkExistInCart($product_id, $customer_id) {
-        return $this->model->where([['customer_id', '=', $customer_id], ['product_id', '=', $product_id]])->firstOrFail();
+        try {
+            return $this->model->where([['customer_id', '=', $customer_id], ['product_id', '=', $product_id]])->firstOrFail();
+        } catch (\Exception $e) {
+            return null;
+        }
+
     }
     private function getByProductId ($product_id) {
         return  $this->model->where([
