@@ -37,4 +37,21 @@ class StoreEmployeeCreate extends BaseFormRequest
             'contract_at' => 'nullable|date_format:d-m-Y'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'code.max' => 'Mã nhân viên phải nhỏ hơn 20 ký tự.',
+            'code.unique' => 'Mã nhân viên đã được đăng ký.',
+            'user.name.max' => 'Tên đăng nhập phải nhỏ hơn 100 ký tự.',
+            'user.name.unique' => 'Tên đăng nhập đã được đăng ký.',
+            'user.email.max' => 'Email phải nhỏ hơn 255 ký tự.',
+            'user.email.email' => 'Email không đúng.',
+            'user.email.unique' => 'Email đã được đăng ký.',
+            'user.first_name.max' => 'Tên nhân viên phải nhỏ hơn 100 ký tự.',
+            'user.last_name.max' => 'Tên nhân viên phải nhỏ hơn 100 ký tự.',
+            'user.phone.max' => 'Số điện thoại phải nhỏ hơn 20 ký tự.',
+            'user.address.max' => 'Địa chỉ phải nhỏ hơn 255 ký tự.'
+        ];
+    }
 }

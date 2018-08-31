@@ -1,5 +1,7 @@
 <template lang="pug">
   el-row
+    div(v-if="errorMessages.length" style="margin: 10px 0 10px")
+      el-alert(v-for="message, index of errorMessages" :key="index" :title="message" type="error")
     el-col.side-form(:span="5")
       el-row.image-container
         img.image-preview(:src="avatarUrl()" width="100%")
@@ -16,15 +18,15 @@
         el-col(:span="24")
           el-form-item(prop="user.name" label="TÊN ĐĂNG NHẬP")
             el-input(v-model="customer.user.name" clearable placeholder="Tên đăng nhập" :disabled="isUpdate")
+        el-col(:span="24")
+          el-form-item(prop="user.phone" label="ĐIỆN THOẠI CHÍNH")
+            el-input(v-model="customer.user.phone" clearable placeholder="Ví dụ: 0123345373, ...")
         el-col(:span="12")
           el-form-item(prop="user.last_name" label="HỌ")
             el-input(v-model="customer.user.last_name" clearable placeholder="Họ")
         el-col(:span="12")
           el-form-item(prop="user.first_name" label="TÊN")
             el-input(v-model="customer.user.first_name" clearable placeholder="Tên")
-        el-col(:span="24")
-          el-form-item(prop="user.phone" label="ĐIỆN THOẠI CHÍNH")
-            el-input(v-model="customer.user.phone" clearable placeholder="Ví dụ: 0123345373, ...")
         el-col(:span="24")
           el-form-item(prop="user.address" label="ĐỊA CHỈ")
             el-input(v-model="customer.user.address" clearable placeholder="Địa chỉ")
@@ -98,6 +100,7 @@
   import WardSelect from '~/components/AdministrativeSelect/Ward';
   import MediaManagerModal from '~/components/MediaManager/modal';
   import dummyImage from '~/assets/login_images/dummy-avatar.png';
+  import BaseMixin from '../../mixin';
 
   export default {
     name: 'CustomerForm',
@@ -107,6 +110,9 @@
       WardSelect,
       MediaManagerModal
     },
+    mixins: [
+      BaseMixin
+    ],
     props: {
       customer: {
         type: Object,
@@ -139,6 +145,9 @@
       }
     },
     computed: {
+      ...mapGetters('customers', {
+        isLoading: 'isLoading'
+      }),
       ...mapGetters('employees', {
         employees: 'list'
       }),
@@ -191,12 +200,14 @@
             { max: 50, message: 'Họ phải nhỏ hơn 50 ký tự', trigger: 'blur' }
           ],
           'user.phone': [
+            { required: true, message: 'Điện thoại không được trống', trigger: 'blur' },
             { max: 20, message: 'Điện thoại phải nhỏ hơn 20 ký tự', trigger: 'blur' }
           ],
           'user.address': [
             { max: 255, message: 'Địa chỉ phải nhỏ hơn 255 ký tự', trigger: 'blur' }
           ],
-        }
+        },
+        errorMessages: []
       }
     },
     methods: {
@@ -220,7 +231,8 @@
         }).then(() => {
           this.$notify({ title: 'Thông báo', message: 'Cập nhật thành công', type: 'success' });
           this.$router.push({ name: 'customer_index', replace: true })
-        }).catch(() => {
+        }).catch((errors) => {
+          this.errorMessages = this.getValidateErrorMessages(errors);
           this.$notify({ title: 'Thông báo', message: 'Cập nhật thất bại', type: 'error' });
         })
       },
@@ -230,7 +242,8 @@
         }).then(() => {
           this.$notify({ title: 'Thông báo', message: 'Tạo mới thành công', type: 'success' });
           this.$router.push({ name: 'customer_index', replace: true })
-        }).catch(() => {
+        }).catch((errors) => {
+          this.errorMessages = this.getValidateErrorMessages(errors);
           this.$notify({ title: 'Thông báo', message: 'Tạo mới thất bại', type: 'error' });
         })
       },
@@ -328,6 +341,7 @@
     },
     created () {
       this.fetchEmployees()
+      if (this.isUpdate) this.loading();
     }
   }
 </script>

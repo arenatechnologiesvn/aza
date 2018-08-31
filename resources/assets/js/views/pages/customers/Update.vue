@@ -22,8 +22,7 @@
     },
     computed: {
       ...mapGetters('customers', {
-        ById : 'byId',
-        isLoading: 'isLoading'
+        ById : 'byId'
       }),
       ...mapState([
         'route', // vuex-router-sync
@@ -75,7 +74,6 @@
     },
     created () {
       this.fetchData()
-      this.loading()
     }
   }
 </script>

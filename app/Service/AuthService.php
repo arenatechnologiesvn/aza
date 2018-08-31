@@ -55,6 +55,7 @@ class AuthService
             return $user;
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
             throw $e;
         }
     }

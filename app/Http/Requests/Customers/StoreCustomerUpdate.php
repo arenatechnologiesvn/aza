@@ -43,4 +43,21 @@ class StoreCustomerUpdate extends BaseFormRequest
            'user.is_active' => 'nullable|boolean'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'code.max' => 'Mã khách hàng phải nhỏ hơn 20 ký tự.',
+            'code.unique' => 'Mã khách hàng đã được đăng ký.',
+            'user.name.max' => 'Tên đăng nhập phải nhỏ hơn 100 ký tự.',
+            'user.name.unique' => 'Tên đăng nhập đã được đăng ký.',
+            'user.email.max' => 'Email phải nhỏ hơn 255 ký tự.',
+            'user.email.email' => 'Email không đúng.',
+            'user.email.unique' => 'Email đã được đăng ký.',
+            'user.first_name.max' => 'Tên khách hàng phải nhỏ hơn 100 ký tự.',
+            'user.last_name.max' => 'Tên khách hàng phải nhỏ hơn 100 ký tự.',
+            'user.phone.max' => 'Số điện thoại phải nhỏ hơn 20 ký tự.',
+            'user.address.max' => 'Địa chỉ phải nhỏ hơn 255 ký tự.'
+        ];
+    }
 }
