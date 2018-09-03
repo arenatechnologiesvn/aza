@@ -18,7 +18,7 @@
                   el-option(label="Tất cả" :value="-1")
             el-col(:span="4")
               el-form-item(label="Trạng thái:")
-                el-select(placeholder="Trạng thái" v-model="status" clearable filterable)
+                el-select(placeholder="Trạng thái" v-model="status" clearable filterable style="width: 100%")
                   el-option(label="Đang hoạt động" :value="0")
                   el-option(label="Đang tạm khóa" :value="1")
                   el-option(label="Chưa kích hoạt" :value="2")

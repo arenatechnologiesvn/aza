@@ -50,8 +50,8 @@
                   span(style="margin-left: 5px") Ảnh chi tiết sản phẩm
                 div(style="float: right")
                   el-button(type="text" @click="openMediaModal('multi')") Thay đổi
-                  span  /
-                  el-button(type="text" style="color: red" @click="clearAllPreviewImages()")  Xóa tất cả
+                  span /
+                  el-button(type="text" style="color: red" @click="clearAllPreviewImages()") Xóa tất cả
 
               ul.preview-container
                 li.preview-item(v-for="(image, index) in product.preview_images" :key="index")
@@ -164,9 +164,8 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid && this.productId) {
           this.updateProduct({ id: this.productId, data: this.prepareParams() }).then(() => {
-            this.fetchProducts().then(() => {
-              this.closeProductEditPanel();
-            });
+            this.closeProductEditPanel();
+            this.fetchProducts();
           });
         }
       });
@@ -215,8 +214,8 @@ export default {
       if (this.panelOpen && this.productId) {
         this.resetForm();
         this.product = JSON.parse(JSON.stringify(this.currentProduct));
-        this.product.category_id = parseInt(this.product.category_id);
-        this.product.provider_id = parseInt(this.product.provider_id);
+        this.product.category_id = this.product.category_id ? parseInt(this.product.category_id) : '';
+        this.product.provider_id = this.product.provider_id ? parseInt(this.product.provider_id) : '';
       }
     },
 

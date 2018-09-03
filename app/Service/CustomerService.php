@@ -16,6 +16,7 @@ use App\Employee;
 use App\Service\MediaService;
 use App\Service\AuthService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CustomerService extends BaseService
 {
@@ -47,15 +48,24 @@ class CustomerService extends BaseService
 
     public function beforeCreate($customer)
     {
+        if (isset($customer['employee_code'])) {
+            if ($employee = Employee::where('code', '=', $customer['employee_code'])->first()) {
+                $employee_user = User::find($employee->user_id);
+
+                if ($employee_user->role_id === 3) {
+                    $customer['employee_id'] = $employee['id'];
+                } else {
+                    throw ValidationException::withMessages([
+                        'employee_code' => 'Nhân viên #' . $customer['employee_code'] . ' không phải là nhân viên sale'
+                    ]);
+                }
+            } else {
+                throw new Exception('Nhân viên #' . $customer['employee_code'] . ' không tồn tại');
+            }
+        }
+
         $user = $this->authService->register($customer['user']);
         $customer['user_id'] = $user->id;
-
-        if (isset($customer['employee_code']) &&
-            $employee = Employee::where('code', '=', $customer['employee_code'])->first()) {
-            $customer['employee_id'] = $employee['id'];
-        } else {
-            throw new \Exception('Nhân viên #' . $customer['employee_code'] . ' không tồn tại');
-        }
 
         return $customer;
     }

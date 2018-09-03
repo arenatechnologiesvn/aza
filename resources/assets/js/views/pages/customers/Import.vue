@@ -195,6 +195,7 @@ export default {
     },
 
     getErrorMessages(errors) {
+      if (!errors || !Array.isArray(errors)) return;
       this.errorMessages = errors.map((error) => {
         return error.message;
       })

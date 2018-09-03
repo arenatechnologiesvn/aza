@@ -24,6 +24,12 @@ export default {
         type: 'warning',
         confirmButtonClass: 'el-button el-button--danger'
       }).then(ok).catch(cancel);
+    },
+    getValidateErrorMessages (errors) {
+      if (!errors || !Array.isArray(errors)) return [];
+      return errors.map((error) => {
+        return error.message;
+      });
     }
   },
   watch: {

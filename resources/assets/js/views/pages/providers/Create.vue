@@ -157,6 +157,8 @@ export default {
             }
           }
         });
+      }).catch(() => {
+        // Do nothing
       });
     },
 
