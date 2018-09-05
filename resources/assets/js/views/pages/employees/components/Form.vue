@@ -1,5 +1,7 @@
 <template lang="pug">
   el-row
+    div(v-if="errorMessages.length" style="margin: 10px 0 10px")
+      el-alert(v-for="message, index of errorMessages" :key="index" :title="message" type="error")
     el-col.side-form(:span="5")
       el-row.image-container
         img.image-preview(:src="avatarUrl()" width="100%")
@@ -16,6 +18,9 @@
         el-col(:span="24")
           el-form-item(prop="user.name" label="TÊN ĐĂNG NHẬP")
             el-input(v-model="employee.user.name" v-bind:disabled="isUpdate" placeholder="Tên đăng nhập" clearable)
+        el-col(:span="24")
+          el-form-item(prop="user.phone" label="SỐ ĐIỆN THOẠI")
+            el-input(v-model="employee.user.phone" placeholder="Điện thoại" clearable)
         el-col(:span="12")
           el-form-item(prop="user.last_name" label="HỌ")
             el-input(v-model="employee.user.last_name" placeholder="Họ" clearable)
@@ -25,9 +30,6 @@
         el-col(:span="24")
           el-form-item(prop="user.address" label="ĐỊA CHỈ")
             el-input(v-model="employee.user.address" placeholder="Địa chỉ" clearable)
-        el-col(:span="24")
-          el-form-item(prop="user.phone" label="SỐ ĐIỆN THOẠI")
-            el-input(v-model="employee.user.phone" placeholder="Điện thoại" clearable)
         el-col(:span="8")
           el-form-item(prop="user.role_id" label="VAI TRÒ")
             el-select(v-model="employee.user.role_id" clearable placeholder="Vai trò" style="width: 100%")
@@ -58,12 +60,16 @@
   import { mapGetters, mapActions } from 'vuex'
   import MediaManagerModal from '~/components/MediaManager/modal';
   import dummyImage from '~/assets/login_images/dummy-avatar.png';
+  import BaseMixin from '../../mixin';
 
   export default {
     name: 'EmployeeForm',
     components: {
       MediaManagerModal
     },
+    mixins: [
+      BaseMixin
+    ],
     props: {
       employee: {
         type: Object,
@@ -91,6 +97,9 @@
       }
     },
     computed: {
+      ...mapGetters('employees', {
+        isLoading: 'isLoading'
+      }),
       ...mapGetters('roles', {
         roles: 'list'
       }),
@@ -129,6 +138,7 @@
             { max: 50, message: 'Họ phải nhỏ hơn 50 ký tự', trigger: 'blur' }
           ],
           'user.phone': [
+            { required: true, message: 'Điện thoại không được trống', trigger: 'blur' },
             { max: 20, message: 'Điện thoại phải nhỏ hơn 20 ký tự', trigger: 'blur' }
           ],
           'user.address': [
@@ -136,8 +146,9 @@
           ],
           'user.role_id': [
             { required: true, message: 'Vai trò không được trống', trigger: 'change' }
-          ],
-        }
+          ]
+        },
+        errorMessages: []
       }
     },
     methods: {
@@ -158,19 +169,23 @@
         this.employeeUpdate({
           id: this.$route.params.id,
           data: params
-        }).then(res => {
+        }).then(() => {
+          this.$notify({ title: 'Thông báo', message: 'Cập nhật thành công', type: 'success' });
           this.$router.push({name: 'employee_index', replace: true})
-        }).catch(err => {
-          this.$message.error('Cập nhật thất bại');
+        }).catch((errors) => {
+          this.errorMessages = this.getValidateErrorMessages(errors);
+          this.$notify({ title: 'Thông báo', message: 'Cập nhật thất bại', type: 'error' });
         })
       },
       create (params) {
         this.employeeCreate({
           data: params
-        }).then(res => {
+        }).then(() => {
+          this.$notify({ title: 'Thông báo', message: 'Tạo mới thành công', type: 'success' });
           this.$router.push({name: 'employee_index', replace: true})
-        }).catch(err => {
-          this.$message.error('Tạo mới nhân viên thất bại');
+        }).catch((errors) => {
+          this.errorMessages = this.getValidateErrorMessages(errors);
+          this.$notify({ title: 'Thông báo', message: 'Tạo mới thất bại', type: 'error' });
         })
       },
       handleSubmit () {
@@ -218,6 +233,7 @@
     },
     created () {
       this.fetchRoles()
+      if (this.isUpdate) this.loading()
     }
   }
 </script>

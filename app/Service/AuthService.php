@@ -42,10 +42,11 @@ class AuthService
                 'is_active' => $data['is_verified']
             ]);
 
-            $verifyUser = VerifyUser::create([
-                'user_id' => $user->id,
-                'token' => str_random(40)
-            ]);
+            // TODO: use for verifying email next developve time
+            // $verifyUser = VerifyUser::create([
+            //     'user_id' => $user->id,
+            //     'token' => str_random(40)
+            // ]);
 
             $user->randomPassword = $data['password'];
             \Mail::to($user->email)->send(new VerifyMail($user));
@@ -54,6 +55,7 @@ class AuthService
             return $user;
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
             throw $e;
         }
     }

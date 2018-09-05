@@ -22,8 +22,7 @@
     },
     computed: {
       ...mapGetters('customers', {
-        ById : 'byId',
-        isLoading: 'isLoading'
+        ById : 'byId'
       }),
       ...mapState([
         'route', // vuex-router-sync
@@ -62,10 +61,12 @@
           id: this.$route.params.id
         }).then(() => {
           this.current = JSON.parse(JSON.stringify(this.ById(this.$route.params.id)));
-          console.log(this.current)
-          this.current.employee_id = parseInt(this.current.employee_id)
-          this.current.customer_type = parseInt(this.current.customer_type)
-        }).catch(() => this.$router.push({name: 'page404'}))
+          this.current.employee_id = this.current.employee_id ? parseInt(this.current.employee_id) : ''
+          this.current.customer_type = this.current.customer_type ? parseInt(this.current.customer_type) : ''
+        }).catch(() => {
+          this.$notify({ title: 'Thông báo', message: 'Tải về hồ sơ nhân viên thất bại', type: 'error' });
+          this.$router.push({ name: 'customer_index', replace: true });
+        })
       }
     },
     watch: {
@@ -73,7 +74,6 @@
     },
     created () {
       this.fetchData()
-      this.loading()
     }
   }
 </script>

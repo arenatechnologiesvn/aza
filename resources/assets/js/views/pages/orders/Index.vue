@@ -52,12 +52,8 @@
           el-col(:span="4")
             el-date-picker(type="date" style="width: 100%" v-model="delivery_date" size="small" placeholder="Ngày giao hàng")
           el-col(:span="4")
-            el-select(v-model="delivery_type" style="width: 100%" clearable filterable placeholder="Giờ giao hàng" size="small")
-              el-option(label="9h - 11h" :value="'9h-11h'")
-              el-option(label="11h - 13h" :value="'11h-13h'")
-              el-option(label="13h - 15h" :value="'13h-15h'")
-              el-option(label="15h - 17h" :value="'15h-17h'")
-              el-option(label="17h - 19h" :value="'17h-19h'")
+            el-select(v-model="delivery_type" clearable filterable placeholder="Chọn khung giờ" size="small")
+              el-option(:label="item" :value="item" v-for="item in times" :key="item")
     div.account-order__content(style="padding: 10px;")
       order-detail(ref="showDetail")
       el-table(:data="orders.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" @selection-change="handleSelectionChange" style="width: 100%" border size="small" v-loading="loading")
@@ -111,6 +107,7 @@
   import excelExport from '~/utils/excel/export2Excel.js'
   import dummyImage from '~/assets/login_images/dummy-image.jpg'
   import moment from 'moment'
+  import { get } from '~/api/setting'
 
   const COMPLETE_STATUS = 0;
   const CONFIRM_STATUS = 1;
@@ -198,6 +195,9 @@
             }
             // return (this.customer_id.toString().trim() === item.customer.id.toString().trim())
           })
+      },
+      times () {
+        return this.timeFrame  && this.timeFrame.length && this.timeFrame.map(item => item.start + ' - ' + item.end)
       }
     },
     watch: {
@@ -389,12 +389,18 @@
         customer_id: null,
         delivery_range: null,
         showingOrderStatus: LABEL_ORDER_STATUS,
-        orderSelectedIds: []
+        orderSelectedIds: [],
+        timeFrame: []
       }
     },
     created () {
       this.fetchData()
       this.fetchCustomers()
+      get('timeFrame').then(res => {
+        (res.data) && (this.timeFrame = res.data.value)
+      }).catch(() => {
+        this.timeFrame = []
+      })
     }
   }
 </script>
