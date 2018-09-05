@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::get('setting/{key}', 'SettingController@getPopup');
     // Role and permission
     Route::resource('role', 'RoleController');
+    Route::put('print/select', 'PrintController@bulkBill');
     Route::resource('print', 'PrintController');
     Route::delete('roles/deletes', 'RoleController@deletes');
     Route::resource('roles', 'RoleController');

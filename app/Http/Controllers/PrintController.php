@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 use App\Service\OrderService;
 use App\Service\SettingService;
 use App\Setting;
+use Illuminate\Http\Request;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
 class PrintController extends Controller
@@ -40,9 +41,18 @@ class PrintController extends Controller
             $printer -> text("Hello World!\n");
             $printer -> cut();
             $printer -> close();
-            return $this->api_success_response(['data' => view('pdf.bill', ['order' =>$this->service->getById($id), 'settings' => $this->settings->all()])->render(), 'settings' => $this->settings->all()]) ;
+            return $this->api_success_response(['data' => view('pdf.bill', ['order' =>$this->service->getById($id), 'settings' => $this->settings->all()])->render()]) ;
         } catch (\Exception $e) {
         }
 //        return $order->download('bill.pdf');
+    }
+
+    public function bulkBill(Request $request) {
+        $ids = $request->get('ids');
+        if ($ids!= null) {
+            return $this->api_success_response(['data' => view('pdf.bulk', ['orders' =>$this->service->getByIds($ids), 'settings' => $this->settings->all()])->render()]) ;
+        } else {
+            return $this->api_error_response("Not Found records");
+        }
     }
 }

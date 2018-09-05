@@ -154,4 +154,27 @@ class OrderService extends BaseService
             }, 'shop']);
         }
     }
+
+    public function getByIds($ids) {
+        return $this->model->select($this->selectable)->with(['products'=> function($query) {
+            $query->select([
+                'id',
+                'name',
+                'description',
+                'price',
+                'unit',
+                'quantitative',
+                'provider_id',
+            ])->with(['provider'=> function ($q2) {
+                $q2->select(['id', 'name']);
+            }, 'featured' => function ($q3) {
+                $q3->select([
+                    'id',
+                    DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                ]);
+            }]);
+        },'customer' => function ($q3) {
+            $q3->with(['user']);
+        }, 'shop'])->whereIn('id', $ids)->get();
+    }
 }

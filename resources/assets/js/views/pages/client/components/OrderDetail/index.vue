@@ -129,7 +129,7 @@
       },
       print (id) {
         this.printBill(id).then(res => {
-          let myWindow = window.open('', 'my div', 'height=400,width=600');
+          let myWindow = window.open('', 'In hóa đơn', 'height=800,width=960');
           myWindow.document.write(res.data);
           myWindow.print();
           myWindow.close();

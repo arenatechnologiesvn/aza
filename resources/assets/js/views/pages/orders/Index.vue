@@ -36,6 +36,9 @@
                 el-dropdown-item(v-if="status === 1 || status === 3" command="CANCEL" style="color: red")
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
+                el-dropdown-item(command="PRINT")
+                  svg-icon(icon-class="fa-solid print")
+                  span In Hóa đơn
             el-button(type="success" size="small" @click="exportExcelFile" :disabled="status === -1")
               svg-icon(icon-class="fa-solid file-excel")
               span.ml-5  Xuất Excel
@@ -204,7 +207,8 @@
       ...mapActions('orders', {
         fetchOrder: 'fetchList',
         updateOrder: 'update',
-        bulkUpdate: 'bulkUpdate'
+        bulkUpdate: 'bulkUpdate',
+        printBill: 'bulkBill'
       }),
       ...mapActions('customers', {
         fetchCustomers: 'fetchList',
@@ -329,6 +333,13 @@
               this.failedNotify('Hủy đơn hàng thất bại');
             })
           });
+        }else if (command === 'PRINT') {
+          this.printBill(this.orderSelectedIds).then(res => {
+            let myWindow = window.open('', 'In hóa đơn', 'height=800,width=960');
+            myWindow.document.write(res.data);
+            myWindow.print();
+            myWindow.close();
+          })
         }
       },
       successNotify(message) {

@@ -65,27 +65,28 @@
 </head>
 
 <body>
+@foreach ($orders as $order)
+<div class="break">
+    <div id="page-wrap">
 
-<div id="page-wrap">
+        <div id="header">HÓA ĐƠN BÁN LẺ <br>
+            <small style="font-size: 8px;">{{date('d-m-Y h:m:s')}}</small></div>
 
-    <div id="header">HÓA ĐƠN BÁN LẺ <br>
-    <small style="font-size: 8px;">{{date('d-m-Y h:m:s')}}</small></div>
+        <div style="clear:both"></div>
 
-    <div style="clear:both"></div>
-
-    <div id="customer">
-        <div class="customer-info">
-            <ul class="customer-info--list">
-                <li class="item"><strong>Khách hàng: </strong><span> {{$order['customer']['user']['full_name']}}</span></li>
-                <li class="item"><strong>Địa chỉ: </strong><span> {{$order['delivery_address']}}</span></li>
-                <li class="item"><strong>Điện thoại: </strong><span> {{$order['shop']['phone']}}</span></li>
-                <li class="item"><strong>Ngày giờ giao hàng: </strong><span> {{date('d-m-Y', $order['delivery'])}} ({{$order['delivery_type']}})</span></li>
-            </ul>
+        <div id="customer">
+            <div class="customer-info">
+                <ul class="customer-info--list">
+                    <li class="item"><strong>Khách hàng: </strong><span> {{$order['customer']['user']['full_name']}}</span></li>
+                    <li class="item"><strong>Địa chỉ: </strong><span> {{$order['delivery_address']}}</span></li>
+                    <li class="item"><strong>Điện thoại: </strong><span> {{$order['shop']['phone']}}</span></li>
+                    <li class="item"><strong>Ngày giờ giao hàng: </strong><span> {{date('d-m-Y', $order['delivery'])}} ({{$order['delivery_type']}})</span></li>
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <table id="items">
-        <thead>
+        <table id="items">
+            <thead>
             <tr>
                 <th>Tên sản phẩm</th>
                 <th>Giá <br /> (₫)</th>
@@ -93,31 +94,32 @@
                 <th>Định lượng</th>
                 <th>Thành tiền <br/> (₫)</th>
             </tr>
-        </thead>
-        <tbody>
-        @foreach($order['products'] as $product)
-            <tr class="item-row">
-                <td class="item-name">{{$product['name']}}</td>
-                <td class="price">{{number_format($product['price'])}}</td>
-                <td class="qty">{{$product['pivot']['quantity']}}</td>
-                <td class="unit">{{$product['quantitative']}}({{$product['unit']}}) </td>
-                <td class="cost">{{number_format($product['price'] * $product['pivot']['quantity'])}}</td>
+            </thead>
+            <tbody>
+            @foreach($order['products'] as $product)
+                <tr class="item-row">
+                    <td class="item-name">{{$product['name']}}</td>
+                    <td class="price">{{number_format($product['price'])}}</td>
+                    <td class="qty">{{$product['pivot']['quantity']}}</td>
+                    <td class="unit">{{$product['quantitative']}}({{$product['unit']}}) </td>
+                    <td class="cost">{{number_format($product['price'] * $product['pivot']['quantity'])}}</td>
+                </tr>
+            @endforeach
+            <tr>
+                <td colspan="2" class="blank"> </td>
+                <td colspan="2" class="total-line">TỔNG TIỀN</td>
+                <td class="total-value"><div id="subtotal">{{number_format($order['total_money'])}}₫</div></td>
             </tr>
-        @endforeach
-        <tr>
-            <td colspan="2" class="blank"> </td>
-            <td colspan="2" class="total-line">TỔNG TIỀN</td>
-            <td class="total-value"><div id="subtotal">{{number_format($order['total_money'])}}₫</div></td>
-        </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <p id="note">
-        <strong>Ghi chú: </strong> {{$settings['print']->note}}
-    </p>
+        <p id="note">
+            <strong>Ghi chú: </strong> {{$settings['print']->note}}
+        </p>
 
+    </div>
 </div>
-
+@endforeach
 </body>
 
 </html>
