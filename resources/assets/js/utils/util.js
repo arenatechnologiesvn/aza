@@ -15,7 +15,7 @@ const showThisMenuEle = (item, access) => {
 
 export const formatNumber = (num) => {
   const floatNumber = parseFloat(num);
-  return _.numberFormat(floatNumber, 2, '.', ',');
+  return _.numberFormat(floatNumber, 0, ',', '.');
 };
 
 export const getMenuByRouter = (list) => {
