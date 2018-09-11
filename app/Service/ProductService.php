@@ -48,7 +48,20 @@ class ProductService extends BaseService
           Select by orm
         */
         if (Auth::user()->role_id == RoleConstant::Customer) {
-            return $this->model->with($this->relative())->get();
+            return $this->model->with(['customerFavorites' => function ($q) {
+                $q->select(['id']);
+            },'customerCarts' => function ($q) {
+                $q->select(['id']);
+            },'category', 'provider', 'featured' => function ($q3) {
+                $q3->select(
+                    DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                );
+            },'previews'=> function ($q3) {
+                $q3->select([
+                    'id',
+                    DB::raw('CONCAT("/", directory, "/", filename, ".", extension) as url')
+                ]);
+            } ])->get();
         } else {
             /*
           Maping
@@ -56,7 +69,6 @@ class ProductService extends BaseService
             $products = $this->model->get()->map(function ($item) {
                 return $this->transformData($item);
             });
-
             return $products;
         }
 
@@ -71,7 +83,6 @@ class ProductService extends BaseService
              if (!$product = $this->model::find($id)) {
                  throw new \Exception('Product is not exist');
              }
-
              return $this->transformData($product);
         }
 
@@ -220,7 +231,9 @@ class ProductService extends BaseService
     private function relative() {
         $relatives = ['category', 'provider', 'featured','previews'];
         if(Auth::user()->role_id == RoleConstant::Customer){
-            array_push($relatives, 'customerFavorites', 'customerCarts');
+            array_push($relatives, ['customerFavorites' => function ($q) {
+                $q->select(['id']);
+            }, 'customerCarts']);
         }
         return $relatives;
     }

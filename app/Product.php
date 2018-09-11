@@ -30,6 +30,17 @@ class Product extends BaseModel
         'provider_id'
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'created_by',
+        'updated_at',
+        'updated_by',
+        'deleted_at',
+        'deleted_by'
+    ];
+
     public $primaryKey = 'id';
 
     public function category()

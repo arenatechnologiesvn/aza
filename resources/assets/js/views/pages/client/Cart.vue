@@ -247,7 +247,8 @@
       },
       onShopChange (value) {
         this.listShop.map(item => {
-         if(item.customer_id == value) {
+          console.log(item)
+         if(item.id == value) {
            this.form.delivery_address = item.zone
          }
         } )

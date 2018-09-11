@@ -66,7 +66,7 @@
         return this.listProducts.map(item => ({
           id: item.id,
           name: item.name,
-          image:item.featured && item.featured[0] && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}`,
+          image:item.featured && item.featured[0] && item.featured[0].url,
           price: item.price
         }))
       }

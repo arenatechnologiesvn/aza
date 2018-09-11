@@ -79,9 +79,9 @@
         return item ? {
           id: item.id,
           title: item.name,
-          img: item.featured  && item.featured[0] && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
+          img: item.url ,
           category: item.category ? item.category.name : 'Chưa xác định',
-          preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: `/${p.directory}/${p.filename}.${p.extension}`})): [],
+          preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: p.url})): [],
           price: item.price,
           discount: item.discount_price,
           inventory: 10,
@@ -98,8 +98,8 @@
           .map(item => ({
             id: item.id,
             title: item.name,
-            img: item.featured && item.featured[0] && `/${item.featured[0].directory}/${item.featured[0].filename}.${item.featured[0].extension}` ,
-            preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: `/${p.directory}/${p.filename}.${p.extension}`})): [],
+            img: item.featured && item.featured[0] && item.featured[0].url,
+            preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: p.url})): [],
             category: item.category ? item.category.name : 'Chưa xác định',
             price: item.price,
             discount: item.discount_price,

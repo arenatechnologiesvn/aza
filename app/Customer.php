@@ -18,8 +18,6 @@ class Customer extends BaseModel
         'province_code',
         'district_code',
         'ward_code',
-        'favorites',
-        'carts',
         'sex'
     ];
     protected $hidden = [
