@@ -34,7 +34,7 @@ class ShopService extends BaseService
         if (Auth::user()->role_id == 2) {
             return $this->model->select($this->selectable)->where('customer_id', $this->getCustomerId())->get();
         }
-        return $this->model->select($this->selectable)->get();
+        return $this->selectable()->get();
     }
     private function getCustomerId (){
         try {
@@ -55,7 +55,7 @@ class ShopService extends BaseService
     public function toDto($selectable = null){
         return is_callable($selectable) ? $selectable() : $this->selectable();
     }
-    protected function selectable(){
+    protected function selectable() {
         return $this->model->select($this->selectable)->with(['customer'=> function($query) {
             $query->with(['user']);
         }]);
