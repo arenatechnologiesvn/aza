@@ -35,7 +35,10 @@
       div.index__container
         div.table
           el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange" v-loading="loading")
-            el-table-column(type="selection" header-align="center" align="center" width="40")
+            //- el-table-column(type="selection" header-align="center" align="center" width="40")
+            el-table-column(prop="num" label="STT" align="center" width="60")
+              template(slot-scope="scope")
+                span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
             el-table-column(prop="featured_image" align="center" width="60")
               template(slot-scope="scope")
                 img(:src="featuredImageUrl(scope.row)" :width="40" :height="40")

@@ -2,7 +2,10 @@
   div.index__container
     div.table
       el-table(:data="shops.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
-        el-table-column(type="selection" width="40")
+        //- el-table-column(type="selection" width="40")
+        el-table-column(prop="num" label="STT" align="center" width="60")
+          template(slot-scope="scope")
+            span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
         el-table-column(prop="name" label="TÊN CỬA HÀNG" min-width="200" sortable)
         el-table-column(prop="phone" label="ĐIỆN THOẠI" sortable width="180")
         el-table-column(prop="customer.user.full_name" label="KHÁCH HÀNG" sortable width="180")

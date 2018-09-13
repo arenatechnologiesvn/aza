@@ -11,7 +11,7 @@
         el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" clearable size="small" style="width: 100%")
       el-col(:span="4")
         span.search-wrapper__title Khách hàng:
-        el-select(placeholder="Khách hàng" v-model="selectedCustomer" clearable size="small")
+        el-select(placeholder="Khách hàng" v-model="selectedCustomer" clearable size="small" style="width: 100%")
           el-option(v-for="item in customerList" :key="item.id" :label="item.name" :value="item.id")
       el-col(:span="4")
         span.search-wrapper__title Tỉnh/TP:
