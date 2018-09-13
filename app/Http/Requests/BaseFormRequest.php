@@ -14,10 +14,14 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use App\Traits\RestApiResponse;
 
 abstract class BaseFormRequest extends FormRequest
 {
+    use RestApiResponse;
+
     protected $statusCode;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -60,9 +64,13 @@ abstract class BaseFormRequest extends FormRequest
         } else {
             $statusResponse = JsonResponse::HTTP_UNPROCESSABLE_ENTITY;
         }
-        throw new HttpResponseException(response()->json(['errors' => $transformed
-        ], $statusResponse));
+
+        throw new HttpResponseException($this->api_error_response(
+            $transformed,
+            $statusResponse
+        ));
     }
+
     /**
      * Handle a failed authorization attempt.
      *
@@ -72,7 +80,9 @@ abstract class BaseFormRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new HttpResponseException(response()->json(['errors' => trans('auth.unauthorized')], 401));
-        // throw new UnauthorizedException;
+        throw new HttpResponseException($this->api_error_response(
+            'Không có quyền truy cập',
+            401
+        ));
     }
 }
