@@ -24,7 +24,7 @@
       div
         el-row(:gutter="5")
           el-col(:span="6")
-            el-dropdown(split-button type="primary" @command="handleBulkSelection" size="small" style="margin-right: 5px")
+            el-dropdown(v-if="[1, 3].includes(status)" split-button type="primary" @command="handleBulkSelection" size="small" style="margin-right: 5px")
               span Tác vụ
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item(v-if="status === 1" command="PROCESS")
@@ -33,18 +33,18 @@
                 el-dropdown-item(v-if="status === 3" command="COMPLETE")
                   svg-icon(icon-class="fa-solid check-circle")
                   span Hoàn thành đơn hàng
-                el-dropdown-item(v-if="status === 1 || status === 3" command="CANCEL" style="color: red")
+                el-dropdown-item(command="CANCEL" style="color: red")
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
                 el-dropdown-item(command="PRINT")
                   svg-icon(icon-class="fa-solid print")
-                  span In Hóa đơn
+                  span In hóa đơn
             el-button(type="success" size="small" @click="exportExcelFile" :disabled="status === -1")
               svg-icon(icon-class="fa-solid file-excel")
               span.ml-5  Xuất Excel
           el-col(:span="6" style="text-align: right")
             el-radio-group(size="small" v-model="delivery_range")
-              el-radio-button(label="1") Hôm nay
+              el-radio-button(label="0") Hôm nay
               el-radio-button(label="7") Tuần qua
               el-radio-button(label="-1") Tất cả
           el-col(:span="4")
@@ -185,15 +185,9 @@
             return (this.customer_id.toString().trim() === item.customer.id.toString().trim())
           })
           .filter(item => {
-            if(this.delivery_range === null || parseInt(this.delivery_range) === -1 ) return true;
-            else {
-              const nDate = new Date
-              const end = +(nDate)
-              const before = end - (parseInt(this.delivery_range) * 3600 * nDate.getHours() * 1000);
-              const d = +(new Date(item.date * 1000))
-              return d >= before && d <= end
-            }
-            // return (this.customer_id.toString().trim() === item.customer.id.toString().trim())
+            if (this.delivery_range === null || parseInt(this.delivery_range) === -1 ) return true;
+            const applyDate = moment.unix(item.date);
+            return moment().diff(applyDate, 'days') <= this.delivery_range;
           })
       },
       times () {
