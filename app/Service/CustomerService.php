@@ -172,4 +172,19 @@ class CustomerService extends BaseService
             throw $e;
         }
     }
+
+    public function setScore ($customer_id, $point) {
+        try {
+            DB::beginTransaction();
+            $customer = Customer::find($customer_id);
+            if ($customer != null) {
+                $point  = $customer->point + $point;
+                $customer->update(['point' => $point]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

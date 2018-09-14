@@ -35,10 +35,12 @@ class OrderService extends BaseService
         'shop_id'
     ];
     private $setting;
-    public function __construct(Order $model, SettingService $service)
+    private $customerService;
+    public function __construct(Order $model, SettingService $service, CustomerService $customerService)
     {
         $this->model = $model;
         $this->setting = $service;
+        $this->customerService = $customerService;
         parent::__construct($model);
     }
 
@@ -48,6 +50,7 @@ class OrderService extends BaseService
     protected function selectable(){
         return $this->selectByRole();
     }
+
 
     public function beforeCreate($order) {
         $order['order_code'] = 'DH-'.time();
@@ -99,6 +102,16 @@ class OrderService extends BaseService
     }
 
     public function afterSave($order, $data, $update = false) {
+        if ($data['status'] == 0) {
+            try {
+                $general = $this->setting->action('get', 'general');
+                $general = json_decode($general, true)['value'];
+                $scorePoint = $general['score'];
+                $this->customerService->setScore($order->customer_id, (int) (floatval($order->total_money) / intval($scorePoint)));
+            } catch (\Exception $e) {
+                return $e;
+            }
+        }
         if(!empty($data['product'])) {
             if ($update) {
                 usort($data['product'], function($a, $b) {
@@ -106,6 +119,7 @@ class OrderService extends BaseService
                 });
             }
             $order->products()->sync($data['product']);
+
         }
     }
 

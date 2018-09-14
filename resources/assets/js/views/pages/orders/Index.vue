@@ -82,7 +82,7 @@
         el-table-column(prop="id" label="TÁC VỤ" width="200" fixed="right")
           template(slot-scope="scope")
             el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" :content="parseInt(scope.row.status) === 1 ? 'Xác nhận đơn hàng' : 'Hoàn thành đơn hàng'" placement="top")
-              el-button(size="mini" @click="changeStatus(scope.row.id, scope.row.status, 3)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2" round)
+              el-button(size="mini" @click="changeStatus(scope.row.id, scope.row.status, scope.row.status == 1 ? 3 : 0)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2" round)
                 svg-icon(icon-class="fa-solid check-circle")
             el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" content="Hủy đơn hàng" placement="top")
               el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, scope.row.status, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)

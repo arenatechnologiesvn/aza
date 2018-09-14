@@ -9,7 +9,7 @@
           strong.info__vip {{$store.getters.user_info.customer.customer_type === 0 ? 'THƯỜNG': 'VIP'}}
         div
           span.info__score
-            span.score 400
+            span.score {{$store.getters.user_info.customer.point}}
             svg-icon(icon-class="fa-solid coins")
     ul
       li(v-for="menu in menus" :key="menu.name" :class="{'active': $route.name === menu.name}")

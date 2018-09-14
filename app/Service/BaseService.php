@@ -109,6 +109,9 @@ abstract class BaseService
             foreach ($ids as $id) {
                 if ($target = $this->model->find($id)) {
                     $target->update($data);
+                    if(method_exists($this, 'afterSave')) {
+                        $this->afterSave($target, $data, true);
+                    }
                 }
             }
 
