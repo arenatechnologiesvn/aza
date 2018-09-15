@@ -7,16 +7,23 @@
             svg-icon(icon-class="fa-solid trash")
             span(style="margin-left: 7px") Xóa {{selection.length}} quyền đã chọn
       el-col(:span="12" style="text-align: right; float: right")
-        el-button(type="primary" size="small" @click="handleAdd")
+        el-button(type="primary" size="small" @click="handleAdd" v-if="addEnable")
           svg-icon(icon-class="fa-solid plus-circle")
           span(style="margin-left: 7px") Thêm mới
 </template>
 
 <script>
+  import {checkPermission} from '~/utils/util'
+  import {ADD_ROLE} from '~/utils/const'
   export default {
     name: 'RoleControl',
     props: {
       selection: {}
+    },
+    computed: {
+      addEnable () {
+        return checkPermission(ADD_ROLE, this.$store.getters.mpermissions)
+      }
     },
     methods: {
       handleAdd () {

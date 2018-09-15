@@ -45,6 +45,12 @@ class RoleService extends BaseService
         }
     }
 
+    protected function selectable(){
+        return $this->model->with(['permissions' => function($q){
+            $q->with('children')->where('parent_id', '=', null);
+        }]);
+    }
+
     public function getById($id, $selectable = null)
     {
         $permissions = Permission::with('roles')->whereHas('roles', function ($q1) use ($id) {

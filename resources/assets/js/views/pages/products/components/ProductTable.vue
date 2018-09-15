@@ -25,10 +25,10 @@
           el-button(type="success" size="small" @click="exportExcelFile" :disabled="!this.tableData.length")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
-          el-button(type="success" size="small" @click="redirectToImportPage")
+          el-button(type="success" size="small" @click="redirectToImportPage" v-if="enableImport")
             svg-icon(icon-class="fa-solid upload")
             span.ml-5  Tải lên
-          el-button(type="primary" size="small" @click="redirectToAddingPage")
+          el-button(type="primary" size="small" @click="redirectToAddingPage" v-if="enableAdd")
             svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới
     div.table__wrapper
@@ -57,7 +57,7 @@
                 span {{ scope.row.provider ? scope.row.provider.name : '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
+                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top" v-if="enableEdit")
                   el-button(icon="el-icon-edit" size="mini" round  @click="openEditPanel(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneProduct(scope.row.id)")
@@ -80,7 +80,8 @@ import MediaManagerModal from '~/components/MediaManager/modal';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
 import excelExport from '~/utils/excel/export2Excel.js';
 import moment from 'moment';
-
+import {checkPermission} from '~/utils/util'
+import {ADD_PRODUCT, EDIT_PRODUCT, IMPORT_PRODUCT} from '~/utils/const'
 const DEDAULT_PAGE_SIZE = 10;
 
 export default {
@@ -99,6 +100,15 @@ export default {
 
     tableData() {
       return this.extractData(this.products);
+    },
+    enableAdd () {
+      return checkPermission(ADD_PRODUCT, this.$store.getters.mpermissions)
+    },
+    enableEdit () {
+      return checkPermission(EDIT_PRODUCT, this.$store.getters.mpermissions)
+    },
+    enableImport () {
+      return checkPermission(IMPORT_PRODUCT, this.$store.getters.mpermissions)
     }
   },
   created() {

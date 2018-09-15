@@ -3,6 +3,7 @@ import { getIntersection } from '~/utils/tools';
 import { getMenuByRouter } from '~/utils/util';
 import request from '~/utils/request';
 import Layout from '~/views/shared/layout/Admin';
+import permissions from "./permissions";
 
 /**
  * Determine whether to match the current user authority by meta.role
@@ -65,6 +66,9 @@ const permission = {
       state.addRouters = routers.asyncRouter;
       state.menus = routers.menu;
       state.routers = getIntersection(constantRouterMap, routers.asyncRouter);
+    },
+    SET_PERMISSIONS: (state, permissions) => {
+      state.mpermissions = permissions;
     }
   },
   actions: {
@@ -81,6 +85,7 @@ const permission = {
             commit('SET_ROUTERS', { asyncRouter });
           } else {
             const data = processRouter(res.data.permissions);
+            commit('SET_PERMISSIONS', res.data.permissions);
             const menu = getMenuByRouter(data.sort((a, b) => a.lft - b.lft));
             asyncRouter.push({
               path: '/',

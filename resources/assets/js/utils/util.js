@@ -5,6 +5,19 @@ export const hasChild = (item) => {
   return item.children && item.children.length !== 0;
 };
 
+export function checkPermission (id, permissions) {
+  if (permissions && permissions.length > 0) {
+    const check = permissions.filter(item => {
+      if (item.id === id) return true;
+      if (item.children && item.children.length > 0) return checkPermission(id, item.children);
+      return false;
+    });
+    return check.length > 0;
+  } else {
+    return false;
+  }
+}
+
 const showThisMenuEle = (item, access) => {
   if (item.meta && item.meta.access && item.meta.access.length) {
     return hasOneOf(item.meta.access, access);

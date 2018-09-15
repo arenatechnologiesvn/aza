@@ -21,7 +21,7 @@
         //-     el-dropdown-menu(slot="dropdown")
         //-       el-dropdown-item Xóa
         el-col(:span="24" style="text-align: right;")
-          el-button(type="primary" size="small" @click="redirectToAddingPage")
+          el-button(type="primary" size="small" @click="redirectToAddingPage" v-if="enableAdd")
             svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới
     div.table__wrapper
@@ -50,7 +50,7 @@
                 span {{ scope.row.contract_at || '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
+                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top" v-if="enableEdit")
                   el-button(icon="el-icon-edit" size="mini" round  @click="update(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneProvider(scope.row.id)")
@@ -69,6 +69,8 @@ import ProvinceSelect from '~/components/AdministrativeSelect/Province';
 import DistrictSelect from '~/components/AdministrativeSelect/District';
 import WardSelect from '~/components/AdministrativeSelect/Ward';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
+import {checkPermission} from '~/utils/util'
+import {ADD_PROVIDER, EDIT_PROVIDER} from '~/utils/const'
 
 const DEDAULT_PAGE_SIZE = 10;
 
@@ -81,6 +83,12 @@ export default {
 
     tableData() {
       return this.extractData(this.providers);
+    },
+    enableAdd () {
+      return checkPermission(ADD_PROVIDER, this.$store.getters.mpermissions)
+    },
+    enableEdit () {
+      return checkPermission(EDIT_PROVIDER, this.$store.getters.mpermissions)
     }
   },
   components: {

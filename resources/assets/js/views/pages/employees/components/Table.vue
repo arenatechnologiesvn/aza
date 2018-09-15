@@ -30,7 +30,7 @@
             span(v-if="!scope.row.user.is_verified") {{ '-' }}
         el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
+            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top" v-if="editEnable")
               el-button(size="mini" @click="handleEdit(scope.row.id)" round)
                 svg-icon(icon-class="fa-solid user-edit")
             el-tooltip(effect="dark" content="Xóa" placement="top")
@@ -49,6 +49,8 @@
 
 <script>
   import dummyImage from '~/assets/login_images/dummy-avatar.png';
+  import {checkPermission} from '~/utils/util'
+  import {EDIT_EMPLOYEE} from '~/utils/const'
 
   export default {
     name: 'EmployeeTable',
@@ -56,6 +58,11 @@
       return {
         currentPage: 1,
         pageSize: 10
+      }
+    },
+    computed: {
+      editEnable () {
+        return checkPermission(EDIT_EMPLOYEE, this.$store.getters.mpermissions)
       }
     },
     props: {

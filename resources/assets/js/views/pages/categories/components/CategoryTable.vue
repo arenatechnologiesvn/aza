@@ -8,7 +8,7 @@
         //-     el-dropdown-menu(slot="dropdown")
         //-       el-dropdown-item Xóa
         el-col(:span="24" style="text-align: right")
-          el-button(type="primary" size="small" @click="redirectToAddingPage")
+          el-button(type="primary" size="small" @click="redirectToAddingPage" v-if="enableAdd")
             svg-icon(icon-class="fa-solid plus-circle")
             span.ml-5  Thêm mới
           el-input(placeholder="Tìm kiếm" v-model="searchWord" suffix-icon="el-icon-search" style="max-width: 200px; margin-left: 5px;" size="small")
@@ -26,7 +26,7 @@
                 span {{ scope.row.description || '-' }}
             el-table-column(prop="id" label="TÁC VỤ" width="125" fixed="right")
               template(slot-scope="scope")
-                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top")
+                el-tooltip(class="item" effect="dark" content="Sửa đổi" placement="top" v-if="enableEdit")
                   el-button(icon="el-icon-edit" size="mini" round  @click="update(scope.row.id)")
                 el-tooltip(class="item" effect="dark" content="Xóa" placement="top")
                   el-button(type="danger" icon="el-icon-delete" size="mini" round @click="deleteOneCategory(scope.row.id)")
@@ -40,13 +40,21 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import {checkPermission} from '~/utils/util'
+import {ADD_CATEGORY, EDIT_CATEGORY} from '~/utils/const'
 
 export default {
   name: 'category-table',
   computed: {
     ...mapGetters({
       categories: 'categories/list'
-    })
+    }),
+    enableAdd () {
+      return checkPermission(ADD_CATEGORY, this.$store.getters.mpermissions)
+    },
+    enableEdit () {
+      return checkPermission(EDIT_CATEGORY, this.$store.getters.mpermissions)
+    }
   },
   created() {
     this.fetchData();

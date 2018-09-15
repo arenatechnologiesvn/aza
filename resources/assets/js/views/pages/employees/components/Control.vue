@@ -18,18 +18,26 @@
         //- el-button(type="success" size="small" @click="redirectToImportPage")
         //-   svg-icon(icon-class="fa-solid upload")
         //-   span.ml-5  Tải lên
-        el-button(type="primary" size="small" @click="handleAdd")
+        el-button(type="primary" size="small" @click="handleAdd" v-if="addEnable")
           svg-icon(icon-class="fa-solid plus-circle")
           span.ml-5 Thêm mới
 </template>
 
 <script>
+  import {checkPermission} from '~/utils/util'
+  import {ADD_EMPLOYEE} from '~/utils/const'
+
   export default {
     name: 'EmployeeControl',
     props: {
       selected: {
         type: Number,
         default: 0
+      }
+    },
+    computed: {
+      addEnable () {
+        return checkPermission(ADD_EMPLOYEE, this.$store.getters.mpermissions)
       }
     },
     methods: {

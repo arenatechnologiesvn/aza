@@ -17,7 +17,7 @@
             el-switch(v-model="!!scope.row.is_menu" @change="onChangeStatus(scope.row.id, scope.row.status)")
         el-table-column(prop="id" label="TÁC VỤ" width="130" fixed="right")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
+            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top" v-if="editEnable")
               el-button(size="mini" @click="handleEdit(scope.row.id)" round)
                 svg-icon(icon-class="fa-solid user-edit")
             el-tooltip(effect="dark" content="Xóa" placement="top")
@@ -35,13 +35,19 @@
 </template>
 
 <script>
-
+  import {checkPermission} from '~/utils/util'
+  import {EDIT_ACTION} from '~/utils/const'
   export default {
     name: 'PermissionTable',
     data () {
       return {
         currentPage: 1,
         pageSize: 10
+      }
+    },
+    computed: {
+      editEnable () {
+        return checkPermission(EDIT_ACTION, this.$store.getters.mpermissions)
       }
     },
     props: {

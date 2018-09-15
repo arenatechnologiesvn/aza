@@ -32,7 +32,7 @@
             span(v-if="!scope.row.user.is_verified") {{ '-' }}
         el-table-column(prop="id" label="TÁC VỤ" width="120" fixed="right")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" content="Chi tiết" placement="top")
+            el-tooltip(effect="dark" content="Chi tiết" placement="top" v-if="enableEdit")
               el-button(size="mini" @click="onEdit(scope.row.id)" round)
                 svg-icon(icon-class="fa-solid user")
             el-tooltip(effect="dark" content="Xóa" placement="top")
@@ -50,6 +50,8 @@
 
 <script>
   import dummyImage from '~/assets/login_images/dummy-avatar.png';
+  import {checkPermission} from '~/utils/util'
+  import {EDIT_CUSTOMER} from '~/utils/const'
 
   export default {
     name: 'CustomerTable',
@@ -57,6 +59,11 @@
       return {
         currentPage: 1,
         pageSize: 10
+      }
+    },
+    computed: {
+      enableEdit () {
+        return checkPermission(EDIT_CUSTOMER, this.$store.getters.mpermissions)
       }
     },
     props: {

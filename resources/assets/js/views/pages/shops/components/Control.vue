@@ -9,14 +9,21 @@
       //-         span Xóa
       //-   h4.control__info(style="margin: 0;")
       el-col(:span="24" style="text-align: right;")
-        el-button(type="primary" size="small" @click="handleAdd")
+        el-button(type="primary" size="small" @click="handleAdd" v-if="addEnable")
           svg-icon(icon-class="fa-solid plus")
           span.ml-5 Thêm mới
 </template>
 
 <script>
+  import {checkPermission} from '~/utils/util'
+  import {ADD_SHOP} from '~/utils/const'
   export default {
     name: 'EmployeeControl',
+    computed: {
+      addEnable () {
+        return checkPermission(ADD_SHOP, this.$store.getters.mpermissions)
+      }
+    },
     props: {
       selected: {
         type: Number,

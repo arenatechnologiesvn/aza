@@ -15,7 +15,7 @@
             span {{ scope.row.zone || '-' }}
         el-table-column(prop="id" label="TÁC VỤ" width="120" fixed="right")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
+            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top" v-if="editEnable")
               el-button(size="mini" @click="onEdit(scope.row.id)" round)
                 svg-icon(icon-class="fa-solid user-edit")
             el-tooltip(effect="dark" content="Xóa" placement="top")
@@ -33,9 +33,15 @@
 </template>
 
 <script>
-
+  import {checkPermission} from '~/utils/util'
+  import {EDIT_SHOP} from '~/utils/const'
   export default {
     name: 'ShopTable',
+    computed: {
+      editEnable () {
+        return checkPermission(EDIT_SHOP, this.$store.getters.mpermissions)
+      }
+    },
     data () {
       return {
         currentPage: 1,

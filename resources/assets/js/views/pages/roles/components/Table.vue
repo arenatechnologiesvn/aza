@@ -7,7 +7,7 @@
         el-table-column(prop="description" label="MÔ TẢ" sortable width="180")
         el-table-column(prop="id" label="TÁC VỤ" width="120")
           template(slot-scope="scope")
-            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top")
+            el-tooltip(effect="dark" content="Chỉnh sửa" placement="top" v-if="editEnable")
               el-button(size="mini" @click="handleEdit(scope.row.id)" round)
                 svg-icon(icon-class="fa-solid user-edit")
             el-tooltip(effect="dark" content="Xóa" placement="top")
@@ -26,6 +26,8 @@
 
 <script>
   import { mapActions } from 'vuex'
+  import {checkPermission} from '~/utils/util'
+  import {EDIT_ROLE} from '~/utils/const'
   export default {
     name: 'RoleTable',
     data () {
@@ -33,6 +35,11 @@
         currentPage: 1,
         showDialog: false,
         selection: []
+      }
+    },
+    computed: {
+      editEnable () {
+        return checkPermission(EDIT_ROLE, this.$store.getters.mpermissions)
       }
     },
     props: {
