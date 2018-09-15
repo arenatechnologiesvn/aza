@@ -44,6 +44,7 @@
       },
       current () {
         return this.permissions
+          .filter(item => parseInt(item.id)!== 1)
           .filter(item => {
               for(let index in this.search) {
                 if (index === 'key') {
