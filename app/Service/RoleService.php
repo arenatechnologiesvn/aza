@@ -55,8 +55,8 @@ class RoleService extends BaseService
         });
         return $this->model->select($this->selectable)->with(['permissions' => function ($q) use ($permissions) {
             $q->with(['children' => function ($q1) use ($permissions) {
-                $q1->whereIn('id', $permissions);
-            }])->where('parent_id', null)->whereIn('id', $permissions);
+                $q1->whereIn('id', $permissions)->orderBy('lft');
+            }])->where('parent_id', null)->whereIn('id', $permissions)->orderBy('lft');
         }])->FirstOrFail($id);
     }
 
