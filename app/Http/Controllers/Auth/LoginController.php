@@ -39,11 +39,19 @@ class LoginController extends Controller
             $user = Auth::user();
 
             if (!$this->isVerified($user)) {
-                return $this->api_error_response('Tài khoản của bạn chưa kích hoạt. Làm ơn liên hệ AZA để được kích hoạt', 401);
+                return $this->api_error_response(
+                    AUTH_ACCOUNT_VERIFY_ERROR_MESSAGE,
+                    AUTH_ACCOUNT_VERIFY_ERROR_MESSAGE,
+                    401
+                );
             }
 
             if ($this->isLocked($user)) {
-                return $this->api_error_response('Tài khoản của bạn đã bị tạm khóa', 401);
+                return $this->api_error_response(
+                    AUTH_ACCOUNT_LOCK_ERROR_MESSAGE,
+                    AUTH_ACCOUNT_LOCK_ERROR_MESSAGE,
+                    401
+                );
             }
 
             $this->setToken($token);
@@ -54,7 +62,7 @@ class LoginController extends Controller
         // to login and redirect the user back to the login form. Of course, when this
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
-        return $this->api_error_response('Email hoặc mật khẩu không đúng', 401);
+        return $this->api_error_response(AUTH_LOGIN_ERROR_MESSAGE, AUTH_LOGIN_ERROR_MESSAGE, 401);
     }
 
     /**

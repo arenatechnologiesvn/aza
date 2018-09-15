@@ -20,9 +20,13 @@ abstract class CrudController extends Controller
      * @return \Illuminate\Http\Response
      * */
     protected function responseApi(){
-        return $this->returnData ?
-            $this->api_success_response(['data' => $this->returnData]):
-            $this->api_error_response(['message' => 'Error Server']);
+        return $this->returnData
+            ? $this->api_success_response(['data' => $this->returnData])
+            : $this->api_error_response(
+                INTERNAL_SERVER_ERROR_MESSAGE,
+                INTERNAL_SERVER_ERROR_MESSAGE,
+                500
+            );
     }
     /**
      * Display a listing of the resource.

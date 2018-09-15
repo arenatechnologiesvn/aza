@@ -29,12 +29,7 @@ class PrintController extends Controller
         $p = $this->pdf->loadView('pdf.bill', ['key' => 'Content']);
         return $p;
     }
-    public function show($id){
-//        return $this->api_success_response(['data' => 'd' ]);
-//        return view("pdf.bill")->with("order", $this->service->getById($id));
-//        return App::view('pdf.bill', ['order' =>]);
-//        $order = $this->pdf->loadView('pdf.bill', ['order' =>$this->service->getById($id)]);
-//        return $order->stream();
+    public function show($id) {
         try {
             $connector = new FilePrintConnector("php://stdout");
             $printer = new Printer($connector);
@@ -43,16 +38,19 @@ class PrintController extends Controller
             $printer -> close();
             return $this->api_success_response(['data' => view('pdf.bill', ['order' =>$this->service->getById($id), 'settings' => $this->settings->all()])->render()]) ;
         } catch (\Exception $e) {
+            return $this->api_error_response($e, ORDER_BILL_PRINTING_ERROR_MESSAGE);
         }
-//        return $order->download('bill.pdf');
     }
 
     public function bulkBill(Request $request) {
         $ids = $request->get('ids');
-        if ($ids!= null) {
+        if ($ids != null) {
             return $this->api_success_response(['data' => view('pdf.bulk', ['orders' =>$this->service->getByIds($ids), 'settings' => $this->settings->all()])->render()]) ;
         } else {
-            return $this->api_error_response("Not Found records");
+            return $this->api_error_response(
+                ORDER_BILL_PRINTING_ERROR_MESSAGE,
+                ORDER_BILL_PRINTING_ERROR_MESSAGE
+            );
         }
     }
 }

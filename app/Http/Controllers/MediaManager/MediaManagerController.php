@@ -12,11 +12,12 @@ use Plank\Mediable\Media;
 use Plank\Mediable\MediaUploader;
 use App\Http\Controllers\Controller;
 use App\Service\MediaService;
+use App\Http\Requests\Media\StoreMediaIndex;
+use App\Http\Requests\Media\StoreMediaCreate;
+use App\Http\Requests\Media\StoreMediaDelete;
 
 class MediaManagerController extends Controller
 {
-    private static $OBJECT_TYPES = ['user', 'shop', 'product', 'provider'];
-
     public function __construct(MediaService $service)
     {
         $this->service = $service;
@@ -27,12 +28,8 @@ class MediaManagerController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(StoreMediaIndex $request)
     {
-        if (!$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
-            return $this->api_error_response('Params is invalid', 433);
-        }
-
         $medias = Media::where('directory', 'like', '%'.$request->input('type').'%')->get();
         return $this->api_success_response(['data' => $medias]);
     }
@@ -45,21 +42,8 @@ class MediaManagerController extends Controller
      * @param MediaUploader $mediaUploader
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function uploadMediaImage(Request $request, MediaUploader $mediaUploader)
+    public function uploadMediaImage(StoreMediaCreate $request, MediaUploader $mediaUploader)
     {
-        $validator = Validator::make($request->all(), [
-            'file' => 'file|image'
-        ]);
-
-        // if there are validation errors, show that
-        if ($validator->fails()) {
-            return $this->api_error_response($validator->errors(), 433);
-        }
-
-        if (!$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
-            return $this->api_error_response('params is invalid', 433);
-        }
-
         $file = $request->file('file');
         $folder = 'uploads/' .$request->input('type'). '/' . Carbon::now()->year . '/' . Carbon::now()->month . '/';
         $uniqid = uniqid();
@@ -113,14 +97,9 @@ class MediaManagerController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteMediaImage(Request $request)
+    public function deleteMediaImage(StoreMediaDelete $request)
     {
-        if (!$request->input('imageId') || !$request->input('type') || !in_array($request->input('type'), $this::$OBJECT_TYPES)) {
-            return response(['message' => 'params is invalid'], 433);
-        }
-
         $media = Media::find($request->input('imageId'));
-        if (!$media) return response('Image not found', 400);
 
         // delete media file from directory
         $directory = $media->disk . '/' . $media->directory;

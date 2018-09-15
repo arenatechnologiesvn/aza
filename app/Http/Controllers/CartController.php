@@ -32,7 +32,7 @@ class CartController extends Controller
             $carts = $this->model->where('customer_id', '=', $this->getCustomerId())->get();
             return $this->api_success_response( ['data' => $carts ]);
         } catch (\Exception $e) {
-            return $this->api_error_response( $e);
+            return $this->api_error_response($e);
         }
     }
 

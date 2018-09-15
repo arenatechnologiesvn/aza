@@ -57,7 +57,11 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof NotFoundHttpException) {
-            return $this->api_error_response('File not found', 404);
+            return $this->api_error_response(
+                FILE_NOT_FOUND_ERROR_MESSAGE,
+                FILE_NOT_FOUND_ERROR_MESSAGE,
+                404
+            );
         }
 
         $custom_exception = [
@@ -67,6 +71,6 @@ class Handler extends ExceptionHandler
             'line' => $exception->getLine()
         ];
 
-        return $this->api_error_response($custom_exception, 500);
+        return $this->api_error_response($custom_exception, INTERNAL_SERVER_ERROR_MESSAGE, 500);
     }
 }
