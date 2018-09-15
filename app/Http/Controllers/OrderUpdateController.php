@@ -27,7 +27,7 @@ class OrderUpdateController extends Controller
             $productOrder = $this->model->where('order_id', '=', $id)->get();
             return $this->api_success_response( ['data' => $productOrder ]);
         } catch (\Exception $e) {
-            return $this->api_error_response( $e);
+            return $this->api_error_response($e);
         }
     }
 

@@ -23,7 +23,11 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return $this->api_error_response('Already authenticated.', ALREADY_AUTHENTICATED_CODE);
+            return $this->api_error_response(
+                AUTH_ALREADY_LOGIN_ERROR_MESSAGE,
+                AUTH_ALREADY_LOGIN_ERROR_MESSAGE,
+                ALREADY_AUTHENTICATED_CODE
+            );
         }
 
         return $next($request);

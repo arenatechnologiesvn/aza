@@ -151,7 +151,7 @@ class UserController extends Controller
             $profile = $this->user->with(['userDetail'])->find($user_id);
             return $this->api_success_response(['data' => $profile]);
         } catch (\Exception $e) {
-            return $this->api_error_response(['data' => $e]);
+            return $this->api_error_response($e);
         }
     }
 }

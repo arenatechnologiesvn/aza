@@ -49,7 +49,11 @@ class ProductController extends Controller
     {
         if ($request->input('discount_price') &&
             ($request->input('discount_price') > $request->input('price'))) {
-            return $this->api_error_response('price must be greater than discount price', 401);
+            return $this->api_error_response(
+                'Giá sản phẩm phải lớn hơn giá khuyến mãi',
+                'Giá sản phẩm phải lớn hơn giá khuyến mãi',
+                401
+            );
         }
 
         $product = $this->service->storeProduct($request->all());
@@ -102,7 +106,11 @@ class ProductController extends Controller
     {
         if ($request->input('discount_price') &&
             ($request->input('discount_price') > $request->input('price'))) {
-            return $this->api_error_response('price must be greater than discount price', 401);
+            return $this->api_error_response(
+                'Giá sản phẩm phải lớn hơn giá khuyến mãi',
+                'Giá sản phẩm phải lớn hơn giá khuyến mãi',
+                401
+            );
         }
 
         $product = $this->service->updateProduct($product, $request->all());

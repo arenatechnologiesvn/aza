@@ -47,7 +47,7 @@ class CategoryController extends Controller
             return $this->api_success_response([ 'data' => $category ]);
         } catch (\Exception $e) {
             \DB::rollback();
-            return $this->api_error_response($e->getMessage(), 500);
+            return $this->api_error_response($e->getMessage(), RECORD_CREATE_ERROR_MESSAGE, 500);
         }
     }
 
@@ -97,7 +97,7 @@ class CategoryController extends Controller
             return $this->api_success_response(['data' => $category]);
         } catch (\Exception $e) {
             \DB::rollback();
-            return $this->api_error_response($e->getMessage(), 500);
+            return $this->api_error_response($e->getMessage(), RECORD_UPDATE_ERROR_MESSAGE, 500);
         }
     }
 
@@ -116,7 +116,7 @@ class CategoryController extends Controller
             return $this->api_success_response();
         } catch (\Exception $e) {
             \DB::rollback();
-            return $this->api_error_response($e->getMessage(), 500);
+            return $this->api_error_response($e->getMessage(), RECORD_DELETE_ERROR_MESSAGE, 500);
         }
     }
 }

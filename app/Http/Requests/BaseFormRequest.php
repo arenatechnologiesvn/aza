@@ -67,6 +67,7 @@ abstract class BaseFormRequest extends FormRequest
 
         throw new HttpResponseException($this->api_error_response(
             $transformed,
+            PARAM_VALIDATE_ERROR_MESSAGE,
             $statusResponse
         ));
     }
@@ -81,7 +82,8 @@ abstract class BaseFormRequest extends FormRequest
     protected function failedAuthorization()
     {
         throw new HttpResponseException($this->api_error_response(
-            'Không có quyền truy cập',
+            AUTH_JWT_INVALID_ERROR_MESSAGE,
+            AUTH_JWT_INVALID_ERROR_MESSAGE,
             401
         ));
     }
