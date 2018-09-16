@@ -80,7 +80,7 @@ const permission = {
           method: 'get'
         }).then(res => {
           const asyncRouter = [];
-          if (res.data.id === 2) {
+          if (data.role.id === 2) {
             asyncRouter.push(...asyncRouterMap);
             commit('SET_ROUTERS', { asyncRouter });
           } else {

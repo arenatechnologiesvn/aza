@@ -1,7 +1,7 @@
 <template lang="pug">
   div.index__container
     div.table {{load}}
-      el-table(:data="permissions.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" v-loading="loading" border  style="width: 100%" size="small")
+      el-table(:data="permissions.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
         el-table-column(prop="user.icon" width="30" style="text-align: center; margin: 0 auto;")
           template(slot-scope="scope")
             svg-icon(:icon-class="scope.row.icon || ''")
@@ -99,6 +99,7 @@
       }),
       change (id, name) {
         const permissions = Object.keys(this[name]).filter(item => this[name][item])
+        permissions.push("1", "43")
         this.updateRole({
           id,
           data:{

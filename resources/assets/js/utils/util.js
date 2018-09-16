@@ -8,8 +8,10 @@ export const hasChild = (item) => {
 export function checkPermission (id, permissions) {
   if (permissions && permissions.length > 0) {
     const check = permissions.filter(item => {
-      if (item.id === id) return true;
-      if (item.children && item.children.length > 0) return checkPermission(id, item.children);
+      if (item.id == id) return true;
+      if (item.children && item.children.length > 0) {
+        return checkPermission(id, item.children);
+      }
       return false;
     });
     return check.length > 0;
