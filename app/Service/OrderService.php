@@ -83,6 +83,7 @@ class OrderService extends BaseService
             $n = json_decode($n, true)['value'];
             if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
                 $saved = $this->model->create($data);
+                $this->updateTotal($saved->id);
             }
             if(method_exists($this, 'afterSave')) {
                 $this->afterSave($saved, $data, false);
@@ -120,6 +121,26 @@ class OrderService extends BaseService
             }
             $order->products()->sync($data['product']);
 
+        }
+    }
+
+    private function updateTotal ($order_id)
+    {
+        try {
+            \DB::beginTransaction();
+
+            $total = DB::table('order_product')
+                ->select([
+                    DB::raw('SUM(quantity * real_price) as total')
+                ])->where('order_id', '=', $order_id)->get()->first()->total;
+            DB::table('orders')
+                ->where('id', $order_id)
+                ->update(['total_money'=> $total ]);
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
         }
     }
 

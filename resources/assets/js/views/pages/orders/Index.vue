@@ -275,11 +275,8 @@
         return year + '-' + month + '-' + day
       },
       formatDate(num) {
-        let date = new Date(1000*num)
-        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
-        const year = date.getFullYear()
-        return day + '-' + month + '-' +year
+        if (!num) return '-';
+        return moment.unix(num).format('DD-MM-YYYY');
       },
       formatDateCompare (num) {
         let date = new Date(1000*num)
