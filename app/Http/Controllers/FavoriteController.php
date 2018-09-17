@@ -13,23 +13,23 @@ use App\Customer;
 
 
 use App\Favorite;
+use App\Service\FavoriteService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Helper\RoleConstant;
 
 class FavoriteController extends Controller
 {
-    private $model;
+    private $service;
 
-    public function __construct(Favorite $model)
+    public function __construct(FavoriteService $service)
     {
-        $this->model = $model;
+        $this->service = $service;
     }
 
     public function index(){
         try {
-            $favorites = $this->model->where('customer_id', '=', $this->getCustomerId())->get();
-            return $this->api_success_response( ['data' => $favorites ]);
+            return $this->api_success_response( ['data' => $this->service->index() ]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
@@ -37,9 +37,7 @@ class FavoriteController extends Controller
 
     public function store (Request $request) {
         try {
-            $favorite = new Favorite ;
-            $favorite->create($request->all());
-            return $this->api_success_response( ['data' => $this->getByProductId($request->get('product_id'))]);
+            return $this->api_success_response( ['data' => $this->service->store($request->all())]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
@@ -47,11 +45,7 @@ class FavoriteController extends Controller
 
     public function update(Request $request, $id = null) {
         try {
-            $cart = $this->model->where([
-                ['customer_id', '=', $this->getCustomerId()],
-                ['product_id', '=', $id]
-            ])->update($request->all());
-            return $this->api_success_response(['data' => $this->getByProductId($id)]);
+            return $this->api_success_response(['data' => $this->service->update($request->all(), $id)]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
@@ -59,31 +53,10 @@ class FavoriteController extends Controller
 
     public function destroy($id) {
         try {
-            $cart = $this->model->where([
-                ['customer_id', '=', $this->getCustomerId()],
-                ['product_id', '=', $id]
-            ])->delete();
-            return $this->api_success_response($cart);
+            return $this->api_success_response(['data' => $this->service->destroy($id)]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
         }
     }
 
-    private function getCustomerId (){
-        try {
-            if (Auth::user()->role_id == RoleConstant::Customer){
-                return Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
-            }
-            return 0;
-        } catch (\Exception $e) {
-            return 0;
-        }
-    }
-
-    private function getByProductId ($product_id) {
-        return  $this->model->where([
-            ['customer_id', '=', $this->getCustomerId()],
-            ['product_id', '=', $product_id]
-        ])->firstOrFail();
-    }
 }
