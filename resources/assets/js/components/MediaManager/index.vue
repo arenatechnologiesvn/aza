@@ -240,7 +240,7 @@
         font-size: 12px;
 
         .row-info {
-          margin-top: 3px;
+          margin-top: 5px;
 
           .image-info {
             font-weight: bold;
