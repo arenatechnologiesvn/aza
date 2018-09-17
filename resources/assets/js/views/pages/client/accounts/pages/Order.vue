@@ -77,6 +77,7 @@
   import {formatNumber} from '~/utils/util'
   import OrderDetail from '../../components/OrderDetail'
   import dummyImage from '~/assets/login_images/dummy-image.jpg'
+  import moment from 'moment'
 
   export default {
     components: {

@@ -70,9 +70,9 @@ class CartService
                 }
                 return $data;
             }else {
-                throw new \Exception();
+                throw new Exception();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $e;
         }
     }
@@ -86,28 +86,25 @@ class CartService
                 ])->update(['quantity' => $data['quantity']]);
                 return $this->getByProductId($id);
             }else {
-                throw new \Exception();
+                throw new Exception();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $e;
         }
     }
 
     public function destroy($id) {
         try {
-            $n = $this->setting->action('get', 'apply');
-            $n = json_decode($n, true)['value'];
-            if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
+            if ($this->checkTime()) {
                 $cart = $this->model->where([
                     ['customer_id', '=', $this->getCustomerId()],
                     ['product_id', '=', $id]
                 ])->delete();
                 return $cart;
             }else {
-                throw new \Exception();
+                throw new Exception();
             }
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $e;
         }
     }
@@ -130,7 +127,7 @@ class CartService
                 return Customer::where('user_id', '=', Auth::user()->id)->firstOrFail()->id;
             }
             return 0;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $e;
         }
     }
@@ -138,7 +135,7 @@ class CartService
     private function checkExistInCart($product_id, $customer_id) {
         try {
             return $this->model->where([['customer_id', '=', $customer_id], ['product_id', '=', $product_id]])->firstOrFail();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\UpdateUserFormRequest;
 use App\User;
 use App\UserDetail;
 use Illuminate\Http\Request;
@@ -80,7 +81,7 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserFormRequest $request, $id)
     {
         try {
             DB::beginTransaction();

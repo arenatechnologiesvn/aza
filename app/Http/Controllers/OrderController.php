@@ -9,9 +9,10 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Orders\StoreOrderFormRequest;
+use App\Http\Requests\Orders\UpdateOrderFormRequest;
 use App\Order;
 use App\Service\OrderService;
-use App\Service\SettingService;
 use Illuminate\Http\Request;
 
 class OrderController extends CrudController
@@ -28,13 +29,9 @@ class OrderController extends CrudController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreOrderFormRequest $request)
     {
-        try {
-            return $this->save($request->all());
-        } catch(\Exception $e){
-            return $e;
-        }
+        return $this->save($request->all());
     }
 
 
@@ -46,13 +43,9 @@ class OrderController extends CrudController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateOrderFormRequest $request, $id)
     {
-        try {
-            return $this->edit($request->all(), $id);
-        } catch(\Exception $e){
-            return $e;
-        }
+        return $this->edit($request->all(), $id);
     }
 
     /**
@@ -63,10 +56,6 @@ class OrderController extends CrudController
      */
     public function bulkUpdate(Request $request)
     {
-        try {
-            return $this->bulkEdit($request->all());
-        } catch(\Exception $e){
-            return $e;
-        }
+        return $this->bulkEdit($request->all());
     }
 }

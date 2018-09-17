@@ -68,9 +68,12 @@ class OrderService extends BaseService
         return $order;
     }
 
-    // public function beforeUpdate($employee, $data){
-
-    // }
+     public function beforeUpdate($order, $data){
+         if(!empty($data['delivery'])) {
+             $data['delivery'] = strtotime($data['delivery']);
+         }
+         return $data;
+     }
 
     public function create(array $data)
     {
@@ -79,11 +82,8 @@ class OrderService extends BaseService
             if (method_exists($this, 'beforeCreate')) {
                 $data = $this->beforeCreate($data);
             }
-            $n = $this->setting->action('get', 'apply');
-            $n = json_decode($n, true)['value'];
-            if ($this->timeFormat() > $n['start'] && $this->timeFormat() < $n['end'] ) {
+            if ($this->checkTime()) {
                 $saved = $this->model->create($data);
-                $this->updateTotal($saved->id);
             }
             if(method_exists($this, 'afterSave')) {
                 $this->afterSave($saved, $data, false);
@@ -95,15 +95,10 @@ class OrderService extends BaseService
             throw $e;
         }
     }
-    private function timeFormat() {
-        $now = now();
-        $h = $now->hour;
-        $minute = $now->minute;
-        return $h.":".$minute;
-    }
+
 
     public function afterSave($order, $data, $update = false) {
-        if ($data['status'] == 0) {
+        if (isset($data['status']) && $data['status'] == 0) {
             try {
                 $general = $this->setting->action('get', 'general');
                 $general = json_decode($general, true)['value'];
@@ -120,7 +115,6 @@ class OrderService extends BaseService
                 });
             }
             $order->products()->sync($data['product']);
-
         }
     }
 
@@ -128,7 +122,6 @@ class OrderService extends BaseService
     {
         try {
             \DB::beginTransaction();
-
             $total = DB::table('order_product')
                 ->select([
                     DB::raw('SUM(quantity * real_price) as total')
@@ -211,5 +204,17 @@ class OrderService extends BaseService
         },'customer' => function ($q3) {
             $q3->with(['user']);
         }, 'shop'])->whereIn('id', $ids)->get();
+    }
+
+    private function timeFormat() {
+        $now = now();
+        $h = $now->hour;
+        $minute = $now->minute;
+        return $h.":".$minute;
+    }
+    private function checkTime () {
+        $n = $this->setting->action('get', 'apply');
+        $n = json_decode($n, true)['value'];
+        return intval($this->timeFormat()) >= intval($n['start'] )&& intval($this->timeFormat()) <= intval($n['end']);
     }
 }

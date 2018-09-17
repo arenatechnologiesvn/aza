@@ -8,7 +8,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Carts\BulkStoreCartFormRequest;
 use App\Http\Requests\Carts\StoreCartFormRequest;
+use App\Http\Requests\Carts\UpdateCartFormRequest;
 use App\Service\CartService;
 use Exception;
 use Illuminate\Http\Request;
@@ -38,7 +40,7 @@ class CartController extends Controller
         }
     }
 
-    public function storeAll (Request $request) {
+    public function storeAll (BulkStoreCartFormRequest $request) {
         try {
             return $this->api_success_response( ['data' => $this->service->storeAll($request->all())]);
         } catch (Exception $e) {
@@ -46,7 +48,7 @@ class CartController extends Controller
         }
     }
 
-    public function update(Request $request, $id) {
+    public function update(UpdateCartFormRequest $request, $id) {
         try {
             return $this->api_success_response(['data' => $this->service->update($request->all(), $id)]);
         } catch (Exception $e) {
