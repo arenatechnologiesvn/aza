@@ -44,10 +44,18 @@ const media = {
 
     SET_SELECTED_MEDIA: (state, { mode, selected }) => {
       if (mode === 'single') {
+        // Make watch of selectedSingleMedia in the forms
+        // which use this getters will be refreshed
+        state.selectedSingleMedia = null;
+
         state.selectedSingleMedia = state.mediaList.find((media) => {
           return media.id === selected;
         });
       } else {
+        // Make watch of selectedMultiMedia in the forms
+        // which use this getters will be refreshed
+        state.selectedMultiMedia = [];
+
         state.selectedMultiMedia = state.mediaList.filter((media) => {
           return selected && selected.includes(media.id);
         }) || [];

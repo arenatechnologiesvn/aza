@@ -25,6 +25,7 @@ class StoreCustomerBulkCreate extends BaseFormRequest
     {
         return [
             '*.code' => 'required|string|max:20|unique:customers,code',
+            '*.customer_type' => 'required|boolean',
             '*.employee_code' => 'required|string|exists:employees,code',
             '*.user.name' => 'required|string|max:100|unique:users,name',
             '*.user.email' => 'required|string|email|max:255|unique:users,email',
@@ -41,6 +42,7 @@ class StoreCustomerBulkCreate extends BaseFormRequest
         foreach ($this->request->all() as $key => $data) {
             $messages[$key . '.code.max'] = 'Hàng #' . ($key + 1) .': Mã khách hàng phải nhỏ hơn 20 ký tự.';
             $messages[$key . '.code.unique'] = 'Hàng #' . ($key + 1) .': Mã khách hàng '. $data['code'] . ' đã được đăng ký.';
+            $messages[$key . '.customer_type.required'] = 'Hàng #' . ($key + 1) .': Loại khách hàng không được trống.';
             $messages[$key . '.employee_code.exists'] = 'Hàng #' . ($key + 1) . ': Mã nhân viên '. $data['employee_code'] .' không tồn tại.';
             $messages[$key . '.user.name.max'] = 'Hàng #' . ($key + 1) . ': Tên đăng nhập phải nhỏ hơn 100 ký tự.';
             $messages[$key . '.user.name.unique'] = 'Hàng #' . ($key + 1) . ': Tên đăng nhập ' . $data['user']['name'] . ' đã được đăng ký.';

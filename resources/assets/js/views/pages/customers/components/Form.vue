@@ -44,7 +44,7 @@
             el-select(v-model="customer.employee_id" clearable placeholder="Nhân viên" style="width: 100%")
               el-option(v-for="item in employeesList" :key="item.id" :label="item.name" :value="item.id")
         el-col(:span="8")
-          el-form-item(label="LOẠI KHÁCH HÀNG (VIP/THƯỜNG)")
+          el-form-item(prop="customer_type" label="LOẠI KHÁCH HÀNG")
             el-select(v-model="customer.customer_type" clearable placeholder="Loại khách hàng" style="width: 100%")
               el-option(label="Vip" :value="1")
               el-option(label="Thường" :value="0")
@@ -192,6 +192,9 @@
           ],
           employee_id: [
             { required: true, message: 'Nhân viên sale không được trống', trigger: 'change' }
+          ],
+          customer_type: [
+            { required: true, message: 'Loại khách hàng không được trống', trigger: 'change' }
           ],
           'user.first_name': [
             { max: 50, message: 'Tên phải nhỏ hơn 50 ký tự', trigger: 'blur' }

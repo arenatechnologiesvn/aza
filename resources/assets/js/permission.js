@@ -8,6 +8,7 @@ import { getToken } from '~/utils/auth';
 NProgress.configure({ showSpinner: false });
 
 const whiteList = ['/login', '/forget', '/reset'];
+const VERIFICATION_FAILED_MESSAGE = 'Verification failed, please login again';
 
 router.beforeEach((to, from, next) => {
   // Start routing bar
@@ -34,7 +35,7 @@ router.beforeEach((to, from, next) => {
           });
         }).catch((err) => {
           store.dispatch('user/FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again');
+            Message.error(err || VERIFICATION_FAILED_MESSAGE);
             next({ path: '/' });
 
             // if current page is login will not trigger afterEach hook, so manually handle it
