@@ -116,6 +116,7 @@ class OrderService extends BaseService
             }
             $order->products()->sync($data['product']);
         }
+        $this->updateTotal($order->id);
     }
 
     private function updateTotal ($order_id)
