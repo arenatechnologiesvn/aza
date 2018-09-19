@@ -6,6 +6,7 @@ use App\Customer;
 use App\UserAccessHistories;
 use App\Helper\RoleConstant;
 use App\Http\Requests\Auth\LoginRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -139,6 +140,8 @@ class LoginController extends Controller
             $customer = Customer::where('user_id', $user->id)->firstOrFail();
             $user['customer'] = $customer;
         }
+        $user['avatar'] = $user->avatar;
+        $user['birthday'] = $user->userDetail->birthday;
         return $user;
     }
 
