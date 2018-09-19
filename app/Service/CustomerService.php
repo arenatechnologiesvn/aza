@@ -49,19 +49,9 @@ class CustomerService extends BaseService
     public function beforeCreate($customer)
     {
         if (isset($customer['employee_code'])) {
-            if ($employee = Employee::where('code', '=', $customer['employee_code'])->first()) {
-                $employee_user = User::find($employee->user_id);
-
-                if ($employee_user->role_id === 3) {
-                    $customer['employee_id'] = $employee['id'];
-                } else {
-                    throw ValidationException::withMessages([
-                        'employee_code' => 'Nhân viên #' . $customer['employee_code'] . ' không phải là nhân viên sale'
-                    ]);
-                }
-            } else {
-                throw new Exception('Nhân viên #' . $customer['employee_code'] . ' không tồn tại');
-            }
+            $employee = Employee::where('code', '=', $customer['employee_code'])->first();
+            $employee_user = User::find($employee->user_id);
+            $customer['employee_id'] = $employee['id'];
         }
 
         $user = $this->authService->register($customer['user']);

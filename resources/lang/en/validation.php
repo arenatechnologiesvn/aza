@@ -118,4 +118,7 @@ return [
 
     'attributes' => [],
 
+    /* Extend validators messages */
+    'is_sale_employee' => "The :attribute must be sale employee.",
+    'is_active_employee' => "The :attribute must be active."
 ];
