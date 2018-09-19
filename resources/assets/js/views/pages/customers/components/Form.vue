@@ -160,7 +160,9 @@
         getZoneByWard: 'getZoneByWard'
       }),
       employeesList () {
-        return this.employees.filter(item => parseInt(item.user.role_id) === 3).map(item => {
+        return this.employees.filter((item) => {
+          return item.user.is_active && item.user.is_verified && parseInt(item.user.role_id) === 3
+        }).map(item => {
           return {
             id: item.id,
             name: item.user.full_name
