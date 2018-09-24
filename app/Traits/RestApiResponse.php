@@ -18,6 +18,8 @@ define("RECORD_CREATE_ERROR_MESSAGE", "Tạo mới thất bại");
 define("RECORD_UPDATE_ERROR_MESSAGE", "Cập nhật thất bại");
 define("RECORD_DELETE_ERROR_MESSAGE", "Xóa thất bại");
 
+define("PARAM_VALIDATE_ERROR_MESSAGE", "Dữ liệu không hợp lệ");
+
 trait RestApiResponse
 {
     public function api_success_response($data = []) {
