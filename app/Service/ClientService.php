@@ -42,6 +42,7 @@ class ClientService
     }
 
     public function staticsByDay ($date) {
+        $date = Carbon::parse($date)->format("Y-m-d");
         return DB::table('orders')
             ->select(
                 'products.name as dname',
@@ -59,6 +60,10 @@ class ClientService
     }
 
     public function staticsByMonth ($month) {
+        $dateMonthArray = explode('-', $month);
+        $month = $dateMonthArray[0];
+        $year = $dateMonthArray[1];
+        $month = Carbon::createFromDate($year, $month)->format("Y-m");
         try {
             $values = DB::table('orders')
                 ->select(
@@ -126,6 +131,8 @@ class ClientService
     }
 
     public function productsInRange($from, $to){
+        $from = Carbon::parse($from)->format("Y-m-d");
+        $to = Carbon::parse($to)->format("Y-m-d");
         try {
             return DB::table('orders')
                 ->select(

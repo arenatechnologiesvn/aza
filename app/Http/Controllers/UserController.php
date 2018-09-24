@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\User\UpdateUserFormRequest;
 use App\User;
 use App\UserDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -88,7 +89,7 @@ class UserController extends Controller
             $data  = $request->all();
 
             if (isset($data['user_detail']) && isset($data['user_detail']['birthday'])) {
-                $data['user_detail']['birthday'] = strtotime($data['user_detail']['birthday']);
+                $data['user_detail']['birthday'] = strtotime(Carbon::parse($data['user_detail']['birthday'])->format('Y-m-d'));
             }
 
             $updated = $this->user->find($id);
