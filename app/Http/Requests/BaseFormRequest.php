@@ -67,7 +67,7 @@ abstract class BaseFormRequest extends FormRequest
 
         throw new HttpResponseException($this->api_error_response(
             $transformed,
-            PARAM_VALIDATE_ERROR_MESSAGE,
+            count($transformed) ? $transformed[0]['message'] : PARAM_VALIDATE_ERROR_MESSAGE,
             $statusResponse
         ));
     }

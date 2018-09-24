@@ -42,12 +42,12 @@ class UpdateCartFormRequest extends BaseFormRequest
     public function messages()
     {
         return [
-            'customer_id.required' => 'ID Khách hàng là bắt buộc',
-            'customer_id.numeric' => 'ID Khách hàng phải là số',
-            'customer_id.exists' => 'ID Khách hàng chưa tồn tại',
-            'product_id.required' => 'ID Sản phẩm là bắt buộc',
-            'product_id.numeric' => 'ID Sản phẩm phải là số',
-            'product_id.exists' => 'ID Sản phẩm chưa tồn tại',
+            'customer_id.required' => 'Mã khách hàng là bắt buộc',
+            'customer_id.numeric' => 'Mã khách hàng phải là số',
+            'customer_id.exists' => 'Mã khách hàng không tồn tại',
+            'product_id.required' => 'Mã sản phẩm là bắt buộc',
+            'product_id.numeric' => 'Mã sản phẩm phải là số',
+            'product_id.exists' => 'Mã sản phẩm không tồn tại',
             'quantity.required' => 'Số lượng sản phẩm là bắt buộc',
             'quantity.numeric' => 'Số lượng sản phẩm phải là số',
             'quantity.min' => 'Số lượng sản phẩm phải lớn hơn 0'
