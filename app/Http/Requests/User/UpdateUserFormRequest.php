@@ -49,8 +49,9 @@ class UpdateUserFormRequest extends BaseFormRequest
             'first_name.required' => 'Tên người dùng là bắt buộc',
             'last_name.required' => 'Họ người dùng là bắt buộc',
             'phone.required' => 'Số điện thoại là bắt buộc',
-            'phone.max' => 'Số điện thoại không quá 11 ký tự',
+            'phone.max' => 'Số điện thoại không được quá 11 ký tự',
             'address.nullable' => 'Địa chỉ là không bắt buộc',
+            'address.max' => 'Địa chỉ không được quá 155 ký tự',
             'user_detail.birthday.required' => 'Ngày sinh là bắt buộc',
             'user_detail.birthday.date' => 'Ngày sinh phải là có định dạng Tháng/Ngày/Năm',
             'user_detail.sex' => 'Giới tính là bắt buộc'
