@@ -84,6 +84,8 @@ class OrderService extends BaseService
             }
             if ($this->checkTime()) {
                 $saved = $this->model->create($data);
+            } else {
+                return null;
             }
             if(method_exists($this, 'afterSave')) {
                 $this->afterSave($saved, $data, false);

@@ -52,7 +52,7 @@ class CartService
                     return $cart;
                 }
             }else {
-                throw new Exception("Không thể đặt hàng ngoài khung giờ");
+                return null;
             }
         } catch (Exception $e) {
             return $e;
@@ -70,7 +70,7 @@ class CartService
                 }
                 return $data;
             }else {
-                throw new Exception();
+                return null;
             }
         } catch (Exception $e) {
             return $e;
@@ -86,7 +86,7 @@ class CartService
                 ])->update(['quantity' => $data['quantity']]);
                 return $this->getByProductId($id);
             }else {
-                throw new Exception();
+                return null;
             }
         } catch (Exception $e) {
             return $e;
@@ -102,7 +102,7 @@ class CartService
                 ])->delete();
                 return $cart;
             }else {
-                throw new Exception();
+                return null;
             }
         } catch (Exception $e) {
             return $e;

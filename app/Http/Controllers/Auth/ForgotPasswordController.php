@@ -28,7 +28,7 @@ class ForgotPasswordController extends Controller
      */
     protected function sendResetLinkResponse($response)
     {
-        return ['status' => trans($response)];
+        return $this->api_success_response(['message' => 'Đã gửi thông tin khôi phục đến email, Xin vui lòng kiểm tra email của bạn!']);
     }
 
     /**
@@ -40,6 +40,6 @@ class ForgotPasswordController extends Controller
      */
     protected function sendResetLinkFailedResponse(Request $request, $response)
     {
-        return response()->json(['email' => trans($response)], 400);
+        return $this->api_error_response("Địa chỉ email chưa được đăng ký vui lòng kiểm tra lại", "Địa chỉ email chưa được đăng ký vui lòng kiểm tra lại");
     }
 }

@@ -33,7 +33,16 @@ class OrderController extends CrudController
     {
         return $this->save($request->all());
     }
-
+    public function save($data){
+        try {
+            $entity = $this->service->create($data);
+            if ($entity!=null)
+                return $this->api_success_response(['data' => $entity]);
+            return $this->api_error_response('Không thể đặt hàng lúc này', 'Không thể đặt hàng lúc này');
+        } catch(\Exception $e) {
+            return $this->api_error_response($e);
+        }
+    }
 
 
     /**

@@ -34,7 +34,10 @@ class CartController extends Controller
 
     public function store (StoreCartFormRequest $request) {
         try {
-           return $this->api_success_response( ['data' => $this->service->store($request->all())]);
+            $cart = $this->service->store($request->all());
+            if ($cart!=null)
+                return $this->api_success_response( ['data' => $cart]);
+            return $this->timeoutApply();
         } catch (Exception $e) {
             return $this->api_error_response($e);
         }
@@ -42,7 +45,10 @@ class CartController extends Controller
 
     public function storeAll (BulkStoreCartFormRequest $request) {
         try {
-            return $this->api_success_response( ['data' => $this->service->storeAll($request->all())]);
+            $carts = $this->service->storeAll($request->all());
+            if ($carts!=null)
+                return $this->api_success_response( ['data' =>$carts]);
+            return $this->timeoutApply();
         } catch (Exception $e) {
             return $this->api_error_response($e);
         }
@@ -50,7 +56,10 @@ class CartController extends Controller
 
     public function update(UpdateCartFormRequest $request, $id) {
         try {
-            return $this->api_success_response(['data' => $this->service->update($request->all(), $id)]);
+            $cart = $this->service->update($request->all(), $id);
+            if ($cart!=null)
+                return $this->api_success_response(['data' => $cart]);
+            return $this->timeoutApply();
         } catch (Exception $e) {
             return $this->api_error_response($e);
         }
@@ -58,9 +67,17 @@ class CartController extends Controller
 
     public function destroy($id) {
         try {
-            return $this->api_success_response(['data' => $this->service->destroy($id)]);
+            $cart = $this->service->destroy($id);
+            if ($cart != null)
+                return $this->api_success_response(['data' => $cart]);
+            return $this->timeoutApply();
         } catch (Exception $e) {
             return $this->api_error_response($e);
         }
+    }
+
+    private function timeoutApply(){
+        return $this->api_error_response('Không thể đặt hàng lúc này', 'Không thể đặt hàng lúc này');
+
     }
 }
