@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\UpdateUserFormRequest;
+use App\Http\Requests\User\UpdateUserIsActiveRequest;
 use App\User;
 use App\UserDetail;
 use Carbon\Carbon;
@@ -154,6 +155,22 @@ class UserController extends Controller
             return $this->api_success_response(['data' => $profile]);
         } catch (\Exception $e) {
             return $this->api_error_response($e);
+        }
+    }
+
+    public function updateIsActive(UpdateUserIsActiveRequest $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $updated = $this->user->find($id);
+            $updated->update($request->all());
+
+            DB::commit();
+            return $this->api_success_response(['data' => $updated]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
     }
 }

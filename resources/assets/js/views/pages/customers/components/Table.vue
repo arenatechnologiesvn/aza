@@ -19,7 +19,7 @@
           template(slot-scope="scope")
             svg-icon(
               icon-class="fa-solid check-square"
-              :class="scope.row.customer_type ? 'vip-customer-icon' : 'normal-customer-icon'")
+              :class="scope.row.customer_type && parseInt(scope.row.customer_type) === 1 ? 'vip-customer-icon' : 'normal-customer-icon'")
         el-table-column(prop="is_active" label="KHÓA/HOẠT ĐỘNG" align="center" width="150")
           template(slot-scope="scope")
             el-switch(

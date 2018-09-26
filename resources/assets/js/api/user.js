@@ -7,3 +7,11 @@ export function update (id, params) {
     data: params
   });
 }
+
+export function updateIsActive (id, params) {
+  return request({
+    url: '/api/users/' + id + '/active',
+    method: 'put',
+    data: params
+  });
+}

@@ -1,5 +1,5 @@
 import { login, logout, getInfo } from '~/api/login';
-import { update } from '~/api/user';
+import { update, updateIsActive } from '~/api/user';
 import { getToken, setToken, removeToken } from '~/utils/auth';
 import dummyImage from '~/assets/login_images/dummy-avatar.png';
 import Vue from 'vue';
@@ -44,7 +44,6 @@ const user = {
     Settings ({ commit }) {
       return new Promise((resolve, reject) => {
         all().then(res => {
-          console.log(res)
           commit('SET_SETTING', res.data);
           resolve(res.data);
         }).catch(err => reject(err));
@@ -86,6 +85,16 @@ const user = {
     Update ({ commit }, { id, params }) {
       return new Promise((resolve, reject) => {
         update(id, params).then(response => {
+          resolve(response);
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
+
+    UpdateIsActive ({ commit }, { id, params }) {
+      return new Promise((resolve, reject) => {
+        updateIsActive(id, params).then(response => {
           resolve(response);
         }).catch(error => {
           reject(error);
