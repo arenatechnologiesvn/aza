@@ -141,7 +141,8 @@ class LoginController extends Controller
             $user['customer'] = $customer;
         }
         $user['avatar'] = $user->avatar;
-        $user['birthday'] = $user->userDetail->birthday;
+        $user['birthday'] = $user->userDetail && $user->userDetail->birthday ? $user->userDetail->birthday : null;
+
         return $user;
     }
 
