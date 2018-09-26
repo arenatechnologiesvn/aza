@@ -118,7 +118,7 @@
         fetchEmployees: 'fetchList'
       }),
       ...mapActions({
-        updateUserActive: 'user/Update'
+        updateUserActive: 'user/UpdateIsActive'
       }),
       changeActiveHandle (user_id, params) {
         this.updateUserActive({

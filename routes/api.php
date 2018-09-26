@@ -21,6 +21,10 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::post('user', 'Auth\RegisterController@register');
     Route::get('user', 'UserController@detail');
     Route::post('user/uploadavatar', 'Auth\RegisterController@uploadProfilePicture');
+    Route::get('profile', 'UserController@profile');
+    Route::put('users/{id}', 'UserController@update');
+    Route::put('users/{id}/active', 'UserController@updateIsActive');
+    Route::post('users/change-password', 'UserController@changePassword');
 
     // Settings
     Route::patch('settings/profile', 'Settings\ProfileController@update');
@@ -28,22 +32,23 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::get('setting', 'SettingController@index');
     Route::post('setting/{key}', 'SettingController@createPopup');
     Route::get('setting/{key}', 'SettingController@getPopup');
+
     // Role and permission
     Route::resource('role', 'RoleController');
     Route::put('print/select', 'PrintController@bulkBill');
     Route::resource('print', 'PrintController');
     Route::delete('roles/deletes', 'RoleController@deletes');
     Route::resource('roles', 'RoleController');
-    Route::get('profile', 'UserController@profile');
+
     Route::get('clients/today', 'ClientController@staticstoDay');
     Route::get('clients/day/{date}', 'ClientController@staticsByDay');
     Route::get('clients/month/{month}', 'ClientController@staticsByMonth');
     Route::get('clients/year/{year}', 'ClientController@staticsByYear');
     Route::get('clients/range/{from}/{to}', 'ClientController@productInRange');
-    Route::put('users/{id}', 'UserController@update');
+
     Route::resource('employees', 'EmployeeController');
     Route::resource('favorites', 'FavoriteController');
-    Route::post('users/change-password', 'UserController@changePassword');
+
     Route::post('carts/save-all', 'CartController@storeAll');
     Route::resource('carts', 'CartController');
     Route::resource('order_updates', 'OrderUpdateController');
