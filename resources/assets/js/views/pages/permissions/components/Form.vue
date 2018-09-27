@@ -101,7 +101,6 @@
         }).then(res => {
           this.$router.push({name: 'permission_index', replace: true})
         }).catch(err => {
-          console.log(err)
           this.$message.error('Error! Cannot update employee');
         })
       },
@@ -111,7 +110,6 @@
         }).then(res => {
           this.$router.push({name: 'permission_index', replace: true})
         }).catch(err => {
-          console.log(err)
           this.$message.error('Error! Cannot create employee');
         })
       },

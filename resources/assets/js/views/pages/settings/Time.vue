@@ -119,7 +119,6 @@
       onEdit (data) {
         if(this.timeModal != null) {
           const findIndex = this.timeFrame.findIndex(item => item.start === this.timeModal.start && item.end === this.timeModal.end )
-          console.log(findIndex)
           if(findIndex > -1) {
             this.timeFrame[findIndex].start = data.start
             this.timeFrame[findIndex].end = data.end

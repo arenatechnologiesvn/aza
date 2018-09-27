@@ -180,9 +180,9 @@
       //   this.currentImage.meta_data.currentImageId = this.currentImage.id
       //   this.$http.post(metaDataSave, this.currentImage.meta_data)
       //     .then(response => {
-      //       console.log('response', response)
+      //
       //     }).catch(error => {
-      //       console.log('error', error)
+      //
       //   })
       // },
 

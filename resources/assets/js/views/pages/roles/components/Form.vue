@@ -55,7 +55,6 @@
           }
         }).then(() => this.$router.push({name: 'role_index', replace: true}))
           .catch(err => {
-            console.log(err)
             this.$message.error('Error! Cannot update role')
           })
       },
@@ -65,7 +64,6 @@
         }).then(() => {
           this.$router.push({name: 'role_index', replace: true})
         }).catch(err => {
-          console.log(err)
           this.$message.error('Error! Cannot create role');
         })
       },

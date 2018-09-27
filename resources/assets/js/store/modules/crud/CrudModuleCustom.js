@@ -86,7 +86,6 @@ const CrudModuleCustom = ({
           return res;
         })
         .catch(err => {
-          console.log(err);
           state.isDestroying = false;
         });
     }

@@ -67,7 +67,6 @@
         fetchProduct: 'fetchList'
       }),
       addToCart(product) {
-        console.log(product)
         if (product.added) {
           this.canExecute('Bạn muốn thêm sản phẩm này vào giỏ hàng?')
             .then(() => {
@@ -105,7 +104,9 @@
                   message: 'Đã thêm thành công sản phẩm vào giỏ hàng',
                   type: 'success'
                 }))
-                .catch(err => console.log(err))
+                .catch(err => {
+                  // Do nothing
+                })
             })
         }
       },
@@ -147,7 +148,6 @@
             this.$router.push({path: '/cart'})
           })
           .catch(err => {
-            console.log(err)
             this.$message(
             {
               message: 'Lỗi khi thêm vào giỏ hàng',

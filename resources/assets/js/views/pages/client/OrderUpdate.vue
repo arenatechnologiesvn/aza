@@ -111,7 +111,9 @@
               }
             })
           })
-          .catch(err => console.log(err))
+          .catch(err => {
+            // Do nothing
+          })
       },
       formatNumber(num) {
         return formatNumber(num)

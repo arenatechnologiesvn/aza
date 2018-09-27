@@ -1,13 +1,13 @@
 <template lang="pug">
   div
-    el-form(ref="form" :model="password" status-icon label-width="150px" :rules="rules")
+    el-form(ref="form" :model="password" status-icon label-width="150px" :rules="rules" size="small")
       el-form-item(label="MẬT KHẨU CỦ" prop="current")
         el-input(v-model="password.current" type="password" placeholder="**********")
       el-form-item(label="MẬT KHẨU MỚI" prop="new_pass")
         el-input(v-model="password.new_pass" type="password" placeholder="**********")
       el-form-item(label="XÁC NHẬN MẬT KHẨU" prop="pass_confirm")
         el-input(v-model="password.pass_confirm" type="password" placeholder="**********")
-      el-form-item
+      el-form-item(style="text-align: right")
         el-button(type="success" @click="onChangePassword") CẬP NHẬT
 </template>
 <script>
@@ -41,9 +41,17 @@
           pass_confirm: ''
         },
         rules: {
-          current: [{ required: true, message: 'Mật khẩu hiện tại là bắt buộc', trigger: 'blur' }],
-          new_pass: [{required: true, message: 'Mật khẩu mới là bắt buộc'}, {validator: validateLength, trigger: 'blur' }],
-          pass_confirm: [{validator: validateEquals, trigger: 'blur' }]
+          current: [
+            { required: true, message: 'Mật khẩu củ là bắt buộc', trigger: 'blur' }
+          ],
+          new_pass: [
+            { required: true, message: 'Mật khẩu mới là bắt buộc' },
+            { validator: validateLength, trigger: 'blur' }
+          ],
+          pass_confirm: [
+            { required: true, message: 'Xác nhận mật khẩu mới là bắt buộc' },
+            { validator: validateEquals, trigger: 'blur' }
+          ]
         }
       }
     },
@@ -67,9 +75,7 @@
             location.reload()
           })
         }).catch(err => {
-          console.log(err)
-           this.$message(
-          {
+          this.$message({
             message: 'Không thể đổi mật khẩu, Đã có lỗi xảy ra',
             type: 'error'
           })

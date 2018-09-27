@@ -50,9 +50,6 @@
         }
         return false
       }
-    },
-    created () {
-      console.log(this.menus)
     }
   }
 </script>

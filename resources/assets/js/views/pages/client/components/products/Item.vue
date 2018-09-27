@@ -148,7 +148,6 @@
                   customer_id
                 }
               }).then((data) => {
-                console.log(data)
                 this.fetchCart()
                 this.fetchProduct()
               }).then(() => this.$notify(
@@ -157,7 +156,9 @@
                   message: 'Đã thêm thành công sản phẩm vào giỏ hàng',
                   type: 'success'
                 }))
-                .catch(err => console.log('err', err))
+                .catch(err => {
+                  // Do nothing
+                })
             })
         }
       },

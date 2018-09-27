@@ -32,7 +32,6 @@
         getList: 'list'
       }),
       categories () {
-        console.log(this.getList)
         return this.getList
       }
     },

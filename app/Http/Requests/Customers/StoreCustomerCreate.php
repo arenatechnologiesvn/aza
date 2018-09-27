@@ -54,8 +54,8 @@ class StoreCustomerCreate extends BaseFormRequest
             'user.email.max' => 'Email phải nhỏ hơn 255 ký tự.',
             'user.email.email' => 'Email không đúng.',
             'user.email.unique' => 'Email đã được đăng ký.',
-            'user.first_name.max' => 'Tên khách hàng phải nhỏ hơn 100 ký tự.',
-            'user.last_name.max' => 'Tên khách hàng phải nhỏ hơn 100 ký tự.',
+            'user.first_name.max' => 'Tên khách hàng phải nhỏ hơn 50 ký tự.',
+            'user.last_name.max' => 'Tên khách hàng phải nhỏ hơn 50 ký tự.',
             'user.phone.max' => 'Số điện thoại phải nhỏ hơn 20 ký tự.',
             'user.address.max' => 'Địa chỉ phải nhỏ hơn 255 ký tự.'
         ];
