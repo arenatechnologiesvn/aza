@@ -22,7 +22,6 @@ export function apiUpdate (id, employeeModel) {
 }
 
 export function apiCreate (employeeModel) {
-  console.log(employeeModel)
   return request({
     url: `/api/employees`,
     data: employeeModel,

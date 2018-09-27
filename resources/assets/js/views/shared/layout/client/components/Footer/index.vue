@@ -22,7 +22,6 @@
     },
     methods: {
       company () {
-        console.log(this.settings)
         return this.settings && this.settings.company
       }
     }

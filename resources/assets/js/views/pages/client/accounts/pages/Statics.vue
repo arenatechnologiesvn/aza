@@ -173,7 +173,6 @@
             break;
           case 2:
             byMonth(year + '-' + month).then(res => {
-              console.log(res)
               this.assignData(res)
             } )
             byRange(year+ '-' + month + '-01', year+ '-' + month + '-31').then(res => this.drawTable(res))

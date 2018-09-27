@@ -31,7 +31,6 @@ const role = {
           commit('SET_LIST', res)
           resolve(res)
         }).catch(err => {
-          console.log(err)
           reject(err)
         })
       })
@@ -49,7 +48,6 @@ const role = {
     update ({ commit }, roleModel) {
       return new Promise((resolve, reject) => {
         apiUpdate(roleModel.id, roleModel).then(res => {
-          console.log(res)
           commit('UPDATE', res)
           resolve(res)
         }).catch(err => {
@@ -60,7 +58,6 @@ const role = {
     create ({ commit }, roleModel) {
       return new Promise((resolve, reject) => {
         apiCreate(roleModel).then(res => {
-          console.log(res)
           commit('CREATE', res)
           resolve(res)
         }).catch(err => {

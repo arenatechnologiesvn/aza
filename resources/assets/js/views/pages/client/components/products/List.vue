@@ -82,9 +82,6 @@
     mounted() {
       window.addEventListener('resize', this.handleWindowResize);
       this.handleWindowResize()
-    },
-    created () {
-      // console.log(this.chunk(this.products, 2))
     }
   }
 </script>

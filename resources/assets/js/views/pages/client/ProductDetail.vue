@@ -158,7 +158,6 @@
         return formatNumber(num)
       },
       addToCart (product) {
-        console.log(product)
         if (product.added) {
           const data = {
             product_id: product.id,

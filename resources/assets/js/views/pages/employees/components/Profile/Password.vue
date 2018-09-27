@@ -73,7 +73,6 @@
                 location.reload()
               })
             }).catch(err => {
-              console.log(err)
               this.$message(
                 {
                   message: 'Không thể đổi mật khẩu, Đã có lỗi xảy ra',

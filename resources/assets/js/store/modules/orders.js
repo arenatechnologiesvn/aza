@@ -16,7 +16,6 @@ const addition = {
     bill ({ commit }, id) {
       return new Promise((resolve, reject) => {
         print(id).then(response => {
-          console.log(response)
           resolve(response);
         }).catch(error => {
           reject(error);
@@ -26,7 +25,6 @@ const addition = {
     bulkBill ({ commit }, ids) {
       return new Promise((resolve, reject) => {
         bulkPrint(ids).then(response => {
-          console.log(response)
           resolve(response);
         }).catch(error => {
           reject(error);

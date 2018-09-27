@@ -103,7 +103,6 @@
     },
     watch: {
       user_info: (value) => {
-        console.log(value)
         this.form.delivery_address = value
       }
     },
@@ -211,7 +210,6 @@
                 type: 'success'
               })).then(() => this.$router.push({'name': 'home_account_order'}))
               .catch(err => {
-                console.log(err)
                 this.$notify(
                   {
                     title: 'Cảnh báo báo',
@@ -229,8 +227,12 @@
       },
       remove(id) {
         this.removeItem({id})
-          .then(res => console.log(res))
-          .catch(err => console.log(err))
+          .then(res => {
+            // Do nothing
+          })
+          .catch(err => {
+            // Do nothing
+          })
       },
       formatNumber(num) {
         return formatNumber(num)
@@ -247,11 +249,10 @@
       },
       onShopChange (value) {
         this.listShop.map(item => {
-          console.log(item)
-         if(item.id == value) {
-           this.form.delivery_address = item.zone
-         }
-        } )
+          if(item.id == value) {
+            this.form.delivery_address = item.zone
+          }
+        })
       },
       enableCart () {
         const apply = this.$store.getters.settings && this.$store.getters.settings.apply

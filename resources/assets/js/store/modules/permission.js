@@ -73,7 +73,6 @@ const permission = {
   },
   actions: {
     GenerateRoutes ({ commit }, data) {
-      console.log(data)
       return new Promise(resolve => {
         request({
           url: `/api/roles/${data.role.id}`,

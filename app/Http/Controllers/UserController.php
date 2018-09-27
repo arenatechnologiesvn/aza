@@ -39,8 +39,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return 'ok';
-//        return Auth::user();
+        //
     }
 
     /**
@@ -87,7 +86,7 @@ class UserController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data  = $request->all();
+            $data = $request->all();
 
             if (isset($data['user_detail']) && isset($data['user_detail']['birthday'])) {
                 $data['user_detail']['birthday'] = strtotime(Carbon::parse($data['user_detail']['birthday'])->format('Y-m-d'));
@@ -100,10 +99,8 @@ class UserController extends Controller
                 if (isset($updated->userDetail)) {
                     $updated->userDetail->update($data['user_detail']);
                 } else {
-                    if (!UserDetail::where('user_id', $id)) {
-                        $data['user_detail']['user_id'] = $id;
-                        UserDetail::create($data['user_detail']);
-                    }
+                    $data['user_detail']['user_id'] = $id;
+                    UserDetail::create($data['user_detail']);
                 }
             }
 
@@ -113,7 +110,6 @@ class UserController extends Controller
             DB::rollBack();
             throw $e;
         }
-
     }
 
     /**

@@ -112,10 +112,9 @@
       }),
       detail (id) {
         this.fetchOrder({id}).then(res => {
-          console.log(res.data)
           this.show = true
           this.order = res.data
-        } )
+        })
       },
       currencyFormat(value) {
         return currencyFormat(value)
@@ -134,16 +133,6 @@
           myWindow.print();
           myWindow.close();
         })
-        // request({
-        //   url: `/api/print/${id}`,
-        //   method: 'get'
-        // }).then(res => {
-        //   let mywindow = window.open('', 'my div', 'height=400,width=600');
-        //   console.log(res)
-        //   mywindow.document.write(res);
-        //   mywindow.print();
-        //   mywindow.close();
-        // })
       }
     }
   }

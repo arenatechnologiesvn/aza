@@ -134,7 +134,9 @@
                   message: 'Đã thêm thành công sản phẩm vào giỏ hàng',
                   type: 'success'
                 }))
-                .catch(err => console.log(err))
+                .catch(err => {
+                  // Do nothing
+                })
             })
         }
       },
@@ -146,7 +148,6 @@
         }
       },
       addProductToFavorite(id) {
-        console.log(this.$store.state)
         if (this.$store.state.favorite.list.length > 4) {
           this.$notify(
             {
