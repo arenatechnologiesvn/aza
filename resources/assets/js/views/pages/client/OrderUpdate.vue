@@ -28,9 +28,12 @@
           div(style="margin-top: 10px")
             el-row
               el-col(:span="12" style="text-align: left;")
-                el-button(type="primary" size="small" @click="onShowProducts")
-                  svg-icon(icon-class="fa-solid plus-square")
-                  span(style="margin-left: 10px;") Thêm mới sản phẩm
+                el-button(type="primary" size="small" @click="onShowProducts" style="margin-left: 5px")
+                  svg-icon(icon-class="fa-solid plus-circle")
+                  span  Thêm mới sản phẩm
+                el-button(type="success" size="small" @click="onShowProducts")
+                  svg-icon(icon-class="fa-solid paint-brush")
+                  span  Cập nhật đơn hàng
               el-col.total(:span="12" style="float: right;")
                 strong Tạm tính:
                 template  {{formatNumber(total)}} (VNĐ)
