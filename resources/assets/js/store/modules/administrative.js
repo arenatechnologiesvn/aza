@@ -2,6 +2,8 @@ import originProvinces from '~/assets/administrative/province.json';
 import originDistricts from '~/assets/administrative/district.json';
 import originWards from '~/assets/administrative/ward.json';
 
+const POPULAR_PROVINCES = [1, 48, 79];
+
 const convertObject = (orginObjects) => {
   return Object.keys(orginObjects).map((index) => {
     return orginObjects[index];
@@ -19,7 +21,22 @@ const adminstrative = {
 
   getters: {
     getProvinces (state) {
-      return state.provinces;
+      let groups = [{
+        label: 'Phổ biến',
+        options: []
+      }, {
+        label: 'Tỉnh/TP',
+        options: []
+      }];
+      convertObject(state.provinces).forEach(province => {
+        if (POPULAR_PROVINCES.includes(parseInt(province.code))) {
+          groups[0].options.push(province);
+        } else {
+          groups[1].options.push(province);
+        }
+      });
+
+      return groups;
     },
 
     getDistricts (state) {
