@@ -1,10 +1,14 @@
 <template lang="pug">
   el-select(v-model="selectedProvince" clearable style="width: 100%" filterable placeholder="Tỉnh/TP" @change="_sendSelectedObjectToParent" :size="size")
-    el-option(
-      v-for="item in provinces"
-      :key="item.code"
-      :label="item.name_with_type"
-      :value="item.code")
+    el-option-group(
+      v-for="group in provinces"
+      :key="group.label"
+      :label="group.label")
+      el-option(
+        v-for="item in group.options"
+        :key="item.code"
+        :label="item.name_with_type"
+        :value="item.code")
 </template>
 
 <script>
