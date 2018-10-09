@@ -2,20 +2,22 @@
   el-tabs(type="border-card")
     el-tab-pane
       span(slot="label")
-        svg-icon(icon-class="fa-solid desktop")
-        span Cài đặt giờ đặt hàng
+        svg-icon(icon-class="fa-solid clock")
+        span Cài đặt khung giờ đặt hàng
       div
         el-form(:model="apply" status-icon :rules="rules" ref="apply")
           el-form-item(label="Giờ bắt đầu" prop="start")
             el-time-select(:picker-options="steps" style="width: 100%;" v-model="apply.start" placeholder="Giờ bắt đàu đặt hàng")
           el-form-item(label="Giờ kết thúc" prop="end")
             el-time-select(:picker-options="steps" style="width: 100%;" v-model="apply.end" placeholder="Giờ kết thúc đặt hàng")
-          el-form-item
-            el-button(type="primary" @click="save") Lưu thông tin
+          el-form-item(style="text-align: right")
+            el-button(type="primary" @click="save" size="small")
+              svg-icon(icon-class="fa-solid save")
+              span Lưu thông tin
     el-tab-pane
       span(slot="label")
-        svg-icon(icon-class="fa-solid desktop")
-        span Cài đặt khung giờ
+        svg-icon(icon-class="fa-solid truck")
+        span Cài đặt khung giờ giao hàng
       div
         modal-time(ref="showTime" @add="onAdd" @edit="onEdit")
         div(style="text-align: right;")
@@ -23,7 +25,7 @@
           style="width: 100%"
           size="mini"
           border)
-            el-table-column(type="index" label="STT" width="60")
+            el-table-column(type="index" label="STT" width="60" align="center")
             el-table-column(prop="start" label="Giờ bắt đầu")
             el-table-column(prop="end" label="Giờ kết thúc")
             el-table-column(label="#" width="230")
@@ -35,7 +37,7 @@
                   svg-icon(icon-class="fa-solid trash")
                   span Xóa bỏ
             div(slot="append" style="padding: 10px; text-align: left;")
-              el-button(@click="add" size="mini")
+              el-button(type="success" @click="add" size="mini")
                 svg-icon(icon-class="fa-solid plus-circle")
                 span Thêm mới
           div(style="margin-top: 10px;")
