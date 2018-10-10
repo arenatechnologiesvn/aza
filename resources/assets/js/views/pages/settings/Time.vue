@@ -5,13 +5,15 @@
         svg-icon(icon-class="fa-solid clock")
         span Cài đặt khung giờ đặt hàng
       div
-        el-form(:model="apply" status-icon :rules="rules" ref="apply")
+        el-form(:model="apply" status-icon :rules="rules" ref="apply" label-width="120px" size="small")
           el-form-item(label="Giờ bắt đầu" prop="start")
-            el-time-select(:picker-options="steps" style="width: 100%;" v-model="apply.start" placeholder="Giờ bắt đàu đặt hàng")
+            el-time-select(:picker-options="steps" v-model="apply.start" placeholder="Giờ bắt đàu đặt hàng" style="margin-right: 5px")
+            el-tag(type="success") Hôm nay
           el-form-item(label="Giờ kết thúc" prop="end")
-            el-time-select(:picker-options="steps" style="width: 100%;" v-model="apply.end" placeholder="Giờ kết thúc đặt hàng")
-          el-form-item(style="text-align: right")
-            el-button(type="primary" @click="save" size="small")
+            el-time-select(:picker-options="steps" v-model="apply.end" placeholder="Giờ kết thúc đặt hàng" style="margin-right: 5px")
+            el-tag(:type="endTimeType()") {{ endTimeTypeLabel() }}
+          el-form-item(style="margin-top: 10px")
+            el-button(type="primary" @click="save")
               svg-icon(icon-class="fa-solid save")
               span Lưu thông tin
     el-tab-pane
@@ -49,6 +51,8 @@
 <script>
   import { get, update } from '~/api/setting'
   import ModalTime from './Modal'
+  import moment from 'moment'
+
   export default {
     name: 'TimeSetting',
     components: {
@@ -66,19 +70,15 @@
     },
     data () {
       const validateTimeStart = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('Thời gian không được trống'));
-        } else if (this.apply.end && parseInt(value) > parseInt(this.apply.end)) {
-          callback(new Error('Thời Gian bắt đầu không được lớn hơn thời gian kết thúc'));
+        if (this.apply.end && value === this.apply.end) {
+          callback(new Error('Thời gian bắt đầu không được trùng thời gian kết thúc'));
         } else {
           callback();
         }
       };
       const validateTimeEnd = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('Thời gian không được trống'));
-        } else if (this.apply.start && parseInt(value) < parseInt(this.apply.start)) {
-          callback(new Error('Thời Gian kết thúc không được nhỏ hơn thời gian bắt đầu'));
+        if (this.apply.start && value === this.apply.start) {
+          callback(new Error('Thời gian kết thúc không được trùng thời gian bắt đầu'));
         } else {
           callback();
         }
@@ -86,16 +86,19 @@
       return {
         apply: {
           start: '',
-          end: ''
+          end: '',
+          is_end_in_today: false
         },
         times: [
           '7h-9h'
         ],
         rules: {
           start: [
+            { required: true, message: 'Thời gian bắt đầu không được trống', trigger: 'blur' },
             { validator: validateTimeStart, trigger: 'blur' }
           ],
           end: [
+            { required: true, message: 'Thời gian kết thúc không được trống', trigger: 'blur' },
             { validator: validateTimeEnd, trigger: 'blur' }
           ],
         },
@@ -142,7 +145,8 @@
       save () {
         this.$refs['apply'].validate(valid => {
           if(valid) {
-            return update('apply', {apply: this.apply}).then(res=> this.apply = res.data.value )
+            this.apply.is_end_in_today = this.isEndTimeInToday();
+            return update('apply', { apply: this.apply }).then(res=> this.apply = res.data.value )
               .then(() => this.$notify(
                 {
                   title: 'Thông báo',
@@ -162,6 +166,19 @@
               message: 'Đã cập nhật thành công thông tin',
               type: 'success'
             }))
+      },
+      endTimeType() {
+        if (this.isEndTimeInToday()) return 'success';
+        return 'danger';
+      },
+      endTimeTypeLabel() {
+        if (this.isEndTimeInToday()) return 'Hôm nay';
+        return 'Ngày mai';
+      },
+      isEndTimeInToday() {
+        const startTime = moment(this.apply.start, 'hh:mm');
+        var endTime = moment(this.apply.end, 'hh:mm');
+        return startTime.isBefore(endTime);
       }
     },
     created () {
