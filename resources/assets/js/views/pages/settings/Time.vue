@@ -177,7 +177,7 @@
       },
       isEndTimeInToday() {
         const startTime = moment(this.apply.start, 'hh:mm');
-        var endTime = moment(this.apply.end, 'hh:mm');
+        const endTime = moment(this.apply.end, 'hh:mm');
         return startTime.isBefore(endTime);
       }
     },
