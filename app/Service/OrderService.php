@@ -209,15 +209,15 @@ class OrderService extends BaseService
         }, 'shop'])->whereIn('id', $ids)->get();
     }
 
-    private function timeFormat() {
-        $now = now();
-        $h = $now->hour;
-        $minute = $now->minute;
-        return $h.":".$minute;
-    }
     private function checkTime () {
-        $n = $this->setting->action('get', 'apply');
-        $n = json_decode($n, true)['value'];
-        return intval($this->timeFormat()) >= intval($n['start'] )&& intval($this->timeFormat()) <= intval($n['end']);
+        $orderTimes = $this->setting->action('get', 'apply');
+        $orderTimes = json_decode($orderTimes, true)['value'];
+
+        $now = new \DateTime();
+        $startOrderTime = new \DateTime($now->format('Y-m-d') . ' ' . $orderTimes['start']);
+        $endOrderTime = new \DateTime($now->format('Y-m-d') . ' ' . $orderTimes['end']);
+
+        if ($orderTimes['is_end_in_today']) return $startOrderTime < $now && $now <= $endOrderTime;
+        return !($endOrderTime < $now && $now <= $startOrderTime);
     }
 }
