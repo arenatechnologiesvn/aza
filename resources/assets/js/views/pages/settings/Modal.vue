@@ -1,10 +1,6 @@
 <template lang="pug">
-  el-dialog(title="Giờ giao hàng"
-    :visible.sync="show"
-  width="30%"
-  center
-  @close="onOpened")
-    el-form(:model="formTime" ref="form" :rules="rules")
+  el-dialog(title="Giờ giao hàng" :visible.sync="show" width="30%" center @close="onOpened")
+    el-form(:model="formTime" ref="form" :rules="rules" size="small")
       el-form-item(label="Giờ bắt đầu" prop="start")
         el-select(style="width: 100%;" v-model="formTime.start" placeholder="Giờ bắt đầu giao hàng")
           el-option(v-for="item in 23" :key="item" :label="`${item}h`" :value="`${item}h`")
@@ -12,8 +8,8 @@
         el-select(style="width: 100%;" v-model="formTime.end" placeholder="Giờ kết thúc giao hàng")
           el-option(v-for="item in 23" :key="item" :label="`${item}h`" :value="`${item}h`")
     span(slot="footer")
-      el-button(@click="show = false") Hủy
-      el-button(type="primary" @click="add") {{buttonTitle}}
+      el-button(@click="show = false" size="small") Hủy
+      el-button(type="primary" @click="add" size="small") {{buttonTitle}}
 </template>
 
 <script>

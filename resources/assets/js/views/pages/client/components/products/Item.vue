@@ -40,6 +40,8 @@
 <script>
   import {mapActions, mapGetters} from 'vuex'
   import {formatNumber} from '~/utils/util'
+  import moment from 'moment'
+
   export default {
     name: 'ItemProduct',
     props: {
@@ -52,15 +54,13 @@
     computed: {
       enableCart () {
         const apply = this.$store.getters.settings && this.$store.getters.settings.apply
-        if(apply) {
-          const start = apply.start
-          const end = apply.end
+        if (apply) {
+          const now = moment();
+          const startTime = moment(apply.start, 'hh:mm');
+          const endTime = moment(apply.end, 'hh:mm');
 
-          let now = new Date
-          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
-          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
-          const time = hour+ ':'+ minute
-          if (time > start && time < end) return true;
+          if (apply.is_end_in_today) return startTime.isBefore(now) && now.isBefore(endTime)
+          return !(endTime.isBefore(now) && now.isBefore(startTime))
         }
         return false;
       }
@@ -106,15 +106,13 @@
       },
       enableCartF () {
         const apply = this.$store.getters.settings && this.$store.getters.settings.apply
-        if(apply) {
-          const start = apply.start
-          const end = apply.end
+        if (apply) {
+          const now = moment();
+          const startTime = moment(apply.start, 'hh:mm');
+          const endTime = moment(apply.end, 'hh:mm');
 
-          let now = new Date
-          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
-          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
-          const time = hour+ ':'+ minute
-          if (time > start && time < end) return true;
+          if (apply.is_end_in_today) return startTime.isBefore(now) && now.isBefore(endTime)
+          return !(endTime.isBefore(now) && now.isBefore(startTime))
         }
         return false;
       },

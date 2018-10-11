@@ -32,27 +32,24 @@
               span
                 svg-icon(icon-class="fa-solid info-circle")
               template Thông tin đặt hàng
-            el-form(ref="form" :model="form" status-icon :rules="rules")
+            el-form(ref="form" :model="form" status-icon :rules="rules" size="small")
               el-form-item(label="Ghi chú và nhận xét" prop="title")
-                el-input(v-model="form.title" size="small" placeholder="Ghi chú và nhận xét"  auto-complete="off")
+                el-input(v-model="form.title" placeholder="Ghi chú và nhận xét"  auto-complete="off")
               el-form-item(label="Sản phẩm ngoài danh mục" prop="description")
-                el-input(v-model="form.description" type="textarea" rows="5" size="small" placeholder="Nhập mô tả chi tiết đơn hàng")
+                el-input(v-model="form.description" type="textarea" rows="5" placeholder="Nhập mô tả chi tiết đơn hàng")
               el-form-item(label="Cửa hàng" prop="shop_id")
-                el-select(v-model="form.shop_id" clearable filterable placeholder="Chọn cửa hàng" size="small" style="width: 100%;" @change="onShopChange")
+                el-select(v-model="form.shop_id" clearable filterable placeholder="Chọn cửa hàng" style="width: 100%;" @change="onShopChange")
                   el-option(:label="shop.name" :value="shop.id" v-for="shop in shops" :key="shop.id")
               el-form-item(label="Địa chỉ nhận hàng" prop="delivery_address")
-                el-input(v-model="form.delivery_address" type="textarea" rows="3" size="small" placeholder="Địa chỉ giao hàng")
-              el-row(:gutter="5" type="flex")
-                el-col(:span="14")
-                  el-form-item(label="Ngày giao hàng" prop="delivery")
-                    el-date-picker(v-model="form.delivery" type="date" size="small" placeholder="Ngày đặt hàng")
-                el-col(:span="10")
-                  el-form-item(label="Giờ giao hàng" prop="delivery_type")
-                    el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" size="small")
-                      el-option(:label="item" :value="item" v-for="item in times" :key="item")
-            div.cart__detail
-              el-button(type="success" @click="checkout" :disabled="!enableCart()") ĐẶT HÀNG
-              el-button(type="danger" @click="resetForm('form')") HỦY BỎ
+                el-input(v-model="form.delivery_address" type="textarea" rows="3" placeholder="Địa chỉ giao hàng")
+              el-form-item(label="Ngày giao hàng" prop="delivery")
+                el-date-picker(v-model="form.delivery" type="date" format="dd-MM-yyyy" placeholder="Ngày giao hàng" style="width: 100%;")
+              el-form-item(label="Giờ giao hàng" prop="delivery_type")
+                el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" style="width: 100%;")
+                  el-option(:label="item" :value="item" v-for="item in times" :key="item")
+              el-form-item
+                el-button(type="danger" @click="resetForm('form')") Hủy bỏ
+                el-button(type="success" @click="checkout" :disabled="!enableCart()") Đặt hàng
 </template>
 
 <script>
@@ -61,6 +58,7 @@
   import _ from 'lodash'
   import {formatNumber} from '~/utils/util'
   import ElRow from "element-ui/packages/row/src/row";
+  import moment from 'moment'
 
   export default {
     name: 'CustomerCart',
@@ -73,7 +71,7 @@
         const now = +(new Date())
         value = +value + 86400000
         if(value <= now) {
-          callback(new Error('Ngày giao hàng không hợp lệ'))
+          callback(new Error('Ngày giao hàng không được trước hôm nay'))
         } else {
           callback()
         }
@@ -256,15 +254,13 @@
       },
       enableCart () {
         const apply = this.$store.getters.settings && this.$store.getters.settings.apply
-        if(apply) {
-          const start = apply.start
-          const end = apply.end
+        if (apply) {
+          const now = moment();
+          const startTime = moment(apply.start, 'hh:mm');
+          const endTime = moment(apply.end, 'hh:mm');
 
-          let now = new Date
-          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
-          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
-          const time = hour+ ':'+ minute
-          if (time > start && time < end) return true;
+          if (apply.is_end_in_today) return startTime.isBefore(now) && now.isBefore(endTime)
+          return !(endTime.isBefore(now) && now.isBefore(startTime))
         }
         return false;
       }
@@ -314,13 +310,6 @@
   .cart {
     padding: 10px 5px;
     margin-top: 2px;
-  }
-
-  .cart__detail {
-    h4 {
-      margin: 5px 3px 20px 3px;
-    }
-    padding-bottom: 20px;
   }
 
   .line {
