@@ -23,11 +23,11 @@ class UpdateOrderFormRequest extends BaseFormRequest
     {
         // TODO: Implement rules() method.
         return [
-            'customer_id' => 'required|numeric|exists:customers,id',
-            'delivery_type' => 'required',
+            'customer_id' => 'nullable|numeric|exists:customers,id',
+            'delivery_type' => 'nullable',
             'discount'=> 'nullable|numeric',
             'description' => 'nullable',
-            'shop_id' => 'required|numeric|exists:shops,id',
+            'shop_id' => 'nullable|numeric|exists:shops,id',
             'title' => 'nullable',
             'product.*.product_id'=> 'required|numeric|exists:products,id',
             'product.*.quantity'=> 'required|numeric|min:0',
@@ -52,10 +52,7 @@ class UpdateOrderFormRequest extends BaseFormRequest
             'delivery_address.required' => 'Địa chỉ nhận hàng là bắt buộc',
             'delivery.required' => 'Ngày giao hàng là bắt buộc',
             'delivery.date' => 'Ngày giao hàng chưa đúng định dạng',
-            'customer_id.required' => 'Mã khách hàng là bắt buộc',
             'customer_id.exists' => 'Khách hàng không tồn tại',
-            'delivery_type.required' => 'Giờ giao hàng là bắt buộc',
-            'shop_id.required' => 'Mã cửa hàng là bắt buộc',
             'shop_id.exists' => 'Cửa hàng chưa tồn tại',
             'product.*.product_id.required' => 'Mã sản phẩm là bắt buộc',
             'product.*.product_id.numeric' => 'Mã sản phẩm phải là số',
