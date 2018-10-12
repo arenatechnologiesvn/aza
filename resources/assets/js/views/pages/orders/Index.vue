@@ -8,7 +8,7 @@
       div(style="margin-bottom: 10px;")
         el-row(:gutter="5")
           el-col(:span="4")
-            el-select(size="small" v-model="status" placeholder="Trạng thái" clearable)
+            el-select(size="small" v-model="status" placeholder="Trạng thái")
               el-option(:value="1" label="Chờ xác nhận")
               el-option(:value="3" label="Đang xử lý")
               el-option(:value="0" label="Đã hoàn thành")
@@ -33,10 +33,10 @@
                 el-dropdown-item(v-if="status === 3" command="COMPLETE")
                   svg-icon(icon-class="fa-solid check-circle")
                   span Hoàn thành đơn hàng
-                el-dropdown-item(command="CANCEL" style="color: red")
+                el-dropdown-item(command="CANCEL" style="color: red" divided)
                   svg-icon(icon-class="fa-solid ban")
                   span Hủy đơn hàng
-                el-dropdown-item(command="PRINT")
+                el-dropdown-item(command="PRINT" divided)
                   svg-icon(icon-class="fa-solid print")
                   span In hóa đơn
             el-button(type="success" size="small" @click="exportExcelFile" :disabled="status === -1")
@@ -48,11 +48,11 @@
               el-radio-button(label="7") Tuần qua
               el-radio-button(label="-1") Tất cả
           el-col(:span="4")
-            el-date-picker(type="date" style="width: 100%" v-model="apply_at" size="small" placeholder="Ngày đặt hàng")
+            el-date-picker(type="date" style="width: 100%" v-model="apply_at" format="dd-MM-yyyy" value-format="dd-MM-yyyy" size="small" placeholder="Ngày đặt hàng")
           el-col(:span="4")
-            el-date-picker(type="date" style="width: 100%" v-model="delivery_date" size="small" placeholder="Ngày giao hàng")
+            el-date-picker(type="date" style="width: 100%" v-model="delivery_date" format="dd-MM-yyyy" value-format="dd-MM-yyyy" size="small" placeholder="Ngày giao hàng")
           el-col(:span="4")
-            el-select(v-model="delivery_type" clearable filterable placeholder="Chọn khung giờ" size="small")
+            el-select(v-model="delivery_type" style="width: 100%" clearable filterable placeholder="Chọn khung giờ" size="small")
               el-option(:label="item" :value="item" v-for="item in times" :key="item")
     div.account-order__content(style="padding: 10px;")
       order-detail(ref="showDetail")
@@ -79,17 +79,28 @@
         el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG" min-width="150" align="center")
-        el-table-column(prop="id" label="TÁC VỤ" width="200" fixed="right")
+        el-table-column(prop="id")
           template(slot-scope="scope")
-            el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" :content="parseInt(scope.row.status) === 1 ? 'Xác nhận đơn hàng' : 'Hoàn thành đơn hàng'" placement="top")
-              el-button(size="mini" @click="changeStatus(scope.row.id, scope.row.status, scope.row.status == 1 ? 3 : 0)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2" round)
-                svg-icon(icon-class="fa-solid check-circle")
-            el-tooltip(v-if="![0, 2].includes(parseInt(scope.row.status))" effect="dark" content="Hủy đơn hàng" placement="top")
-              el-button(size="mini" type="danger" @click="changeStatus(scope.row.id, scope.row.status, 2)" :disabled="parseInt(scope.row.status) === 0 || parseInt(scope.row.status) === 2 " round)
-                svg-icon(icon-class="fa-solid ban")
-            el-tooltip(effect="dark" content="Xem chi tiết" placement="top")
-              el-button(size="mini" type="primary" @click="onView(scope.row.id)" round)
-                svg-icon(icon-class="fa-solid eye")
+            el-dropdown(type="primary" size="small")
+              span.el-dropdown-link
+                i.el-icon-arrow-down.el-icon--right
+              el-dropdown-menu(slot="dropdown")
+                el-dropdown-item(v-if="parseInt(scope.row.status) === 1")
+                  span(@click="changeStatus(scope.row.id, 3)")
+                    svg-icon(icon-class="fa-solid check-circle")
+                    span Xác nhận đơn hàng
+                el-dropdown-item(v-if="parseInt(scope.row.status) === 3")
+                  span(@click="changeStatus(scope.row.id, 0)" style="color: #67C23A")
+                    svg-icon(icon-class="fa-solid check-circle")
+                    span Hoàn thành đơn hàng
+                el-dropdown-item(v-if="[1, 3].includes(parseInt(scope.row.status))" style="color: red" divided)
+                  span(@click="changeStatus(scope.row.id, 2)")
+                    svg-icon(icon-class="fa-solid ban")
+                    span Hủy đơn hàng
+                el-dropdown-item(style="color: #409EFF" divided)
+                  span(@click="onView(scope.row.id)")
+                    svg-icon(icon-class="fa-solid eye")
+                    span Xem chi tiết
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -169,12 +180,12 @@
             return parseInt(this.status) === parseInt(item.status)
           })
           .filter(item => {
-            if(this.delivery_date === null) return true;
-            return (+(new Date(item.delivery * 1000)) === +this.delivery_date)
+            if (this.delivery_date === null) return true;
+            return this.delivery_date === moment.unix(item.delivery).format('DD-MM-YYYY');
           })
           .filter(item => {
-            if(this.apply_at === null) return true;
-            return (this.formatDateFromString(this.apply_at) === this.formatDateCompare(item.date))
+            if (this.apply_at === null) return true;
+            return this.apply_at === moment.unix(item.date).format('DD-MM-YYYY');
           })
           .filter(item => {
             if(this.delivery_type === null || this.delivery_type === '' ) return true;
@@ -224,8 +235,8 @@
       fetchData () {
         this.fetchOrder()
       },
-      changeStatus(id, currentStatus, targetStatus) {
-        if (currentStatus === CONFIRM_STATUS && targetStatus === PROCESSING_STATUS) {
+      changeStatus(id, targetStatus) {
+        if (targetStatus === PROCESSING_STATUS) {
           this.canExecute('Bạn muốn xác nhận đơn hàng này').then(() => {
             this.updateOrder({ id, data: { status: targetStatus } }).then(() => {
               this.successNotify('Xác nhận đơn hàng thành công');
@@ -233,7 +244,7 @@
               this.failedNotify('Xác nhận đơn hàng thất bại');
             })
           })
-        } else if (currentStatus === PROCESSING_STATUS && targetStatus === COMPLETE_STATUS) {
+        } else if (targetStatus === COMPLETE_STATUS) {
           this.canExecute('Bạn muốn hoàn thành đơn hàng này').then(() => {
             this.updateOrder({ id, data: { status: targetStatus } }).then(() => {
               this.successNotify('Duyệt hoàn thành đơn hàng thành công');
@@ -241,7 +252,7 @@
               this.failedNotify('Duyệt hoàn thành đơn hàng thất bại');
             })
           })
-        } else if ([CONFIRM_STATUS, PROCESSING_STATUS].includes(currentStatus) && targetStatus === CANCEL_STATUS) {
+        } else if (targetStatus === CANCEL_STATUS) {
           this.openCancelReasonModal().then(reason => {
             this.updateOrder({ id, data: { status: targetStatus, approve_note: reason }}).then(() => {
               this.successNotify('Hủy đơn hàng thành công');
@@ -253,9 +264,9 @@
       },
       openCancelReasonModal() {
         return new Promise((resolve) => {
-          this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+          this.$prompt('', 'Lý do hủy', {
+            confirmButtonText: 'Hủy đơn hàng',
+            cancelButtonText: 'Đóng',
             inputPattern: /\w+/,
             inputErrorMessage: 'Bạn phải nhập lý do'
           }).then(reasonInput => {
@@ -268,22 +279,9 @@
       currencyFormat(value) {
         return currencyFormat(value)
       },
-      formatDateFromString (date) {
-        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
-        const year = date.getFullYear()
-        return year + '-' + month + '-' + day
-      },
       formatDate(num) {
         if (!num) return '-';
         return moment.unix(num).format('DD-MM-YYYY');
-      },
-      formatDateCompare (num) {
-        let date = new Date(1000*num)
-        const day = date.getDate() < 10 ? '0'+  date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0'+ (date.getMonth() + 1) : (date.getMonth() + 1)
-        const year = date.getFullYear()
-        return year + '-' + month + '-' + day
       },
       handleSizeChange (size) {
         this.pageSize = size

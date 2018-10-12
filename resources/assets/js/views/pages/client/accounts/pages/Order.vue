@@ -12,16 +12,16 @@
       div
         el-row(:gutter="10")
           el-col(:span="6")
-            el-select(size="small" v-model="status" clearable filterable placeholder="Trạng thái đơn hàng")
-              el-option(:value="1" label="Đang chờ xử lý")
+            el-select(size="small" v-model="status" filterable placeholder="Trạng thái đơn hàng")
+              el-option(:value="1" label="Chờ xác nhận")
               el-option(:value="3" label="Đang xử lý")
               el-option(:value="0" label="Đã hoàn thành")
               el-option(:value="2" label="Đã hủy")
               el-option(:value="-1" label="Tất cả")
           el-col(:span="6")
-            el-date-picker(type="date" v-model="apply_at" style="width: 100%" size="small" placeholder="Ngày đặt hàng")
+            el-date-picker(type="date" v-model="apply_at" style="width: 100%" format="dd-MM-yyyy" value-format="dd-MM-yyyy" size="small" placeholder="Ngày đặt hàng")
           el-col(:span="6")
-            el-date-picker(type="date" v-model="delivery_date" style="width: 100%" size="small" placeholder="Ngày giao hàng")
+            el-date-picker(type="date" v-model="delivery_date" style="width: 100%" format="dd-MM-yyyy" value-format="dd-MM-yyyy" size="small" placeholder="Ngày giao hàng")
           el-col(:span="6")
             el-select(v-model="delivery_type" clearable filterable placeholder="Chọn khung giờ" size="small")
               el-option(:label="item" :value="item" v-for="item in times" :key="item")
@@ -38,30 +38,32 @@
               el-table-column(prop="price" label="GIÁ(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
               el-table-column(prop="total" label="TỔNG(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
               el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
-        el-table-column(prop="code" label="MÃ ĐƠN HÀNG")
-        el-table-column(label="TRẠNG THÁI")
+        el-table-column(prop="code" label="MÃ ĐƠN HÀNG" sortable min-width="150")
+        el-table-column(label="TRẠNG THÁI" min-width="150" align="center")
           template(slot-scope="scope")
-            el-tag(:type="parseInt(scope.row.status) === 0 ? 'success': parseInt(scope.row.status) === 1 ?  'info' : parseInt(scope.row.status) === 2 ? 'danger' : 'primary'") {{parseInt(scope.row.status) === 0 ? 'Đã hoàn thành' : parseInt(scope.row.status) === 1 ? 'Đang chờ xử lý' : parseInt(scope.row.status) === 2 ? 'Đã bị hủy' : 'Đang xử lý' }}
-        el-table-column(prop="total" label="TỔNG TIỀN(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" )
-        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG")
-        el-table-column(label="THAO TÁC" min-width="60")
+            el-tag(:type="parseInt(scope.row.status) === 0 ? 'success': parseInt(scope.row.status) === 1 ?  'warning' : parseInt(scope.row.status) === 2 ? 'danger' : 'info'") {{parseInt(scope.row.status) === 0 ? 'Đã hoàn thành' : parseInt(scope.row.status) === 1 ? 'Chờ xác nhận' : parseInt(scope.row.status) === 2 ? 'Đã hủy' : 'Đang xử lý' }}
+        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)" min-width="150" align="right")
+        el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
+        el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
+        el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG" min-width="150" align="center")
+        el-table-column(width="40" fixed="right")
           template(slot-scope="scope")
-            el-dropdown(split-button type="default" size="mini")
-              svg-icon(icon-class="fa-solid list")
+            el-dropdown(type="default" size="small")
+              span.el-dropdown-link
+                i.el-icon-arrow-down.el-icon--right
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item(@click="onView(scope.row.id)")
                   span(@click="onView(scope.row.id)")
                     svg-icon(icon-class="fa-solid eye")
                     span Xem chi tiết
                 el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
-                  span(@click="changeStatus(scope.row.id, 2)")
+                  span(@click="onEdit(scope.row.id)")
+                    svg-icon(icon-class="fa-solid paint-brush")
+                    span Sửa đơn hàng
+                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
+                  span(@click="changeStatus(scope.row.id, 2)" style="color: red")
                     svg-icon(icon-class="fa-solid ban")
                     span Hủy đơn hàng
-                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
-                  span(@click="onEdit(scope.row.id)")
-                    svg-icon(icon-class="fa-solid user-edit")
-                    span Cập nhật đơn hàng
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -120,11 +122,11 @@
           })
           .filter(item => {
             if (this.delivery_date === null) return true;
-            return (+(new Date(item.delivery * 1000)) === +this.delivery_date)
+            return this.delivery_date === moment.unix(item.delivery).format('DD-MM-YYYY');
           })
           .filter(item => {
             if (this.apply_at === null) return true;
-            return (this.formatDateFromString(this.apply_at) === this.formatDateCompare(item.date))
+            return this.apply_at === moment.unix(item.date).format('DD-MM-YYYY');
           })
           .filter(item => {
             if (this.delivery_type === null || this.delivery_type === '') return true;
@@ -152,22 +154,9 @@
       onView (id) {
         this.$refs['showDetail'].detail(id)
       },
-      formatDateFromString(date) {
-        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
-        const year = date.getFullYear()
-        return year + '-' + month + '-' + day
-      },
       formatDate(num) {
         if (!num) return '-';
         return moment.unix(num).format('DD-MM-YYYY')
-      },
-      formatDateCompare(num) {
-        let date = new Date(1000 * num)
-        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
-        const year = date.getFullYear()
-        return year + '-' + month + '-' + day
       },
       handleSizeChange(size) {
         this.pageSize = size
@@ -177,9 +166,9 @@
       },
       changeStatus(id, status) {
         if (status === 2) {
-          this.$prompt('Hãy nhập lý do hủy', 'Lý do hủy', {
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+          this.$prompt('', 'Lý do hủy', {
+            confirmButtonText: 'Hủy đơn hàng',
+            cancelButtonText: 'Đóng',
             inputPattern: /\w+/,
             inputErrorMessage: 'Bạn phải nhập lý do'
           }).then(value => {
