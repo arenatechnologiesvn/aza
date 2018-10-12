@@ -1,7 +1,5 @@
 <template lang="pug">
-  el-dialog.detail(:title="`DANH SÁCH SẢN PHẨM`"
-  width="60%"
-    :visible.sync="show" style="text-align: left;")
+  el-dialog.detail(:title="`DANH SÁCH SẢN PHẨM`" width="60%" :visible.sync="show" style="text-align: left;")
     div.content
       h5.table-title(style="text-align: left;")
         svg-icon(icon-class="fa-solid list")
@@ -19,7 +17,7 @@
           template(slot-scope="scope")
             el-tooltip(class="item" effect="dark" content="Thêm vào đơn hàng" placement="top")
               el-button(size="mini" type="default" @click="addToOrder(scope.row)")
-                svg-icon(icon-class="fa-solid calendar-plus")
+                svg-icon(icon-class="fa-solid plus")
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -33,9 +31,10 @@
 <script>
   import { mapGetters } from 'vuex'
   import {formatNumber} from '~/utils/util'
+  import dummyImage from '~/assets/login_images/dummy-image.jpg'
 
   export default {
-    name: 'DilaogList',
+    name: 'DialogList',
     data () {
       return {
         search: '',
@@ -59,7 +58,7 @@
           .filter(item => this.black.indexOf(item.id.toString()) < 0)
           .map(p => ({
             id: p.id,
-            img:  p.featured &&  p.featured[0] && '/' + p.featured[0].directory + '/' + p.featured[0].filename + '.' + p.featured[0].extension,
+            img:  p.featured && p.featured[0] && p.featured[0].url ? p.featured[0].url : dummyImage,
             unit: p.unit,
             title: p.name,
             price: p.price

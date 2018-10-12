@@ -60,6 +60,7 @@
   import Comment from './components/Comment'
   import { mapGetters, mapActions } from 'vuex'
   import { formatNumber } from '~/utils/util'
+  import dummyImage from '~/assets/login_images/dummy-image.jpg'
 
   export default {
     name: 'ProductDetail',
@@ -79,7 +80,7 @@
         return item ? {
           id: item.id,
           title: item.name,
-          img: item.url ,
+          img: item.featured && item.featured[0] && item.featured[0].url ,
           category: item.category ? item.category.name : 'Chưa xác định',
           preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: p.url})): [],
           price: item.price,

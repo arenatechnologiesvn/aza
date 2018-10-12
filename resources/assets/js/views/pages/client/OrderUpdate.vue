@@ -25,15 +25,18 @@
                 template(slot-scope="scope")
                   el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;" @change="changeQuantity(scope.row)")
               el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
-          div
+          div(style="margin-top: 10px")
             el-row
               el-col(:span="12" style="text-align: left;")
-                el-button(type="primary" size="small" @click="onShowProducts")
-                  svg-icon(icon-class="fa-solid plus-square")
-                  span(style="margin-left: 10px;") Thêm mới sản phẩm
+                el-button(type="primary" size="small" @click="onShowProducts" style="margin-left: 5px")
+                  svg-icon(icon-class="fa-solid plus-circle")
+                  span  Thêm mới sản phẩm
+                el-button(type="success" size="small" @click="onShowProducts")
+                  svg-icon(icon-class="fa-solid paint-brush")
+                  span  Cập nhật đơn hàng
               el-col.total(:span="12" style="float: right;")
                 strong Tạm tính:
-                template {{formatNumber(total)}} (VNĐ)
+                template  {{formatNumber(total)}} (VNĐ)
 </template>
 
 <script>
@@ -43,7 +46,7 @@
   import DialogProducts from './components/products/DialogList'
 
   export default {
-    name: 'CustomerCart',
+    name: 'OrderUpdate',
     components: {
       DialogProducts,
       BreadCrumb
@@ -143,6 +146,16 @@
             order_id: this.$route.params.id,
             quantity: 1
           }
+        }).then(() => {
+          this.$notify({
+            message: `Đã thêm ${product.title} vào giỏ hàng`,
+            type: 'success'
+          })
+        }).catch(() => {
+          this.$notify({
+            message: `Thêm thất bại`,
+            type: 'error'
+          })
         })
       }
     },
