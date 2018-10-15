@@ -145,6 +145,7 @@ class OrderService extends BaseService
             return $this->model->select($this->selectable)->with(['products'=> function($query) {
                 $query->select([
                     'id',
+                    'product_code',
                     'name',
                     'description',
                     'price',
@@ -166,6 +167,7 @@ class OrderService extends BaseService
             return $this->model->select($this->selectable)->with(['products'=> function($query) {
                 $query->select([
                     'id',
+                    'product_code',
                     'name',
                     'description',
                     'price',
@@ -190,6 +192,7 @@ class OrderService extends BaseService
         return $this->model->select($this->selectable)->with(['products'=> function($query) {
             $query->select([
                 'id',
+                'product_code',
                 'name',
                 'description',
                 'price',

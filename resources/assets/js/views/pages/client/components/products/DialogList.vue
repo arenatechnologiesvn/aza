@@ -1,22 +1,20 @@
 <template lang="pug">
   el-dialog.detail(:title="`DANH SÁCH SẢN PHẨM`" width="60%" :visible.sync="show" style="text-align: left;")
     div.content
-      h5.table-title(style="text-align: left;")
-        svg-icon(icon-class="fa-solid list")
-        span(style="margin-left: 10px;") DANH SÁCH SẢN PHẨM
       div.form-search
         el-input(v-model="search" placeholder="Tìm kiếm sản phẩm..." prefix-icon="el-icon-search" clearable)
       el-table(:data="products.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border="border" size="mini")
         el-table-column(width="70")
           template(slot-scope="product")
-            img.product-img(:src="product.row.img")
-        el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="100")
-        el-table-column(prop="price" label="GIÁ(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+            img.product-img(:src="imageUrl(product.row)")
+        el-table-column(prop="product_code" label="MÃ SẢN PHẨM" min-width="70")
+        el-table-column(prop="name" label="TÊN SẢN PHẨM" min-width="130")
+        el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="unit" label="ĐƠN VỊ" width="70")
         el-table-column(width="70")
           template(slot-scope="scope")
             el-tooltip(class="item" effect="dark" content="Thêm vào đơn hàng" placement="top")
-              el-button(size="mini" type="default" @click="addToOrder(scope.row)")
+              el-button(size="mini" type="success" @click="addToOrder(scope.row)")
                 svg-icon(icon-class="fa-solid plus")
       div.pagination__wrapper(style="padding: 10px 0;")
         el-pagination(@size-change="handleSizeChange"
@@ -44,26 +42,16 @@
       }
     },
     props: {
-      black: {
+      addableProducts: {
         type: Array,
         default: () => []
       }
     },
     computed: {
-      ...mapGetters('products', {
-        listProducts: 'list'
-      }),
       products () {
-        return this.listProducts
-          .filter(item => this.black.indexOf(item.id.toString()) < 0)
-          .map(p => ({
-            id: p.id,
-            img:  p.featured && p.featured[0] && p.featured[0].url ? p.featured[0].url : dummyImage,
-            unit: p.unit,
-            title: p.name,
-            price: p.price
-        }))
-          .filter(item => item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1)
+        return this.addableProducts.filter(item => {
+          return item.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        })
       }
     },
     methods: {
@@ -73,13 +61,6 @@
       formatNumber(num) {
         return formatNumber(num)
       },
-      formatDate(num) {
-        let date = new Date(1000 * num)
-        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
-        const month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
-        const year = date.getFullYear()
-        return day + '-' + month + '-' + year
-      },
       addToOrder (product) {
         this.$emit('addOrder', product)
       },
@@ -88,6 +69,9 @@
       },
       handleCurrentChange (current) {
         this.currentPage = current
+      },
+      imageUrl(product) {
+        return product.featured && product.featured[0] && product.featured[0].url ? product.featured[0].url : dummyImage;
       }
     }
   }

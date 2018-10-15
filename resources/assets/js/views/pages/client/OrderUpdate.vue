@@ -1,20 +1,21 @@
 <template lang="pug">
   div.container
     bread-crumb
-    dialog-products(ref="dialogProduct" @addOrder="onAddProduct" :black="products.map(item => item.product_id)")
+    dialog-products(ref="dialogProduct" @addOrder="onAddProduct" :addable-products="addableProducts")
     div.cart__contain(style="margin-top: 10px")
       el-row(:gutter="10")
         el-col(:span="24")
           div.grid-content.bg-puple
             div(style="background-color: white; border-bottom: 1px solid #d6d6d;padding: 15px;")
-              h4(style="margin: 0;") MÃ ĐƠN HÀNG {{order && order.order_code}}
-            el-table(border style="width: 100%" :data="products" size="mini" v-loading="products.length < 1")
+              h4(style="margin: 0;") ĐƠN HÀNG {{order && order.order_code}}
+            el-table(border style="width: 100%" :data="orderProducts" size="mini" v-loading="orderProducts.length < 1")
               el-table-column(prop="name" label="Sản phẩm" min-width="200")
                 template(slot-scope="scope")
                   div.detail
                     div.img
                       img(:src="scope.row.img")
-                    h4 {{scope.row.title}}
+                    h4 {{ scope.row.product_code }}
+                    h4 {{ scope.row.title }}
                     el-button.button(type="danger" size="mini" @click="remove(scope.row)")
                       svg-icon(icon-class="fa-solid trash")
               el-table-column(prop="price" label="GIÁ (VNĐ)")
@@ -23,7 +24,7 @@
                   div / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
-                  el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;" @change="changeQuantity(scope.row)")
+                  el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;")
               el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div(style="margin-top: 10px")
             el-row
@@ -44,6 +45,7 @@
   import {mapGetters, mapActions} from 'vuex'
   import {formatNumber} from '~/utils/util'
   import DialogProducts from './components/products/DialogList'
+  import dummyImage from '~/assets/login_images/dummy-image.jpg'
 
   export default {
     name: 'OrderUpdate',
@@ -56,25 +58,47 @@
     },
     computed: {
       ...mapGetters('products', {
-        listProducts: 'list'
-      }),
-      ...mapGetters('update_orders', {
-        listProducts: 'products'
+        products: 'list'
       }),
       ...mapGetters('orders', {
-        byOrderId: 'byId'
+        orderById: 'byId'
       }),
       order () {
-        return this.byOrderId(this.$route.params.id)
+        return this.orderById(this.$route.params.id)
       },
-      products () {
-        return this.listProducts()
+      orderProducts () {
+        if (!(this.order && this.order.products)) return [];
+        return this.order.products.map((item) => {
+          return {
+            id: item.id,
+            product_code: item.product_code,
+            title: item.name,
+            price: item.price,
+            img: item.featured && item.featured[0] ? item.featured[0].url : dummyImage,
+            provider: item.provider && item.provider.name,
+            quantity: item.pivot.quantity,
+            unit: item.unit,
+            order_id: item.pivot.order_id,
+            quantitative: item.quantitative,
+            real_price: item.price,
+            tmp_price: item.price
+          }
+        });
+      },
+      addableProducts () {
+        if (!this.products) return [];
+        const orderProductIds = this.orderProducts.map(item => item.id);
+        return this.products.filter((item) => {
+          return !orderProductIds.includes(item.id);
+        });
       },
       total() {
-        return (this.products && this.products.length > 1) ?
-          this.products.reduce((a, b) => (parseFloat(a)  + parseFloat((parseFloat(b.price) * parseInt(b.quantity)))), 0) :
-          this.products.length === 1 ? parseInt(this.products[0].quantity) * parseFloat(this.products[0].price) :
-            0
+        let sum = 0;
+        this.orderProducts.forEach((item) => {
+          sum = sum + (item.price * item.quantity);
+        });
+
+        return sum;
       },
     },
     methods: {
@@ -82,7 +106,6 @@
         fetchProduct: 'fetchList'
       }),
       ...mapActions('update_orders', {
-        fetchProductByOrderId: 'fetchByOrderId',
         destroyProduct: 'destroy',
         updateQuantity: 'update',
         deleteProduct: 'delete',
@@ -121,21 +144,8 @@
       formatNumber(num) {
         return formatNumber(num)
       },
-      changeQuantity(order) {
-        this.updateQuantity({
-          id: order.order_id,
-          item: {
-            product_id: order.product_id,
-            quantity: order.quantity,
-            order_id: order.order_id,
-            action: 'update'
-          }
-        })
-      },
       fetchProductInOrder () {
-        const id = this.$route.params.id
-        this.fetchProductByOrderId(id)
-        this.fetchOrder({id})
+        this.fetchOrder({ id: this.$route.params.id })
       },
       onAddProduct (product) {
         this.addProduct({
