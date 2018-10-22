@@ -9,14 +9,14 @@
             div(style="background-color: white; border-bottom: 1px solid #d6d6d;padding: 15px;")
               h4(style="margin: 0;") ĐƠN HÀNG {{order && order.order_code}}
             el-table(border style="width: 100%" :data="orderProducts" size="mini" v-loading="orderProducts.length < 1")
-              el-table-column(prop="name" label="Sản phẩm" min-width="200")
+              el-table-column(prop="name" label="SẢN PHẨM" min-width="200")
                 template(slot-scope="scope")
                   div.detail
                     div.img
                       img(:src="scope.row.img")
                     h4 {{ scope.row.product_code }}
                     h4 {{ scope.row.title }}
-                    el-button.button(type="danger" size="mini" @click="remove(scope.row)")
+                    el-button.button(type="danger" size="mini" @click="remove(scope.row.id)")
                       svg-icon(icon-class="fa-solid trash")
               el-table-column(prop="price" label="GIÁ (VNĐ)")
                 template(slot-scope="scope")
@@ -34,7 +34,7 @@
                   span  Thêm mới sản phẩm
                 el-button(type="success" size="small" @click="onShowProducts")
                   svg-icon(icon-class="fa-solid paint-brush")
-                  span  Cập nhật đơn hàng
+                  span  Lưu đơn hàng
               el-col.total(:span="12" style="float: right;")
                 strong Tạm tính:
                 template  {{formatNumber(total)}} (VNĐ)
@@ -66,25 +66,6 @@
       order () {
         return this.orderById(this.$route.params.id)
       },
-      orderProducts () {
-        if (!(this.order && this.order.products)) return [];
-        return this.order.products.map((item) => {
-          return {
-            id: item.id,
-            product_code: item.product_code,
-            title: item.name,
-            price: item.price,
-            img: item.featured && item.featured[0] ? item.featured[0].url : dummyImage,
-            provider: item.provider && item.provider.name,
-            quantity: item.pivot.quantity,
-            unit: item.unit,
-            order_id: item.pivot.order_id,
-            quantitative: item.quantitative,
-            real_price: item.price,
-            tmp_price: item.price
-          }
-        });
-      },
       addableProducts () {
         if (!this.products) return [];
         const orderProductIds = this.orderProducts.map(item => item.id);
@@ -100,6 +81,11 @@
 
         return sum;
       },
+    },
+    data() {
+      return {
+        orderProducts: []
+      }
     },
     methods: {
       ...mapActions('products', {
@@ -126,46 +112,58 @@
           resolve(true);
         }));
       },
-      remove(order) {
-        this.canExecute('Bạn Muốn xóa sản phẩm khỏi đơn hàng?')
-          .then(res => {
-            this.deleteProduct({
-              id: order.order_id,
-              item: {
-                product_id: order.product_id,
-                action: 'delete'
-              }
-            })
-          })
-          .catch(err => {
-            // Do nothing
-          })
+      remove(orderId) {
+        this.canExecute('Bạn Muốn xóa sản phẩm khỏi đơn hàng?').then(res => {
+          this.orderProducts = this.orderProducts.filter((item) => {
+            return item.id !== orderId;
+          });
+        }).catch(err => {
+          // Do nothing
+        })
       },
       formatNumber(num) {
         return formatNumber(num)
       },
       fetchProductInOrder () {
-        this.fetchOrder({ id: this.$route.params.id })
-      },
-      onAddProduct (product) {
-        this.addProduct({
-          item: {
-            product_id: product.id,
-            tmp_price: product.price,
-            real_price: product.price,
-            order_id: this.$route.params.id,
-            quantity: 1
+        this.fetchOrder({ id: this.$route.params.id }).then(() => {
+          if (this.order && this.order.products && this.order.products.length) {
+            this.orderProducts = this.order.products.map((item) => {
+              return {
+                id: item.id,
+                product_code: item.product_code,
+                title: item.name,
+                price: item.price,
+                img: item.featured && item.featured[0] ? item.featured[0].url : dummyImage,
+                provider: item.provider && item.provider.name,
+                quantity: item.pivot.quantity,
+                unit: item.unit,
+                order_id: item.pivot.order_id,
+                quantitative: item.quantitative,
+                real_price: item.price,
+                tmp_price: item.price
+              }
+            });
           }
-        }).then(() => {
-          this.$notify({
-            message: `Đã thêm ${product.title} vào giỏ hàng`,
-            type: 'success'
-          })
-        }).catch(() => {
-          this.$notify({
-            message: `Thêm thất bại`,
-            type: 'error'
-          })
+        });
+      },
+      onAddProduct (item) {
+        this.orderProducts.push({
+          id: item.id,
+          product_code: item.product_code,
+          title: item.name,
+          price: item.price,
+          img: item.featured && item.featured[0] ? item.featured[0].url : dummyImage,
+          provider: item.provider && item.provider.name,
+          quantity: 1,
+          unit: item.unit,
+          order_id: this.order.id,
+          quantitative: item.quantitative,
+          real_price: item.price,
+          tmp_price: item.price
+        })
+        this.$notify({
+          message: `Đã thêm ${item.name} vào giỏ hàng`,
+          type: 'success'
         })
       }
     },

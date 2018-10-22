@@ -31,10 +31,10 @@
                   span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
               div(v-else)
                 div.price {{formatNumber(product.price)}} (VNĐ)
-                  span(style="font-size: .9em;") / {{`${product.quantitative} ${product.unit}`}}
+                  span(style="font-size: .9em;")  / {{`${product.quantitative} ${product.unit}`}}
               div.submit
                 span
-                  el-button(type="success" @click="addToCart(product)" :disabled="product.added || !(enableCartF())")
+                  el-button(type="success" @click="addToCart(product)" size="small" :disabled="product.added || !(enableCartF())")
                     span(style="margin-right: 10px;")
                       svg-icon(icon-class="fa-solid cart-plus")
                     template Thêm vào giỏ hàng
@@ -94,24 +94,25 @@
         }: {}
       },
       products () {
-        return this.listProducts
-          .filter(item => (item.category.name === this.product.category && item.id !== this.product.id))
-          .map(item => ({
-            id: item.id,
-            title: item.name,
-            img: item.featured && item.featured[0] && item.featured[0].url,
-            preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: p.url})): [],
-            category: item.category ? item.category.name : 'Chưa xác định',
-            price: item.price,
-            discount: item.discount_price,
-            inventory: 10,
-            unit: item.unit,
-            quantitative: item.quantitative,
-            added: item.customer_carts && item.customer_carts.length > 0,
-            favorite: item.customer_favorites && item.customer_favorites.length > 0,
-            description: item.description,
-            quantity: (item.customer_carts && item.customer_carts.pivot && item.customer_carts.pivot.quantity) || 0
-          })).slice(0, 4)
+        return this.listProducts.filter((item) => {
+          const category = item.category ? item.category.name : 'Chưa xác định';
+          return category === this.product.category && item.id !== this.product.id;
+        }).map(item => ({
+          id: item.id,
+          title: item.name,
+          img: item.featured && item.featured[0] && item.featured[0].url,
+          preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: p.url})): [],
+          category: item.category ? item.category.name : 'Chưa xác định',
+          price: item.price,
+          discount: item.discount_price,
+          inventory: 10,
+          unit: item.unit,
+          quantitative: item.quantitative,
+          added: item.customer_carts && item.customer_carts.length > 0,
+          favorite: item.customer_favorites && item.customer_favorites.length > 0,
+          description: item.description,
+          quantity: (item.customer_carts && item.customer_carts.pivot && item.customer_carts.pivot.quantity) || 0
+        })).slice(0, 4)
       }
     },
     data () {

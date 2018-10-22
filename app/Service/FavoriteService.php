@@ -11,6 +11,7 @@ namespace App\Service;
 
 use App\Customer;
 use App\Favorite;
+use App\Product;
 use App\Helper\RoleConstant;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +26,13 @@ class FavoriteService
 
     public function index(){
         try {
-            return $this->model->where('customer_id', '=', $this->getCustomerId())->get();
+            $results = [];
+            $favorites = $this->model->where('customer_id', '=', $this->getCustomerId())->get();
+            foreach ($favorites as $item) {
+                $product = Product::find($item['product_id']);
+                if ($product != null) array_push($results, $item);
+            }
+            return $results;
         } catch (\Exception $e) {
             return $e;
         }

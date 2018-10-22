@@ -8,6 +8,7 @@ use App\Category;
 use App\Provider;
 use App\Order;
 use App\ProductOrder;
+use App\Favorite;
 use App\Service\MediaService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -77,16 +78,13 @@ class ProductService extends BaseService
 
     public function getProductById($id)
     {
-        if (Auth::user()->role_id == RoleConstant::Customer) {
+        if (Auth::user()->role_id == RoleConstant::Customer)
             return $this->model->with($this->relative())->find($id);
-        } else {
-             if (!$product = $this->model::find($id)) {
-                 throw new \Exception('Product is not exist');
-             }
-             return $this->transformData($product);
+
+        if (!$product = $this->model::find($id)) {
+            throw new \Exception('Product is not exist');
         }
-
-
+        return $this->transformData($product);
     }
 
     public function getProductByCategory($categoryId)
@@ -192,7 +190,15 @@ class ProductService extends BaseService
 
     public function deleteProduct($id)
     {
-        $this->destroy($id);
+        try {
+            \DB::beginTransaction();
+            Favorite::where('product_id', $id)->delete();
+            $this->destroy($id);
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
     }
 
     /*================= PRIVATE FUNCTIONS =================*/
@@ -230,11 +236,9 @@ class ProductService extends BaseService
 
     private function relative() {
         $relatives = ['category', 'provider', 'featured','previews'];
-        if(Auth::user()->role_id == RoleConstant::Customer){
-            array_push($relatives, ['customerFavorites' => function ($q) {
-                $q->select(['id']);
-            }, 'customerCarts']);
-        }
+        array_push($relatives, ['customerFavorites' => function ($q) {
+            $q->select(['id']);
+        }, 'customerCarts']);
         return $relatives;
     }
 
