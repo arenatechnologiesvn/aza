@@ -78,9 +78,6 @@ class ProductService extends BaseService
 
     public function getProductById($id)
     {
-        if (Auth::user()->role_id == RoleConstant::Customer)
-            return $this->model->with($this->relative())->find($id);
-
         if (!$product = $this->model::find($id)) {
             throw new \Exception('Product is not exist');
         }
@@ -232,14 +229,6 @@ class ProductService extends BaseService
             'provider_id' => $data['provider_id'],
             'provider' => $data->provider
         ];
-    }
-
-    private function relative() {
-        $relatives = ['category', 'provider', 'featured','previews'];
-        array_push($relatives, ['customerFavorites' => function ($q) {
-            $q->select(['id']);
-        }, 'customerCarts']);
-        return $relatives;
     }
 
     private function updateOrderProductPrice($product_id, $newPrice)

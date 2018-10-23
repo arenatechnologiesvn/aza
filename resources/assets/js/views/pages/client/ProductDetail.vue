@@ -14,27 +14,23 @@
               el-col(:span="24").left
                 h4.title {{product.title}}
                 span.category
+                  strong Mã sản phẩm:
+                  span.category__name {{ product.product_code }}
+                span.category
                   strong Danh mục:
-                  span.category__name {{product.category}}
-                span.rating
-                  span.score(v-for="item in 5" @click="rate(item)" :key="item" :style="{color: item <= rating ? 'orange' : ''}")
-                    svg-icon(icon-class="fa-solid star")
-            el-row
+                  span.category__name {{ getCategoryName(product.category_id) }}
+            el-row(style="margin-top: 20px")
               el-col(:span="24")
-              p.description {{product.description}}
-              p
-                strong Đinh lượng: 
-                template {{product.unit}}
               div(v-if="parseFloat(product.discount) > 0")
                 div.price {{formatNumber(product.discount)}} (VNĐ)
                 div(style="font-size=16px; color: #d6d6d6;margin: 5px 0; text-decoration: line-through;") {{ formatNumber(product.price)}} (VNĐ)
                   span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
               div(v-else)
-                div.price {{formatNumber(product.price)}} (VNĐ)
-                  span(style="font-size: .9em;")  / {{`${product.quantitative} ${product.unit}`}}
+                div.price {{formatNumber(product.price) || '-' }} (VNĐ)
+                  span(style="font-size: .9em;")  / {{ `${product.quantitative || '-'} ${product.unit || '-'}`}}
               div.submit
                 span
-                  el-button(type="success" @click="addToCart(product)" size="small" :disabled="product.added || !(enableCartF())")
+                  el-button(type="success" @click="addToCart(product)" size="small" :disabled="!canAddToCart(product)")
                     span(style="margin-right: 10px;")
                       svg-icon(icon-class="fa-solid cart-plus")
                     template Thêm vào giỏ hàng
@@ -47,19 +43,20 @@
             el-button(:type="commentShow? 'default' : 'primary'" size="mini" @click="commentShow = !commentShow") {{commentShow ? 'X Hủy' : 'Gửi đánh giá của bạn về sản phẩm'}}
           el-col(:span="24")
             comment(v-if="commentShow")
-      div.product-detail__relative
+      div.product-detail__relative(v-if="products.length > 0")
         h4 SẢN PHẨM LIÊN QUAN
         div
           products(:products="products")
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex'
   import BreadCrumb from './components/BreadCrumb'
   import PreviewImage from './components/PreviewImage'
   import Products from './components/products/Category'
   import Comment from './components/Comment'
-  import { mapGetters, mapActions } from 'vuex'
   import { formatNumber } from '~/utils/util'
+  import moment from 'moment'
   import dummyImage from '~/assets/login_images/dummy-image.jpg'
 
   export default {
@@ -72,37 +69,45 @@
     },
     computed: {
       ...mapGetters('products', {
-        data: 'byId',
+        productById: 'byId',
         listProducts: 'list'
       }),
+      ...mapGetters('categories', {
+        categories: 'list'
+      }),
+      ...mapGetters('cart', {
+        carts: 'list'
+      }),
       product () {
-        const item = this.data(this.$route.params.id)
-        return item ? {
+        const item = this.productById(this.$route.params.id)
+        if (item === undefined || item === null) return {};
+        return {
           id: item.id,
+          product_code: item.product_code,
           title: item.name,
-          img: item.featured && item.featured[0] && item.featured[0].url ,
-          category: item.category ? item.category.name : 'Chưa xác định',
-          preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: p.url})): [],
+          img: (item.featured && item.featured.url) || dummyImage,
+          category_id: item.category_id,
+          preview_images: item.preview_images && item.preview_images.length > 0 ? item.preview_images.map(p => ({id: p.id, img: p.url})): [],
           price: item.price,
           discount: item.discount_price,
           inventory: 10,
           unit: item.unit,
           quantitative: item.quantitative,
-          added: item.customer_carts && item.customer_carts.length > 0,
           favorite: item.customer_favorites && item.customer_favorites.length > 0,
           description: item.description
-        }: {}
+        }
       },
       products () {
         return this.listProducts.filter((item) => {
-          const category = item.category ? item.category.name : 'Chưa xác định';
-          return category === this.product.category && item.id !== this.product.id;
+          return item.category_id &&
+            parseInt(item.category_id) === parseInt(this.product.category_id) &&
+            parseInt(item.id) !== parseInt(this.product.id);
         }).map(item => ({
           id: item.id,
           title: item.name,
-          img: item.featured && item.featured[0] && item.featured[0].url,
+          img: item.featured && item.featured[0] ? item.featured[0].url : dummyImage,
           preview_images: item.previews.length > 0 ? item.previews.map(p => ({id: p.id, img: p.url})): [],
-          category: item.category ? item.category.name : 'Chưa xác định',
+          category: this.getCategoryName(item.category_id),
           price: item.price,
           discount: item.discount_price,
           inventory: 10,
@@ -117,7 +122,6 @@
     },
     data () {
       return {
-        rating: 5,
         commentShow: false
       }
     },
@@ -134,22 +138,28 @@
         updateCart: 'update',
         fetchCart: 'fetchList'
       }),
-      enableCartF () {
+      canAddToCart (product) {
+        return !this.isInCart(product) && this.isInOrderTime();
+      },
+      isInOrderTime () {
         const apply = this.$store.getters.settings && this.$store.getters.settings.apply
-        if(apply) {
-          const start = apply.start
-          const end = apply.end
+        if (apply) {
+          const now = moment();
+          const startTime = moment(apply.start, 'hh:mm');
+          const endTime = moment(apply.end, 'hh:mm');
 
-          let now = new Date
-          let hour = now.getHours() < 10 ? '0' + now.getHours().toString() : now.getHours().toString()
-          let minute = now.getMinutes() < 10 ? '0' + now.getMinutes().toString() : now.getMinutes().toString()
-          const time = hour+ ':'+ minute
-          if (time > start && time < end) return true;
+          if (apply.is_end_in_today) return startTime.isBefore(now) && now.isBefore(endTime)
+          return !(endTime.isBefore(now) && now.isBefore(startTime))
         }
         return false;
       },
-      rate (score) {
-        this.rating = score
+      isInCart(product) {
+        if (!(this.carts && this.carts.length > 0)) return false;
+        const target = this.carts.find((item) => {
+          return parseInt(item.product_id) === parseInt(product.id);
+        });
+
+        return !!target;
       },
       getById () {
         this.fetchData({
@@ -194,6 +204,15 @@
                 type: 'danger'
               }))
         }
+      },
+      getCategoryName(category_id) {
+        if (!category_id) return 'Chưa xác định';
+
+        const category = this.categories.find((item) => {
+          return item.category_id === category_id;
+        });
+
+        return category ? category.name : 'Chưa xác định';
       }
     },
     created () {
@@ -251,14 +270,6 @@
       p {
         text-align: justify;
         line-height: 25px;
-      }
-    }
-  }
-  .rating {
-    .score {
-      cursor: pointer;
-      &:hover {
-        color: darkgoldenrod;
       }
     }
   }
