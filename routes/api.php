@@ -51,7 +51,6 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
 
     Route::post('carts/save-all', 'CartController@storeAll');
     Route::resource('carts', 'CartController');
-    Route::resource('order_updates', 'OrderUpdateController');
 
     // Customer
     Route::resource('customers', 'CustomerController');

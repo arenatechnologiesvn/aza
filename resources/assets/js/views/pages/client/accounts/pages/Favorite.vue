@@ -22,8 +22,8 @@
         el-table-column(width="230" style="text-align: left;")
           template(slot-scope="scope")
             div(style="text-align: left;" v-if="scope.row.discount")
-              div.price ₫{{formatNumber(scope.row.discount)}} / {{`${scope.row.quantitative} ${scope.row.unit}`}}
-              div.discount ₫{{formatNumber(scope.row.price)}}
+              div.price {{formatNumber(scope.row.discount)}} / {{`${scope.row.quantitative} ${scope.row.unit}`}}
+              div.discount {{formatNumber(scope.row.price)}}
                 span(style="margin-left: 10px; text-decoration: unset; color: black;")  {{ ((1 - (scope.row.discount / scope.row.price)) * 100).toFixed(2)}} %
             div(v-else)
               div.price ₫{{formatNumber(scope.row.price)}} / {{`${scope.row.quantitative} ${scope.row.unit}`}}
@@ -32,9 +32,9 @@
             el-button(size="mini" type="warning" @click="addToCart(scope.row)")
               svg-icon(icon-class="fa-solid cart-plus")
     div(style="text-align: right; margin: 10px 0; padding: 10px;" v-show="!loading")
-      el-button(type="primary" @click="addAllFavorite")
+      el-button(type="primary" @click="addAllFavorite" size="small" :disabled="favorites.length === 0")
         svg-icon(icon-class="fa-solid cart-plus")
-        span(style="margin-left: 10px;") Thêm tất cả vào giò hàng
+        span(style="margin-left: 10px;") Thêm tất cả vào giỏ hàng
 </template>
 
 <script>

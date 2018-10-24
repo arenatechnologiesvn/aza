@@ -1,4 +1,6 @@
 import createCrudModule from './crud';
+import dummyImage from '~/assets/login_images/dummy-image.jpg'
+
 export default createCrudModule({
   resource: 'favorites',
   idAttribute: 'product_id',
@@ -6,7 +8,7 @@ export default createCrudModule({
     favoriteProducts: (state, getters, rootState) => state.list.map((id) => {
       const index = rootState.products.list.find(p => p === state.entities[id].product_id.toString());
       const p = rootState.products.entities[index];
-      const img = p && p.featured && p.featured[0] && p.featured[0].url;
+      const img = p && p.featured && p.featured[0] ? p.featured[0].url : dummyImage;
 
       return p && {
         id,

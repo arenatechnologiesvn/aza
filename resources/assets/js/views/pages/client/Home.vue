@@ -12,6 +12,7 @@
   import { mapGetters, mapActions } from 'vuex'
   import _ from 'lodash'
   import BaseMixin from '../mixin'
+  import dummyImage from '~/assets/login_images/dummy-image.jpg'
 
   export default {
     name: 'Home',
@@ -41,7 +42,7 @@
         const products = this.data.map(item => ({
           id: item.id,
           title: item.name,
-          img: item.featured && item.featured[0] && item.featured[0].url,
+          img: item.featured && item.featured[0] ? item.featured[0].url : dummyImage,
           category: item.category ? item.category.name : 'Chưa xác định',
           price: item.price,
           discount: item.discount_price,
