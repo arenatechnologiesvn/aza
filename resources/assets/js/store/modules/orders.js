@@ -1,5 +1,5 @@
 import createCrudModule from './crud';
-import { bulkUpdate } from '~/api/update_order';
+import { bulkUpdate } from '~/api/order';
 import { print, bulkPrint } from '~/api/print';
 
 const addition = {

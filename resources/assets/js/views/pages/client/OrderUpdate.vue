@@ -8,7 +8,7 @@
           div.grid-content.bg-puple
             div(style="background-color: white; border-bottom: 1px solid #d6d6d;padding: 15px;")
               h4(style="margin: 0;") ĐƠN HÀNG {{order && order.order_code}}
-            el-table(border style="width: 100%" :data="orderProducts" size="mini" v-loading="orderProducts.length < 1")
+            el-table(border style="width: 100%" :data="orderProducts" size="mini" v-loading="loading")
               el-table-column(prop="name" label="SẢN PHẨM" min-width="200")
                 template(slot-scope="scope")
                   div.detail
@@ -32,7 +32,7 @@
                 el-button(type="primary" size="small" @click="onShowProducts" style="margin-left: 5px")
                   svg-icon(icon-class="fa-solid plus-circle")
                   span  Thêm mới sản phẩm
-                el-button(type="success" size="small" @click="onShowProducts")
+                el-button(type="success" size="small" @click="update")
                   svg-icon(icon-class="fa-solid paint-brush")
                   span  Lưu đơn hàng
               el-col.total(:span="12" style="float: right;")
@@ -84,21 +84,17 @@
     },
     data() {
       return {
-        orderProducts: []
+        orderProducts: [],
+        loading: false
       }
     },
     methods: {
       ...mapActions('products', {
         fetchProduct: 'fetchList'
       }),
-      ...mapActions('update_orders', {
-        destroyProduct: 'destroy',
-        updateQuantity: 'update',
-        deleteProduct: 'delete',
-        addProduct: 'add'
-      }),
       ...mapActions('orders', {
-        fetchOrder: 'fetchSingle'
+        fetchOrder: 'fetchSingle',
+        updateOrder: 'update'
       }),
       onShowProducts () {
         this.$refs['dialogProduct'].detail()
@@ -113,18 +109,15 @@
         }));
       },
       remove(orderId) {
-        this.canExecute('Bạn Muốn xóa sản phẩm khỏi đơn hàng?').then(res => {
-          this.orderProducts = this.orderProducts.filter((item) => {
-            return item.id !== orderId;
-          });
-        }).catch(err => {
-          // Do nothing
-        })
+        this.orderProducts = this.orderProducts.filter((item) => {
+          return item.id !== orderId;
+        });
       },
       formatNumber(num) {
         return formatNumber(num)
       },
       fetchProductInOrder () {
+        this.loading = true;
         this.fetchOrder({ id: this.$route.params.id }).then(() => {
           if (this.order && this.order.products && this.order.products.length) {
             this.orderProducts = this.order.products.map((item) => {
@@ -144,7 +137,35 @@
               }
             });
           }
+
+          this.loading = false;
+        }).catch(() => {
+          this.loading = false;
         });
+      },
+      update() {
+        this.canExecute('Bạn có muốn cập nhật đơn hàng?').then(res => {
+          this.loading = true;
+          this.updateOrder({
+            id: this.order.id,
+            data: {
+              product: this.orderProducts.map((item) => {
+                return {
+                  product_id: item.id,
+                  quantity: item.quantity,
+                  tmp_price: item.tmp_price,
+                  real_price: item.real_price
+                }
+              })
+            }
+          }).then(() => {
+            this.loading = false;
+          }).catch(() => {
+            this.loading = false;
+          })
+        }).catch(err => {
+          // Do nothing
+        })
       },
       onAddProduct (item) {
         this.orderProducts.push({
@@ -170,9 +191,6 @@
     mounted () {
       this.fetchProduct()
       this.fetchProductInOrder()
-    },
-    beforeDestroy () {
-      this.destroyProduct()
     }
   }
 </script>
