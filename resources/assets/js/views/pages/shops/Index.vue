@@ -23,7 +23,7 @@
         span.search-wrapper__title Xã/Phường:
         ward-select(v-model="selectedWard" :parent-code="selectedDistrict")
     div.control__wraper
-     aza-control(@on-add="handAddClick")
+      aza-control(@on-add="handAddClick")
     div.index__wrapper
       aza-table(:shops="current" @on-update="handUpdateClick" :total="total" @on-delete="deleteHandle")
 </template>

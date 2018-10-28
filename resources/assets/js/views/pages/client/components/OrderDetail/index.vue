@@ -21,7 +21,7 @@
         strong ĐỊA CHỈ NHẬN HÀNG:
         span {{order.delivery_address}}
       el-col.body-item(:span="24")
-        strong NGÀY ĐẶT HÀNG
+        strong NGÀY ĐẶT HÀNG:
         span {{formatDate(parseInt(order.apply_at))}}
       el-col.body-item(:span="12")
         strong NGÀY GIAO HÀNG:

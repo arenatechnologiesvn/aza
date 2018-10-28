@@ -6,7 +6,7 @@
         el-col(:xs="24" :sm="16" :md="16" :lg="16")
           div.grid-content.bg-puple
             el-table(border style="width: 100%" :data="products" size="mini" v-loading="loading")
-              el-table-column(prop="name" label="Sản phẩm" min-width="200")
+              el-table-column(prop="name" label="SẢN PHẨM" min-width="200")
                 template(slot-scope="scope")
                   div.detail
                     div.img
@@ -21,7 +21,7 @@
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
                   el-input-number(v-model="scope.row.quantity" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
-              el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
+              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div.total
             p
               strong Tạm tính:
@@ -48,23 +48,26 @@
                 el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" style="width: 100%;")
                   el-option(:label="item" :value="item" v-for="item in times" :key="item")
               el-form-item
-                el-button(type="danger" @click="resetForm('form')") Hủy bỏ
-                el-button(type="success" @click="checkout" :disabled="!enableCart()") Đặt hàng
+                el-row(:gutter="5")
+                  el-col(:xs="24" :sm="12" :md="12" :lg="12")
+                    el-button(type="info" @click="resetForm('form')" style="width: 100%") Hủy bỏ
+                  el-col(:xs="24" :sm="12" :md="12" :lg="12")
+                    el-button(type="success" @click="openConfirmDialog" :disabled="!enableCart()" style="width: 100%") Đặt hàng
+    order-confirm-dialog(ref="orderConfirmDialog" @on-order-cart="onOrderCart" :order="formCart" :user="user_info" :shops="shops" :products="products")
 </template>
 
 <script>
-  import BreadCrumb from './components/BreadCrumb'
   import {mapGetters, mapActions} from 'vuex'
-  import _ from 'lodash'
+  import BreadCrumb from './components/BreadCrumb'
+  import OrderConfirmDialog from './components/OrderConfirmDialog'
   import {formatNumber} from '~/utils/util'
-  import ElRow from "element-ui/packages/row/src/row";
   import moment from 'moment'
 
   export default {
     name: 'CustomerCart',
     components: {
-      ElRow,
-      BreadCrumb
+      BreadCrumb,
+      OrderConfirmDialog
     },
     data() {
       const validateDelivery = (rule, value, callback) => {
@@ -106,7 +109,7 @@
     },
     computed: {
       ...mapGetters('cart', {
-        data: 'cartProducts'
+        cartProducts: 'cartProducts'
       }),
       ...mapGetters([
         'user_info'
@@ -119,7 +122,7 @@
         return this.$store.getters.settings && this.$store.getters.settings.timeFrame && this.$store.getters.settings.timeFrame.map(item => item.start + ' - ' + item.end)
       },
       products() {
-        return this.data()
+        return this.cartProducts()
       },
       shops () {
         return this.listShop.filter(item=> item.customer_id.toString().trim() === this.user_info.customer.id.toString().trim())
@@ -128,14 +131,13 @@
               this.form.shop_id = item.id
               this.form.delivery_address = item.zone
             }
-            return {id: item.id, name: item.name}
+            return { id: item.id, name: item.name, phone: item.phone }
           })
       },
       total() {
         return (this.products && this.products.length > 1) ?
           this.products.reduce((a, b) => (parseFloat(a)  + parseFloat((parseFloat(b.price) * parseInt(b.quantity)))), 0) :
-          this.products.length === 1 ? parseInt(this.products[0].quantity) * parseFloat(this.products[0].price) :
-            0
+          this.products.length === 1 ? parseInt(this.products[0].quantity) * parseFloat(this.products[0].price) : 0
       },
       formCart() {
         const user = this.user_info
@@ -161,14 +163,10 @@
     methods: {
       ...mapActions('cart', {
         'removeItem': 'destroy',
-        'updateItem': 'update',
-        fetchCart: 'fetchList'
+        'updateItem': 'update'
       }),
       ...mapActions('orders', {
         createOrder: 'create'
-      }),
-      ...mapActions('products', {
-        fetchProduct: 'fetchList'
       }),
       ...mapActions('shops', {
         fetchShops: 'fetchList'
@@ -182,42 +180,38 @@
           resolve(true);
         }));
       },
-      checkout() {
+      openConfirmDialog() {
         this.$refs['form'].validate(valid => {
           if (valid) {
             const all = this.formCart.product && this.formCart.product.filter(item => item.quantity > 0).length
-            if(all < 1) {
-              this.$message(
-                {
-                  title: 'Thông báo',
-                  message: 'Vui lòng chọn sản phẩm để tiếp tục đặt hàng!',
-                  type: 'error'
-                })
-              return;
-            }
-            this.formCart.product = this.formCart.product.filter(item => item.quantity > 0)
-            this.canExecute('Bạn muốn gửi đơn hàng nay?')
-              .then(() => this.createOrder({
-                data: this.formCart
-              }).then(() => {
-                this.fetchCart()
-              })).then(() => this.$notify(
-              {
+            if (all < 1) {
+              this.$message({
                 title: 'Thông báo',
-                message: 'Đã đặt hàng thành công',
-                type: 'success'
-              })).then(() => this.$router.push({'name': 'home_account_order'}))
-              .catch(err => {
-                this.$notify(
-                  {
-                    title: 'Cảnh báo báo',
-                    message: 'Đơn hàng đã không được lưu thành công',
-                    type: 'danger'
-                  })
+                message: 'Vui lòng chọn sản phẩm để tiếp tục đặt hàng!',
+                type: 'error'
               })
-          } else {
-            return false
+            } else {
+              this.$refs['orderConfirmDialog'].showConfirmDialog()
+            }
           }
+        })
+      },
+      onOrderCart() {
+        this.formCart.product = this.formCart.product.filter(item => item.quantity > 0)
+        this.createOrder({ data: this.formCart }).then(() => {
+          this.$notify({
+            title: 'Thông báo',
+            message: 'Đặt hàng thành công',
+            type: 'success'
+          })
+          this.$refs['orderConfirmDialog'].closeConfirmDialog()
+          this.$router.push({'name': 'home_account_order'})
+        }).catch(() => {
+          this.$notify({
+            title: 'Thông báo',
+            message: 'Đặt hàng thất bại',
+            type: 'danger'
+          })
         })
       },
       resetForm (name) {
