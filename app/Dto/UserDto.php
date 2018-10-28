@@ -27,7 +27,7 @@ class UserDto implements BaseDto
             'role_name' =>  $item->role->title,
             'avatar' => $item->avatar ?? 'https://www.gravatar.com/avatar/' . md5(strtolower($item->email)) . '.jpg?s=200&d=mm',
             'phone' => $item->phone,
-            'full_name' => $item->first_name . ' ' . $item->last_name,
+            'full_name' => $item->last_name . ' ' . $item->first_name,
             'first_name' => $item->first_name,
             'last_name' => $item->last_name,
         ];

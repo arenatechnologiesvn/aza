@@ -226,7 +226,7 @@ class ReportService
 
     public function getSellingProducts($params)
     {
-        return DB::table('orders')
+        $products = DB::table('orders')
             ->select(
                 'order_product.product_id',
                 'products.product_code as product_code',
@@ -239,12 +239,45 @@ class ReportService
             ->join('order_product', 'order_product.order_id', '=', 'orders.id')
             ->join('products', 'products.id', '=', 'order_product.product_id')
             ->where('orders.status', ORDER_PROCESSING_STATUS)
-            ->whereBetween('orders.apply_at', [
+            ->whereBetween('orders.delivery', [
                 strtotime($params['start_date'] . " 00:00:00"),
                 strtotime($params['end_date'] . ' 23:59:59')
             ])
             ->groupBy('order_product.product_id', 'product_code', 'product_name', 'product_quantitative')
             ->get();
+
+        if (count($products) > 0) {
+            $customer_products = DB::table('orders')->select(
+                'order_product.product_id',
+                DB::raw('SUM(order_product.quantity * products.quantitative) as mass_total'),
+                DB::raw('SUM(order_product.quantity) as quantity_total'),
+                DB::raw('SUM(order_product.quantity * order_product.real_price) as revenue_total'),
+                'customers.code as customer_code',
+                DB::raw('CONCAT(users.last_name, " ", users.first_name) as customer_name')
+            )
+            ->join('customers', 'customers.id', '=', 'orders.customer_id')
+            ->join('users', 'users.id', '=', 'customers.user_id')
+            ->join('order_product', 'order_product.order_id', '=', 'orders.id')
+            ->join('products', 'products.id', '=', 'order_product.product_id')
+            ->where('orders.status', ORDER_PROCESSING_STATUS)
+            ->whereBetween('orders.delivery', [
+                strtotime($params['start_date'] . " 00:00:00"),
+                strtotime($params['end_date'] . ' 23:59:59')
+            ])
+            ->groupBy('order_product.product_id', 'customers.code', 'customer_name')
+            ->get();
+
+            foreach ($products as $product) {
+                $product->customers = [];
+                foreach ($customer_products as $item) {
+                    if ($product->product_id == $item->product_id) {
+                        array_push($product->customers, $item);
+                    }
+                }
+            }
+        }
+
+        return $products;
     }
 
     /*================================ PRIVATE FUNCTIONS ================================*/
