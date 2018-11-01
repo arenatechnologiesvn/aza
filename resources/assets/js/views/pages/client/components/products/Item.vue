@@ -10,12 +10,12 @@
           router-link(:to="`/products/${product.id}`") {{product.title}}
         div.product-item__description(style="color: black;height: 50px;")
           div.product-item__control--left(v-if="product.discount")
-            div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}} / {{`${product.quantitative} ${product.unit}`}}
+            div.product-item__price(style="color: red; font-size: 1.2em;") {{formatNumber(product.discount)}} ₫ / {{`${product.quantitative} ${product.unit}`}}
             div(v-if="product.discount").product-item__price--discount
-              span(style="text-decoration: line-through; margin-right: 10px;") ₫{{formatNumber(product.price)}}
+              span(style="text-decoration: line-through; margin-right: 10px;") {{formatNumber(product.price)}} ₫
               span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
           div(v-else)
-            div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}} / {{`${product.quantitative} ${product.unit}`}}
+            div.product-item__price(style="color: red; font-size: 1.2em;") {{formatNumber(product.price)}} ₫ / {{`${product.quantitative} ${product.unit}`}}
           div(style="clear: both")
             router-link(:to="{name: 'home_product', query: {category: product.category}}" style="font-size: 1.1em;color: #999;")
               strong(style="color: #666; margin-right: 10px;") Danh mục:

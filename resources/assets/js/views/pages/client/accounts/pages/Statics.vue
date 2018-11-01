@@ -37,8 +37,8 @@
           el-table-column(prop="unit" label="Đơn vị tính" min-width="100")
           el-table-column(prop="quantitative" label="Định lượng" min-width="100")
           el-table-column(prop="quantity" label="SL" sortable min-width="80")
-          el-table-column(prop="price" label="Đơn giá (VNĐ)" sortable min-width="120" :formatter="(row, column, value) => formatNumber(value)")
-          el-table-column(prop="revenue_total" label="Chi phí (VNĐ)" sortable min-width="120" :formatter="(row, column, value) => formatNumber(value)")
+          el-table-column(prop="price" label="Đơn giá (₫)" sortable min-width="120" :formatter="(row, column, value) => formatNumber(value)")
+          el-table-column(prop="revenue_total" label="Chi phí (₫)" sortable min-width="120" :formatter="(row, column, value) => formatNumber(value)")
 </template>
 
 <script>

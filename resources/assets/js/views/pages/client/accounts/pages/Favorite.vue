@@ -26,7 +26,7 @@
               div.discount {{formatNumber(scope.row.price)}}
                 span(style="margin-left: 10px; text-decoration: unset; color: black;")  {{ ((1 - (scope.row.discount / scope.row.price)) * 100).toFixed(2)}} %
             div(v-else)
-              div.price ₫{{formatNumber(scope.row.price)}} / {{`${scope.row.quantitative} ${scope.row.unit}`}}
+              div.price {{formatNumber(scope.row.price)}} ₫ / {{`${scope.row.quantitative} ${scope.row.unit}`}}
         el-table-column(prop="address" label="Date" width="100")
           template(slot-scope="scope")
             el-button(size="mini" type="warning" @click="addToCart(scope.row)")

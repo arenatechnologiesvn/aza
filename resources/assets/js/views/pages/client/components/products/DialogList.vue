@@ -9,7 +9,7 @@
             img.product-img(:src="imageUrl(product.row)")
         el-table-column(prop="product_code" label="MÃ SẢN PHẨM" min-width="150")
         el-table-column(prop="name" label="TÊN SẢN PHẨM" min-width="200")
-        el-table-column(prop="price" label="GIÁ (VNĐ)" min-width="100" :formatter="(row, column, value) => formatNumber(value)")
+        el-table-column(prop="price" label="GIÁ (₫)" min-width="100" :formatter="(row, column, value) => formatNumber(value)")
         el-table-column(prop="unit" label="ĐƠN VỊ" min-width="70")
         el-table-column(width="70" fixed="right")
           template(slot-scope="scope")

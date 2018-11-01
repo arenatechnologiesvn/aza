@@ -19,12 +19,12 @@
           div.product-item__description(style="color: black;height: 30px;")
             strong(style="margin-right: 20px;") GIÁ BÁN:
             span.product-item__control--left(v-if="product.discount")
-              span.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}} / {{`${product.quantitative} ${product.unit}`}}
+              span.product-item__price(style="color: red; font-size: 1.2em;") {{formatNumber(product.discount)}} ₫ / {{`${product.quantitative} ${product.unit}`}}
               span(v-if="product.discount").product-item__price--discount
-                span(style="text-decoration: line-through; margin-right: 10px;") ₫{{formatNumber(product.price)}}
+                span(style="text-decoration: line-through; margin-right: 10px;") {{formatNumber(product.price)}} ₫
                 span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
             span(v-else)
-              span.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}} / {{`${product.quantitative} ${product.unit}`}}
+              span.product-item__price(style="color: red; font-size: 1.2em;") {{formatNumber(product.price)}} ₫ / {{`${product.quantitative} ${product.unit}`}}
           div.line
           div.product-item__control
             div.product-item__control--left

@@ -49,13 +49,13 @@
             img.product-img(:src="product.row.img")
         el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
         el-table-column(prop="quantity" label="SL" width="40")
-        el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
-        el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
+        el-table-column(prop="price" label="GIÁ (₫)" :formatter="(row, column, value) => currencyFormat(value)")
+        el-table-column(prop="total" label="TỔNG (₫)" :formatter="(row, column, value) => currencyFormat(value)")
         el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
     div.total(v-if="order" v-show="order && order.status.toString() !== '2' ")
       div.item
-        strong TỔNG TIỀN:
-        span {{ currencyFormat(order.total_money) }} VNĐ
+        strong TỔNG TIỀN ({{ products ? products.length : 0 }} sản phẩm):
+        span {{ currencyFormat(order.total_money) }} ₫
     div.footer
       el-button-group(v-show="(order && order.status.toString() === '0') || (order && order.status.toString() === '3')")
         el-button(type="primary" )

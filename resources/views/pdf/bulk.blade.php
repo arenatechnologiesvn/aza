@@ -108,7 +108,7 @@
             <tr>
                 <td colspan="2" class="blank"> </td>
                 <td colspan="2" class="total-line">TỔNG TIỀN</td>
-                <td class="total-value"><div id="subtotal">{{number_format($order['total_money'])}}₫</div></td>
+                <td class="total-value"><div id="subtotal">{{number_format($order['total_money'])}} ₫</div></td>
             </tr>
             </tbody>
         </table>

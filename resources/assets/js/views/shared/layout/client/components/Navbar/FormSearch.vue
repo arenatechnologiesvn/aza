@@ -10,7 +10,7 @@
             el-col(:span="20")
               span {{ item.name }}
               span -
-              span.price ₫{{ formatNumber(item.price) }}
+              span.price {{ formatNumber(item.price) }} ₫
     span.shopcart(style="color: black;")
       el-dropdown.top__dropdown(v-if="total > 0")
         el-badge(:value="total" class="item")
@@ -30,10 +30,10 @@
                   td(style="width: 10%")
                     span.remove-item__cart(@click="removeFromCart(item.id)")
                       svg-icon(icon-class="fa-solid times")
-          div
-            tr(style="border-top: 1px solid red;")
-              td(colspan="4")
-                router-link(to="/cart" class="el-button el-button--success") Thanh Toán
+          div(style="padding: 10px 10px 0")
+            el-row
+              el-col(:span="24")
+                router-link.el-button.el-button--success(to="/cart" style="width: 100%") THANH TOÁN
 </template>
 
 <script>

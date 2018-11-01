@@ -7,7 +7,7 @@
         el-col(:span="24")
           div.grid-content.bg-puple
             div(style="background-color: white; border-bottom: 1px solid #d6d6d;padding: 15px;")
-              h4(style="margin: 0;") ĐƠN HÀNG {{order && order.order_code}}
+              h4(style="margin: 0;") ĐƠN HÀNG {{order && order.order_code}} ({{ orderProducts ? orderProducts.length : 0 }} sản phẩm)
             el-table(border style="width: 100%" :data="orderProducts" size="mini" v-loading="loading")
               el-table-column(prop="name" label="SẢN PHẨM" min-width="200")
                 template(slot-scope="scope")
@@ -18,14 +18,14 @@
                     h4 {{ scope.row.title }}
                     el-button.button(type="danger" size="mini" @click="remove(scope.row.id)")
                       svg-icon(icon-class="fa-solid trash")
-              el-table-column(prop="price" label="GIÁ (VNĐ)")
+              el-table-column(prop="price" label="GIÁ (₫)")
                 template(slot-scope="scope")
                   div {{formatNumber(scope.row.price)}}
                   div / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
                   el-input-number(v-model="scope.row.quantity" :min="1" size="mini" style="width: 110px;")
-              el-table-column(prop="total" label="TỔNG CỘNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
+              el-table-column(prop="total" label="TỔNG CỘNG (₫)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div(style="margin-top: 10px")
             el-row
               el-col(:span="12" style="text-align: left;")
@@ -37,7 +37,7 @@
                   span  Lưu đơn hàng
               el-col.total(:span="12" style="float: right;")
                 strong Tạm tính:
-                template  {{formatNumber(total)}} (VNĐ)
+                template  {{formatNumber(total)}} ₫
 </template>
 
 <script>

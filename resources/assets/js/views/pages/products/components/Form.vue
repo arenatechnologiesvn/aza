@@ -23,11 +23,11 @@
         el-col(:span="12")
           el-form-item(prop="price" label="Giá sản phẩm:")
             el-input(v-model.number="product.price" placeholder="Ví dụ: 24000")
-              template(slot="append") VNĐ
+              template(slot="append") ₫
         el-col(:span="12")
           el-form-item(prop="discount_price" label="Giá khuyến mãi:")
             el-input(v-model.number="product.discount_price" placeholder="Ví dụ: 23500")
-              template(slot="append") VNĐ
+              template(slot="append") ₫
         el-col(:span="12")
           el-form-item(prop="category_id" label="Danh mục sản phẩm:")
             el-select(v-model="product.category_id" clearable placeholder="Danh mục sản phẩm" style="width: 100%")

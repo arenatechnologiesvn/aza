@@ -66,8 +66,8 @@
                   img.product-img(:src="product.row.img")
               el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
               el-table-column(prop="quantity" label="SL" width="40")
-              el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
-              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)")
+              el-table-column(prop="price" label="GIÁ (₫)" :formatter="(row, column, value) => currencyFormat(value)")
+              el-table-column(prop="total" label="TỔNG (₫)" :formatter="(row, column, value) => currencyFormat(value)")
               el-table-column(prop="unit" label="Đơn vị tính" width="100")
         el-table-column(prop="code" label="MÃ ĐƠN HÀNG" sortable min-width="150")
         el-table-column(prop="customer.code" label="MÃ KH" sortable min-width="100")
@@ -75,7 +75,7 @@
         el-table-column(label="TRẠNG THÁI" min-width="150" align="center")
           template(slot-scope="scope")
             el-tag(:type="showingOrderStatus[scope.row.status].type") {{ showingOrderStatus[scope.row.status].status }}
-        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)" min-width="150" align="right")
+        el-table-column(prop="total" label="TỔNG TIỀN (₫)" :formatter="(row, column, value) => currencyFormat(value)" min-width="150" align="right")
         el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG" min-width="150" align="center")
@@ -352,7 +352,7 @@
             "MÃ ĐƠN HÀNG": item.code.indexOf('#') > -1 ? item.code.replace('#', '') : item.code,
             "MÃ KH": item.customer.code,
             "TÊN KH": item.customer.user.full_name,
-            "TỔNG TIỀN (VNĐ)": currencyFormat(item.total),
+            "TỔNG TIỀN (₫)": currencyFormat(item.total),
             "NGÀY ĐẶT HÀNG": this.formatDate(item.date),
             "NGÀY GIAO HÀNG": this.formatDate(item.delivery),
             "GIỜ GIAO HÀNG": item.delivery_type

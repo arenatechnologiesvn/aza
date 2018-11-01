@@ -1,5 +1,6 @@
 import createCrudModule from './crud';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
+import cookie from 'js-cookie';
 
 export default createCrudModule({
   resource: 'carts',

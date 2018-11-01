@@ -14,18 +14,18 @@
                     h4 {{scope.row.title}}
                     el-button.button(type="danger" size="mini" @click="remove(scope.row.id)" :disabled="!enableCart()")
                       svg-icon(icon-class="fa-solid trash")
-              el-table-column(prop="price" label="GIÁ (VNĐ)")
+              el-table-column(prop="price" label="GIÁ (₫)")
                 template(slot-scope="scope")
                   div {{formatNumber(scope.row.price)}}
                   div / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
                   el-input-number(v-model="scope.row.quantity" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
-              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
+              el-table-column(prop="total" label="TỔNG (₫)" :formatter="row =>formatNumber(row.price * row.quantity)")
           div.total
             p
-              strong Tạm tính:
-              template {{formatNumber(total)}} (VNĐ)
+              strong Tạm tính ({{ products ? products.length : 0 }} sản phẩm):
+              template {{formatNumber(total)}} ₫
         el-col(:xs="24" :sm="8" :md="8" :lg="8")
           div.cart(style="background-color: #ffffff")
             h4.title__info

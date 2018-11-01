@@ -42,14 +42,14 @@
         el-table-column(prop="title" label="TÊN SẢN PHẨM" min-width="200")
         el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" min-width="100")
         el-table-column(prop="quantity" label="SL" width="40")
-        el-table-column(prop="price" label="GIÁ (VNĐ)" :formatter="(row, column, value) => currencyFormat(value)" min-width="100")
-        el-table-column(prop="total" label="TỔNG (VNĐ)" min-width="100")
+        el-table-column(prop="price" label="GIÁ (₫)" :formatter="(row, column, value) => currencyFormat(value)" min-width="100")
+        el-table-column(prop="total" label="TỔNG (₫)" min-width="100")
           template(slot-scope="product")
             span {{ currencyFormat(productTotal(product.row)) }}
     div.total(style="margin-top: 5px")
       div.item
-        strong TỔNG TIỀN:
-        span {{ currencyFormat(order.total_money) }} VNĐ
+        strong TỔNG TIỀN ({{ products ? products.length : 0 }} sản phẩm):
+        span {{ currencyFormat(order.total_money) }} ₫
     div.footer(style="text-align: right")
       el-button-group
         el-button(type="success" size="small" :disabled="isSaving" style="width: 100%")
