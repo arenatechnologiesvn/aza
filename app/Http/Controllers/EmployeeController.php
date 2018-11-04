@@ -49,11 +49,4 @@ class EmployeeController extends CrudController
     {
         return $this->edit($request->all(), $id);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
 }

@@ -28,17 +28,6 @@ class ProductController extends Controller
         return $this->api_success_response(['data' => $products]);
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -85,17 +74,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -126,6 +104,18 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $this->service->deleteProduct($id);
+        return $this->api_success_response();
+    }
+
+    /**
+     * Remove bulk of the specified resource from storage.
+     *
+     * @param  \App\Request  $product ids
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $this->service->bulkDeleteProduct($request->input('ids'));
         return $this->api_success_response();
     }
 

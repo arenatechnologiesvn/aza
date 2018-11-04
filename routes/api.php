@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('carts', 'CartController');
 
     // Customer
+    Route::delete('customers/bulk_delete','CustomerController@bulkDestroy');
     Route::resource('customers', 'CustomerController');
     Route::post('customers/bulk_create','CustomerController@bulkStore');
 
@@ -80,6 +81,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     // Products
     Route::resource('products', 'Product\ProductController');
     Route::post('products/bulk_create','Product\ProductController@bulkStore');
+    Route::post('products/bulk_delete','Product\ProductController@bulkDestroy');
     Route::get('products/category/{id}','Product\ProductController@getByCategory');
 
     // Report

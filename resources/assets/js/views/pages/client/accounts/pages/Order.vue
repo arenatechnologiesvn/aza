@@ -52,16 +52,16 @@
               span.el-dropdown-link
                 i.el-icon-arrow-down.el-icon--right
               el-dropdown-menu(slot="dropdown")
-                el-dropdown-item(@click="onView(scope.row.id)")
+                el-dropdown-item
                   span(@click="onView(scope.row.id)")
                     svg-icon(icon-class="fa-solid eye")
                     span Xem chi tiết
-                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
+                el-dropdown-item(v-show="parseInt(scope.row.status) === 1")
                   span(@click="onEdit(scope.row.id)")
                     svg-icon(icon-class="fa-solid paint-brush")
                     span Sửa đơn hàng
-                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
-                  span(@click="changeStatus(scope.row.id, 2)" style="color: red")
+                el-dropdown-item(v-show="parseInt(scope.row.status) === 1")
+                  span(@click="changeStatus(scope.row.id, 2)" style="color: #f56c6c")
                     svg-icon(icon-class="fa-solid ban")
                     span Hủy đơn hàng
       div.pagination__wrapper(style="padding: 10px 0;")

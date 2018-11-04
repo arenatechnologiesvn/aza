@@ -86,7 +86,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: 'Chi phí (VND)',
+            name: 'Chi phí (₫)',
             min: 0,
             interval: 100000000
           },

@@ -36,6 +36,8 @@ class Customer extends BaseModel
         {
             $model->user()->delete();
             $model->shops()->delete();
+            $model->carts()->delete();
+            $model->favorites()->delete();
         });
     }
     public function employee() {

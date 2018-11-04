@@ -1,7 +1,7 @@
 <template lang="pug">
   div.index__container
     div.table
-      el-table(:data="customers.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" border  style="width: 100%" size="small")
+      el-table(:data="customers.slice((currentPage - 1)*pageSize, (currentPage - 1)*pageSize + pageSize)" @selection-change="handleSelectionChange" border  style="width: 100%" size="small")
         el-table-column(type="selection" width="40")
         el-table-column(prop="user.avatar" width="60")
           template(slot-scope="scope")
@@ -108,7 +108,10 @@
         if (!user.is_verified) return 'Chưa kích hoạt';
         if (!user.is_active) return 'Đang tạm khóa';
         return 'Đang hoạt động';
-      }
+      },
+      handleSelectionChange(val) {
+        this.$emit('on-selection-change', val)
+      },
     }
   }
 </script>

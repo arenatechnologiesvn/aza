@@ -7,10 +7,10 @@ const extendModule = {
     bulkCreate ({ commit }, customers) {
       return new Promise((resolve, reject) => {
         bulkCreate(customers).then(response => {
-          Notification.success({ title: 'Thông báo', message: 'Tải lên sản phẩm thành công' });
+          Notification.success({ title: 'Thông báo', message: 'Tải lên khách hàng thành công' });
           resolve(response);
         }).catch(error => {
-          Notification.error({ title: 'Thông báo', message: 'Tải lên sản phẩm thất bại' });
+          Notification.error({ title: 'Thông báo', message: 'Tải lên khách hàng thất bại' });
           reject(error);
         });
       });

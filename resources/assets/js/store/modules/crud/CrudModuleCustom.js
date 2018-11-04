@@ -1,6 +1,11 @@
 import crudModule from 'vuex-crud';
 import defaultClient from '~/utils/request';
 import Vue from 'vue';
+import { Notification } from 'element-ui';
+
+const notifyWrap = (message, type) => {
+  Notification({ title: 'Thông báo', message, type });
+};
 
 const CrudModuleCustom = ({
   idAttribute = 'id',
@@ -78,16 +83,16 @@ const CrudModuleCustom = ({
       customUrlFnArgs = []
     } = {}) {
       state.isDestroying = true;
-      defaultClient.delete(urlGetter({ id, customUrl, customUrlFnArgs }), data, config)
-        .then(res => {
-          state.isDestroying = false;
-          const ids = res.data || [];
-          commit('DELETE_SELECTION', ids);
-          return res;
-        })
-        .catch(err => {
-          state.isDestroying = false;
-        });
+      defaultClient.delete(urlGetter({ id, customUrl, customUrlFnArgs }), data, config).then(res => {
+        state.isDestroying = false;
+        const ids = res.data || [];
+        commit('DELETE_SELECTION', ids);
+        notifyWrap('Xóa thành công', 'success');
+        return res;
+      }).catch(() => {
+        state.isDestroying = false;
+        notifyWrap('Xóa thất bại', 'error');
+      });
     }
   });
 
