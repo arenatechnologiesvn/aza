@@ -23,9 +23,9 @@
                   el-option(label="Đang tạm khóa" :value="1")
                   el-option(label="Chưa kích hoạt" :value="2")
     div.control__wrapper
-      aza-control(@on-add="handAddClick")
+      aza-control(@on-add="handAddClick" @on-bulk-delete="handleBulkDelete" :selected="selection")
     div.index__wrapper
-      aza-table(ref="table" @on-delete="deleteHandle" :employees="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle")
+      aza-table(ref="table" @on-delete="deleteHandle" :employees="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle" @on-selection-change="onSelected")
 </template>
 
 <script>
@@ -45,7 +45,8 @@
       return {
         key: '',
         role_id: null,
-        status: null
+        status: null,
+        selection: []
       }
     },
     computed: {
@@ -149,6 +150,22 @@
           });
         }).catch(() => {
           // Do nothing
+        });
+      },
+      handleBulkDelete () {
+        this.$confirm('Bạn có chắc chắn muốn xóa những nhân viên này?', 'Xác nhận', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Hủy',
+          type: 'warning'
+        }).then(() => {
+          const employeeIds = this.selection.map((item) => {
+            return item.id;
+          });
+          this.loading()
+          this.deleteSelection({
+            customUrl: 'bulk_delete',
+            data: { data: employeeIds }
+          });
         });
       },
       handUpdateClick (id) {
