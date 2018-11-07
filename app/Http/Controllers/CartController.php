@@ -76,8 +76,17 @@ class CartController extends Controller
         }
     }
 
+    public function destroyAll() {
+        try {
+            $result = $this->service->destroyAll();
+            if ($result) return $this->api_success_response(['data' => true]);
+            return $this->timeoutApply();
+        } catch (Exception $e) {
+            return $this->api_error_response($e);
+        }
+    }
+
     private function timeoutApply(){
         return $this->api_error_response('Không thể đặt hàng lúc này', 'Không thể đặt hàng lúc này');
-
     }
 }

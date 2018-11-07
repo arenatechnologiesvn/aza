@@ -69,6 +69,10 @@ const CrudModuleCustom = ({
         }
         Vue.delete(state.entities, item.toString());
       });
+    },
+    DELETE_ALL (state) {
+      state.list = [];
+      state.entities = [];
     }
   });
   Object.assign(actions, {
@@ -92,6 +96,23 @@ const CrudModuleCustom = ({
       }).catch(() => {
         state.isDestroying = false;
         notifyWrap('Xóa thất bại', 'error');
+      });
+    },
+    deleteAll ({ commit }, {
+      config,
+      customUrl,
+      customUrlFnArgs = []
+    } = {}) {
+      state.isDestroying = true;
+      defaultClient.delete(urlGetter({ customUrl, customUrlFnArgs }), config).then(res => {
+        state.isDestroying = false;
+        commit('DELETE_ALL');
+        notifyWrap('Xóa thành công', 'success');
+        return res;
+      }).catch((error) => {
+        state.isDestroying = false;
+        notifyWrap('Xóa thất bại', 'error');
+        return error;
       });
     }
   });

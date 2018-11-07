@@ -1,6 +1,5 @@
 import createCrudModule from './crud';
 import dummyImage from '~/assets/login_images/dummy-image.jpg';
-import cookie from 'js-cookie';
 
 export default createCrudModule({
   resource: 'carts',
@@ -13,6 +12,7 @@ export default createCrudModule({
         const img = (p && p.featured && p.featured[0] && p.featured[0].url) || dummyImage;
         return p && {
           id,
+          code: p.product_code,
           title: p.name,
           price: p.price,
           img: img,

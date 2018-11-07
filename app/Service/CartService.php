@@ -109,6 +109,18 @@ class CartService
         }
     }
 
+    public function destroyAll() {
+        try {
+            if ($this->checkTime()) {
+                $this->model->where('customer_id', '=', $this->getCustomerId())->delete();
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     private function checkTime () {
         $orderTimes = $this->setting->action('get', 'apply');
         $orderTimes = json_decode($orderTimes, true)['value'];

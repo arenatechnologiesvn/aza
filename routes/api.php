@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::resource('favorites', 'FavoriteController');
 
     Route::post('carts/save-all', 'CartController@storeAll');
+    Route::delete('carts/remove_all', 'CartController@destroyAll');
     Route::resource('carts', 'CartController');
 
     // Employee
