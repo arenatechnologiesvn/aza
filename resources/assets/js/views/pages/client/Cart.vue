@@ -25,7 +25,7 @@
               el-table-column(prop="total" label="TỔNG (₫)" :formatter="row =>formatNumber(row.price * row.quantity)")
           el-row(:gutter="5")
             el-col(:xs="24" :sm="4" :md="4" :lg="4" style="margin-top: 10px")
-              el-button(type="danger" size="small" @click="removeAll" :disabled="products.length === 0" style="width: 100%")
+              el-button(type="danger" size="small" @click="removeAll" :disabled="products.length === 0" style="width: 100%" v-if="enableCart()")
                 svg-icon(icon-class="fa-solid trash")
                 span  Xóa tất cả
             el-col.total(:xs="24" :sm="20" :md="20" :lg="20")

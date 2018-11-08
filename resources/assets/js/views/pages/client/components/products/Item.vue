@@ -27,19 +27,19 @@
               svg-icon(icon-class="fa-solid star")
           div.product-item__control--right
             el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
-              span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
-                svg-icon( icon-class="fa-solid heart")
-            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
-              span.shop(@click="addToCart(product)" :disabled="!enableCart")
+              span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? '#F56C6C': 'black'}")
+                svg-icon(icon-class="fa-solid heart")
+            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top" v-if="enableCart && !product.added")
+              span.shop(@click="addToCart(product)")
                 svg-icon(icon-class="fa-solid cart-plus")
-            el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
-              span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
-                svg-icon(icon-class="fa-solid eraser")
+            el-tooltip(effect="dark" content="Xóa khỏi giỏ hàng" placement="top" v-if="enableCart && product.added")
+              span.shop-remove(@click="removeFromCart(product.id)" style="color: #F56C6C")
+                svg-icon(icon-class="fa-solid cart-arrow-down")
 </template>
 
 <script>
-  import {mapActions, mapGetters} from 'vuex'
-  import {formatNumber} from '~/utils/util'
+  import { mapActions, mapGetters } from 'vuex'
+  import { formatNumber } from '~/utils/util'
   import moment from 'moment'
 
   export default {
@@ -194,7 +194,7 @@
             this.$confirm(message, 'Xác nhận', {
               confirmButtonText: 'Đồng ý',
               cancelButtonText: 'Hủy',
-              type: 'success'
+              type: 'warning'
             }).then(() => {
               resolve(true);
             }).catch(err => err)
@@ -212,7 +212,7 @@
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
           confirmButtonText: 'Đồng ý',
           cancelButtonText: 'Hủy',
-          type: 'success'
+          type: 'warning'
         }).then(() => {
           resolve(true);
         }).catch(err => err))
@@ -225,7 +225,7 @@
     position: relative;
   }
   $font-size: 16px;
-  $line-height: 1.1;
+  $line-height: 2.1;
   $lines-to-show: 2;
 
   .product-item__title {

@@ -29,14 +29,14 @@
           div.product-item__control
             div.product-item__control--left
               el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
-                span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
+                span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? '#F56C6C': 'black'}")
                   svg-icon( icon-class="fa-solid heart")
-              el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
+              el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top" v-if="enableCart && !product.added")
                 span.shop(@click="addToCart(product)")
                   svg-icon(icon-class="fa-solid cart-plus")
-              el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
-                span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
-                  svg-icon(icon-class="fa-solid eraser")
+              el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top" v-if="enableCart && product.added")
+                span.shop-remove(@click="removeFromCart(product.id)" style="color: #F56C6C")
+                  svg-icon(icon-class="fa-solid cart-arrow-down")
             div.product-item__control--right
               <!--span.score(v-for="item in 5" :key="item" :style="{color: item <= 5 ? '#F7CA51' : ''}")-->
                 <!--svg-icon(icon-class="fa-solid star")-->
@@ -54,7 +54,22 @@
       product: {
         type: Object,
         default: () => {
+          return {};
         }
+      }
+    },
+    computed: {
+      enableCart () {
+        const apply = this.$store.getters.settings && this.$store.getters.settings.apply
+        if (apply) {
+          const now = moment();
+          const startTime = moment(apply.start, 'hh:mm');
+          const endTime = moment(apply.end, 'hh:mm');
+
+          if (apply.is_end_in_today) return startTime.isBefore(now) && now.isBefore(endTime)
+          return !(endTime.isBefore(now) && now.isBefore(startTime))
+        }
+        return false;
       }
     },
     methods: {
@@ -181,7 +196,7 @@
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
           confirmButtonText: 'Đồng ý',
           cancelButtonText: 'Hủy',
-          type: 'success'
+          type: 'warning'
         }).then(() => {
           resolve(true);
         }));
