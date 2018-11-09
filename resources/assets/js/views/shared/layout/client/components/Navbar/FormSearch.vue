@@ -11,13 +11,12 @@
               span {{ item.name }}
               span -
               span.price {{ formatNumber(item.price) }} ₫
-    span.shopcart(style="color: black;")
-      el-dropdown.top__dropdown(v-if="total > 0")
-        el-badge(:value="total" class="item")
-          router-link(to="/cart")
-            svg-icon(icon-class="fa-solid shopping-cart")
+    span.shopcart(style="color: black; cursor: pointer;")
+      el-dropdown.top__dropdown(trigger="click")
+        el-badge(:value="total" :hidden="total === 0" class="item")
+          svg-icon.shopping-cart(icon-class="fa-solid shopping-cart")
         el-dropdown-menu(slot="dropdown")
-          div(style="height: 300px; overflow-y: scroll;")
+          div.cart-dropdown-container
             table.cart-dropdown
               tbody
                 tr(v-for="item in products" :key="item.id")
@@ -56,8 +55,7 @@
         listProducts: 'list'
       }),
       total() {
-        return this.data.length === 0 ? 0 :
-          this.data.length
+        return this.data && this.data.length ? this.data.length : 0;
       },
       products() {
         return this.cartData()
@@ -128,6 +126,10 @@
 </script>
 
 <style lang="scss" scoped>
+  .cart-dropdown-container {
+    height: 300px;
+    overflow-y: scroll;
+  }
   .cart-dropdown {
     width: 100%;
     max-width: 300px;
@@ -154,6 +156,13 @@
       font-weight: bolder;
     }
   }
+
+  .shopping-cart {
+    font-size: 35px;
+    vertical-align: middle;
+    color: #2d3a4b;
+  }
+
   @media screen and (max-width: 500px) {
     .search {
       max-width: 150px;

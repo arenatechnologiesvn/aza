@@ -32,9 +32,6 @@
             el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top" v-if="enableCart && !product.added")
               span.shop(@click="addToCart(product)")
                 svg-icon(icon-class="fa-solid cart-plus")
-            el-tooltip(effect="dark" content="Xóa khỏi giỏ hàng" placement="top" v-if="enableCart && product.added")
-              span.shop-remove(@click="removeFromCart(product.id)" style="color: #F56C6C")
-                svg-icon(icon-class="fa-solid cart-arrow-down")
 </template>
 
 <script>
@@ -69,31 +66,19 @@
       ...mapActions('cart', {
         add2Cart: 'create',
         updateCart: 'update',
-        deletFromCart: 'destroy',
         fetchCart: 'fetchList'
       }),
       ...mapActions('favorite', {
         addFavorite: 'create',
-        deletFavorite: 'destroy',
+        deleteFavorite: 'destroy',
         fetchFavorite: 'fetchList'
       }),
       ...mapActions('products', {
         fetchProduct: 'fetchList'
       }),
-      removeFromCart(id) {
-        this.canExecute('Bạn muốn xóa sản phẩm này khỏi giỏ hàng?')
-          .then(() => this.deletFromCart({id})
-            .then(() => this.fetchProduct()))
-          .then(() => this.$notify(
-            {
-              title: 'Thông báo',
-              message: 'Xóa thành công sản phầm khỏi giỏ hàng',
-              type: 'success'
-            }))
-      },
       removeFromFavorite(id) {
         this.canExecuteF('Bạn muốn xóa sản phẩm khỏi danh sách yêu thích?')
-          .then(() => this.deletFavorite({id})
+          .then(() => this.deleteFavorite({id})
             .then(() => {
               this.fetchProduct()
               this.fetchFavorite()
@@ -244,24 +229,18 @@
 
   .label {
     position: absolute;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    vertical-align: middle;
-    font-size: 14px;
-    background-color: rgba(255, 255, 255, 0.7);
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    top: 0;
-    left: 0;
-    color: darkgreen;
+    top: 47px;
+    right: -35px;
+    transform: rotate(45deg);
+    padding: 5px 25px;
+    font-size: 12px;
     font-weight: bolder;
-    text-align: left;
-    padding-left: 5px;
-    z-index: 2;
+    opacity: .6;
+    color: white;
+    background-color: green;
     &.no {
-      top: calc(50% - 20px);
       text-align: center;
-      color: red;
+      background-color: red;
     }
   }
   .product-item__image {
