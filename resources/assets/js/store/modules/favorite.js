@@ -12,6 +12,7 @@ export default createCrudModule({
 
       return p && {
         id,
+        code: p.product_code,
         title: p.name,
         price: p.price,
         discount: p.discount_price,

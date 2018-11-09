@@ -10,6 +10,7 @@ namespace App\Service;
 
 
 use App\Cart;
+use App\Favorite;
 use App\Customer;
 use App\Helper\RoleConstant;
 use Exception;
@@ -59,19 +60,29 @@ class CartService
         }
     }
 
-    public function storeAll ($data) {
+    public function storeAll() {
         try {
             if ($this->checkTime()) {
-                foreach($data as $item) {
-                    if ( $this->checkExistInCart($item['product_id'], $item['customer_id']) == null){
+                $currentCustomer = $this->getCustomerId();
+                $existedCartProducts = $this->model
+                    ->where('customer_id', '=', $currentCustomer)
+                    ->pluck('product_id')->toArray();
+                $favoriteProducts = Favorite::where('customer_id', '=', $currentCustomer)
+                    ->pluck('product_id')->toArray();
+                foreach($favoriteProducts as $favoriteProduct) {
+                    if (!in_array($favoriteProduct, $existedCartProducts)) {
                         $cart = new Cart;
-                        $cart->create($item);
+                        $cart->create([
+                            'customer_id' => $currentCustomer,
+                            'product_id' => $favoriteProduct,
+                            'quantity' => 0
+                        ]);
                     }
                 }
-                return $data;
-            }else {
-                return null;
+
+                return $this->model->where('customer_id', '=', $currentCustomer)->get();
             }
+            return null;
         } catch (Exception $e) {
             return $e;
         }
@@ -144,14 +155,6 @@ class CartService
         }
     }
 
-    private function checkExistInCart($product_id, $customer_id) {
-        try {
-            return $this->model->where([['customer_id', '=', $customer_id], ['product_id', '=', $product_id]])->firstOrFail();
-        } catch (Exception $e) {
-            return null;
-        }
-
-    }
     private function getByProductId ($product_id) {
         return  $this->model->where([
             ['customer_id', '=', $this->getCustomerId()],
