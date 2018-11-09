@@ -12,13 +12,10 @@
               el-col(:span="6")
                 img(:src="scope.row.img")
               el-col(:span="18")
+                h4 {{scope.row.code}}
                 h4 {{scope.row.title}}
-                div
-                  span(v-for="item in 5" :key="item" :style="{color: item <= 5 ? '#F7CA51': 'black'}")
-                    svg-icon(icon-class="fa-solid star")
-                div
-                  span(@click="removeFromFavorite(scope.row.id)" style="cursor: pointer;")
-                    svg-icon(icon-class="fa-solid trash")
+                el-button.button(type="danger" size="mini" @click="removeFromFavorite(scope.row.id)")
+                  svg-icon(icon-class="fa-solid trash")
         el-table-column(width="230" style="text-align: left;")
           template(slot-scope="scope")
             div(style="text-align: left;" v-if="scope.row.discount")
@@ -26,7 +23,7 @@
               div.discount {{formatNumber(scope.row.price)}}
                 span(style="margin-left: 10px; text-decoration: unset; color: black;")  {{ ((1 - (scope.row.discount / scope.row.price)) * 100).toFixed(2)}} %
             div(v-else)
-              div.price ₫{{formatNumber(scope.row.price)}} / {{`${scope.row.quantitative} ${scope.row.unit}`}}
+              div.price {{formatNumber(scope.row.price)}} ₫ / {{`${scope.row.quantitative} ${scope.row.unit}`}}
         el-table-column(prop="address" label="Date" width="100")
           template(slot-scope="scope")
             el-button(size="mini" type="warning" @click="addToCart(scope.row)")
@@ -126,32 +123,20 @@
 
       },
       addAllFavorite () {
-        this.canExecute().then(res => {
-          const favorites = this.$store.state.favorite.list
-          const carts = this.$store.state.cart.list
-          const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
-          let tmp = [];
-          for(let i = 0; i< favorites.length; i++) {
-            if(carts.indexOf(favorites[i]) < 0) tmp.push({customer_id, product_id: parseInt(favorites[i]) , quantity: 0})
-          }
+        this.canExecute('Bạn muốn thêm tất cả sản phẩm yêu thích vào giỏ hàng?').then(() => {
           request({
-            url: `/api/carts/save-all`,
-            method: 'post',
-            data: tmp
+            url: '/api/carts/add_all_favorites',
+            method: 'post'
           }).then(data => {
-            this.$message(
-            {
-              message: 'Đã thêm danh sách yêu thích vào giỏ hàng',
+            this.$message({
+              message: 'Thêm thành công',
               type: 'success'
             })
-            this.fetchProduct()
             this.fetchCart()
             this.$router.push({path: '/cart'})
-          })
-          .catch(err => {
-            this.$message(
-            {
-              message: 'Lỗi khi thêm vào giỏ hàng',
+          }).catch(err => {
+            this.$message({
+              message: 'Thêm thất bại',
               type: 'error'
             })
           })
@@ -181,9 +166,11 @@
             this.$confirm(message, 'Xác nhận', {
               confirmButtonText: 'Đồng ý',
               cancelButtonText: 'Hủy',
-              type: 'success'
+              type: 'warning'
             }).then(() => {
               resolve(true);
+            }).catch(() => {
+              // Do nothing
             })
           } else {
             const apply = this.$store.getters.settings && this.$store.getters.settings.apply

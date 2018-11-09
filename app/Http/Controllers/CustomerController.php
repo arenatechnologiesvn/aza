@@ -52,4 +52,14 @@ class CustomerController extends CrudController
     {
         return $this->bulkCreate($request->all());
     }
+
+    /**
+     * Bulk destroy the resources in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDestroy(Request $request) {
+        return $this->bulkDelete($request->all());
+    }
 }

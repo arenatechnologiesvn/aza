@@ -35,14 +35,14 @@
                   img.product-img(:src="product.row.img")
               el-table-column(prop="title" label="TÊN MẶT HÀNG" min-width="200")
               el-table-column(prop="quantity" label="SL" width="40")
-              el-table-column(prop="price" label="GIÁ(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
-              el-table-column(prop="total" label="TỔNG(VNĐ)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="price" label="GIÁ (₫)" :formatter="(row, column, value) => formatNumber(value)")
+              el-table-column(prop="total" label="TỔNG (₫)" :formatter="(row, column, value) => formatNumber(value)")
               el-table-column(prop="unit" label="ĐƠN VỊ TÍNH" width="100")
         el-table-column(prop="code" label="MÃ ĐƠN HÀNG" sortable min-width="150")
         el-table-column(label="TRẠNG THÁI" min-width="150" align="center")
           template(slot-scope="scope")
             el-tag(:type="parseInt(scope.row.status) === 0 ? 'success': parseInt(scope.row.status) === 1 ?  'warning' : parseInt(scope.row.status) === 2 ? 'danger' : 'info'") {{parseInt(scope.row.status) === 0 ? 'Đã hoàn thành' : parseInt(scope.row.status) === 1 ? 'Chờ xác nhận' : parseInt(scope.row.status) === 2 ? 'Đã hủy' : 'Đang xử lý' }}
-        el-table-column(prop="total" label="TỔNG TIỀN (VNĐ)" :formatter="(row, column, value) => formatNumber(value)" min-width="150" align="right")
+        el-table-column(prop="total" label="TỔNG TIỀN (₫)" :formatter="(row, column, value) => formatNumber(value)" min-width="150" align="right")
         el-table-column(prop="date" label="NGÀY ĐẶT HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
         el-table-column(prop="delivery" label="NGÀY GIAO HÀNG" :formatter="(row, column, value) => formatDate(value)" min-width="150" align="center")
         el-table-column(prop="delivery_type" label="GIỜ GIAO HÀNG" min-width="150" align="center")
@@ -52,16 +52,16 @@
               span.el-dropdown-link
                 i.el-icon-arrow-down.el-icon--right
               el-dropdown-menu(slot="dropdown")
-                el-dropdown-item(@click="onView(scope.row.id)")
+                el-dropdown-item
                   span(@click="onView(scope.row.id)")
                     svg-icon(icon-class="fa-solid eye")
                     span Xem chi tiết
-                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
+                el-dropdown-item(v-show="parseInt(scope.row.status) === 1")
                   span(@click="onEdit(scope.row.id)")
                     svg-icon(icon-class="fa-solid paint-brush")
                     span Sửa đơn hàng
-                el-dropdown-item(@click="onView(scope.row.id)" v-show="parseInt(scope.row.status) === 1")
-                  span(@click="changeStatus(scope.row.id, 2)" style="color: red")
+                el-dropdown-item(v-show="parseInt(scope.row.status) === 1")
+                  span(@click="changeStatus(scope.row.id, 2)" style="color: #f56c6c")
                     svg-icon(icon-class="fa-solid ban")
                     span Hủy đơn hàng
       div.pagination__wrapper(style="padding: 10px 0;")

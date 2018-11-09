@@ -15,7 +15,7 @@
             el-table-column(prop="order_total" label="TỔNG HÓA ĐƠN" sortable min-width="120")
               template(slot-scope="scope")
                 span {{ scope.row.order_total || 0 }}
-            el-table-column(prop="revenue_total" label="TỔNG DOANH SỐ (VND)" sortable min-width="200")
+            el-table-column(prop="revenue_total" label="TỔNG DOANH SỐ (₫)" sortable min-width="200")
               template(slot-scope="scope")
                 span {{ Number(scope.row.revenue_total).toLocaleString('de-DE') }}
         div.pagination__wrapper

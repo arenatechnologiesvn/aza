@@ -1,7 +1,7 @@
 import createCrudModule from 'vuex-crud';
 import defaultClient from '~/utils/request';
 import { Notification } from 'element-ui';
-import { bulkCreate } from '~/api/product';
+import { bulkCreate, bulkDelete } from '~/api/product';
 
 const notifyWrap = (message, type) => {
   Notification({ title: 'Thông báo', message, type });
@@ -46,6 +46,19 @@ const form = {
         }).catch(error => {
           const message = error && error.message;
           notifyWrap(message || 'Tải lên sản phẩm thất bại', 'error');
+          reject(error);
+        });
+      });
+    },
+
+    bulkDelete ({ commit }, productIds) {
+      return new Promise((resolve, reject) => {
+        bulkDelete({ ids: productIds }).then(response => {
+          notifyWrap('Xóa sản phẩm thành công', 'success');
+          resolve(response);
+        }).catch(error => {
+          const message = error && error.message;
+          notifyWrap(message || 'Xóa sản phẩm thất bại', 'error');
           reject(error);
         });
       });

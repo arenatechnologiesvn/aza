@@ -9,6 +9,7 @@ use App\Provider;
 use App\Order;
 use App\ProductOrder;
 use App\Favorite;
+use App\Cart;
 use App\Service\MediaService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -190,7 +191,24 @@ class ProductService extends BaseService
         try {
             \DB::beginTransaction();
             Favorite::where('product_id', $id)->delete();
+            Cart::where('product_id', $id)->delete();
             $this->destroy($id);
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function bulkDeleteProduct($ids)
+    {
+        try {
+            \DB::beginTransaction();
+            foreach ($ids as $id) {
+                Favorite::where('product_id', $id)->delete();
+                Cart::where('product_id', $id)->delete();
+                $this->destroy($id);
+            }
             \DB::commit();
         } catch (\Exception $e) {
             \DB::rollBack();

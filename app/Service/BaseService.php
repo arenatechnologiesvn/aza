@@ -140,4 +140,19 @@ abstract class BaseService
             }
         }
     }
+
+    public function bulkDelete(array $ids)
+    {
+        try {
+            DB::beginTransaction();
+            foreach ($ids as $id) {
+                $target = $this->model->find($id);
+                if ($target) $target->delete();
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

@@ -26,7 +26,7 @@
               template(slot-scope="scope")
                 span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
             el-table-column(prop="day" label="NGÀY" sortable min-width="200")
-            el-table-column(prop="revenue" label="DOANH THU (VND)" sortable min-width="120")
+            el-table-column(prop="revenue" label="DOANH THU (₫)" sortable min-width="120")
               template(slot-scope="scope")
                 span {{ Number(scope.row.revenue).toLocaleString('de-DE') }}
         div.pagination__wrapper
@@ -97,7 +97,7 @@ export default {
         }],
         yAxis: [{
           type: 'value',
-          name: 'Doanh thu (VND)',
+          name: 'Doanh thu (₫)',
           min: 0,
           interval: 100000000
         }],

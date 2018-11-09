@@ -5,27 +5,33 @@
       el-row(:gutter="10")
         el-col(:xs="24" :sm="16" :md="16" :lg="16")
           div.grid-content.bg-puple
-            el-table(border style="width: 100%" :data="products" size="mini" v-loading="loading")
+            el-table(border style="width: 100%" :data="products" size="mini" v-loading="isLoading")
               el-table-column(prop="name" label="SẢN PHẨM" min-width="200")
                 template(slot-scope="scope")
                   div.detail
                     div.img
                       img(:src="scope.row.img")
-                    h4 {{scope.row.title}}
+                    h4 {{ scope.row.code }}
+                    h4 {{ scope.row.title }}
                     el-button.button(type="danger" size="mini" @click="remove(scope.row.id)" :disabled="!enableCart()")
                       svg-icon(icon-class="fa-solid trash")
-              el-table-column(prop="price" label="GIÁ (VNĐ)")
+              el-table-column(prop="price" label="GIÁ (₫)")
                 template(slot-scope="scope")
                   div {{formatNumber(scope.row.price)}}
                   div / {{`${scope.row.quantitative} ${scope.row.unit}`}}
               el-table-column(prop="quantity" label="SỐ LƯỢNG" width="130")
                 template(slot-scope="scope")
-                  el-input-number(v-model="scope.row.quantity" :min="0" size="mini" style="width: 110px;" :disabled="!enableCart()" @change="changeQuantity(scope.row)")
-              el-table-column(prop="total" label="TỔNG (VNĐ)" :formatter="row =>formatNumber(row.price * row.quantity)")
-          div.total
-            p
-              strong Tạm tính:
-              template {{formatNumber(total)}} (VNĐ)
+                  el-input-number(v-model="scope.row.quantity" :min="0" size="mini" style="width: 110px;" :disabled="isChangingQuantity" @change="changeQuantity(scope.row)")
+              el-table-column(prop="total" label="TỔNG (₫)" :formatter="row =>formatNumber(row.price * row.quantity)")
+          el-row(:gutter="5")
+            el-col(:xs="24" :sm="4" :md="4" :lg="4" style="margin-top: 10px")
+              el-button(type="danger" size="small" @click="removeAll" :disabled="products.length === 0" style="width: 100%" v-if="enableCart()")
+                svg-icon(icon-class="fa-solid trash")
+                span  Xóa tất cả
+            el-col.total(:xs="24" :sm="20" :md="20" :lg="20")
+              p
+                strong Tạm tính ({{ products ? products.length : 0 }} sản phẩm):
+                template {{formatNumber(total)}} ₫
         el-col(:xs="24" :sm="8" :md="8" :lg="8")
           div.cart(style="background-color: #ffffff")
             h4.title__info
@@ -33,10 +39,6 @@
                 svg-icon(icon-class="fa-solid info-circle")
               template Thông tin đặt hàng
             el-form(ref="form" :model="form" status-icon :rules="rules" size="small")
-              el-form-item(label="Ghi chú và nhận xét" prop="title")
-                el-input(v-model="form.title" placeholder="Ghi chú và nhận xét"  auto-complete="off")
-              el-form-item(label="Sản phẩm ngoài danh mục" prop="description")
-                el-input(v-model="form.description" type="textarea" rows="5" placeholder="Nhập mô tả chi tiết đơn hàng")
               el-form-item(label="Cửa hàng" prop="shop_id")
                 el-select(v-model="form.shop_id" clearable filterable placeholder="Chọn cửa hàng" style="width: 100%;" @change="onShopChange")
                   el-option(:label="shop.name" :value="shop.id" v-for="shop in shops" :key="shop.id")
@@ -47,6 +49,10 @@
               el-form-item(label="Giờ giao hàng" prop="delivery_type")
                 el-select(v-model="form.delivery_type" clearable placeholder="Chọn khung giờ" style="width: 100%;")
                   el-option(:label="item" :value="item" v-for="item in times" :key="item")
+              el-form-item(label="Ghi chú và nhận xét" prop="title")
+                el-input(v-model="form.title" placeholder="Ghi chú và nhận xét"  auto-complete="off")
+              el-form-item(label="Sản phẩm ngoài danh mục" prop="description")
+                el-input(v-model="form.description" type="textarea" rows="5" placeholder="Nhập mô tả chi tiết đơn hàng")
               el-form-item
                 el-row(:gutter="5")
                   el-col(:xs="24" :sm="12" :md="12" :lg="12")
@@ -60,11 +66,13 @@
   import {mapGetters, mapActions} from 'vuex'
   import BreadCrumb from './components/BreadCrumb'
   import OrderConfirmDialog from './components/OrderConfirmDialog'
+  import BaseMixin from '../mixin'
   import {formatNumber} from '~/utils/util'
   import moment from 'moment'
 
   export default {
     name: 'CustomerCart',
+    mixins: [ BaseMixin ],
     components: {
       BreadCrumb,
       OrderConfirmDialog
@@ -81,6 +89,7 @@
       }
 
       return {
+        isChangingQuantity: false,
         form: {
           delivery_type: '',
           delivery: '',
@@ -109,14 +118,14 @@
     },
     computed: {
       ...mapGetters('cart', {
-        cartProducts: 'cartProducts'
+        cartProducts: 'cartProducts',
+        isLoading: 'isLoading'
       }),
       ...mapGetters([
         'user_info'
       ]),
       ...mapGetters('shops', {
-        listShop: 'list',
-        loading: 'isLoading'
+        listShop: 'list'
       }),
       times () {
         return this.$store.getters.settings && this.$store.getters.settings.timeFrame && this.$store.getters.settings.timeFrame.map(item => item.start + ' - ' + item.end)
@@ -163,7 +172,8 @@
     methods: {
       ...mapActions('cart', {
         'removeItem': 'destroy',
-        'updateItem': 'update'
+        'updateItem': 'update',
+        'removeAllItem': 'deleteAll'
       }),
       ...mapActions('orders', {
         createOrder: 'create'
@@ -218,18 +228,17 @@
         this.$refs[name].resetFields();
       },
       remove(id) {
-        this.removeItem({id})
-          .then(res => {
-            // Do nothing
-          })
-          .catch(err => {
-            // Do nothing
-          })
+        this.removeItem({id}).then(res => {
+          // Do nothing
+        }).catch(err => {
+          // Do nothing
+        })
       },
       formatNumber(num) {
         return formatNumber(num)
       },
       changeQuantity(value) {
+        this.isChangingQuantity = true;
         this.updateItem({
           id: value.id,
           data: {
@@ -237,7 +246,27 @@
             quantity: value.quantity,
             customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
           }
+        }).then(() => {
+          this.isChangingQuantity = false;
+        }).catch(() => {
+          this.isChangingQuantity = false;
         })
+      },
+      removeAll () {
+        this.$confirm('Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng?', 'Xác nhận', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Hủy',
+          type: 'warning'
+        }).then(() => {
+          this.loading()
+          this.removeAllItem({ customUrl: 'remove_all' }).then(() => {
+            this.loader && this.loader.close();
+          }).catch(()=> {
+            this.loader && this.loader.close();
+          })
+        }).catch(() => {
+          // Do nothing
+        });
       },
       onShopChange (value) {
         this.listShop.map(item => {
@@ -325,7 +354,6 @@
   }
 
   .total {
-    margin: 10px 0;
     text-align: right;
     p {
       font-size: 1.2em;

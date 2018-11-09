@@ -16,12 +16,15 @@
           el-option(v-for="item in providers" :key="item.id" :label="item.name" :value="item.id")
     .control-wrapper
       el-row
-        //- el-col(:span="8")
-          //- el-dropdown(split-button type="primary" size="small")
-          //-   span Đã chọn {{ multipleSelection.length }} sản phẩm
-          //-   el-dropdown-menu(slot="dropdown")
-          //-     el-dropdown-item Xóa
-        el-col(:span="24" style="text-align: right")
+        el-col(:span="8")
+          el-dropdown(split-button :type="multipleSelection.length ? 'primary' : 'default'" size="small")
+            span Đã chọn {{ multipleSelection.length }} sản phẩm
+            el-dropdown-menu(slot="dropdown")
+              el-dropdown-item(style="color: #f56c6c" :disabled="multipleSelection.length === 0")
+                span(@click="deleteBulkProduct")
+                  svg-icon(icon-class="fa-solid trash")
+                  span.ml-5  Xóa
+        el-col(:span="16" style="text-align: right")
           el-button(type="success" size="small" @click="exportExcelFile" :disabled="!this.tableData.length")
             svg-icon(icon-class="fa-solid file-excel")
             span.ml-5  Xuất Excel
@@ -35,7 +38,7 @@
       div.index__container
         div.table
           el-table(:data="tableData" border size="small" style="width: 100%" @selection-change="handleSelectionChange" v-loading="loading")
-            //- el-table-column(type="selection" header-align="center" align="center" width="40")
+            el-table-column(type="selection" header-align="center" align="center" width="40")
             el-table-column(prop="num" label="STT" align="center" width="60")
               template(slot-scope="scope")
                 span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
@@ -44,7 +47,7 @@
                 img(:src="featuredImageUrl(scope.row)" :width="40" :height="40")
             el-table-column(prop="product_code" label="MÃ SẢN PHẨM" sortable min-width="180")
             el-table-column(prop="name" label="TÊN SẢN PHẨM" sortable min-width="200")
-            el-table-column(prop="price" label="GIÁ (VND)" align="right" sortable min-width="150")
+            el-table-column(prop="price" label="GIÁ (₫)" align="right" sortable min-width="150")
               template(slot-scope="scope")
                 span {{ Number(scope.row.price).toLocaleString('de-DE') }}
             el-table-column(prop="unit" label="ĐƠN VỊ" sortable min-width="100")
@@ -130,6 +133,7 @@ export default {
       fetchProducts: 'products/fetchList',
       fetchProduct: 'products/fetchSingle',
       deleteProduct: 'products/destroy',
+      bulkDeleteProduct: 'products/bulkDelete',
       setEditProductId: 'common/setEditProductId',
       openProductEditPanel: 'common/openProductEditPanel'
     }),
@@ -199,7 +203,7 @@ export default {
     },
 
     handleSelectionChange(val) {
-        this.multipleSelection = val;
+      this.multipleSelection = val;
     },
 
     redirectToAddingPage() {
@@ -222,6 +226,21 @@ export default {
       });
     },
 
+    deleteBulkProduct() {
+      this.$confirm('Bạn có chắc chắn muốn xóa những sản phẩm này?', 'Xác nhận', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Hủy',
+        type: 'warning'
+      }).then(() => {
+        const productIds = this.multipleSelection.map((item) => {
+          return item.id;
+        });
+        this.bulkDeleteProduct(productIds).then(() => {
+          this.fetchData();
+        });
+      });
+    },
+
     featuredImageUrl(row) {
       if (!row.featured_image) return dummyImage;
       return row.featured_image.url;
@@ -233,7 +252,7 @@ export default {
           "STT": index + 1,
           "MÃ SẢN PHẨM": item.product_code,
           "TÊN SẢN PHẨM": item.name,
-          "GIÁ (VND)": Number(item.price).toLocaleString('de-DE'),
+          "GIÁ (₫)": Number(item.price).toLocaleString('de-DE'),
           "ĐƠN VỊ": item.unit,
           "ĐỊNH LƯỢNG": item.quantitative,
           "DANH MỤC": item.category && item.category.name ? item.category.name : '-',

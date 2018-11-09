@@ -42,7 +42,7 @@
                     el-table-column(prop="mass_total" label="TỔNG KHỐI LƯỢNG" min-width="180")
                       template(slot-scope="scope")
                         span {{ scope.row.mass_total || '-' }}
-                    el-table-column(prop="revenue_total" label="TỔNG TIỀN (VND)" min-width="200")
+                    el-table-column(prop="revenue_total" label="TỔNG TIỀN (₫)" min-width="200")
                       template(slot-scope="scope")
                         span {{ Number(scope.row.revenue_total).toLocaleString('de-DE') }}
               el-table-column(prop="product_code" label="MÃ SẢN PHẨM" min-width="150")
@@ -54,7 +54,7 @@
               el-table-column(prop="mass_total" label="TỔNG KHỐI LƯỢNG" min-width="180")
                 template(slot-scope="scope")
                   span {{ scope.row.mass_total || '-' }}
-              el-table-column(prop="revenue_total" label="TỔNG TIỀN (VND)" min-width="200")
+              el-table-column(prop="revenue_total" label="TỔNG TIỀN (₫)" min-width="200")
                 template(slot-scope="scope")
                   span {{ Number(scope.row.revenue_total).toLocaleString('de-DE') }}
           div.pagination__wrapper
@@ -143,7 +143,7 @@ export default {
           "SỐ LƯỢNG": item.quantity_total,
           "ĐỊNH LƯỢNG": item.product_quantitative || '-',
           "TỔNG KHỐI LƯỢNG": item.mass_total || '-',
-          "TỔNG TIỀN (VND)": Number(item.revenue_total).toLocaleString('de-DE')
+          "TỔNG TIỀN (₫)": Number(item.revenue_total).toLocaleString('de-DE')
         };
       });
 

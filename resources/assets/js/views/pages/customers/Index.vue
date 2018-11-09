@@ -27,9 +27,9 @@
                   el-option(label="Đang tạm khóa" :value="1")
                   el-option(label="Chưa kích hoạt" :value="2")
     div.control__wrapper
-      aza-control(@on-add="handAddClick" @on-import="handImportClick")
+      aza-control(@on-add="handAddClick" @on-import="handImportClick" @on-bulk-delete="handleBulkDelete" :selected="selection")
     div.index__wrapper
-      aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle" @on-delete="deleteHandle")
+      aza-table(:customers="current" :total="total" @on-update="handUpdateClick" @on-change-active="changeActiveHandle" @on-selection-change="onSelected" @on-delete="deleteHandle")
 </template>
 
 <script>
@@ -50,7 +50,8 @@
         key: '',
         employee_id: null,
         customer_type: null,
-        status: null
+        status: null,
+        selection: []
       }
     },
     computed: {
@@ -182,23 +183,21 @@
       onChangeRole () {
         this.current.filter(item => item.role_id === this.search.role_id)
       },
-      onDeleteSelect (ids) {
-        this.confirm(() => {
+      handleBulkDelete () {
+        this.$confirm('Bạn có chắc chắn muốn xóa những khách hàng này?', 'Xác nhận', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Hủy',
+          type: 'warning'
+        }).then(() => {
+          const customerIds = this.selection.map((item) => {
+            return item.id;
+          });
+          this.loading()
           this.deleteSelection({
-            customUrl: 'deletes',
-            data: {data: ids}
-          }).then(() => {
-            this.$message({
-              type: 'success',
-              message: `Xóa thành công`
-            })
-          })
-        }, () => {
-          this.$message({
-            type: 'info',
-            message: `Huy xóa khách hàng`
-          })
-        })
+            customUrl: 'bulk_delete',
+            data: {data: customerIds}
+          });
+        });
       }
     },
     created () {

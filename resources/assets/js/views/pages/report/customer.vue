@@ -38,7 +38,7 @@
               el-table-column(prop="mass_total" label="KHỐI LƯỢNG" sortable min-width="120")
                 template(slot-scope="scope")
                   span {{ scope.row.mass_total || '-' }}
-              el-table-column(prop="revenue_total" label="DOANH SỐ  (VND)" sortable min-width="200")
+              el-table-column(prop="revenue_total" label="DOANH SỐ  (₫)" sortable min-width="200")
                 template(slot-scope="scope")
                   span {{ Number(scope.row.revenue_total).toLocaleString('de-DE') }}
           div.pagination__wrapper
@@ -115,7 +115,7 @@ export default {
         }],
         yAxis: [{
           type: 'value',
-          name: 'Doanh số (VND)',
+          name: 'Doanh số (₫)',
           min: 0,
           interval: 50
         }],

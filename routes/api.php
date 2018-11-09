@@ -46,13 +46,18 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     Route::get('clients/year/{year}', 'ClientController@staticsByYear');
     Route::get('clients/range/{from}/{to}', 'ClientController@productInRange');
 
-    Route::resource('employees', 'EmployeeController');
     Route::resource('favorites', 'FavoriteController');
 
-    Route::post('carts/save-all', 'CartController@storeAll');
+    Route::post('carts/add_all_favorites', 'CartController@storeAll');
+    Route::delete('carts/remove_all', 'CartController@destroyAll');
     Route::resource('carts', 'CartController');
 
+    // Employee
+    Route::delete('employees/bulk_delete','EmployeeController@bulkDestroy');
+    Route::resource('employees', 'EmployeeController');
+
     // Customer
+    Route::delete('customers/bulk_delete','CustomerController@bulkDestroy');
     Route::resource('customers', 'CustomerController');
     Route::post('customers/bulk_create','CustomerController@bulkStore');
 
@@ -80,6 +85,7 @@ Route::group(['middleware' => 'auth.jwt:api'], function () {
     // Products
     Route::resource('products', 'Product\ProductController');
     Route::post('products/bulk_create','Product\ProductController@bulkStore');
+    Route::post('products/bulk_delete','Product\ProductController@bulkDestroy');
     Route::get('products/category/{id}','Product\ProductController@getByCategory');
 
     // Report

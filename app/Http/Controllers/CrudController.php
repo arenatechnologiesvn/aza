@@ -134,4 +134,20 @@ abstract class CrudController extends Controller
         }
 
     }
+
+    /**
+     * Bulk delete the specified resource in storage.
+     *
+     * @param  array  $ids
+     * @return \Illuminate\Http\Response
+     */
+    public function bulkDelete($ids)
+    {
+        try {
+            $this->service->bulkDelete($ids);
+            return $this->api_success_response(['data' => $ids]);
+        } catch(\Exception $e){
+            return $this->api_error_response($e, 'Xóa khách hàng thất bại');
+        }
+    }
 }

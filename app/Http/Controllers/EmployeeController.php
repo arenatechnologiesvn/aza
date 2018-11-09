@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Employee;
 use App\Http\Requests\Employees\StoreEmployeeCreate;
 use App\Http\Requests\Employees\StoreEmployeeUpdate;
+use Illuminate\Http\Request;
 use App\Service\EmployeeService;
 use Illuminate\Support\Facades\Auth;
 
@@ -51,9 +52,12 @@ class EmployeeController extends CrudController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Bulk destroy the resources in storage.
      *
-     * @param  int $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function bulkDestroy(Request $request) {
+        return $this->bulkDelete($request->all());
+    }
 }

@@ -10,12 +10,12 @@
           router-link(:to="`/products/${product.id}`") {{product.title}}
         div.product-item__description(style="color: black;height: 50px;")
           div.product-item__control--left(v-if="product.discount")
-            div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.discount)}} / {{`${product.quantitative} ${product.unit}`}}
+            div.product-item__price(style="color: red; font-size: 1.2em;") {{formatNumber(product.discount)}} ₫ / {{`${product.quantitative} ${product.unit}`}}
             div(v-if="product.discount").product-item__price--discount
-              span(style="text-decoration: line-through; margin-right: 10px;") ₫{{formatNumber(product.price)}}
+              span(style="text-decoration: line-through; margin-right: 10px;") {{formatNumber(product.price)}} ₫
               span(style="margin-left: 10px;") {{ ((1 - parseFloat((parseFloat(product.discount) / parseFloat(product.price)))) * 100).toFixed(2)}} %
           div(v-else)
-            div.product-item__price(style="color: red; font-size: 1.2em;") ₫{{formatNumber(product.price)}} / {{`${product.quantitative} ${product.unit}`}}
+            div.product-item__price(style="color: red; font-size: 1.2em;") {{formatNumber(product.price)}} ₫ / {{`${product.quantitative} ${product.unit}`}}
           div(style="clear: both")
             router-link(:to="{name: 'home_product', query: {category: product.category}}" style="font-size: 1.1em;color: #999;")
               strong(style="color: #666; margin-right: 10px;") Danh mục:
@@ -27,19 +27,16 @@
               svg-icon(icon-class="fa-solid star")
           div.product-item__control--right
             el-tooltip(effect="dark" :content="product.favorite ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'" placement="top")
-              span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? 'red': 'black'}")
-                svg-icon( icon-class="fa-solid heart")
-            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top")
-              span.shop(@click="addToCart(product)" :disabled="!enableCart")
+              span.heart(@click="toggleFavorite(product)" :style="{color: product.favorite ? '#F56C6C': 'black'}")
+                svg-icon(icon-class="fa-solid heart")
+            el-tooltip(effect="dark" content="Thêm vào giỏ hàng" placement="top" v-if="enableCart && !product.added")
+              span.shop(@click="addToCart(product)")
                 svg-icon(icon-class="fa-solid cart-plus")
-            el-tooltip(effect="dark" content="Xóa sản phẩm trong giỏ hàng" placement="top")
-              span.shop-remove(@click="removeFromCart(product.id)" v-if="product.added")
-                svg-icon(icon-class="fa-solid eraser")
 </template>
 
 <script>
-  import {mapActions, mapGetters} from 'vuex'
-  import {formatNumber} from '~/utils/util'
+  import { mapActions, mapGetters } from 'vuex'
+  import { formatNumber } from '~/utils/util'
   import moment from 'moment'
 
   export default {
@@ -69,31 +66,19 @@
       ...mapActions('cart', {
         add2Cart: 'create',
         updateCart: 'update',
-        deletFromCart: 'destroy',
         fetchCart: 'fetchList'
       }),
       ...mapActions('favorite', {
         addFavorite: 'create',
-        deletFavorite: 'destroy',
+        deleteFavorite: 'destroy',
         fetchFavorite: 'fetchList'
       }),
       ...mapActions('products', {
         fetchProduct: 'fetchList'
       }),
-      removeFromCart(id) {
-        this.canExecute('Bạn muốn xóa sản phẩm này khỏi giỏ hàng?')
-          .then(() => this.deletFromCart({id})
-            .then(() => this.fetchProduct()))
-          .then(() => this.$notify(
-            {
-              title: 'Thông báo',
-              message: 'Xóa thành công sản phầm khỏi giỏ hàng',
-              type: 'success'
-            }))
-      },
       removeFromFavorite(id) {
         this.canExecuteF('Bạn muốn xóa sản phẩm khỏi danh sách yêu thích?')
-          .then(() => this.deletFavorite({id})
+          .then(() => this.deleteFavorite({id})
             .then(() => {
               this.fetchProduct()
               this.fetchFavorite()
@@ -194,7 +179,7 @@
             this.$confirm(message, 'Xác nhận', {
               confirmButtonText: 'Đồng ý',
               cancelButtonText: 'Hủy',
-              type: 'success'
+              type: 'warning'
             }).then(() => {
               resolve(true);
             }).catch(err => err)
@@ -212,7 +197,7 @@
         return new Promise(resolve => this.$confirm(message, 'Xác nhận', {
           confirmButtonText: 'Đồng ý',
           cancelButtonText: 'Hủy',
-          type: 'success'
+          type: 'warning'
         }).then(() => {
           resolve(true);
         }).catch(err => err))
@@ -225,7 +210,7 @@
     position: relative;
   }
   $font-size: 16px;
-  $line-height: 1.1;
+  $line-height: 2.1;
   $lines-to-show: 2;
 
   .product-item__title {
@@ -244,24 +229,18 @@
 
   .label {
     position: absolute;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    vertical-align: middle;
-    font-size: 14px;
-    background-color: rgba(255, 255, 255, 0.7);
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    top: 0;
-    left: 0;
-    color: darkgreen;
+    top: 47px;
+    right: -35px;
+    transform: rotate(45deg);
+    padding: 5px 25px;
+    font-size: 12px;
     font-weight: bolder;
-    text-align: left;
-    padding-left: 5px;
-    z-index: 2;
+    opacity: .6;
+    color: white;
+    background-color: green;
     &.no {
-      top: calc(50% - 20px);
       text-align: center;
-      color: red;
+      background-color: red;
     }
   }
   .product-item__image {

@@ -12,6 +12,7 @@ export default createCrudModule({
         const img = (p && p.featured && p.featured[0] && p.featured[0].url) || dummyImage;
         return p && {
           id,
+          code: p.product_code,
           title: p.name,
           price: p.price,
           img: img,

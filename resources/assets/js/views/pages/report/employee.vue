@@ -33,7 +33,7 @@
                 template(slot-scope="scope")
                   span {{ (scope.$index + 1) + (currentPage - 1) * pageSize }}
               el-table-column(prop="name" label="TÊN KHÁCH HÀNG" sortable min-width="200")
-              el-table-column(prop="revenue_total" label="TỔNG DOANH SỐ  (VND)" sortable min-width="200")
+              el-table-column(prop="revenue_total" label="TỔNG DOANH SỐ  (₫)" sortable min-width="200")
                 template(slot-scope="scope")
                   span {{ Number(scope.row.revenue_total).toLocaleString('de-DE') }}
           div.pagination__wrapper
