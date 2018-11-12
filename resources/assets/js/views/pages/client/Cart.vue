@@ -30,7 +30,7 @@
                 span  Xóa tất cả
             el-col.total(:xs="24" :sm="20" :md="20" :lg="20")
               p
-                strong Tạm tính ({{ products ? products.length : 0 }} sản phẩm):
+                strong Tạm tính:
                 template {{formatNumber(total)}} ₫
         el-col(:xs="24" :sm="8" :md="8" :lg="8")
           div.cart(style="background-color: #ffffff")
@@ -145,7 +145,7 @@
       },
       total() {
         return (this.products && this.products.length > 1) ?
-          this.products.reduce((a, b) => (parseFloat(a)  + parseFloat((parseFloat(b.price) * parseInt(b.quantity)))), 0) :
+          this.products.reduce((a, b) => (parseFloat(a) + parseFloat((parseFloat(b.price) * parseInt(b.quantity)))), 0) :
           this.products.length === 1 ? parseInt(this.products[0].quantity) * parseFloat(this.products[0].price) : 0
       },
       formCart() {
@@ -206,6 +206,10 @@
           }
         })
       },
+      clearCart() {
+        this.$store.state.cart.list = [];
+        this.$store.state.cart.entities = [];
+      },
       onOrderCart() {
         this.formCart.product = this.formCart.product.filter(item => item.quantity > 0)
         this.createOrder({ data: this.formCart }).then(() => {
@@ -214,6 +218,7 @@
             message: 'Đặt hàng thành công',
             type: 'success'
           })
+          this.clearCart();
           this.$refs['orderConfirmDialog'].closeConfirmDialog()
           this.$router.push({'name': 'home_account_order'})
         }).catch(() => {

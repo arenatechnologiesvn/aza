@@ -28,9 +28,9 @@
               div(v-else)
                 div.price {{formatNumber(product.price) || '-' }} ₫
                   span(style="font-size: .9em;")  / {{ `${product.quantitative || '-'} ${product.unit || '-'}`}}
-              div.submit
+              div.submit(v-if="canAddToCart(product)")
                 span
-                  el-button(type="success" @click="addToCart(product)" size="small" :disabled="!canAddToCart(product)")
+                  el-button(type="success" @click="addToCart(product)" size="small")
                     span(style="margin-right: 10px;")
                       svg-icon(icon-class="fa-solid cart-plus")
                     template Thêm vào giỏ hàng
@@ -135,11 +135,10 @@
       }),
       ...mapActions('cart', {
         add2Cart: 'create',
-        updateCart: 'update',
         fetchCart: 'fetchList'
       }),
       canAddToCart (product) {
-        return !this.isInCart(product) && this.isInOrderTime();
+        return !product.added && this.isInOrderTime();
       },
       isInOrderTime () {
         const apply = this.$store.getters.settings && this.$store.getters.settings.apply
@@ -153,14 +152,6 @@
         }
         return false;
       },
-      isInCart(product) {
-        if (!(this.carts && this.carts.length > 0)) return false;
-        const target = this.carts.find((item) => {
-          return parseInt(item.product_id) === parseInt(product.id);
-        });
-
-        return !!target;
-      },
       getById () {
         this.fetchData({
           id: this.$route.params.id
@@ -170,40 +161,25 @@
         return formatNumber(num)
       },
       addToCart (product) {
-        if (product.added) {
-          const data = {
+        this.add2Cart({
+          data: {
             product_id: product.id,
-            quantity: this.$store.state.cart.entities[product.id].quantity + 1,
+            quantity: 0,
             customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
           }
-          this.updateCart({
-            id: product.id,
-            data: data
+        }).then(res => {
+          this.fetchCart()
+          this.fetchProduct()
+          this.$notify({
+            title: 'Thông báo',
+            message: 'Đã thêm sản phẩm vào giỏ hàng',
+            type: 'success'
           })
-        } else {
-          this.add2Cart({
-            data: {
-              product_id: product.id,
-              quantity: 1,
-              customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
-            }
-          }).then(res => {
-            this.fetchCart()
-            this.fetchProduct()
-            this.$notify(
-              {
-                title: 'Thông báo',
-                message: 'Đã thêm thành công vài giỏ hàng',
-                type: 'success'
-              })
-          } )
-            .catch(err =>   this.$notify(
-              {
-                title: 'Cảnh báo',
-                message: 'Không thể thêm sản phẩm vào giỏ hàng',
-                type: 'danger'
-              }))
-        }
+        }).catch(err => this.$notify({
+          title: 'Thông báo',
+          message: 'Thêm thất bại',
+          type: 'danger'
+        }))
       },
       getCategoryName(category_id) {
         if (!category_id) return 'Chưa xác định';

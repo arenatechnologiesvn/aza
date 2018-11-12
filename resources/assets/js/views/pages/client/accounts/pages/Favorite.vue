@@ -26,7 +26,7 @@
               div.price {{formatNumber(scope.row.price)}} ₫ / {{`${scope.row.quantitative} ${scope.row.unit}`}}
         el-table-column(prop="address" label="Date" width="100")
           template(slot-scope="scope")
-            el-button(size="mini" type="warning" @click="addToCart(scope.row)")
+            el-button(v-if="!scope.row.added" size="mini" type="warning" @click="addToCart(scope.row)")
               svg-icon(icon-class="fa-solid cart-plus")
     div(style="text-align: right; margin: 10px 0; padding: 10px;" v-show="!loading")
       el-button(type="primary" @click="addAllFavorite" size="small" :disabled="favorites.length === 0")
@@ -58,55 +58,31 @@
       }),
       ...mapActions('cart', {
         fetchCart: 'fetchList',
-        add2Cart: 'create',
-        updateCart: 'update'
+        add2Cart: 'create'
       }),
       ...mapActions('products', {
         fetchProduct: 'fetchList'
       }),
       addToCart(product) {
-        if (product.added) {
-          this.canExecute('Bạn muốn thêm sản phẩm này vào giỏ hàng?')
-            .then(() => {
-              const data = {
-                product_id: product.id,
-                quantity: this.$store.state.cart.entities[product.id].quantity + 1,
-                customer_id: this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
-              }
-              this.updateCart({
-                id: product.id,
-                data: data
-              })
-            }).then(() => this.$notify(
-            {
-              title: 'Thông báo',
-              message: 'Đã thêm thành công sản phẩm vào giỏ hàng',
-              type: 'success'
-            }))
-        } else {
-          const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
-          this.canExecute('Bạn muốn thêm sản phẩm này vào giỏ hàng?')
-            .then(() => {
-              this.add2Cart({
-                data: {
-                  product_id: product.id,
-                  quantity: 1,
-                  customer_id
-                }
-              }).then(() => {
-                this.fetchCart()
-                this.fetchProduct()
-              }).then(() => this.$notify(
-                {
-                  title: 'Thông báo',
-                  message: 'Đã thêm thành công sản phẩm vào giỏ hàng',
-                  type: 'success'
-                }))
-                .catch(err => {
-                  // Do nothing
-                })
-            })
-        }
+        const customer_id = this.$store.getters.user_info.customer ? this.$store.getters.user_info.customer.id : 0
+        this.canExecute('Bạn muốn thêm sản phẩm này vào giỏ hàng?').then(() => {
+          this.add2Cart({
+            data: {
+              product_id: product.id,
+              quantity: 0,
+              customer_id
+            }
+          }).then(() => {
+            this.fetchCart()
+            this.fetchProduct()
+          }).then(() => this.$notify({
+            title: 'Thông báo',
+            message: 'Đã thêm sản phẩm vào giỏ hàng',
+            type: 'success'
+          })).catch(err => {
+            // Do nothing
+          })
+        })
       },
       removeFromFavorite(id) {
         this.canExecute('Bạn muốn xóa sản phẩm khỏi danh sách yêu thích?')

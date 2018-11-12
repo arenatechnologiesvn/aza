@@ -158,7 +158,7 @@
   }
 
   .shopping-cart {
-    font-size: 35px;
+    font-size: 25px;
     vertical-align: middle;
     color: #2d3a4b;
   }

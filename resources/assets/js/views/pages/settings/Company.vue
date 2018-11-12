@@ -19,7 +19,7 @@
               el-form-item(label="Địa chỉ email")
                 el-input(v-model="company.email" placeholder="info@azavn.com")
               el-form-item(label="Copyright")
-                el-input(v-model="company.copyright" placeholder="Công Ty Cổ Phần Thịn Thế, All right reversed. Powered by Arena App")
+                el-input(v-model="company.copyright" placeholder="Công Ty Cổ Phần Thịnh Thế, All right reversed. Powered by Arena App")
               el-form-item(label="Link facebook")
                 el-input(v-model="company.fb" placeholder="https://www.facebook.com/")
               el-form-item(label="Link Youtube")

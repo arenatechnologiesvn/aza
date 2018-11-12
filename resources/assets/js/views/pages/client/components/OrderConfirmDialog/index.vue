@@ -35,7 +35,7 @@
       h5.table-title(style="text-align: left;")
         svg-icon(icon-class="fa-solid list")
         span(style="margin-left: 10px;") DANH SÁCH SẢN PHẨM
-      el-table(:data="products" border="border" size="mini" v-loading="isSaving")
+      el-table(:data="orderableProducts" border="border" size="mini" v-loading="isSaving")
         el-table-column(width="70")
           template(slot-scope="product")
             img.product-img(:src="product.row.img")
@@ -48,7 +48,7 @@
             span {{ currencyFormat(productTotal(product.row)) }}
     div.total(style="margin-top: 5px")
       div.item
-        strong TỔNG TIỀN ({{ products ? products.length : 0 }} sản phẩm):
+        strong TỔNG TIỀN ({{ orderableProducts ? orderableProducts.length : 0 }} sản phẩm):
         span {{ currencyFormat(order.total_money) }} ₫
     div.footer(style="text-align: right")
       el-button-group
@@ -91,6 +91,11 @@ export default {
     ...mapGetters('orders', {
       isSaving: 'isLoading'
     }),
+    orderableProducts() {
+      return this.products.filter((item) => {
+        return parseInt(item.quantity) > 0;
+      })
+    },
     selectedShop() {
       if (!this.order || !this.order.shop_id) return null;
       return this.shops.find(item => {
