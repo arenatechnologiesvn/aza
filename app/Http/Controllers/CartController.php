@@ -43,6 +43,16 @@ class CartController extends Controller
         }
     }
 
+    public function bulkStore(BulkStoreCartFormRequest $request) {
+        try {
+            $carts = $this->service->bulkStore($request->all());
+            if ($carts != null) return $this->api_success_response( ['data' => $carts]);
+            return $this->timeoutApply();
+        } catch (Exception $e) {
+            return $this->api_error_response($e);
+        }
+    }
+
     public function storeAll() {
         try {
             $carts = $this->service->storeAll();

@@ -60,6 +60,32 @@ class CartService
         }
     }
 
+    public function bulkStore($data) {
+        try {
+            if ($this->checkTime()) {
+                $currentCustomer = $this->getCustomerId();
+                $existedCartProducts = $this->model
+                    ->where('customer_id', '=', $currentCustomer)
+                    ->pluck('product_id')->toArray();
+                foreach($data as $item) {
+                    if (!in_array($item['product_id'], $existedCartProducts)) {
+                        $cart = new Cart;
+                        $cart->create([
+                            'customer_id' => $currentCustomer,
+                            'product_id' => $item['product_id'],
+                            'quantity' => 0
+                        ]);
+                    }
+                }
+
+                return $this->model->where('customer_id', '=', $currentCustomer)->get();
+            }
+            return null;
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     public function storeAll() {
         try {
             if ($this->checkTime()) {
